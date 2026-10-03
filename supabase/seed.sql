@@ -1,0 +1,2 @@
+﻿-- Dev seed data: a few rows (1 seller, 2-3 gifts) so the UI has something to show.
+-- Runs after migrations on 'supabase db reset'. Add inserts once the first migration creates the tables.

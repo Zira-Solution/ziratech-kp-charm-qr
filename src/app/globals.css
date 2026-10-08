@@ -1,26 +1,350 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Dancing+Script:wght@600;700&family=Abril+Fatface&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
+  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-handwriting: "Caveat", "Dancing Script", cursive;
+  --font-retro: "Abril Fatface", Georgia, serif;
+
+  --color-primary: #540114;
+  --color-primary-container: #721a28;
+  --color-on-primary: #ffffff;
+  
+  --color-secondary: #934841;
+  --color-secondary-fixed: #ffdad6;
+  --color-secondary-container: #fea095;
+  --color-on-secondary-fixed-variant: #76322b;
+  
+  --color-brand-bg: #fff8f6;
+  --color-surface-container-low: #fff0ed;
+  --color-surface-container: #fceae6;
+  --color-surface-container-high: #f6e4e1;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-surface: #221a18;
+  --color-on-surface-variant: #564243;
+  --color-outline: #897172;
+  --color-outline-variant: #dcc0c0;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #fff6f7;
+  --foreground: #221a18;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(255, 218, 214, 0.45) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(254, 160, 149, 0.25) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(255, 218, 214, 0.45) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(252, 234, 230, 0.4) 0px, transparent 50%);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  min-height: 100vh;
 }
+
+/* ========================================================= */
+/* LIQUID GLASS DESIGN SYSTEM (VisionOS & Modern Liquid Glass) */
+/* ========================================================= */
+
+@keyframes liquidFloatSlow {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(25px, -20px) scale(1.05);
+  }
+  66% {
+    transform: translate(-15px, 18px) scale(0.96);
+  }
+}
+
+@keyframes liquidFloatFast {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate(-25px, -25px) scale(1.08) rotate(8deg);
+  }
+}
+
+@keyframes liquidShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-liquid-float-slow {
+  animation: liquidFloatSlow 18s ease-in-out infinite;
+}
+
+.animate-liquid-float-fast {
+  animation: liquidFloatFast 12s ease-in-out infinite;
+}
+
+.animate-liquid-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: liquidShimmer 4s infinite;
+}
+
+/* Liquid Glass Surfaces */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 
+    0 12px 36px -4px rgba(114, 26, 40, 0.06),
+    0 4px 12px -2px rgba(114, 26, 40, 0.03),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px 0 rgba(114, 26, 40, 0.03);
+}
+
+.liquid-glass-card {
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(20px) saturate(175%);
+  -webkit-backdrop-filter: blur(20px) saturate(175%);
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  box-shadow: 
+    0 10px 30px -4px rgba(114, 26, 40, 0.05),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-card:hover {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 22px 45px -4px rgba(114, 26, 40, 0.12),
+    0 8px 16px -2px rgba(114, 26, 40, 0.05),
+    inset 0 2px 2px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-3px);
+}
+
+.liquid-glass-pill {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 4px 14px rgba(114, 26, 40, 0.05),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
+}
+
+.liquid-glass-btn-primary {
+  background: linear-gradient(135deg, rgba(114, 26, 40, 0.94) 0%, rgba(142, 36, 54, 0.92) 50%, rgba(175, 46, 68, 0.94) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 
+    0 8px 24px -2px rgba(114, 26, 40, 0.35),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-btn-primary:hover {
+  background: linear-gradient(135deg, rgba(84, 1, 20, 0.98) 0%, rgba(114, 26, 40, 0.96) 50%, rgba(150, 30, 50, 0.98) 100%);
+  box-shadow: 
+    0 12px 28px -2px rgba(114, 26, 40, 0.45),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.55);
+  transform: translateY(-1px) scale(1.01);
+}
+
+.liquid-glass-btn-secondary {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  color: #540114;
+  box-shadow: 
+    0 4px 16px rgba(114, 26, 40, 0.05),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow: 
+    0 8px 22px rgba(114, 26, 40, 0.09),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.liquid-glass-input {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 
+    inset 0 2px 4px rgba(114, 26, 40, 0.03),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
+}
+
+.liquid-glass-input:focus {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(114, 26, 40, 0.4);
+  box-shadow: 
+    0 0 0 3px rgba(114, 26, 40, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #fceae6;
+}
+::-webkit-scrollbar-thumb {
+  background: #dcc0c0;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #934841;
+}
+
+/* Material Symbols font display helper */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrapbook & Retro Styling Helpers */
+.font-handwriting {
+  font-family: 'Dancing Script', 'Caveat', cursive;
+}
+.font-handnote {
+  font-family: 'Patrick Hand', 'Dancing Script', cursive;
+}
+.font-retro {
+  font-family: 'Abril Fatface', Georgia, serif;
+}
+
+.retro-3d-title-red {
+  color: #c13d28;
+  text-shadow: 2.5px 2.5px 0px #ffffff, 4px 4px 0px #1c3f50;
+}
+
+.retro-3d-title-green {
+  color: #2e5a44;
+  text-shadow: 2.5px 2.5px 0px #ffffff, 4px 4px 0px #8b3a2b;
+}
+
+.retro-3d-title-blue {
+  color: #1c3f50;
+  text-shadow: 2.5px 2.5px 0px #ffffff, 4px 4px 0px #c13d28;
+}
+
+.washi-tape-pink {
+  background: rgba(235, 175, 170, 0.85);
+  box-shadow: 0 1px 3px rgba(60, 30, 20, 0.15);
+  clip-path: polygon(
+    0% 6%, 4% 0%, 96% 3%, 100% 9%, 
+    97% 30%, 100% 52%, 98% 74%, 100% 92%, 96% 99%, 
+    3% 97%, 0% 88%, 3% 68%, 0% 48%, 2% 28%
+  );
+}
+
+.washi-tape-beige {
+  background: rgba(225, 210, 190, 0.85);
+  box-shadow: 0 1px 3px rgba(60, 30, 20, 0.12);
+  clip-path: polygon(
+    0% 8%, 4% 0%, 96% 2%, 100% 7%, 
+    98% 25%, 100% 45%, 97% 65%, 100% 85%, 96% 100%, 
+    4% 97%, 0% 90%, 2% 70%, 0% 50%, 3% 30%
+  );
+}
+
+.washi-tape-green {
+  background: rgba(145, 175, 145, 0.82);
+  box-shadow: 0 1px 3px rgba(40, 50, 30, 0.15);
+  clip-path: polygon(
+    0% 6%, 4% 0%, 96% 2%, 100% 8%, 
+    98% 30%, 100% 55%, 97% 78%, 100% 94%, 96% 100%, 
+    4% 97%, 0% 88%, 2% 66%, 0% 46%, 3% 26%
+  );
+}
+
+.tape-torn {
+  background: rgba(235, 218, 198, 0.88);
+  box-shadow: 0 1px 3px rgba(50, 35, 20, 0.15);
+  clip-path: polygon(
+    0% 8%, 5% 0%, 95% 2%, 100% 7%, 
+    98% 30%, 100% 52%, 97% 75%, 100% 92%, 95% 100%, 
+    5% 97%, 0% 88%, 3% 66%, 0% 46%, 2% 26%
+  );
+}
+
+.tape-pink-torn {
+  background: rgba(235, 180, 175, 0.88);
+  box-shadow: 0 1px 3px rgba(50, 35, 20, 0.15);
+  clip-path: polygon(
+    0% 6%, 4% 0%, 96% 3%, 100% 8%, 
+    98% 28%, 100% 50%, 97% 72%, 100% 90%, 96% 99%, 
+    3% 97%, 0% 88%, 3% 66%, 0% 46%, 2% 26%
+  );
+}
+
+.polaroid-card {
+  background: #ffffff;
+  padding: 8px 8px 24px 8px;
+  box-shadow: 0 10px 24px -3px rgba(40, 28, 20, 0.16), 0 3px 8px -2px rgba(40, 28, 20, 0.1);
+  border: 1px solid rgba(225, 215, 205, 0.7);
+  border-radius: 3px;
+}
+
+.paper-lined {
+  background-color: #fffdfa;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 26px,
+    rgba(210, 195, 185, 0.45) 26px,
+    rgba(210, 195, 185, 0.45) 27px
+  );
+  line-height: 27px;
+}
+
+.scrapbook-card-bg {
+  background-color: #faf5eb;
+  background-image: 
+    radial-gradient(circle at 5% 5%, rgba(247, 218, 214, 0.7) 0%, transparent 40%),
+    radial-gradient(circle at 95% 95%, rgba(248, 226, 218, 0.75) 0%, transparent 45%),
+    radial-gradient(circle at 95% 5%, rgba(238, 226, 210, 0.5) 0%, transparent 35%),
+    radial-gradient(circle at 5% 95%, rgba(238, 226, 210, 0.5) 0%, transparent 35%);
+}
+
+.retro-card-bg {
+  background-color: #f5ece0;
+  background-image: 
+    radial-gradient(rgba(180, 145, 105, 0.22) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+.anime-card-bg {
+  background-color: #faf5ed;
+  background-image: 
+    linear-gradient(180deg, #fcf8f2 0%, #faf3ea 100%);
+}
+

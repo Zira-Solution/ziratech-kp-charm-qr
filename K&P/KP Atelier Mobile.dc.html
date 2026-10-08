@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#fff8f6;color:#221a18;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}@keyframes heart-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}.animate-heart-pulse{animation:heart-pulse 2.2s infinite ease-in-out;}@keyframes wave-dance{0%,100%{height:4px;}50%{height:26px;}}.soundwave-bar{animation:wave-dance 1.4s ease-in-out infinite;}</style>
+<script src="tw-setup-kp.js"></script>
+</helmet>
+<div class="flex flex-col min-h-screen w-full">
+<header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_12px_rgba(114,26,40,0.04)]"><div class="h-16 px-margin flex items-center justify-between"><a class="flex items-center min-w-[44px] min-h-[44px] tracking-widest text-primary font-headline-md text-headline-md font-semibold select-none" data-path="discover" href="#">K<span class="text-secondary text-sm font-body-sm mx-0.5">&amp;</span>P</a><div class="flex items-center gap-space-sm"><button aria-label="Mở Menu" class="min-h-[44px] min-w-[44px] flex items-center justify-center gap-1.5 px-space-sm text-on-surface-variant hover:text-primary transition-colors" id="menu-open-btn" onClick="{{ openMenu }}"><span class="font-label-sm text-label-sm uppercase tracking-widest">Menu</span><span class="material-symbols-outlined text-[15px] text-primary animate-heart-pulse leading-none">favorite</span></button><a aria-label="Tài khoản / Hồ sơ" class="min-w-[44px] min-h-[44px] flex items-center justify-center" data-path="your-story" href="#"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></a></div></div></header>
+<div class="{{ menuCls }}" id="curtain-menu"><div class="h-16 px-margin flex items-center justify-between"><span class="tracking-widest text-primary font-headline-md text-headline-md font-semibold">K<span class="text-secondary text-sm font-body-sm mx-0.5">&amp;</span>P</span><button aria-label="Đóng Menu" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-on-surface hover:text-primary transition-colors" id="menu-close-btn" onClick="{{ closeMenu }}"><span class="material-symbols-outlined text-[24px]">close</span></button></div><div class="flex-1 flex flex-col justify-center px-margin-desktop"><p class="font-label-sm text-label-sm uppercase tracking-widest text-secondary mb-space-lg">Mục Lục Kỷ Niệm</p><nav class="flex flex-col gap-space-md" data-active-classes="text-primary font-semibold italic"><a aria-current="page" class="menu-link transition-all duration-300 py-space-xs text-primary font-semibold italic" data-path="discover" href="#" onClick="{{ closeMenu }}">Khám Phá</a><a class="menu-link font-headline-lg-mobile text-headline-lg-mobile text-on-surface hover:text-primary transition-all duration-300 py-space-xs" data-path="charms" href="#" onClick="{{ closeMenu }}">Hạt Charm</a><a class="menu-link font-headline-lg-mobile text-headline-lg-mobile text-on-surface hover:text-primary transition-all duration-300 py-space-xs" data-path="your-story" href="#" onClick="{{ closeMenu }}">Câu Chuyện Của Bạn</a><a class="menu-link font-headline-lg-mobile text-headline-lg-mobile text-on-surface hover:text-primary transition-all duration-300 py-space-xs" data-path="about-k&amp;p" href="#" onClick="{{ closeMenu }}">Về K&amp;P Atelier</a></nav></div><div class="p-margin mb-space-md"><a class="flex items-center justify-center gap-space-sm w-full h-14 bg-primary text-on-primary rounded-full font-label-lg text-label-lg shadow-[0_12px_32px_rgba(84,1,20,0.18)] hover:bg-primary-container transition-all active:scale-[0.98]" data-path="gift-builder" href="#"><span class="material-symbols-outlined text-[18px]">favorite</span><span>Chế Tác Lời Đề Tặng Riêng</span></a></div></div>
+<main class="flex flex-col relative w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full relative overflow-x-hidden selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-secondary-container/15 blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-[800px] -right-24 w-80 h-80 rounded-full bg-surface-container-high/80 blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-[1800px] -left-20 w-88 h-88 rounded-full bg-secondary-fixed/25 blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-[2800px] right-4 w-96 h-96 rounded-full bg-surface-container-low blur-3xl pointer-events-none -z-10"></div>
+<div class="fixed inset-0 pointer-events-none z-50 overflow-hidden" id="particle-stage"></div>
+
+<section class="relative w-full px-margin pt-6 pb-space-2xl flex flex-col items-center text-center">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container shadow-sm mb-6">
+<span class="material-symbols-outlined text-[14px] text-primary animate-heart-pulse">favorite</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary">K&amp;P Atelier · Chương I</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight max-w-sm mx-auto leading-tight mb-3">
+      Hơn cả một món quà.<br>
+<em class="font-headline-lg-mobile text-headline-lg-mobile italic text-primary font-normal">Một câu chuyện lưu giữ mãi mãi.</em>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xs mx-auto mb-8">
+      Chiếc vòng tay gia bảo đúc thủ công. Một vũ trụ kỷ niệm số ẩn sau từng hạt charm chạm khắc.
+    </p>
+<div class="relative w-full max-w-xs aspect-[4/5] mx-auto rounded-xl bg-surface-container-lowest/80 backdrop-blur-md shadow-xl flex items-center justify-center p-6 mb-8 group overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-tr from-surface-container/60 via-transparent to-secondary-fixed/30 pointer-events-none"></div>
+<img alt="Vòng tay gia bảo K&amp;P" class="w-full h-full object-cover rounded-lg shadow-sm transition-transform duration-700 ease-out group-hover:scale-105" data-alt="Ảnh chụp cận cảnh vòng tay hạt charm vàng hồng thủ công đặt trên nền lụa ngà và đệm nhung phớt hồng." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCLB9jNl9PK2_Ybg7Wp9k3dNbJDNqWLgBZiyNrMpmiSe05kkwONHPcfwMT_6fY88eUucouWbV5q-3pARfuEwrudgdy9VTHiEsmY2NkL3_-5SlSKhaLwXqMeV7JBiPIjr4Mj7_6DhRUXQH2Yz1Lt3D9WJyN9Glxi3utYCaXOMJUEGzR0o9iy57RAAxl7W-AdrznKR0qdTiPmD0460l5newas3dckcX-aqlNm3mAH3Zk0Qgskb6zQQmt">
+<div class="absolute top-6 left-6 px-3 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-md shadow-md flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+<span class="font-label-sm text-label-sm text-primary uppercase">Kết Nối NFC</span>
+</div>
+<div class="absolute bottom-6 right-6 px-3 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-md shadow-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">lock_open</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Bí mật số</span>
+</div>
+</div>
+<div class="w-full max-w-xs flex flex-col items-center gap-3">
+<a class="w-full h-14 rounded-full bg-primary text-on-primary flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-95 hover:bg-primary-container" href="#someone-special" id="hero-discover-btn">
+<span class="font-label-lg text-label-lg tracking-wider uppercase font-semibold">KHÁM PHÁ K&amp;P</span>
+<span class="material-symbols-outlined text-[16px] text-secondary-container animate-heart-pulse">favorite</span>
+</a>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-outline">CHẾ TÁC THỦ CÔNG · DÀNH CHO NGƯỜI ĐẶC BIỆT</span>
+</div>
+</section>
+
+<section class="w-full px-margin py-space-2xl bg-surface-container-low/70 relative" id="someone-special">
+<div class="max-w-md mx-auto">
+<div class="text-center mb-8">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-1">Đề Tặng Yêu Thương</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Dành cho người thương đặc biệt.</h2>
+</div>
+<div class="relative bg-surface-container-lowest rounded-xl p-6 shadow-md">
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6 text-center italic">
+          Chạm để chọn người đang ngự trị trong tâm trí bạn hôm nay:
+        </p>
+<div class="relative flex flex-col gap-3" id="recipient-list">
+<button class="{{ rc.her.row }}" data-recipient="her" onClick="{{ rc.her.pick }}">
+<span class="font-headline-sm text-headline-sm font-normal">Cho nàng.</span>
+<div class="{{ rc.her.heart }}"><span class="material-symbols-outlined text-[16px]">favorite</span></div>
+</button>
+<button class="{{ rc.him.row }}" data-recipient="him" onClick="{{ rc.him.pick }}">
+<span class="font-headline-sm text-headline-sm font-normal">Cho chàng.</span>
+<div class="{{ rc.him.heart }}"><span class="material-symbols-outlined text-[16px]">favorite</span></div>
+</button>
+<button class="{{ rc.mom.row }}" data-recipient="mom" onClick="{{ rc.mom.pick }}">
+<span class="font-headline-sm text-headline-sm font-normal">Cho mẹ kính yêu.</span>
+<div class="{{ rc.mom.heart }}"><span class="material-symbols-outlined text-[16px]">favorite</span></div>
+</button>
+<button class="{{ rc.bf.row }}" data-recipient="best-friend" onClick="{{ rc.bf.pick }}">
+<span class="font-headline-sm text-headline-sm font-normal">Cho bạn thân tri kỷ.</span>
+<div class="{{ rc.bf.heart }}"><span class="material-symbols-outlined text-[16px]">favorite</span></div>
+</button>
+<button class="{{ rc.sl.row }}" data-recipient="someone-loved" onClick="{{ rc.sl.pick }}">
+<span class="font-headline-sm text-headline-sm font-normal">Cho người tôi thầm thương.</span>
+<div class="{{ rc.sl.heart }}"><span class="material-symbols-outlined text-[16px]">favorite</span></div>
+</button>
+</div>
+<div class="mt-6 p-4 rounded-lg bg-surface-container-low text-on-surface transition-opacity duration-300" id="recipient-vignette">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">format_quote</span>
+<p class="font-body-sm text-body-sm italic text-on-surface-variant" id="recipient-quote-text" style="{{ rqStyle }}">{{ rq }}</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="w-full px-margin py-space-2xl bg-surface relative" id="givers-perspective">
+<div class="max-w-md mx-auto">
+<div class="text-center mb-8">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-1">Góc Nhìn Người Tặng</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Bạn là ai trong câu chuyện này?</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 max-w-xs mx-auto italic">Chọn góc nhìn tâm ý để K&amp;P điều chỉnh giai điệu mở hộp và thông điệp khắc chạm riêng biệt.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-md space-y-6">
+<div class="grid grid-cols-1 gap-3.5 pt-1">
+<div>
+<label class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mb-1" for="giver-name-input">
+Tên của bạn / Danh xưng đặc biệt
+</label>
+<div class="relative">
+<input class="w-full h-12 pl-10 pr-4 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/40" id="giver-name-input" placeholder="VD: Minh Triết, Chàng ngốc của em..." type="text" value="{{ giverName }}" onChange="{{ onGiverName }}">
+<span class="material-symbols-outlined text-primary/70 text-[18px] absolute left-3 top-1/2 -translate-y-1/2">edit_note</span>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mb-1" for="recipient-target-input">
+Tên người nhận
+</label>
+<div class="relative">
+<input class="w-full h-12 pl-10 pr-4 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/40" id="recipient-target-input" placeholder="VD: Linh Đan, Em bé của anh..." type="text" value="{{ recipName }}" onChange="{{ onRecipName }}">
+<span class="material-symbols-outlined text-primary/70 text-[18px] absolute left-3 top-1/2 -translate-y-1/2">favorite</span>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mb-1" for="address-input">
+Xưng hô
+</label>
+<div class="relative">
+<input class="w-full h-12 pl-10 pr-4 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/40" id="address-input" placeholder="VD: Anh – Em, Tớ – Cậu..." type="text" value="{{ address }}" onChange="{{ onAddress }}">
+<span class="material-symbols-outlined text-primary/70 text-[18px] absolute left-3 top-1/2 -translate-y-1/2">forum</span>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mb-1" for="custom-note-input">
+Lời nhắn
+</label>
+<sc-if value="{{ hasNote }}" hint-placeholder-val="{{ true }}">
+<textarea class="w-full p-4 rounded-xl bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/40 resize-none" id="custom-note-input" placeholder="Viết những lời chân thành từ trái tim..." rows="4" value="{{ note }}" onChange="{{ onNote }}"></textarea>
+</sc-if>
+<sc-if value="{{ noNote }}" hint-placeholder-val="{{ false }}"><p class="p-4 rounded-xl bg-surface-container-low border border-dashed border-outline-variant/60 font-body-sm text-body-sm italic text-on-surface-variant">Món quà sẽ được gửi đi không kèm lời nhắn.</p></sc-if>
+<div class="mt-2.5 flex flex-wrap gap-2">
+<button class="h-10 px-3 rounded-full bg-surface-container-high text-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 active:scale-95 transition-transform disabled:opacity-50" onClick="{{ aiWrite }}" disabled="{{ aiDisabled }}"><span class="material-symbols-outlined text-[18px]">auto_awesome</span><span>AI viết giúp</span></button>
+<button class="h-10 px-3 rounded-full bg-surface-container-high text-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 active:scale-95 transition-transform disabled:opacity-50" onClick="{{ aiIdeasFn }}" disabled="{{ aiDisabled }}"><span class="material-symbols-outlined text-[18px]">lightbulb</span><span>Gợi ý ý tưởng</span></button>
+<button class="h-10 px-3 rounded-full bg-surface-container-high text-primary font-label-md text-label-md font-semibold flex items-center gap-1.5 active:scale-95 transition-transform disabled:opacity-50" onClick="{{ aiPolish }}" disabled="{{ aiDisabled }}"><span class="material-symbols-outlined text-[18px]">edit</span><span>Trau chuốt</span></button>
+<button class="{{ noNoteCls }}" onClick="{{ toggleNoNote }}"><span class="material-symbols-outlined text-[18px]">{{ noNoteIcon }}</span><span>Không để lời nhắn</span></button>
+</div>
+<sc-if value="{{ hasNote }}" hint-placeholder-val="{{ true }}">
+
+<sc-if value="{{ aiStatus }}" hint-placeholder-val="{{ false }}"><p class="mt-2 font-body-sm text-body-sm italic text-on-surface-variant">{{ aiStatus }}</p></sc-if>
+<sc-if value="{{ hasIdeas }}" hint-placeholder-val="{{ false }}">
+<div class="mt-3 flex flex-col gap-2">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Chạm một ý tưởng để AI viết thành lời nhắn</span>
+<sc-for list="{{ aiIdeas }}" as="idea" hint-placeholder-count="0">
+<button class="w-full text-left p-3 rounded-xl bg-surface-container-low border border-outline-variant/40 font-body-sm text-body-sm text-on-surface active:scale-[0.98] transition-transform" onClick="{{ idea.pick }}">{{ idea.text }}</button>
+</sc-for>
+</div>
+</sc-if>
+</sc-if>
+</div>
+</div>
+<div class="p-5 rounded-2xl bg-gradient-to-b from-surface-container-high/90 to-surface-container-low border border-secondary-fixed/40 shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[19px]">mic</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">Lời Nhắn Giọng Nói</h3>
+</div>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-semibold uppercase">Voice Studio</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+Giọng nói ấm áp mang linh hồn của người tặng, chạm đến trái tim người nhận khi quét vòng tay.
+</p>
+<div class="p-4 rounded-xl bg-surface-container-lowest/90 backdrop-blur border border-outline-variant/30 flex flex-col items-center gap-3">
+<div class="w-full flex items-center justify-center gap-1.5 h-10 py-1" id="waveform-visual">
+<sc-for list="{{ bars }}" as="b" hint-placeholder-count="12"><div class="{{ b.cls }}" style="{{ b.style }}"></div></sc-for>
+</div>
+<div class="flex items-center justify-between w-full text-label-sm font-label-sm text-on-surface-variant px-1">
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-error animate-ping"></span><span id="voice-timer">{{ voiceTimer }}</span></span>
+<span>Giới hạn: 02:00</span>
+</div>
+<div class="flex items-center justify-center gap-4 w-full pt-1">
+<button class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-error transition-colors" id="btn-delete-voice" title="Xóa &amp;amp; ghi lại" onClick="{{ delVoice }}">
+<span class="material-symbols-outlined text-[18px]">replay</span>
+</button>
+<button class="px-5 py-3 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold flex items-center gap-2 shadow-md hover:bg-primary-container active:scale-95 transition-all" id="btn-toggle-record" onClick="{{ toggleRec }}">
+<span class="{{ recIconCls }}" id="record-icon">{{ recIcon }}</span>
+<span id="record-label-text">{{ recLabel }}</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors" id="btn-play-voice" title="Nghe thử" onClick="{{ togglePlay }}">
+<span class="material-symbols-outlined text-[20px]" id="play-voice-icon">{{ playIcon }}</span>
+</button>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-secondary mt-3 flex items-center gap-1.5 justify-center text-center">
+<span class="material-symbols-outlined text-[15px]">lock</span>
+<span>Giọng nói của bạn sẽ được mã hoá trực tiếp vào chip NFC của vòng tay.</span>
+</p>
+</div>
+<div class="p-5 rounded-2xl bg-surface-container-low border border-secondary-fixed/30 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[19px]">photo_library</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">Ảnh Kỷ Niệm Đính Kèm</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 khoảnh khắc</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+Tấm ảnh theo phong cách polaroid viền vàng champagne, xuất hiện lấp lánh khi mở khóa kỷ vật.
+</p>
+<div class="grid grid-cols-2 gap-3 pt-2" id="polaroid-gallery">
+<div class="polaroid-card bg-surface-container-lowest p-2.5 pb-3 rounded-xl shadow-md border border-secondary-fixed/50 transform -rotate-1 hover:rotate-0 transition-transform relative group">
+<div class="relative w-full aspect-square rounded-lg overflow-hidden mb-2 bg-surface-dim">
+<img alt="Bình minh Phú Quốc 2024" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVIHfOVV70vbji5oJ8YUC_bKEq2tLX5Ty_WhRRQPpAR2KgCCUfM7SYTc6mqkfDoAskBYAD_QMiUGl1KWoSJD-e-2MtM6FFDyZNjqJYocddCQcZ3CI6AZC8AO42udXSkXUrpicRwN3rAIBneczLHXMa_eBkKtJvLNvC-OxxiHq504kHmv7VflvIDWFuJO8uVAIBtsjLG30qY3dzaZBaTeaO2ospR3VA4zAdqGfQsK_OjqYAIy8HaZc-">
+<span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-primary/80 backdrop-blur text-on-primary flex items-center justify-center text-[10px]"><span class="material-symbols-outlined text-[12px]">favorite</span></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Bình minh Phú Quốc</p>
+<span class="font-label-sm text-label-sm text-outline block">Mùa hè 2024</span>
+</div>
+<div class="polaroid-card bg-surface-container-lowest p-2.5 pb-3 rounded-xl shadow-md border border-secondary-fixed/50 transform rotate-2 hover:rotate-0 transition-transform relative group">
+<div class="relative w-full aspect-square rounded-lg overflow-hidden mb-2 bg-surface-dim">
+<img alt="Chiều mưa đầu tiên ta gặp nhau" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxciCJuy8pJ2TRE-ICLsfriz7_u-X85DxbIFS8xwRUZ_vNjuWIU1yGG1G2C5_uXtOWRbvO4XslFwLurM1MvSwKI2q3MI7Lsx88jvNvyHQy_5w-oK-fl1-W-ZXReG9ZRVISudheC83J3OOydAep-ksizuHuOBdRJDilCUKkZa3wKpGa-PetL4Tijy1FkJ0-YJTDtuTv6FBYQmGDjkiFrt29u_u0tZdMZFE0lrMyA_Mr0hRn2Ckun__j">
+<span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-primary/80 backdrop-blur text-on-primary flex items-center justify-center text-[10px]"><span class="material-symbols-outlined text-[12px]">favorite</span></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Chiều mưa đầu tiên</p>
+<span class="font-label-sm text-label-sm text-outline block">Góc phố thân quen</span>
+</div>
+<sc-for list="{{ extraPhotos }}" as="p" hint-placeholder-count="0">
+<div class="polaroid-card bg-surface-container-lowest p-2.5 pb-3 rounded-xl shadow-md border border-secondary-fixed/50 transform rotate-1 hover:rotate-0 transition-transform relative group">
+<div class="relative w-full aspect-square rounded-lg overflow-hidden mb-2 bg-surface-dim">
+<img alt="Kỷ niệm mới thêm" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&amp;fit=crop&amp;w=400&amp;q=80">
+<span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-primary/80 backdrop-blur text-on-primary flex items-center justify-center text-[10px]"><span class="material-symbols-outlined text-[12px]">favorite</span></span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface font-medium truncate">Đêm ngắm pháo hoa</p>
+<span class="font-label-sm text-label-sm text-outline block">Vừa thêm vào thẻ NFC</span>
+</div>
+</sc-for>
+</div>
+<button class="{{ addPhotoCls }}" id="btn-add-memory-photo" onClick="{{ addPhoto }}">
+<sc-if value="{{ photoAdded }}" hint-placeholder-val="{{ false }}">✓ Đã đính kèm ảnh kỷ niệm</sc-if>
+<sc-if value="{{ photoNotAdded }}" hint-placeholder-val="{{ true }}"><span class="material-symbols-outlined text-[18px]">add_photo_alternate</span>
+<span>+ Thêm ảnh kỷ niệm vào chip NFC</span></sc-if>
+</button>
+</div>
+<div class="p-5 rounded-2xl bg-surface-container-low border border-secondary-fixed/30 shadow-sm space-y-3" id="memory-song">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[19px]">music_note</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">Bài Nhạc Kỷ Niệm Của Chúng Ta</h3>
+</div>
+<div class="relative">
+<input class="w-full h-12 pl-10 pr-4 rounded-xl bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-primary border border-outline-variant/40" id="memory-song-input" placeholder="Tên bài hát hoặc link YouTube, Spotify..." type="text" value="{{ song }}" onChange="{{ onSong }}">
+<span class="material-symbols-outlined text-primary/70 text-[18px] absolute left-3 top-1/2 -translate-y-1/2">search</span>
+</div>
+<sc-if value="{{ hasSong }}" hint-placeholder-val="{{ true }}">
+<div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-lowest border border-outline-variant/30">
+<button class="w-11 h-11 shrink-0 rounded-full bg-primary text-on-primary flex items-center justify-center active:scale-95 transition-transform" onClick="{{ toggleSong }}"><span class="material-symbols-outlined text-[22px]">{{ songIcon }}</span></button>
+<div class="min-w-0 flex-1">
+<p class="font-body-md text-body-md text-on-surface font-medium truncate">{{ song }}</p>
+<span class="font-label-sm text-label-sm text-outline block">{{ songStatus }}</span>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px] animate-heart-pulse">favorite</span>
+</div>
+</sc-if>
+</div>
+<div class="pt-3 border-t border-b-0 flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" id="giver-cipher-tag">{{ cipher }}</span>
+<span class="font-label-sm text-label-sm text-primary uppercase font-semibold">Đã đồng bộ NFC</span>
+</div>
+</div>
+</div>
+</section>
+
+<section class="w-full px-margin py-space-2xl flex flex-col items-center">
+<div class="text-center max-w-sm mb-6">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-1">Biểu Tượng Xúc Cảm</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Mỗi chiếc charm là một câu chuyện.</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">
+        Chạm vào từng linh vật để đánh thức miền ký ức và thông điệp kỹ thuật số ẩn giấu.
+      </p>
+</div>
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl p-5 shadow-lg flex flex-col items-center">
+<div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container-low flex items-center justify-center mb-6">
+<img alt="Bốn hạt charm K&amp;P" class="w-full h-full object-cover" data-alt="Nhiếp ảnh cận cảnh bốn hạt charm vàng hồng chạm khắc tinh xảo K&amp;P gồm Trái tim, Kỷ niệm, Vĩnh cửu và Ước mơ trên nền lanh màu kem." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsKwfyjXIAAQVbYTQduBxsQ0kzqAoH405MlONocxuSge_7cpBvVnMyuzXgmwMvwAnHrmYxRNH8naxbEP0r2Y7x4PBa9HI5uMBmneR5Xc_hZV1j9KKD_tcLJ8HP2QRbFdyV5Za6KyJV-mG6BcK1eoimFybquvNUHDxXgtG25A8CYWWPWMOiQ3sKcVeoLzUeU73vSJ_mvr_U8h07ikxb2GOUDj5uMHlcLclqTMMAtAf_Lp0au6ufVatt">
+<div class="absolute inset-0 bg-primary/5 pointer-events-none"></div>
+<button class="{{ ch.love.node }}" data-charm-key="love" id="node-love" style="{{ ch.love.pos }}" onClick="{{ ch.love.pick }}"><span class="material-symbols-outlined text-[20px]">favorite</span></button>
+<button class="{{ ch.memory.node }}" data-charm-key="memory" id="node-memory" style="{{ ch.memory.pos }}" onClick="{{ ch.memory.pick }}"><span class="material-symbols-outlined text-[20px]">auto_stories</span></button>
+<button class="{{ ch.always.node }}" data-charm-key="always" id="node-always" style="{{ ch.always.pos }}" onClick="{{ ch.always.pick }}"><span class="material-symbols-outlined text-[20px]">all_inclusive</span></button>
+<button class="{{ ch.dream.node }}" data-charm-key="dream" id="node-dream" style="{{ ch.dream.pos }}" onClick="{{ ch.dream.pick }}"><span class="material-symbols-outlined text-[20px]">hotel_class</span></button>
+</div>
+<div class="grid grid-cols-4 gap-2 w-full mb-4">
+<button class="{{ ch.love.tab }}" data-charm-target="love" onClick="{{ ch.love.pick }}">TÌNH YÊU</button>
+<button class="{{ ch.memory.tab }}" data-charm-target="memory" onClick="{{ ch.memory.pick }}">KỶ NIỆM</button>
+<button class="{{ ch.always.tab }}" data-charm-target="always" onClick="{{ ch.always.pick }}">VĨNH CỬU</button>
+<button class="{{ ch.dream.tab }}" data-charm-target="dream" onClick="{{ ch.dream.pick }}">ƯỚC MƠ</button>
+</div>
+<div class="w-full p-4 rounded-lg bg-surface-container-low transition-all duration-300" id="charm-detail-box">
+<div class="flex items-center justify-between mb-1.5">
+<h3 class="font-headline-sm text-headline-sm text-primary" id="charm-title">{{ charmTitle }}</h3>
+<span class="font-label-sm text-label-sm px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-semibold uppercase" id="charm-tag">{{ charmTag }}</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed" id="charm-story">{{ charmStory }}</p>
+</div>
+</div>
+</section>
+
+<section class="w-full px-margin py-space-2xl bg-surface-container-highest/40 relative overflow-hidden">
+<div class="flex items-center justify-around opacity-40 mb-4 select-none">
+<span class="material-symbols-outlined text-primary text-[14px] animate-pulse">favorite</span>
+<span class="material-symbols-outlined text-secondary text-[10px]">favorite</span>
+<span class="material-symbols-outlined text-primary text-[16px] animate-pulse">favorite</span>
+<span class="material-symbols-outlined text-outline text-[12px]">favorite</span>
+<span class="material-symbols-outlined text-primary text-[14px]">favorite</span>
+</div>
+<div class="max-w-md mx-auto flex flex-col items-center text-center">
+<div class="space-y-1 mb-8">
+<p class="font-headline-lg-mobile text-headline-lg-mobile text-outline font-normal">Ai đó đã chọn</p>
+<p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface italic font-medium">từng chi tiết nhỏ nhất</p>
+<p class="font-headline-lg-mobile text-headline-lg-mobile text-primary font-bold">cho riêng bạn.</p>
+</div>
+<div class="w-full rounded-xl bg-surface-container-lowest p-4 shadow-xl">
+<div class="relative w-full aspect-[16/10] rounded-lg overflow-hidden mb-3">
+<img alt="Khóa gia bảo chạm khắc K&amp;P" class="w-full h-full object-cover" data-alt="Chụp macro tinh tế phần khóa chốt vàng óng ánh có khắc chữ lồng K&amp;P thủ công." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAh7fcYa3LaSZhHY0_xHt3MVZK4kymdDVuiI8QJcXYXfM--Qho0ZBAJSp50KKeH2PLoxzGh5H32l4D6UobcGfgZ11ntYKS4qHU99itxAItxjdSWNTIMAxjVR9601oAuoCxNCyiqUB3bdHoOWvk5tHFpWc7jovHXlxPR97HUPhqX-VAdtGothlBgmyfPyb-iwjK0-6J3IhycFdnHykb28plMtUfzJPc7vsGZhVDYuyNtlTEw8EijSnKa">
+</div>
+<div class="flex items-center justify-between px-2 pt-1 text-left">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block">Mã số chế tác độc bản</span>
+<p class="font-headline-sm text-headline-sm text-on-surface">Khóa gia bảo K&amp;P số 204</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="w-full px-margin py-space-2xl">
+<div class="max-w-md mx-auto flex flex-col items-center">
+<div class="text-center mb-6">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-1">Chế Tác Tương Tác</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Câu chuyện của bạn, kết tinh qua từng chiếc charm.</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+          Mỗi hạt charm khóa chặt một chương ý nghĩa trong hành trình yêu thương.
+        </p>
+</div>
+<div class="w-full bg-surface-container-low rounded-xl p-6 shadow-md flex flex-col items-center relative overflow-hidden">
+<div class="relative w-full aspect-[4/3] rounded-lg bg-surface-container-lowest flex items-center justify-center mb-6 shadow-sm overflow-hidden" id="assembly-visual-stage">
+<img alt="Bước 1 Lắp ráp dây cơ bản" class="w-full h-full object-cover transition-opacity duration-500" data-alt="Hình ảnh bàn làm việc của nghệ nhân kim hoàn lắp ráp dây chuyền vàng hồng thủ công." id="assembly-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGl7_lr9CnN-rtSmfLd8An-0tkU0vojIwjU5eZy4VMrNiAsaSrbEHEdVRjMwCd5x-uHrSXydrz0e2mqtgGxlB6lg7f7cIJ4r0AfwPT0Kjg9A2SCtCC4bDEKPiwaGbo60e9gHfutPOkmLZiEy0w50C7JLBwc5aUEFix-319W_zSbBGZ3kvWlvOkg-WJdz2MuFh0hCvQBvu4LFAXmDftBZSTJTOWKyrQSmjigp_pqgRV8rtVPSb98Ong">
+<div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-primary text-on-primary font-label-sm text-label-sm tracking-widest uppercase">
+<span id="step-badge-text">{{ stepBadge }}</span>
+</div>
+<div class="{{ burstCls }}" id="heart-burst-layer">
+<div class="relative w-full h-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[32px] absolute animate-ping">favorite</span>
+<span class="material-symbols-outlined text-secondary text-[24px] absolute -top-8 -left-8 animate-bounce">favorite</span>
+<span class="material-symbols-outlined text-primary-container text-[20px] absolute -bottom-8 -right-8 animate-pulse">favorite</span>
+<span class="material-symbols-outlined text-secondary-container text-[26px] absolute -top-10 right-10 animate-ping">favorite</span>
+</div>
+</div>
+</div>
+<div class="w-full text-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1" id="step-title">{{ stepTitle }}</h3>
+<p class="font-body-md text-body-md text-on-surface-variant min-h-[48px]" id="step-description">{{ stepDesc }}</p>
+</div>
+<div class="grid grid-cols-4 gap-2 w-full mb-4">
+<button class="{{ st.s1.cls }}" data-step="1" onClick="{{ st.s1.pick }}">1. Dây cơ bản</button>
+<button class="{{ st.s2.cls }}" data-step="2" onClick="{{ st.s2.pick }}">2. Tình yêu</button>
+<button class="{{ st.s3.cls }}" data-step="3" onClick="{{ st.s3.pick }}">3. Kỷ niệm</button>
+<button class="{{ st.s4.cls }}" data-step="4" onClick="{{ st.s4.pick }}">4. Vĩnh cửu</button>
+</div>
+<button class="w-full py-3 rounded-full bg-surface-container-high text-primary font-label-md text-label-md font-semibold flex items-center justify-center gap-1 hover:bg-secondary-fixed transition-colors" id="next-step-trigger" onClick="{{ nextStep }}">
+<span>{{ nextLabel }}</span>
+<span class="material-symbols-outlined text-[18px]">{{ nextIcon }}</span>
+</button>
+</div>
+</div>
+</section>
+
+<section class="w-full px-margin py-space-2xl bg-surface-container-lowest flex flex-col items-center text-center relative overflow-hidden">
+<div class="relative z-10 max-w-sm mx-auto flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary-container text-[36px] mb-2 animate-heart-pulse">favorite</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-1">Chế Tác Từ Tình Yêu</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-3">
+        Lưu giữ trọn vẹn kỷ niệm.
+      </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8">
+        Mỗi hộp quà vật lý mở ra vũ trụ số bí mật qua mã QR mã hóa gắn liền với con chip NFC cá nhân.
+      </p>
+<a class="w-full max-w-xs h-16 rounded-full bg-primary text-on-primary flex items-center justify-center gap-3 shadow-xl hover:bg-primary-container transition-all active:scale-95" data-path="gift-builder" href="#" id="portal-button">
+<span class="font-label-lg text-label-lg uppercase tracking-wider font-bold">BƯỚC VÀO THẾ GIỚI K&amp;P</span>
+<span class="material-symbols-outlined text-[20px] text-secondary-container animate-heart-pulse">favorite</span>
+</a>
+<p class="font-label-sm text-label-sm uppercase tracking-widest text-outline mt-4">
+        Khung Cảnh 01 · Giao Thức Mở Hộp &amp; Trao Tặng
+      </p>
+</div>
+</section>
+
+<footer class="w-full px-margin pt-space-2xl pb-24 bg-surface-container-high/60 relative overflow-hidden">
+<div class="absolute -bottom-10 right-1/2 translate-x-1/2 select-none pointer-events-none opacity-5">
+<span class="material-symbols-outlined text-[240px] text-primary">favorite</span>
+</div>
+<div class="max-w-md mx-auto flex flex-col items-center text-center relative z-10">
+<span class="font-headline-lg text-headline-lg tracking-widest text-primary font-bold mb-1">K<span class="text-secondary text-lg">&amp;</span>P</span>
+<p class="font-headline-sm text-headline-sm italic text-on-surface-variant font-normal mb-8">K&amp;P - Lưu giữ để nhớ mãi.</p>
+<div class="flex flex-wrap justify-center gap-x-6 gap-y-3 mb-10 max-w-xs">
+<a class="font-label-md text-label-md text-on-surface hover:text-primary transition-colors" href="#">Câu chuyện K&amp;P</a>
+<a class="font-label-md text-label-md text-on-surface hover:text-primary transition-colors" href="#">Trải nghiệm số</a>
+<a class="font-label-md text-label-md text-on-surface hover:text-primary transition-colors" href="#">Đặt chế tác riêng</a>
+<a class="font-label-md text-label-md text-on-surface hover:text-primary transition-colors" href="#">Bảo dưỡng trang sức</a>
+<a class="font-label-md text-label-md text-on-surface hover:text-primary transition-colors" href="#">Quyền riêng tư &amp; Kỷ niệm</a>
+</div>
+<div class="flex flex-col items-center gap-2">
+<span class="material-symbols-outlined text-[22px] text-primary animate-heart-pulse">favorite</span>
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-widest">© K&amp;P Heirloom Atelier. Bản quyền đã được bảo hộ.</span>
+</div>
+</div>
+</footer>
+</div></main>
+<aside class="{{ ctaCls }}" id="sticky-cta-bar"><div class="max-w-md mx-auto pointer-events-auto"><a class="flex items-center justify-center gap-space-sm h-14 px-space-lg bg-primary-container text-on-primary rounded-full shadow-[0_16px_36px_-6px_rgba(114,26,40,0.28)] hover:bg-primary transition-all active:scale-[0.98]" data-path="gift-builder" href="#"><span class="material-symbols-outlined text-[18px] text-secondary-container animate-heart-pulse">favorite</span><span class="font-label-lg text-label-lg tracking-wide">Tạo món quà của bạn</span></a></div></aside>
+<nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_20px_rgba(114,26,40,0.05)]" data-active-classes="text-primary" id="bottom-tab-bar"><div class="flex justify-around items-center h-20 px-space-md"><a aria-current="page" class="flex flex-col items-center justify-center gap-1 min-w-[44px] min-h-[44px] transition-colors text-primary" data-path="discover" href="#"><span class="material-symbols-outlined text-[22px]">auto_awesome</span><span class="font-label-sm text-label-sm uppercase tracking-wider">Khám Phá</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[44px] min-h-[44px] text-on-surface-variant hover:text-primary transition-colors" data-path="charms" href="#"><span class="material-symbols-outlined text-[22px]">diamond</span><span class="font-label-sm text-label-sm uppercase tracking-wider">Hạt Charm</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[44px] min-h-[44px] text-on-surface-variant hover:text-primary transition-colors" data-path="your-story" href="#"><span class="material-symbols-outlined text-[22px]">history_edu</span><span class="font-label-sm text-label-sm uppercase tracking-wider">Kỷ Niệm</span></a><a class="flex flex-col items-center justify-center gap-1 min-w-[44px] min-h-[44px] text-on-surface-variant hover:text-primary transition-colors" data-path="about-k&amp;p" href="#"><span class="material-symbols-outlined text-[22px]">spa</span><span class="font-label-sm text-label-sm uppercase tracking-wider">Về K&amp;P</span></a></div></nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+const RQ = {
+  her: '“Nàng mang tiếng cười soi sáng từng góc khuất trong tâm hồn bạn. Một kỷ vật dịu dàng bao bọc nàng trong tất cả sự chở che.”',
+  him: '“Sự điềm tĩnh vững chãi và những ký ức lắng đọng. Một vật phẩm tinh tế đồng hành cùng chàng trên mọi hành trình.”',
+  mom: '“Từng mối nối là lời tri ân gửi đến đức hy sinh vô bờ của mẹ. Một bảo vật vĩnh cửu như chính tình mẫu tử thiêng liêng.”',
+  bf: '“Người cất giữ mọi bí mật đêm muộn và những ước mơ hoang dại nhất. Gắn kết bền chặt dù cách xa vạn dặm.”',
+  sl: '“Ngôn từ có thể dừng lại nhưng xúc cảm là bất tận. Khắc ghi trọn đời bằng một kỷ vật duy nhất.”'
+};
+const GQ = {
+  soulmate: { quote: '“Từng nhịp thở chung, từng tháng năm đồng hành. Chiếc lắc tay như một lời nhắc nhở rằng trái tim tôi luôn đập cùng một nhịp với em.”', cipher: 'Giai điệu mở hộp: Soulmate Echo' },
+  child: { quote: '“Công dưỡng dục sinh thành tựa biển trời. Chiếc vòng tay này gói trọn tấm lòng con luôn hướng về mái ấm mẹ cha.”', cipher: 'Giai điệu mở hộp: Serene Lullaby' },
+  confidant: { quote: '“Cảm ơn cậu vì đã luôn ở đó trong những ngày rực rỡ lẫn những lúc giông bão. Mãi là người bạn tuyệt vời nhất của tớ.”', cipher: 'Giai điệu mở hộp: Starlight Harmony' },
+  admirer: { quote: '“Có những tình cảm chưa từng dám thốt thành lời trọn vẹn, chỉ mong chiếc charm nhỏ này thay tôi âm thầm bảo bọc em.”', cipher: 'Giai điệu mở hộp: Whispering Breeze' },
+  myself: { quote: '“Gửi chính tôi: Cảm ơn vì đã luôn kiên cường, dịu dàng và yêu thương bản thân qua mọi thử thách của cuộc sống.”', cipher: 'Giai điệu mở hộp: Inner Radiance' }
+};
+const CH = {
+  love: { title: 'I. Charm TÌNH YÊU', tag: 'Trái Tim Gắn Kết', story: '“Dành cho những khoảnh khắc bạn không bao giờ muốn quên. Chạm hạt charm này vào điện thoại sẽ mở ra thước phim mở hộp đầu tiên và bản tình ca của hai người.”', pos: { top: '2rem', left: '2rem' } },
+  memory: { title: 'II. Charm KỶ NIỆM', tag: 'Hộp Ký Ức Thầm Kín', story: '“Bến đỗ bình yên cho những lời thì thầm ngọt ngào. Nơi lưu trữ lời nhắn giọng nói chân thành, những ngày kỷ niệm và album ảnh bí mật.”', pos: { top: '2rem', right: '2rem' } },
+  always: { title: 'III. Charm VĨNH CỬU', tag: 'Hiện Diện Bất Biến', story: '“Sự hiện diện vĩnh cửu, vượt qua mọi khoảng cách không gian. Thắp sáng màn hình điện thoại người thương bằng nhịp tim trực tiếp bất kể nơi đâu.”', pos: { bottom: '2rem', left: '2rem' } },
+  dream: { title: 'IV. Charm ƯỚC MƠ', tag: 'Ngôi Sao Hy Vọng', story: '“Lòng can đảm cùng nhau chạm đến những vì sao. Một trang nhật ký mục tiêu chung tự động cập nhật mỗi khi cả hai cùng tạo nên cột mốc mới.”', pos: { bottom: '2rem', right: '2rem' } }
+};
+const STEPS = {
+  1: { title: 'I. Dây Xích Nền Tảng', desc: 'Dây xích vàng hồng 18k dệt thủ công. Thiết kế cân bằng nhẹ nhàng chạm nhẹ nơi cổ tay nhạy cảm.', badge: 'Bước 1 / 4' },
+  2: { title: 'II. Gắn Charm TÌNH YÊU', desc: 'Cố định bằng mối hàn thủ công tinh xảo. Mã hoá cùng danh sách phát bài hát kỷ niệm đầu tiên của hai bạn.', badge: 'Bước 2 / 4' },
+  3: { title: 'III. Khóa Charm KỶ NIỆM', desc: 'Chạm khắc hoa văn mềm mại, bảo vệ trọn vẹn lời ghi âm thì thầm lúc khui hộp.', badge: 'Bước 3 / 4' },
+  4: { title: 'IV. VĨNH CỬU & ƯỚC MƠ Hoàn Thiện', desc: 'Vòng tay gia bảo hoàn chỉnh. Chip vi mạch NFC đã được hiệu chuẩn và sẵn sàng đề tặng.', badge: 'Bước 4 / 4 · Đã Hoàn Thiện' }
+};
+const KS = { k1: 'Trái Tim Vàng Hồng', k2: 'Ngọc Trai Ánh Sao', k3: 'Nút Thắt Tâm Giao', k4: 'Chìa Khóa Vĩnh Hằng' };
+const BARS = [['bg-primary/40', '0.1s'], ['bg-primary/70', '0.3s'], ['bg-primary', '0.5s'], ['bg-primary/80', '0.2s'], ['bg-primary/50', '0.6s'], ['bg-primary', '0.4s'], ['bg-primary/90', '0.15s'], ['bg-primary/60', '0.35s'], ['bg-primary/40', '0.7s'], ['bg-primary/80', '0.25s'], ['bg-primary', '0.45s'], ['bg-primary/50', '0.65s']];
+const NOTE0 = 'Bất cứ nơi nào em đi qua, hãy mang theo kỷ vật này. Khi cần nghe giọng nói của anh, hãy áp nó kề bên lồng ngực.';
+
+class Component extends DCLogic {
+  state = {
+    menuOpen: false, ctaHidden: false,
+    recipient: 'her', rq: RQ.her, rqOp: 1,
+    giver: 'soulmate', gq: GQ.soulmate.quote, cipher: GQ.soulmate.cipher, gqOp: null,
+    giverName: 'Minh Triết', recipName: 'Linh Đan',
+    isRecording: true, isPlaying: false, wavePaused: false,
+    recLabel: 'Đang thu âm lời thì thầm...', recIcon: 'mic', recPulse: true, voiceTimer: '00:42', playIcon: 'play_arrow',
+    extraPhotos: [], photoAdded: false,
+    charm: 'dream', positioned: { love: true, dream: true },
+    step: 1, burst: false,
+    customName: 'Linh Đan', note: NOTE0, previewName: 'Linh Đan', previewNote: '“' + NOTE0 + '”',
+    keystone: 'k1', address: '', aiBusy: false, aiStatus: '', aiIdeas: [], noNote: false, song: 'Có chàng trai viết lên cây – Phan Mạnh Quỳnh', songPlaying: false
+  };
+
+  componentDidMount() {
+    document.body.className = 'bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen selection:bg-secondary-fixed selection:text-on-secondary-fixed';
+    this._click = (e) => {
+      const t = e.target.closest && e.target.closest('button, a, input, textarea, .recipient-row, .giver-card');
+      if (t) this.spawnHeart(e.clientX, e.clientY);
+    };
+    window.addEventListener('click', this._click);
+    this._lastY = window.scrollY;
+    this._scroll = () => {
+      const y = window.scrollY, d = y - this._lastY;
+      if (d > 12 && y > 80) { if (!this.state.ctaHidden) this.setState({ ctaHidden: true }); }
+      else if (d < -8 || y < 80) { if (this.state.ctaHidden) this.setState({ ctaHidden: false }); }
+      this._lastY = y;
+    };
+    window.addEventListener('scroll', this._scroll, { passive: true });
+  }
+  componentWillUnmount() {
+    window.removeEventListener('click', this._click);
+    window.removeEventListener('scroll', this._scroll);
+  }
+
+  spawnHeart(x, y) {
+    const stage = document.getElementById('particle-stage');
+    if (!stage) return;
+    const h = document.createElement('span');
+    h.className = 'material-symbols-outlined text-primary text-[18px] absolute pointer-events-none select-none transition-all duration-700 ease-out';
+    h.textContent = 'favorite';
+    h.style.left = (x - 9) + 'px'; h.style.top = (y - 9) + 'px';
+    h.style.opacity = '0.9'; h.style.transform = 'scale(0.8) translateY(0px)';
+    stage.appendChild(h);
+    requestAnimationFrame(() => {
+      const ox = (Math.random() - 0.5) * 40, oy = -40 - Math.random() * 40;
+      h.style.transform = `scale(1.2) translate(${ox}px, ${oy}px)`;
+      h.style.opacity = '0';
+    });
+    setTimeout(() => { if (h.parentNode) h.parentNode.removeChild(h); }, 750);
+  }
+
+  pickRecipient(k) {
+    this.setState({ recipient: k, rqOp: 0 });
+    setTimeout(() => this.setState({ rq: RQ[k], rqOp: 1 }), 150);
+  }
+  pickGiver(k) {
+    this.setState({ giver: k, gqOp: 0 });
+    setTimeout(() => this.setState({ gq: GQ[k].quote, cipher: GQ[k].cipher, gqOp: 1 }), 150);
+  }
+  setStep(n) {
+    this.setState({ step: n, burst: n === 4 });
+    clearTimeout(this._bt);
+    if (n === 4) this._bt = setTimeout(() => this.setState({ burst: false }), 2200);
+  }
+  aiCtx() {
+    const s = this.state;
+    return 'Người tặng: ' + (s.giverName || 'chưa rõ') + '. Người nhận: ' + (s.recipName || 'chưa rõ') + '. Xưng hô: ' + (s.address || 'tự chọn phù hợp') + '.';
+  }
+  setNote(v) { this.setState({ note: v, previewNote: v ? '“' + v + '”' : '“Mãi mãi bên cạnh em.”' }); }
+  async aiRun(status, prompt) {
+    this.setState({ aiBusy: true, aiStatus: status });
+    try {
+      const out = await window.claude.complete({ system: 'Bạn giúp viết lời nhắn ngắn, chân thành bằng tiếng Việt, khắc vào món quà vòng charm. Chỉ trả về nội dung được yêu cầu, không giải thích, không dấu ngoặc kép.', messages: [{ role: 'user', content: prompt }] });
+      this.setState({ aiBusy: false, aiStatus: '' });
+      return (out || '').trim();
+    } catch (e) {
+      this.setState({ aiBusy: false, aiStatus: 'AI đang bận, vui lòng thử lại.' });
+      return null;
+    }
+  }
+  async aiWrite(idea) {
+    const extra = idea ? ' Dựa trên ý tưởng: ' + idea + '.' : '';
+    const t = await this.aiRun('AI đang viết lời nhắn...', this.aiCtx() + extra + ' Viết một lời nhắn 2-3 câu, tối đa 60 từ.');
+    if (t) { this.setNote(t); this.setState({ aiIdeas: [] }); }
+  }
+  async aiIdeas() {
+    const t = await this.aiRun('AI đang nghĩ ý tưởng...', this.aiCtx() + ' Đưa ra đúng 3 ý tưởng khác nhau cho lời nhắn, mỗi ý tưởng một dòng, tối đa 12 từ, không đánh số.');
+    if (t) this.setState({ aiIdeas: t.split('\n').map(x => x.replace(/^[-*\d.\s]+/, '').trim()).filter(Boolean).slice(0, 3) });
+  }
+  async aiPolish() {
+    const n = (this.state.note || '').trim();
+    if (!n) { this.setState({ aiStatus: 'Hãy viết vài dòng trước, AI sẽ trau chuốt giúp bạn.' }); return; }
+    const t = await this.aiRun('AI đang trau chuốt lời nhắn...', this.aiCtx() + ' Trau chuốt lời nhắn sau cho mượt mà, cảm xúc hơn, giữ nguyên ý và độ dài tương đương: ' + n);
+    if (t) this.setNote(t);
+  }
+  syncName(v) {
+    this.setState({ customName: v, recipName: v, previewName: v.trim() || 'Người Thương' });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const rc = {};
+    Object.keys(RQ).forEach(k => {
+      const on = s.recipient === k;
+      const base = 'recipient-row flex items-center justify-between p-4 rounded-lg transition-all duration-300 w-full text-left' + (k === 'her' ? '' : ' hover:bg-surface-container');
+      rc[k] = {
+        row: base + (on ? ' bg-surface-container-high text-primary' : ' bg-surface-container-lowest text-on-surface-variant'),
+        heart: 'recipient-heart items-center justify-center w-8 h-8 rounded-full bg-primary text-on-primary shadow-sm ' + (on ? 'flex' : 'hidden'),
+        pick: () => this.pickRecipient(k)
+      };
+    });
+    const gv = {};
+    Object.keys(GQ).forEach(k => {
+      const on = s.giver === k;
+      gv[k] = {
+        card: on ? 'giver-card flex items-center justify-between p-4 rounded-xl bg-primary text-on-primary transition-all duration-300 w-full text-left active:scale-[0.98] shadow-sm'
+                 : 'giver-card flex items-center justify-between p-4 rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container transition-all duration-300 w-full text-left active:scale-[0.98]',
+        heart: 'giver-heart items-center justify-center w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed shrink-0 ' + (on ? 'flex' : 'hidden'),
+        pick: () => this.pickGiver(k)
+      };
+    });
+    const ch = {};
+    Object.keys(CH).forEach(k => {
+      const on = s.charm === k;
+      ch[k] = {
+        node: on ? 'charm-node absolute w-11 h-11 rounded-full bg-primary text-on-primary shadow-lg flex items-center justify-center transition-all duration-300 scale-110'
+                 : 'charm-node absolute w-11 h-11 rounded-full bg-surface-container-lowest/90 text-primary shadow-md flex items-center justify-center transition-all duration-300 hover:scale-105',
+        tab: 'charm-tab py-2 rounded-full font-label-sm text-label-sm uppercase tracking-wider text-center transition-colors ' + (on ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface-variant'),
+        pos: s.positioned[k] ? CH[k].pos : {},
+        pick: () => this.setState(p => ({ charm: k, positioned: Object.assign({}, p.positioned, { [k]: true }) }))
+      };
+    });
+    const st = {};
+    [1, 2, 3, 4].forEach(n => {
+      st['s' + n] = {
+        cls: 'step-btn py-2.5 rounded-full font-label-md text-label-md font-semibold transition-all ' + (s.step === n ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface-variant'),
+        pick: () => this.setStep(n)
+      };
+    });
+    const ks = {};
+    Object.keys(KS).forEach(k => {
+      ks[k] = {
+        cls: 'keystone-btn py-2.5 px-3 rounded-full font-label-sm text-label-sm font-semibold text-center transition-all truncate ' + (s.keystone === k ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface'),
+        pick: () => this.setState({ keystone: k })
+      };
+    });
+    const bars = BARS.map(b => ({
+      cls: 'w-1 ' + b[0] + ' rounded-full soundwave-bar',
+      style: s.wavePaused ? { animationDelay: b[1], animationPlayState: 'paused' } : { animationDelay: b[1] }
+    }));
+
+    return {
+      menuCls: 'fixed inset-0 z-50 bg-surface/98 backdrop-blur-2xl transition-all duration-500 ease-in-out flex flex-col pt-safe pb-safe ' + (s.menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'),
+      openMenu: () => this.setState({ menuOpen: true }),
+      closeMenu: () => this.setState({ menuOpen: false }),
+      ctaCls: 'fixed bottom-20 inset-x-0 z-40 px-margin transition-transform duration-500 ease-out pointer-events-none' + (s.ctaHidden ? ' translate-y-28' : ''),
+      rc, rq: s.rq, rqStyle: { opacity: s.rqOp },
+      gv, gq: s.gq, cipher: s.cipher, gqStyle: s.gqOp === null ? {} : { opacity: s.gqOp },
+      giverName: s.giverName, onGiverName: (e) => this.setState({ giverName: e.target.value }),
+      recipName: s.recipName, onRecipName: (e) => this.syncName(e.target.value),
+      bars, voiceTimer: s.voiceTimer, recLabel: s.recLabel, recIcon: s.recIcon, playIcon: s.playIcon,
+      recIconCls: 'material-symbols-outlined text-[18px] text-secondary-container' + (s.recPulse ? ' animate-pulse' : ''),
+      toggleRec: () => {
+        const r = !s.isRecording;
+        this.setState(r ? { isRecording: true, recLabel: 'Đang thu âm lời thì thầm...', recIcon: 'mic', recPulse: true, wavePaused: false }
+                        : { isRecording: false, recLabel: 'Đã lưu lời nhắn (00:42)', recIcon: 'check_circle', recPulse: false, wavePaused: true });
+      },
+      togglePlay: () => {
+        const p = !s.isPlaying;
+        this.setState(p ? { isPlaying: true, playIcon: 'pause', wavePaused: false }
+                        : Object.assign({ isPlaying: false, playIcon: 'play_arrow' }, s.isRecording ? {} : { wavePaused: true }));
+      },
+      delVoice: () => this.setState({ voiceTimer: '00:00', recLabel: 'Bắt đầu ghi âm lời thì thầm', recIcon: 'mic', recPulse: false, isRecording: false, isPlaying: false, playIcon: 'play_arrow', wavePaused: true }),
+      extraPhotos: s.extraPhotos, photoAdded: s.photoAdded, photoNotAdded: !s.photoAdded,
+      addPhotoCls: 'w-full py-3 px-4 rounded-xl border border-dashed border-primary/50 hover:border-primary bg-surface-container-lowest/80 text-primary font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-secondary-fixed/20 transition-all active:scale-[0.99]' + (s.photoAdded ? ' bg-secondary-fixed/30' : ''),
+      addPhoto: () => this.setState(p => ({ extraPhotos: [...p.extraPhotos, { id: p.extraPhotos.length }], photoAdded: true })),
+      ch, charmTitle: CH[s.charm].title, charmTag: CH[s.charm].tag, charmStory: CH[s.charm].story,
+      st, stepTitle: STEPS[s.step].title, stepDesc: STEPS[s.step].desc, stepBadge: STEPS[s.step].badge,
+      burstCls: 'absolute inset-0 pointer-events-none items-center justify-center ' + (s.burst ? 'flex' : 'hidden'),
+      nextLabel: s.step === 4 ? 'Kỷ vật đã trọn vẹn ♡' : 'Gắn charm tiếp theo',
+      nextIcon: s.step === 4 ? 'verified' : 'arrow_forward',
+      nextStep: () => this.setStep(s.step + 1 > 4 ? 1 : s.step + 1),
+      previewName: s.previewName, previewNote: s.previewNote, previewCharm: 'Linh vật: ' + KS[s.keystone],
+      song: s.song, hasSong: !!s.song.trim(), onSong: (e) => this.setState({ song: e.target.value, songPlaying: false }),
+      songIcon: s.songPlaying ? 'pause' : 'play_arrow', songStatus: s.songPlaying ? 'Đang phát thử...' : 'Phát khi mở quà',
+      toggleSong: () => this.setState(p => ({ songPlaying: !p.songPlaying })),
+      noNote: s.noNote, hasNote: !s.noNote, noNoteIcon: s.noNote ? 'check_box' : 'check_box_outline_blank',
+      noNoteCls: 'h-10 px-3 rounded-full font-label-md text-label-md font-semibold flex items-center gap-1.5 active:scale-95 transition-transform ' + (s.noNote ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-primary'),
+      aiDisabled: s.aiBusy || s.noNote,
+      toggleNoNote: () => this.setState(p => ({ noNote: !p.noNote, aiIdeas: [], aiStatus: '' })),
+      aiBusy: s.aiBusy, aiStatus: s.aiStatus, hasIdeas: s.aiIdeas.length > 0,
+      aiIdeas: s.aiIdeas.map(t => ({ text: t, pick: () => this.aiWrite(t) })),
+      aiWrite: () => this.aiWrite(), aiIdeasFn: () => this.aiIdeas(), aiPolish: () => this.aiPolish(),
+      address: s.address, onAddress: (e) => this.setState({ address: e.target.value }),
+      customName: s.customName, onCustomName: (e) => this.syncName(e.target.value),
+      note: s.note, onNote: (e) => { const v = e.target.value; this.setState({ note: v, previewNote: v ? `“${v}”` : '“Mãi mãi bên cạnh em.”' }); },
+      ks,
+      unbox: () => alert(`Hộp quà đã được cá nhân hóa trọn vẹn dành riêng cho ${s.customName}! Đang chuyển hướng vào trải nghiệm mở hộp thiêng liêng.`)
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -109,7 +109,15 @@ export function toPublicView(order: GiftProductOrder): PublicGiftProduct {
 
 // ---------------------------------------------------------------------------
 // Queries
+//
+// With Supabase configured the database is the only source of truth: a failed write throws
+// (so the caller reports an error) instead of silently succeeding in memory. The in-memory store
+// is used only when Supabase is not configured at all (local development).
 // ---------------------------------------------------------------------------
+
+function dbError(action: string, error: { message: string; code?: string }): Error {
+  return new Error(`[Supabase] ${action} failed: ${error.message}${error.code ? ` (${error.code})` : ""}`);
+}
 
 export async function createGiftProductInDb(
   payload: CreateProductPayload
@@ -139,40 +147,34 @@ export async function createGiftProductInDb(
   };
 
   const supabase = getClient();
-  if (supabase) {
-    try {
-      const { data, error } = await supabase
-        .from("gift_products")
-        .insert({
-          token: order.token,
-          creator_key: order.creatorKeyHash,
-          unlock_pin: order.unlockPinHash,
-          customer_name: order.customerName,
-          customer_email: order.customerEmail,
-          customer_phone: order.customerPhone,
-          chain_id: order.chainId,
-          chain_name: order.chainName,
-          chain_price: order.chainPrice,
-          charms: order.charms,
-          total_price: order.totalPrice,
-          payment_method: order.paymentMethod,
-          status: order.status,
-          email_sent: false,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.warn("[Supabase] Insert error, saving to memory fallback:", error.message);
-      } else if (data) {
-        order.id = data.id;
-      }
-    } catch (err) {
-      console.warn("[Supabase] Connection exception, falling back to memory store:", err);
-    }
+  if (!supabase) {
+    memoryStore().unshift(order);
+    return { order, issued };
   }
 
-  memoryStore().unshift(order);
+  const { data, error } = await supabase
+    .from("gift_products")
+    .insert({
+      token: order.token,
+      creator_key: order.creatorKeyHash,
+      unlock_pin: order.unlockPinHash,
+      customer_name: order.customerName,
+      customer_email: order.customerEmail,
+      customer_phone: order.customerPhone,
+      chain_id: order.chainId,
+      chain_name: order.chainName,
+      chain_price: order.chainPrice,
+      charms: order.charms,
+      total_price: order.totalPrice,
+      payment_method: order.paymentMethod,
+      status: order.status,
+      email_sent: false,
+    })
+    .select("id")
+    .single();
+
+  if (error) throw dbError("insert order", error);
+  order.id = data.id;
   return { order, issued };
 }
 
@@ -181,26 +183,23 @@ export async function getGiftProductByToken(token: string): Promise<GiftProductO
   const cleanToken = token.trim().toUpperCase();
 
   const supabase = getClient();
-  if (supabase) {
-    try {
-      const { data, error } = await supabase
-        .from("gift_products")
-        .select("*")
-        .eq("token", cleanToken)
-        .single();
-
-      if (!error && data) return rowToOrder(data);
-    } catch (err) {
-      console.warn("[Supabase] Query error, checking memory store:", err);
-    }
+  if (!supabase) {
+    return memoryStore().find((item) => item.token.toUpperCase() === cleanToken) ?? null;
   }
 
-  return memoryStore().find((item) => item.token.toUpperCase() === cleanToken) ?? null;
+  const { data, error } = await supabase
+    .from("gift_products")
+    .select("*")
+    .eq("token", cleanToken)
+    .maybeSingle();
+
+  if (error) throw dbError("read order", error);
+  return data ? rowToOrder(data) : null;
 }
 
 /**
  * Saves the buyer's card. `newUnlockPin` (already validated as 4 digits) replaces the stored PIN
- * hash; the PIN itself is never written into gift_data.
+ * hash; the PIN itself is never written into gift_data. Resolves false when the token does not exist.
  */
 export async function updateGiftProductCustomData(
   token: string,
@@ -212,41 +211,30 @@ export async function updateGiftProductCustomData(
   const cleanGiftData = stripGiftSecrets(giftData)!;
   const unlockPinHash = newUnlockPin ? await hashSecret(normalizeUnlockPin(newUnlockPin)) : undefined;
 
-  let saved = false;
-
   const supabase = getClient();
-  if (supabase) {
-    try {
-      const { error } = await supabase
-        .from("gift_products")
-        .update({
-          gift_data: cleanGiftData,
-          ...(unlockPinHash ? { unlock_pin: unlockPinHash } : {}),
-          status: "completed",
-          completed_at: completedAt,
-        })
-        .eq("token", cleanToken);
-
-      if (error) {
-        console.warn("[Supabase] Update error:", error.message);
-      } else {
-        saved = true;
-      }
-    } catch (err) {
-      console.warn("[Supabase] Update exception:", err);
-    }
-  }
-
-  const item = memoryStore().find((p) => p.token.toUpperCase() === cleanToken);
-  if (item) {
+  if (!supabase) {
+    const item = memoryStore().find((p) => p.token.toUpperCase() === cleanToken);
+    if (!item) return false;
     item.giftData = cleanGiftData;
     if (unlockPinHash) item.unlockPinHash = unlockPinHash;
     item.status = "completed";
     item.completedAt = completedAt;
-    saved = true;
+    return true;
   }
 
-  return saved;
+  const { data, error } = await supabase
+    .from("gift_products")
+    .update({
+      gift_data: cleanGiftData,
+      ...(unlockPinHash ? { unlock_pin: unlockPinHash } : {}),
+      status: "completed",
+      completed_at: completedAt,
+    })
+    .eq("token", cleanToken)
+    .select("id");
+
+  if (error) throw dbError("save gift", error);
+  return (data?.length ?? 0) > 0;
 }
 
 /** Replaces one of the two stored secret hashes (reset, or upgrade of a legacy plaintext value). */
@@ -256,65 +244,48 @@ export async function setGiftSecretHash(
   hash: string
 ): Promise<void> {
   const cleanToken = token.trim().toUpperCase();
-  const column = which === "creator" ? "creator_key" : "unlock_pin";
 
   const supabase = getClient();
-  if (supabase) {
-    try {
-      const { error } = await supabase
-        .from("gift_products")
-        .update({ [column]: hash })
-        .eq("token", cleanToken);
-      if (error) console.warn("[Supabase] setGiftSecretHash error:", error.message);
-    } catch (err) {
-      console.warn("[Supabase] setGiftSecretHash exception:", err);
+  if (!supabase) {
+    const item = memoryStore().find((p) => p.token.toUpperCase() === cleanToken);
+    if (item) {
+      if (which === "creator") item.creatorKeyHash = hash;
+      else item.unlockPinHash = hash;
     }
+    return;
   }
 
-  const item = memoryStore().find((p) => p.token.toUpperCase() === cleanToken);
-  if (item) {
-    if (which === "creator") item.creatorKeyHash = hash;
-    else item.unlockPinHash = hash;
-  }
+  const { error } = await supabase
+    .from("gift_products")
+    .update({ [which === "creator" ? "creator_key" : "unlock_pin"]: hash })
+    .eq("token", cleanToken);
+  if (error) throw dbError("update secret", error);
 }
 
 export async function markProductEmailSent(token: string): Promise<void> {
   const cleanToken = token.trim().toUpperCase();
 
   const supabase = getClient();
-  if (supabase) {
-    try {
-      await supabase
-        .from("gift_products")
-        .update({ email_sent: true })
-        .eq("token", cleanToken);
-    } catch (err) {
-      console.warn("[Supabase] markProductEmailSent exception:", err);
-    }
+  if (!supabase) {
+    const item = memoryStore().find((p) => p.token.toUpperCase() === cleanToken);
+    if (item) item.emailSent = true;
+    return;
   }
 
-  const item = memoryStore().find((p) => p.token.toUpperCase() === cleanToken);
-  if (item) {
-    item.emailSent = true;
-  }
+  // Not critical: the order exists either way, so only log a failure.
+  const { error } = await supabase.from("gift_products").update({ email_sent: true }).eq("token", cleanToken);
+  if (error) console.warn("[Supabase] markProductEmailSent failed:", error.message);
 }
 
 export async function listAllGiftProducts(): Promise<GiftProductView[]> {
   const supabase = getClient();
-  if (supabase) {
-    try {
-      const { data, error } = await supabase
-        .from("gift_products")
-        .select("*")
-        .order("created_at", { ascending: false });
+  if (!supabase) return memoryStore().map(toAdminView);
 
-      if (!error && data && data.length > 0) {
-        return data.map((row) => toAdminView(rowToOrder(row)));
-      }
-    } catch (err) {
-      console.warn("[Supabase] listAllGiftProducts exception, using memory store:", err);
-    }
-  }
+  const { data, error } = await supabase
+    .from("gift_products")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-  return memoryStore().map(toAdminView);
+  if (error) throw dbError("list orders", error);
+  return (data ?? []).map((row) => toAdminView(rowToOrder(row)));
 }

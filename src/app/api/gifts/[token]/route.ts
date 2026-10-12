@@ -28,15 +28,21 @@ export async function GET(
       return NextResponse.json({ error: "Mã token không hợp lệ" }, { status: 400 });
     }
 
+    // The studio passes ?as=create so a recipient session (view-only) can never load the editor.
+    const requireCreate = req.nextUrl.searchParams.get("as") === "create";
     const scope = hasGiftSession(req, "create", token)
       ? "create"
-      : hasGiftSession(req, "open", token)
+      : !requireCreate && hasGiftSession(req, "open", token)
         ? "open"
         : null;
 
     if (!scope) {
       return NextResponse.json(
-        { error: "Cần nhập mã xác thực trước khi xem. Vui lòng quay lại cổng /gift." },
+        {
+          error: requireCreate
+            ? "Cần nhập mật khẩu tạo thiệp để vào studio thiết kế."
+            : "Cần nhập mã xác thực trước khi xem. Vui lòng quay lại cổng /gift.",
+        },
         { status: 401 }
       );
     }

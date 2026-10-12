@@ -15,6 +15,7 @@ export default function CustomerGiftStudioPage() {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<GiftProductOrder | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [needsAuth, setNeedsAuth] = useState(false); // no valid creator session for this token
   const [isSaving, setIsSaving] = useState(false);
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
@@ -155,9 +156,10 @@ export default function CustomerGiftStudioPage() {
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const res = await fetch(`/api/gifts/${token}`);
+        const res = await fetch(`/api/gifts/${token}?as=create`);
         const data = await res.json();
-        if (!res.ok || !data.success) {
+        if (res.status === 401) setNeedsAuth(true);
+        if (!res.ok || !data.success || data.scope !== "create") {
           throw new Error(data.error || "Không tìm thấy sản phẩm");
         }
         setProduct(data.product);
@@ -277,13 +279,15 @@ export default function CustomerGiftStudioPage() {
       <div className="min-h-screen bg-rose-cream flex items-center justify-center p-4 font-serif">
         <div className="p-8 rounded-3xl liquid-glass bg-white/90 border border-white/95 max-w-md text-center shadow-xl">
           <span className="material-symbols-outlined text-4xl text-rose-600 mb-2">error</span>
-          <h2 className="text-xl font-bold text-primary">Mã Định Danh Không Hợp Lệ</h2>
+          <h2 className="text-xl font-bold text-primary">
+            {needsAuth ? "Cần Nhập Mật Khẩu Tạo Thiệp" : "Mã Định Danh Không Hợp Lệ"}
+          </h2>
           <p className="text-xs text-on-surface-variant font-sans mt-2">{errorMsg || "Không tìm thấy sản phẩm."}</p>
           <Link
-            href="/claim"
+            href={needsAuth ? `/gift?tab=create&token=${encodeURIComponent(token)}` : "/claim"}
             className="mt-6 inline-block py-2.5 px-6 rounded-xl liquid-glass-btn-primary text-white text-xs font-bold font-serif"
           >
-            Nhập Lại Mã Khác
+            {needsAuth ? "Nhập Mật Khẩu Tạo Thiệp" : "Nhập Lại Mã Khác"}
           </Link>
         </div>
       </div>

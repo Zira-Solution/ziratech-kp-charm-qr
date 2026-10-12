@@ -78,6 +78,8 @@ export default function AdminCounterPosPage() {
   const [createdOrder, setCreatedOrder] = useState<GiftProductView | null>(null);
   const [issuedCodes, setIssuedCodes] = useState<IssuedCodes | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [reissuedKey, setReissuedKey] = useState<{ token: string; creatorKey: string } | null>(null);
+  const [copiedReissued, setCopiedReissued] = useState(false);
   const [copiedToken, setCopiedToken] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -349,11 +351,12 @@ export default function AdminCounterPosPage() {
       });
       const data = await res.json();
       if (data.creatorKey) {
-        // Email was not actually delivered: show the new key once so staff can pass it on.
-        alert(`Mật khẩu tạo thiệp MỚI cho mã ${token}: ${data.creatorKey}\n(Hãy đưa trực tiếp cho khách - mã này chỉ hiện một lần.)`);
+        // Email was not actually delivered: show the new key once so staff can hand it over.
+        setReissuedKey({ token, creatorKey: data.creatorKey });
+        setCopiedReissued(false);
       }
       if (data.success) {
-        setNotification(`✓ Đã cấp lại mật khẩu tạo thiệp & gửi email cho mã ${token}`);
+        setNotification(data.simulated ? `✓ Đã cấp lại mật khẩu tạo thiệp cho mã ${token} (chế độ mô phỏng, chưa gửi email thật)` : `✓ Đã cấp lại mật khẩu tạo thiệp & gửi email cho mã ${token}`);
         setTimeout(() => setNotification(null), 4000);
       } else if (!data.creatorKey) {
         alert(data.error || "Lỗi gửi lại email");
@@ -1707,6 +1710,40 @@ export default function AdminCounterPosPage() {
         {/* ========================================================= */}
         {/* SUCCESS POPUP MODAL */}
         {/* ========================================================= */}
+        {reissuedKey && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="relative w-full max-w-md p-6 rounded-4xl liquid-glass bg-white/95 border-2 border-white/90 shadow-2xl text-center">
+              <span className="text-[11px] uppercase font-bold tracking-wider text-secondary">Cấp lại mật khẩu tạo thiệp</span>
+              <h3 className="font-serif text-lg font-bold text-primary mt-1">Mã vòng {reissuedKey.token}</h3>
+              <p className="text-xs font-sans text-on-surface-variant mt-1">
+                Email chưa được gửi thật. Mật khẩu cũ đã bị vô hiệu, hãy đưa mật khẩu mới này cho khách. Mã chỉ hiện một lần.
+              </p>
+              <div className="my-4 p-3 rounded-xl bg-amber-50 border border-amber-300 font-mono text-lg font-bold text-primary select-all">
+                {reissuedKey.creatorKey}
+              </div>
+              <div className="flex gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(reissuedKey.creatorKey);
+                    setCopiedReissued(true);
+                  }}
+                  className="flex-1 py-3 rounded-xl liquid-glass-btn-secondary text-primary font-serif font-bold text-xs border border-white/90 cursor-pointer"
+                >
+                  {copiedReissued ? "Đã copy ✓" : "Copy mật khẩu"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReissuedKey(null)}
+                  className="flex-1 py-3 rounded-xl liquid-glass-btn-primary text-white font-serif font-bold text-xs shadow-md cursor-pointer"
+                >
+                  Đã ghi lại, đóng
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {showSuccessModal && createdOrder && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
             <div className="relative w-full max-w-lg p-6 sm:p-8 rounded-4xl liquid-glass bg-white/95 border-2 border-white/90 shadow-2xl">
@@ -1722,9 +1759,15 @@ export default function AdminCounterPosPage() {
                 <h3 className="font-serif text-xl sm:text-2xl font-bold text-primary mt-1">
                   Đã Cấp Mã Định Danh Cho Khách!
                 </h3>
-                <p className="text-xs font-sans text-on-surface-variant mt-1">
-                  Email kèm mã và link tạo thiệp đã được gửi tới: <strong>{createdOrder.customerEmail}</strong>
-                </p>
+                {createdOrder.emailSent ? (
+                  <p className="text-xs font-sans text-on-surface-variant mt-1">
+                    Email kèm mã và link tạo thiệp đã được gửi tới: <strong>{createdOrder.customerEmail}</strong>
+                  </p>
+                ) : (
+                  <p className="text-xs font-sans font-bold text-rose-700 mt-1">
+                    Chưa gửi được email tới {createdOrder.customerEmail}. Hãy đọc mã bên dưới trực tiếp cho khách.
+                  </p>
+                )}
               </div>
 
               {/* 2 CODES DISPLAY BOXES */}

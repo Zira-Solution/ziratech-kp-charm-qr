@@ -10,7 +10,7 @@ import ReportsView, { type AnalyticsStats } from "@/components/admin/ReportsView
 import ProductsView from "@/components/admin/ProductsView";
 import type { StoredChain } from "@/lib/supabase/chains";
 import { OrderCreatedDialog, ReissuedKeyDialog } from "@/components/admin/AdminDialogs";
-import { adminFontStyle } from "@/components/admin/ui";
+import { ConfirmDialog, adminFontStyle, formatVnd } from "@/components/admin/ui";
 
 export default function AdminPage() {
   const [user, setUser] = useState<AdminUser | null>(null);
@@ -22,6 +22,11 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<GiftProductView[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState("");
+  const [trash, setTrash] = useState(false); // showing soft-deleted orders
+  const [softDeleteReady, setSoftDeleteReady] = useState(true);
+  const [activeCount, setActiveCount] = useState(0); // sidebar badge: active orders only
+  const [busyToken, setBusyToken] = useState<string | null>(null);
+  const [orderToDelete, setOrderToDelete] = useState<GiftProductView | null>(null);
 
   const [chains, setChains] = useState<StoredChain[]>([]);
   const [chainsEditable, setChainsEditable] = useState(true);
@@ -67,17 +72,19 @@ export default function AdminPage() {
     setOrdersLoading(true);
     setOrdersError("");
     try {
-      const res = await fetch("/api/admin/products");
+      const res = await fetch(`/api/admin/products${trash ? "?trash=1" : ""}`);
       if (res.status === 401) return handleExpired();
       const data = await res.json();
       if (!res.ok || !Array.isArray(data.products)) throw new Error(data.error || "Không tải được danh sách đơn.");
       setOrders(data.products);
+      setSoftDeleteReady(data.softDeleteReady !== false);
+      if (!trash) setActiveCount(data.products.length);
     } catch (err) {
       setOrdersError(err instanceof Error ? err.message : "Không tải được danh sách đơn.");
     } finally {
       setOrdersLoading(false);
     }
-  }, [handleExpired]);
+  }, [handleExpired, trash]);
 
   const loadChains = useCallback(async () => {
     setChainsLoading(true);
@@ -118,7 +125,7 @@ export default function AdminPage() {
     if (tab === "orders" || orders.length === 0) loadOrders();
     if (tab === "pos" || tab === "products" || chains.length === 0) loadChains();
     if (tab === "reports") loadStats();
-  }, [user, tab]);
+  }, [user, tab, trash]);
 
   const logout = async () => {
     try {
@@ -130,6 +137,7 @@ export default function AdminPage() {
     setOrders([]);
     setStats(null);
     setChains([]);
+    setTrash(false);
     setTab("pos");
     notify("Đã đăng xuất.");
   };
@@ -158,6 +166,28 @@ export default function AdminPage() {
       notify("Lỗi kết nối khi gửi lại email.");
     } finally {
       setResendingToken(null);
+    }
+  };
+
+  const setDeleted = async (token: string, deleted: boolean) => {
+    setBusyToken(token);
+    try {
+      const res = await fetch(`/api/admin/orders/${token}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deleted }),
+      });
+      if (res.status === 401) return handleExpired();
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || "Không cập nhật được đơn hàng.");
+      notify(deleted ? `Đã chuyển đơn ${token} vào thùng rác.` : `Đã khôi phục đơn ${token}.`);
+      await loadOrders();
+      if (trash && !deleted) setActiveCount((n) => n + 1); // restored into the active list
+    } catch (err) {
+      notify(err instanceof Error ? err.message : "Không cập nhật được đơn hàng.");
+    } finally {
+      setBusyToken(null);
+      setOrderToDelete(null);
     }
   };
 
@@ -197,7 +227,7 @@ export default function AdminPage() {
       onTab={setTab}
       user={user}
       onLogout={logout}
-      orderCount={orders.length}
+      orderCount={activeCount}
       toast={toast}
       onDismissToast={() => setToast(null)}
     >
@@ -221,6 +251,12 @@ export default function AdminPage() {
           onResend={resend}
           resendingToken={resendingToken}
           onCopyLink={copyLink}
+          trash={trash}
+          onToggleTrash={setTrash}
+          softDeleteReady={softDeleteReady}
+          busyToken={busyToken}
+          onDelete={setOrderToDelete}
+          onRestore={(token) => setDeleted(token, false)}
         />
       )}
       {tab === "products" && (
@@ -235,6 +271,27 @@ export default function AdminPage() {
         />
       )}
       {tab === "reports" && <ReportsView stats={stats} loading={statsLoading} error={statsError} onRetry={loadStats} />}
+
+      {orderToDelete && (
+        <ConfirmDialog
+          title="Xóa đơn hàng này?"
+          confirmLabel="Chuyển vào thùng rác"
+          busy={busyToken === orderToDelete.token}
+          onConfirm={() => setDeleted(orderToDelete.token, true)}
+          onCancel={() => setOrderToDelete(null)}
+          message={
+            <>
+              <p>
+                Đơn <strong>{orderToDelete.token}</strong> của <strong>{orderToDelete.customerName}</strong> (
+                {formatVnd(orderToDelete.totalPrice)}) sẽ chuyển vào Thùng rác.
+              </p>
+              <p className="mt-2">
+                Đơn không còn tính vào báo cáo và thiệp của đơn này tạm thời không mở được. Bạn có thể khôi phục lại bất cứ lúc nào.
+              </p>
+            </>
+          }
+        />
+      )}
 
       {created && <OrderCreatedDialog created={created} onClose={() => setCreated(null)} />}
       {reissued && <ReissuedKeyDialog token={reissued.token} creatorKey={reissued.creatorKey} onClose={() => setReissued(null)} />}

@@ -21,6 +21,12 @@ interface Props {
   onResend: (token: string) => void;
   resendingToken: string | null;
   onCopyLink: (token: string) => void;
+  trash: boolean;
+  onToggleTrash: (trash: boolean) => void;
+  softDeleteReady: boolean;
+  busyToken: string | null;
+  onDelete: (order: GiftProductView) => void;
+  onRestore: (token: string) => void;
 }
 
 const iconButton =
@@ -32,12 +38,36 @@ function RowActions({
   onResend,
   resendingToken,
   onCopyLink,
+  trash,
+  softDeleteReady,
+  busyToken,
+  onDelete,
+  onRestore,
 }: {
   order: GiftProductView;
   onResend: Props["onResend"];
   resendingToken: string | null;
   onCopyLink: Props["onCopyLink"];
+  trash: boolean;
+  softDeleteReady: boolean;
+  busyToken: string | null;
+  onDelete: Props["onDelete"];
+  onRestore: Props["onRestore"];
 }) {
+  if (trash) {
+    return (
+      <button
+        type="button"
+        onClick={() => onRestore(order.token)}
+        disabled={busyToken === order.token}
+        className={`inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-300 px-3 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-40 ${focusRing}`}
+      >
+        <Icon name="restore_from_trash" className="text-[18px]" />
+        Khôi phục
+      </button>
+    );
+  }
+
   return (
     <div className="flex items-center gap-1.5">
       <button type="button" className={iconButton} title="Copy link tạo thiệp" aria-label={`Copy link tạo thiệp ${order.token}`} onClick={() => onCopyLink(order.token)}>
@@ -61,11 +91,35 @@ function RowActions({
           <Icon name="open_in_new" className="text-[18px]" />
         </Link>
       )}
+      <button
+        type="button"
+        className={`${iconButton} hover:!border-rose-200 hover:!bg-rose-50 hover:!text-rose-700`}
+        title={softDeleteReady ? "Chuyển vào thùng rác" : "Chưa bật xóa mềm (cần chạy SQL)"}
+        aria-label={`Xóa đơn ${order.token}`}
+        disabled={!softDeleteReady || busyToken === order.token}
+        onClick={() => onDelete(order)}
+      >
+        <Icon name="delete" className="text-[18px]" />
+      </button>
     </div>
   );
 }
 
-export default function OrdersView({ orders, loading, error, onRefresh, onResend, resendingToken, onCopyLink }: Props) {
+export default function OrdersView({
+  orders,
+  loading,
+  error,
+  onRefresh,
+  onResend,
+  resendingToken,
+  onCopyLink,
+  trash,
+  onToggleTrash,
+  softDeleteReady,
+  busyToken,
+  onDelete,
+  onRestore,
+}: Props) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
 
@@ -89,8 +143,44 @@ export default function OrdersView({ orders, loading, error, onRefresh, onResend
     return charmMoney > 0 ? `Dây ${formatVnd(o.chainPrice)} + charm ${formatVnd(charmMoney)}` : `Dây ${formatVnd(o.chainPrice)}`;
   };
 
+  const rowProps = { onResend, resendingToken, onCopyLink, trash, softDeleteReady, busyToken, onDelete, onRestore };
+
   return (
     <Card>
+      {!softDeleteReady && (
+        <div role="alert" className="flex items-start gap-2 border-b border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <Icon name="warning" className="mt-0.5 text-[18px]" />
+          <span>
+            Chưa bật xóa đơn trong database. Mở Supabase → SQL Editor và chạy lại file{" "}
+            <code className="rounded bg-amber-100 px-1">supabase/schema.sql</code>, rồi tải lại trang.
+          </span>
+        </div>
+      )}
+
+      {/* View switch */}
+      <div role="tablist" aria-label="Chế độ xem" className="flex gap-1 border-b border-slate-100 px-4 pt-3">
+        {([
+          { id: false, label: "Đơn hàng", icon: "receipt_long" },
+          { id: true, label: "Thùng rác", icon: "delete" },
+        ] as const).map((v) => (
+          <button
+            key={String(v.id)}
+            type="button"
+            role="tab"
+            aria-selected={trash === v.id}
+            onClick={() => onToggleTrash(v.id)}
+            className={`-mb-px inline-flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-medium ${focusRing} ${
+              trash === v.id
+                ? "border-primary-container text-primary-container"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <Icon name={v.icon} className="text-[18px]" />
+            {v.label}
+          </button>
+        ))}
+      </div>
+
       {/* Toolbar */}
       <div className="flex flex-col gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative sm:w-80">
@@ -141,7 +231,11 @@ export default function OrdersView({ orders, loading, error, onRefresh, onResend
       ) : loading && orders.length === 0 ? (
         <Skeleton rows={5} />
       ) : orders.length === 0 ? (
-        <EmptyState icon="receipt_long" title="Chưa có đơn hàng nào" hint="Các đơn tạo ở mục “Tạo đơn” sẽ hiện ở đây." />
+        trash ? (
+          <EmptyState icon="delete" title="Thùng rác trống" hint="Đơn đã xóa sẽ nằm ở đây và có thể khôi phục." />
+        ) : (
+          <EmptyState icon="receipt_long" title="Chưa có đơn hàng nào" hint="Các đơn tạo ở mục “Tạo đơn” sẽ hiện ở đây." />
+        )
       ) : visible.length === 0 ? (
         <EmptyState icon="search_off" title="Không có đơn phù hợp" hint="Thử đổi từ khóa hoặc bộ lọc." />
       ) : (
@@ -182,7 +276,7 @@ export default function OrdersView({ orders, loading, error, onRefresh, onResend
                       <StatusBadge completed={o.status === "completed"} />
                     </td>
                     <td className="px-5 py-3.5">
-                      <RowActions order={o} onResend={onResend} resendingToken={resendingToken} onCopyLink={onCopyLink} />
+                      <RowActions order={o} {...rowProps} />
                     </td>
                   </tr>
                 ))}
@@ -208,7 +302,7 @@ export default function OrdersView({ orders, loading, error, onRefresh, onResend
                 <p className="text-xs text-slate-500">
                   {o.chainName} · {charmText(o)}
                 </p>
-                <RowActions order={o} onResend={onResend} resendingToken={resendingToken} onCopyLink={onCopyLink} />
+                <RowActions order={o} {...rowProps} />
               </li>
             ))}
           </ul>

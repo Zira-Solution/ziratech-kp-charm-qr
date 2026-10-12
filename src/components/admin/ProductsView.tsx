@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import type { StoredChain } from "@/lib/supabase/chains";
-import { Card, CardHeader, EmptyState, Field, Icon, Skeleton, focusRing, formatVnd, inputClass, primaryButton, secondaryButton } from "./ui";
+import { Card, CardHeader, ConfirmDialog, EmptyState, Field, Icon, Skeleton, focusRing, formatVnd, inputClass, primaryButton, secondaryButton } from "./ui";
 
 interface Props {
   chains: StoredChain[];
@@ -34,8 +34,16 @@ export default function ProductsView({ chains, editable, loading, error, onChang
   const [draft, setDraft] = useState({ name: "", price: "", description: "" });
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  const call = async (url: string, method: "POST" | "PATCH", body: unknown) => {
-    const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  // delete confirmation
+  const [toDelete, setToDelete] = useState<StoredChain | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const call = async (url: string, method: "POST" | "PATCH" | "DELETE", body?: unknown) => {
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
     if (res.status === 401) {
       onExpired();
       throw new Error("Phiên đăng nhập đã hết hạn");
@@ -89,6 +97,22 @@ export default function ProductsView({ chains, editable, loading, error, onChang
       onNotify(err instanceof Error ? err.message : "Không lưu được.");
     } finally {
       setBusyId(null);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!toDelete) return;
+    setDeleting(true);
+    try {
+      await call(`/api/admin/chains/${toDelete.id}`, "DELETE");
+      onNotify(`Đã xóa dây vòng "${toDelete.name}".`);
+      setToDelete(null);
+      onChanged();
+    } catch (err) {
+      onNotify(err instanceof Error ? err.message : "Không xóa được dây vòng.");
+      setToDelete(null);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -262,6 +286,16 @@ export default function ProductsView({ chains, editable, loading, error, onChang
                             <Icon name={c.active ? "visibility_off" : "visibility"} className="text-[16px]" />
                             {c.active ? "Ẩn" : "Bán lại"}
                           </button>
+                          <button
+                            type="button"
+                            onClick={() => setToDelete(c)}
+                            disabled={busy}
+                            className={`${iconButton} hover:!border-rose-200 hover:!bg-rose-50 hover:!text-rose-700`}
+                            aria-label={`Xóa ${c.name}`}
+                          >
+                            <Icon name="delete" className="text-[16px]" />
+                            Xóa
+                          </button>
                         </div>
                       )}
                     </div>
@@ -272,6 +306,26 @@ export default function ProductsView({ chains, editable, loading, error, onChang
           </ul>
         )}
       </Card>
+
+      {toDelete && (
+        <ConfirmDialog
+          title="Xóa dây vòng này?"
+          confirmLabel="Xóa vĩnh viễn"
+          busy={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setToDelete(null)}
+          message={
+            <>
+              <p>
+                <strong>{toDelete.name}</strong> ({formatVnd(toDelete.price)}) sẽ bị xóa hẳn và không khôi phục được.
+              </p>
+              <p className="mt-2">
+                Các đơn đã bán bằng dây này vẫn giữ nguyên thông tin. Nếu chỉ muốn tạm ngưng bán, hãy dùng nút <strong>Ẩn</strong>.
+              </p>
+            </>
+          }
+        />
+      )}
     </div>
   );
 }

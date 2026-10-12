@@ -91,3 +91,8 @@ on conflict (id) do nothing;
 
 revoke all on public.chains from anon, authenticated;
 grant select, insert, update, delete on public.chains to service_role;
+
+-- 7. Soft delete for orders: a deleted order is hidden from the lists and reports and its gift
+-- stops opening for customers, but the row stays and can be restored from the "Thùng rác" view.
+alter table public.gift_products add column if not exists deleted_at timestamptz;
+create index if not exists idx_gift_products_deleted_at on public.gift_products (deleted_at);

@@ -138,6 +138,28 @@ export interface ChainPatch {
   active?: boolean;
 }
 
+/**
+ * Permanently deletes a chain. Orders keep the chain name and price they were sold at, so past
+ * orders are unaffected. Resolves false when the id does not exist.
+ */
+export async function deleteChain(id: string): Promise<boolean> {
+  const { editable } = await listChains();
+  if (!editable) throw new Error("CHAINS_TABLE_MISSING");
+
+  const supabase = createServerClient();
+  if (!supabase) {
+    const list = memoryChains();
+    const idx = list.findIndex((c) => c.id === id);
+    if (idx < 0) return false;
+    list.splice(idx, 1);
+    return true;
+  }
+
+  const { data, error } = await supabase.from("chains").delete().eq("id", id).select("id");
+  if (error) throw fail("delete chain", error);
+  return (data?.length ?? 0) > 0;
+}
+
 /** Updates a chain. Resolves to the updated chain, or null when the id does not exist. */
 export async function updateChain(id: string, patch: ChainPatch): Promise<StoredChain | null> {
   const { editable } = await listChains();

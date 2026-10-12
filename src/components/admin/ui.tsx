@@ -173,3 +173,67 @@ export function Dialog({
     </div>
   );
 }
+
+/** Confirmation for destructive actions. Unlike Dialog, Esc and the Cancel button dismiss it. */
+export function ConfirmDialog({
+  title,
+  message,
+  confirmLabel,
+  busy,
+  onConfirm,
+  onCancel,
+}: {
+  title: string;
+  message: React.ReactNode;
+  confirmLabel: string;
+  busy?: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
+    cancelRef.current?.focus(); // focus the safe choice first
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      previous?.focus();
+    };
+  }, [onCancel]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4" style={adminFontStyle}>
+      <div
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="confirm-title"
+        aria-describedby="confirm-message"
+        className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+      >
+        <h2 id="confirm-title" className="text-lg font-semibold text-slate-900">
+          {title}
+        </h2>
+        <div id="confirm-message" className="mt-2 text-sm text-slate-600">
+          {message}
+        </div>
+        <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <button ref={cancelRef} type="button" onClick={onCancel} disabled={busy} className={secondaryButton}>
+            Hủy
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={busy}
+            className={`inline-flex items-center justify-center gap-2 rounded-lg bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50 ${focusRing}`}
+          >
+            {busy ? "Đang xử lý..." : confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

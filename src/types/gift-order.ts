@@ -25,6 +25,7 @@ export interface GiftProductOrder {
   emailSent: boolean;
   createdAt: string;
   completedAt?: string;
+  deletedAt?: string;         // set when the order was soft-deleted
 }
 
 /** Order as shown to staff: no secret hashes. */

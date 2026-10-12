@@ -14,7 +14,7 @@ export async function GET() {
     }
 
 
-    const products = await listAllGiftProducts();
+    const { orders: products } = await listAllGiftProducts(); // soft-deleted orders are excluded
 
     let totalRevenue = 0;
     let chainRevenue = 0;

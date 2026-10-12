@@ -86,6 +86,7 @@ function rowToOrder(row: any): GiftProductOrder {
     emailSent: row.email_sent,
     createdAt: row.created_at,
     completedAt: row.completed_at,
+    deletedAt: row.deleted_at ?? undefined,
   };
 }
 
@@ -178,20 +179,33 @@ export async function createGiftProductInDb(
   return { order, issued };
 }
 
-/** Internal lookup. Returns secret hashes - route handlers must convert with toAdminView/toPublicView. */
+// Errors for a column that does not exist yet (the soft-delete SQL was not run): Postgres 42703 on
+// reads and filters, PostgREST PGRST204 when writing to it.
+const MISSING_COLUMN_CODES = new Set(["42703", "PGRST204"]);
+const isMissingColumn = (error: { code?: string } | null) => !!error?.code && MISSING_COLUMN_CODES.has(error.code);
+
+/** Internal lookup. Returns secret hashes - route handlers must convert with toAdminView/toPublicView.
+ * Soft-deleted orders are treated as not found. */
 export async function getGiftProductByToken(token: string): Promise<GiftProductOrder | null> {
   const cleanToken = token.trim().toUpperCase();
 
   const supabase = getClient();
   if (!supabase) {
-    return memoryStore().find((item) => item.token.toUpperCase() === cleanToken) ?? null;
+    const hit = memoryStore().find((item) => item.token.toUpperCase() === cleanToken);
+    return hit && !hit.deletedAt ? hit : null;
   }
 
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("gift_products")
     .select("*")
     .eq("token", cleanToken)
+    .is("deleted_at", null)
     .maybeSingle();
+
+  if (isMissingColumn(error)) {
+    // Soft delete is not set up yet, so no order can be deleted: read without the filter.
+    ({ data, error } = await supabase.from("gift_products").select("*").eq("token", cleanToken).maybeSingle());
+  }
 
   if (error) throw dbError("read order", error);
   return data ? rowToOrder(data) : null;
@@ -277,15 +291,62 @@ export async function markProductEmailSent(token: string): Promise<void> {
   if (error) console.warn("[Supabase] markProductEmailSent failed:", error.message);
 }
 
-export async function listAllGiftProducts(): Promise<GiftProductView[]> {
+export interface OrderList {
+  orders: GiftProductView[];
+  /** False until the `deleted_at` column exists; then orders cannot be soft-deleted yet. */
+  softDeleteReady: boolean;
+}
+
+/** Orders for the admin. `trash: true` returns the soft-deleted ones instead of the active ones. */
+export async function listAllGiftProducts(options: { trash?: boolean } = {}): Promise<OrderList> {
+  const trash = options.trash === true;
+
   const supabase = getClient();
-  if (!supabase) return memoryStore().map(toAdminView);
+  if (!supabase) {
+    const rows = memoryStore().filter((o) => (trash ? !!o.deletedAt : !o.deletedAt));
+    return { orders: rows.map(toAdminView), softDeleteReady: true };
+  }
+
+  const query = supabase.from("gift_products").select("*");
+  const { data, error } = await (trash ? query.not("deleted_at", "is", null) : query.is("deleted_at", null)).order(
+    "created_at",
+    { ascending: false }
+  );
+
+  if (isMissingColumn(error)) {
+    if (trash) return { orders: [], softDeleteReady: false };
+    const all = await supabase.from("gift_products").select("*").order("created_at", { ascending: false });
+    if (all.error) throw dbError("list orders", all.error);
+    return { orders: (all.data ?? []).map((row) => toAdminView(rowToOrder(row))), softDeleteReady: false };
+  }
+
+  if (error) throw dbError("list orders", error);
+  return { orders: (data ?? []).map((row) => toAdminView(rowToOrder(row))), softDeleteReady: true };
+}
+
+/**
+ * Soft-deletes (or restores) an order. Resolves false when the token does not exist; throws
+ * SOFT_DELETE_UNAVAILABLE when the `deleted_at` column has not been created yet.
+ */
+export async function setOrderDeleted(token: string, deleted: boolean): Promise<boolean> {
+  const cleanToken = token.trim().toUpperCase();
+  const deletedAt = deleted ? new Date().toISOString() : null;
+
+  const supabase = getClient();
+  if (!supabase) {
+    const item = memoryStore().find((p) => p.token.toUpperCase() === cleanToken);
+    if (!item) return false;
+    item.deletedAt = deletedAt ?? undefined;
+    return true;
+  }
 
   const { data, error } = await supabase
     .from("gift_products")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .update({ deleted_at: deletedAt })
+    .eq("token", cleanToken)
+    .select("id");
 
-  if (error) throw dbError("list orders", error);
-  return (data ?? []).map((row) => toAdminView(rowToOrder(row)));
+  if (isMissingColumn(error)) throw new Error("SOFT_DELETE_UNAVAILABLE");
+  if (error) throw dbError(deleted ? "delete order" : "restore order", error);
+  return (data?.length ?? 0) > 0;
 }

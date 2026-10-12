@@ -5,11 +5,12 @@ import Link from "next/link";
 import { Icon, adminFontStyle, focusRing } from "./ui";
 import type { AdminUser } from "./AdminLogin";
 
-export type AdminTab = "pos" | "orders" | "reports";
+export type AdminTab = "pos" | "orders" | "products" | "reports";
 
 const NAV: Array<{ id: AdminTab; label: string; title: string; icon: string }> = [
   { id: "pos", label: "Tạo đơn", title: "Tạo đơn tại quầy", icon: "add_shopping_cart" },
   { id: "orders", label: "Đơn hàng", title: "Danh sách đơn hàng", icon: "receipt_long" },
+  { id: "products", label: "Sản phẩm", title: "Dây vòng đang bán", icon: "diamond" },
   { id: "reports", label: "Báo cáo", title: "Báo cáo doanh thu", icon: "bar_chart" },
 ];
 
@@ -121,7 +122,7 @@ export default function AdminShell({ tab, onTab, user, onLogout, orderCount, toa
       {/* Bottom tabs (mobile) */}
       <nav
         aria-label="Điều hướng chính"
-        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-3 border-t border-slate-200 bg-white lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-4 border-t border-slate-200 bg-white lg:hidden"
       >
         {NAV.map((item) => {
           const active = item.id === tab;

@@ -66,3 +66,28 @@ revoke all on public.gift_products from anon, authenticated;
 revoke all on public.access_attempts from anon, authenticated;
 grant select, insert, update, delete on public.gift_products to service_role;
 grant select, insert, update, delete on public.access_attempts to service_role;
+
+-- 6. Bracelet chains sold at the counter (name + price), managed from the admin "Sản phẩm" tab.
+-- Safe to run more than once: the starting chains are only inserted when missing.
+create table if not exists public.chains (
+  id text primary key,
+  name text not null,
+  price integer not null check (price >= 0),
+  color text not null default '#DCC0C0',
+  description text not null default '',
+  active boolean not null default true,
+  sort_order integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table public.chains enable row level security; -- no policies: server only
+
+insert into public.chains (id, name, price, color, description, sort_order) values
+  ('silver', 'Bạc Ý S925 Thanh Mảnh',    45000, '#DCC0C0', 'Sáng bóng, tinh xảo, thanh lịch', 0),
+  ('rose',   'Vàng Hồng 14K Ấm Áp',      49000, '#FEA095', 'Ngọt ngào, tôn da phái đẹp',      1),
+  ('pearl',  'Ngọc Trai Nước Ngọt Mini', 55000, '#FAF0ED', 'Dịu dàng, quý phái, tự nhiên',    2),
+  ('cord',   'Dây Dù Kỷ Niệm Bền Bỉ',    35000, '#897172', 'Trẻ trung, cá tính sinh viên',    3)
+on conflict (id) do nothing;
+
+revoke all on public.chains from anon, authenticated;
+grant select, insert, update, delete on public.chains to service_role;

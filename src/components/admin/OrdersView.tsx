@@ -83,8 +83,11 @@ export default function OrdersView({ orders, loading, error, onRefresh, onResend
     });
   }, [orders, query, filter]);
 
-  const charmText = (o: GiftProductView) =>
-    o.charms?.length ? `${o.charms.length} charm: ${o.charms.map((c) => c.name).join(", ")}` : "Không có charm";
+  // Charms are bought separately at the counter; their money is whatever the total adds to the chain price.
+  const charmText = (o: GiftProductView) => {
+    const charmMoney = Math.max(0, (o.totalPrice || 0) - (o.chainPrice || 0));
+    return charmMoney > 0 ? `Dây ${formatVnd(o.chainPrice)} + charm ${formatVnd(charmMoney)}` : `Dây ${formatVnd(o.chainPrice)}`;
+  };
 
   return (
     <Card>

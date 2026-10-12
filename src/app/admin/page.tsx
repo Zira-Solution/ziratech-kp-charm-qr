@@ -7,6 +7,8 @@ import AdminShell, { type AdminTab } from "@/components/admin/AdminShell";
 import PosView, { type CreatedOrder } from "@/components/admin/PosView";
 import OrdersView from "@/components/admin/OrdersView";
 import ReportsView, { type AnalyticsStats } from "@/components/admin/ReportsView";
+import ProductsView from "@/components/admin/ProductsView";
+import type { StoredChain } from "@/lib/supabase/chains";
 import { OrderCreatedDialog, ReissuedKeyDialog } from "@/components/admin/AdminDialogs";
 import { adminFontStyle } from "@/components/admin/ui";
 
@@ -20,6 +22,11 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<GiftProductView[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState("");
+
+  const [chains, setChains] = useState<StoredChain[]>([]);
+  const [chainsEditable, setChainsEditable] = useState(true);
+  const [chainsLoading, setChainsLoading] = useState(false);
+  const [chainsError, setChainsError] = useState("");
 
   const [stats, setStats] = useState<AnalyticsStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
@@ -72,6 +79,23 @@ export default function AdminPage() {
     }
   }, [handleExpired]);
 
+  const loadChains = useCallback(async () => {
+    setChainsLoading(true);
+    setChainsError("");
+    try {
+      const res = await fetch("/api/admin/chains");
+      if (res.status === 401) return handleExpired();
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data.chains)) throw new Error(data.error || "Không tải được danh sách dây vòng.");
+      setChains(data.chains);
+      setChainsEditable(data.editable !== false);
+    } catch (err) {
+      setChainsError(err instanceof Error ? err.message : "Không tải được danh sách dây vòng.");
+    } finally {
+      setChainsLoading(false);
+    }
+  }, [handleExpired]);
+
   const loadStats = useCallback(async () => {
     setStatsLoading(true);
     setStatsError("");
@@ -92,6 +116,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!user) return;
     if (tab === "orders" || orders.length === 0) loadOrders();
+    if (tab === "pos" || tab === "products" || chains.length === 0) loadChains();
     if (tab === "reports") loadStats();
   }, [user, tab]);
 
@@ -104,6 +129,7 @@ export default function AdminPage() {
     setUser(null);
     setOrders([]);
     setStats(null);
+    setChains([]);
     setTab("pos");
     notify("Đã đăng xuất.");
   };
@@ -177,6 +203,9 @@ export default function AdminPage() {
     >
       {tab === "pos" && (
         <PosView
+          chains={chains.filter((c) => c.active)}
+          chainsLoading={chainsLoading}
+          onGoProducts={() => setTab("products")}
           onCreated={(c) => {
             setCreated(c);
             loadOrders();
@@ -192,6 +221,17 @@ export default function AdminPage() {
           onResend={resend}
           resendingToken={resendingToken}
           onCopyLink={copyLink}
+        />
+      )}
+      {tab === "products" && (
+        <ProductsView
+          chains={chains}
+          editable={chainsEditable}
+          loading={chainsLoading}
+          error={chainsError}
+          onChanged={loadChains}
+          onNotify={notify}
+          onExpired={handleExpired}
         />
       )}
       {tab === "reports" && <ReportsView stats={stats} loading={statsLoading} error={statsError} onRetry={loadStats} />}

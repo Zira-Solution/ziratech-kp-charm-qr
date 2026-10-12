@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import { CharmOrderItem } from "@/types/gift-order";
 
 interface SendActivationEmailParams {
   customerName: string;
@@ -9,9 +8,17 @@ interface SendActivationEmailParams {
   /** Omitted when resending: the PIN is hashed and may already be printed on the physical card. */
   unlockPin?: string;
   chainName: string;
-  charms: CharmOrderItem[];
   siteUrl?: string;
 }
+
+// Customer-supplied text goes into an HTML email, so escape it.
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
 export async function sendGiftActivationEmail({
   customerName,
@@ -20,11 +27,11 @@ export async function sendGiftActivationEmail({
   creatorKey,
   unlockPin,
   chainName,
-  charms,
   siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
 }: SendActivationEmailParams): Promise<{ success: boolean; simulated?: boolean; error?: string }> {
   const activationUrl = `${siteUrl}/gift?token=${token}&tab=create`;
-  const charmListText = charms.map((c) => c.name).join(", ") || "Không có charm thêm";
+  const safeName = escapeHtml(customerName);
+  const safeChainName = escapeHtml(chainName);
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -60,7 +67,7 @@ export async function sendGiftActivationEmail({
           <tr>
             <td style="padding: 35px 30px;">
               <p style="margin: 0 0 16px 0; font-size: 15px; line-height: 1.6; color: #2e1d1b;">
-                Thân gửi <strong>${customerName}</strong>,
+                Thân gửi <strong>${safeName}</strong>,
               </p>
               <p style="margin: 0 0 22px 0; font-size: 14px; line-height: 1.6; color: #564243;">
                 Cảm ơn bạn đã lựa chọn món quà thủ công tại quầy <strong>K&amp;P Atelier</strong> (ĐH FPT). Dưới đây là <strong>mã vòng và bộ 2 mật khẩu riêng biệt</strong> để bạn thiết kế thiệp và trao tặng cho người nhận:
@@ -77,10 +84,7 @@ export async function sendGiftActivationEmail({
                       <strong>Mã vòng (Token):</strong> <span style="font-family: monospace; font-weight: bold; color: #540114;">${token}</span>
                     </p>
                     <p style="margin: 0 0 4px 0; font-size: 13px; color: #3d2c2b;">
-                      <strong>Dây vòng:</strong> ${chainName}
-                    </p>
-                    <p style="margin: 0; font-size: 13px; color: #3d2c2b;">
-                      <strong>Hạt charm đính kèm:</strong> ${charmListText}
+                      <strong>Dây vòng:</strong> ${safeChainName}
                     </p>
                   </td>
                 </tr>

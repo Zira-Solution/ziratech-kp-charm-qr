@@ -1,11 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { listAllGiftProducts } from "@/lib/supabase/products";
-import { getAuthenticatedUser } from "@/lib/auth/admin-auth";
+import { getAdminUser } from "@/lib/supabase/auth";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const cookieToken = req.cookies.get("kp_admin_token")?.value;
-    const user = getAuthenticatedUser(req.headers, cookieToken);
+    const user = await getAdminUser();
 
     if (!user) {
       return NextResponse.json(
@@ -14,19 +13,11 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    if (!user.permissions.canViewOrders) {
-      return NextResponse.json(
-        { error: `Từ chối truy cập (403): Vai trò "${user.roleTitle}" không có quyền xem đơn hàng.` },
-        { status: 403 }
-      );
-    }
 
     const products = await listAllGiftProducts();
     return NextResponse.json({
       success: true,
       products,
-      userRole: user.role,
-      userRoleTitle: user.roleTitle,
     });
   } catch (err: any) {
     console.error("[API List Products Error]:", err);

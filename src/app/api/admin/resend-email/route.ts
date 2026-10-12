@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
       token: product.token,
       creatorKey,
       chainName: product.chainName,
-      charms: product.charms,
       siteUrl: origin,
     });
 

@@ -20,7 +20,7 @@ export default function AdminLogin({ onLoggedIn }: { onLoggedIn: (user: AdminUse
     e.preventDefault();
     setError("");
     if (!email.trim() || !password) {
-      setError("Vui lòng nhập đầy đủ email và mật khẩu.");
+      setError("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.");
       return;
     }
 
@@ -36,7 +36,7 @@ export default function AdminLogin({ onLoggedIn }: { onLoggedIn: (user: AdminUse
         setPassword("");
         onLoggedIn(data.user);
       } else {
-        setError(data.error || "Email hoặc mật khẩu không đúng.");
+        setError(data.error || "Tên đăng nhập hoặc mật khẩu không đúng.");
       }
     } catch {
       setError("Không kết nối được máy chủ. Vui lòng thử lại.");
@@ -67,15 +67,17 @@ export default function AdminLogin({ onLoggedIn }: { onLoggedIn: (user: AdminUse
             </div>
           )}
 
-          <Field label="Email" htmlFor="admin-email">
+          <Field label="Tên đăng nhập" htmlFor="admin-email">
             <input
               id="admin-email"
-              type="email"
+              type="text"
               autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@gmail.com"
+              placeholder="Tên đăng nhập hoặc email"
               className={inputClass}
             />
           </Field>

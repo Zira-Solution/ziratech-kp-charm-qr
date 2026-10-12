@@ -2,18 +2,28 @@
 
 import React, { useState } from "react";
 import confetti from "canvas-confetti";
-import { CHAINS, CHARMS, MAX_CHARMS, type Charm } from "@/config/catalog";
+import type { Chain } from "@/config/catalog";
 import type { GiftProductView, IssuedCodes } from "@/types/gift-order";
-import { Card, CardHeader, Field, Icon, focusRing, formatVnd, inputClass, primaryButton } from "./ui";
+import { Card, CardHeader, EmptyState, Field, Icon, focusRing, formatVnd, inputClass, primaryButton, secondaryButton } from "./ui";
 
 export interface CreatedOrder {
   order: GiftProductView;
   codes: IssuedCodes | null;
 }
 
-export default function PosView({ onCreated }: { onCreated: (created: CreatedOrder) => void }) {
-  const [chainId, setChainId] = useState<string>(CHAINS[0].id);
-  const [charms, setCharms] = useState<Charm[]>([]);
+interface Props {
+  chains: Chain[];
+  chainsLoading: boolean;
+  onCreated: (created: CreatedOrder) => void;
+  onGoProducts: () => void;
+}
+
+/** Keeps digits only, so the amount box accepts "10.000", "10,000" or "10000" alike. */
+const digitsOnly = (value: string) => value.replace(/\D/g, "");
+
+export default function PosView({ chains, chainsLoading, onCreated, onGoProducts }: Props) {
+  const [pickedId, setPickedId] = useState<string>("");
+  const [charmAmount, setCharmAmount] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -21,31 +31,14 @@ export default function PosView({ onCreated }: { onCreated: (created: CreatedOrd
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const chain = CHAINS.find((c) => c.id === chainId)!;
-  const total = chain.price + charms.reduce((sum, c) => sum + c.price, 0);
-  const atLimit = charms.length >= MAX_CHARMS;
-
-  // Group repeated charms for the invoice: [{ charm, qty }]
-  const grouped = charms.reduce<Array<{ charm: Charm; qty: number }>>((acc, c) => {
-    const hit = acc.find((g) => g.charm.id === c.id);
-    if (hit) hit.qty += 1;
-    else acc.push({ charm: c, qty: 1 });
-    return acc;
-  }, []);
-
-  const addCharm = (charm: Charm) => {
-    if (!atLimit) setCharms((prev) => [...prev, charm]);
-  };
-  const removeOne = (id: string) => {
-    setCharms((prev) => {
-      const idx = prev.map((c) => c.id).lastIndexOf(id);
-      return idx < 0 ? prev : prev.filter((_, i) => i !== idx);
-    });
-  };
+  // Falls back to the first chain when nothing is picked yet or the picked one was hidden.
+  const chain = chains.find((c) => c.id === pickedId) ?? chains[0];
+  const charmMoney = charmAmount ? Number(charmAmount) : 0;
+  const total = (chain?.price ?? 0) + charmMoney;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting) return;
+    if (submitting || !chain) return;
     setError("");
 
     if (!name.trim()) return setError("Vui lòng nhập họ tên khách hàng.");
@@ -60,8 +53,8 @@ export default function PosView({ onCreated }: { onCreated: (created: CreatedOrd
           customerName: name.trim(),
           customerEmail: email.trim(),
           customerPhone: phone.trim() || undefined,
-          chainId,
-          charms: charms.map((c) => ({ id: c.id })),
+          chainId: chain.id,
+          charmAmount: charmMoney,
           paymentMethod: payment,
         }),
       });
@@ -72,7 +65,7 @@ export default function PosView({ onCreated }: { onCreated: (created: CreatedOrd
       setName("");
       setEmail("");
       setPhone("");
-      setCharms([]);
+      setCharmAmount("");
       onCreated({ order: data.product, codes: data.issuedCodes ?? null });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Đã xảy ra lỗi khi tạo đơn");
@@ -80,6 +73,24 @@ export default function PosView({ onCreated }: { onCreated: (created: CreatedOrd
       setSubmitting(false);
     }
   };
+
+  if (!chainsLoading && chains.length === 0) {
+    return (
+      <Card>
+        <EmptyState
+          icon="diamond"
+          title="Chưa có dây vòng nào để bán"
+          hint="Thêm ít nhất một dây vòng (tên và giá) trước khi tạo đơn."
+        />
+        <div className="flex justify-center pb-8">
+          <button type="button" onClick={onGoProducts} className={primaryButton}>
+            <Icon name="add" className="text-[18px]" />
+            Thêm dây vòng
+          </button>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <form onSubmit={submit} noValidate className="grid items-start gap-6 pb-16 lg:grid-cols-[minmax(0,1fr)_22rem] lg:pb-0">
@@ -96,84 +107,77 @@ export default function PosView({ onCreated }: { onCreated: (created: CreatedOrd
 
         {/* 1. Chain */}
         <Card>
-          <CardHeader title="1. Chọn dây vòng" subtitle="Chọn 1 loại dây khách mua." />
-          <div role="radiogroup" aria-label="Loại dây vòng" className="grid gap-3 p-5 sm:grid-cols-2">
-            {CHAINS.map((c) => {
-              const selected = c.id === chainId;
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  onClick={() => setChainId(c.id)}
-                  className={`flex items-start gap-3 rounded-lg border p-3.5 text-left transition-colors ${focusRing} ${
-                    selected
-                      ? "border-primary-container bg-primary-container/5 ring-1 ring-primary-container"
-                      : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                  }`}
-                >
-                  <span
-                    className="mt-0.5 h-8 w-8 shrink-0 rounded-full border border-slate-200"
-                    style={{ backgroundColor: c.color }}
-                    aria-hidden="true"
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-semibold text-slate-900">{c.name}</span>
-                      {selected && <Icon name="check_circle" className="text-[18px] text-primary-container" />}
-                    </span>
-                    <span className="block text-xs text-slate-500">{c.desc}</span>
-                    <span className="mt-1 block text-sm font-semibold text-primary-container">{formatVnd(c.price)}</span>
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </Card>
-
-        {/* 2. Charms */}
-        <Card>
           <CardHeader
-            title="2. Hạt charm đính kèm"
-            subtitle="Bấm vào hạt để thêm. Có thể chọn một hạt nhiều lần."
+            title="1. Chọn dây vòng"
+            subtitle="Chọn 1 loại dây khách mua."
             action={
-              <span
-                className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                  atLimit ? "bg-amber-50 text-amber-700 ring-1 ring-amber-200" : "bg-slate-100 text-slate-600"
-                }`}
-              >
-                {charms.length}/{MAX_CHARMS} hạt
-              </span>
+              <button type="button" onClick={onGoProducts} className={`${secondaryButton} px-3 py-1.5`}>
+                Quản lý dây vòng
+              </button>
             }
           />
-          <div className="grid grid-cols-2 gap-3 p-5 sm:grid-cols-3 xl:grid-cols-4">
-            {CHARMS.map((charm) => {
-              const qty = charms.filter((c) => c.id === charm.id).length;
-              return (
-                <div key={charm.id} className="relative">
+          {chainsLoading && chains.length === 0 ? (
+            <div className="p-5" aria-busy="true">
+              <div className="h-20 animate-pulse rounded-lg bg-slate-100" />
+            </div>
+          ) : (
+            <div role="radiogroup" aria-label="Loại dây vòng" className="grid gap-3 p-5 sm:grid-cols-2">
+              {chains.map((c) => {
+                const selected = c.id === chain?.id;
+                return (
                   <button
+                    key={c.id}
                     type="button"
-                    onClick={() => addCharm(charm)}
-                    disabled={atLimit}
-                    aria-label={`Thêm ${charm.name}, ${formatVnd(charm.price)}${qty ? `, đã chọn ${qty}` : ""}`}
-                    className={`flex h-full w-full flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${focusRing} ${
-                      qty ? "border-primary-container bg-primary-container/5" : "border-slate-200 hover:bg-slate-50"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => setPickedId(c.id)}
+                    className={`flex items-start gap-3 rounded-lg border p-3.5 text-left transition-colors ${focusRing} ${
+                      selected
+                        ? "border-primary-container bg-primary-container/5 ring-1 ring-primary-container"
+                        : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                     }`}
                   >
-                    <Icon name={charm.icon} className="text-[22px] text-primary-container" />
-                    <span className="text-sm font-medium leading-snug text-slate-900">{charm.name}</span>
-                    <span className="text-xs text-slate-500">{charm.meaning}</span>
-                    <span className="mt-auto pt-1 text-xs font-semibold text-slate-700">+{formatVnd(charm.price)}</span>
-                  </button>
-                  {qty > 0 && (
-                    <span className="pointer-events-none absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary-container px-1 text-xs font-semibold text-white">
-                      {qty}
+                    <span
+                      className="mt-0.5 h-8 w-8 shrink-0 rounded-full border border-slate-200"
+                      style={{ backgroundColor: c.color }}
+                      aria-hidden="true"
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-semibold text-slate-900">{c.name}</span>
+                        {selected && <Icon name="check_circle" className="text-[18px] text-primary-container" />}
+                      </span>
+                      {c.desc && <span className="block text-xs text-slate-500">{c.desc}</span>}
+                      <span className="mt-1 block text-sm font-semibold text-primary-container">{formatVnd(c.price)}</span>
                     </span>
-                  )}
-                </div>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </Card>
+
+        {/* 2. Charm money */}
+        <Card>
+          <CardHeader
+            title="2. Tiền charm"
+            subtitle="Charm khách tự mua thêm tại quầy. Nhập tổng tiền charm khách đã mua (để trống nếu không mua)."
+          />
+          <div className="p-5">
+            <Field label="Số tiền charm (đồng)" htmlFor="pos-charm" hint="Ví dụ: 30000 cho 3 hạt charm 10.000đ">
+              <div className="relative sm:max-w-xs">
+                <input
+                  id="pos-charm"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  value={charmAmount ? new Intl.NumberFormat("vi-VN").format(Number(charmAmount)) : ""}
+                  onChange={(e) => setCharmAmount(digitsOnly(e.target.value).slice(0, 9))}
+                  placeholder="0"
+                  className={`${inputClass} pr-8 text-right`}
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-slate-500">đ</span>
+              </div>
+            </Field>
           </div>
         </Card>
 
@@ -255,34 +259,15 @@ export default function PosView({ onCreated }: { onCreated: (created: CreatedOrd
           <CardHeader title="Hóa đơn" />
           <div className="space-y-3 p-5 text-sm">
             <div className="flex items-start justify-between gap-3">
-              <span className="text-slate-700">{chain.name}</span>
-              <span className="shrink-0 font-medium text-slate-900">{formatVnd(chain.price)}</span>
+              <span className="text-slate-700">{chain ? chain.name : "Chưa chọn dây vòng"}</span>
+              <span className="shrink-0 font-medium text-slate-900">{formatVnd(chain?.price ?? 0)}</span>
             </div>
-
-            {grouped.length === 0 ? (
-              <p className="text-slate-400">Chưa có hạt charm nào.</p>
-            ) : (
-              <ul className="space-y-2">
-                {grouped.map(({ charm, qty }) => (
-                  <li key={charm.id} className="flex items-center justify-between gap-2">
-                    <span className="flex min-w-0 items-center gap-1.5 text-slate-700">
-                      <button
-                        type="button"
-                        onClick={() => removeOne(charm.id)}
-                        aria-label={`Bớt một ${charm.name}`}
-                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-slate-300 text-slate-500 hover:bg-slate-100 ${focusRing}`}
-                      >
-                        <Icon name="remove" className="text-[14px]" />
-                      </button>
-                      <span className="truncate">
-                        {charm.name} {qty > 1 && <span className="text-slate-400">×{qty}</span>}
-                      </span>
-                    </span>
-                    <span className="shrink-0 text-slate-900">{formatVnd(charm.price * qty)}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-slate-700">Tiền charm</span>
+              <span className={`shrink-0 ${charmMoney ? "font-medium text-slate-900" : "text-slate-400"}`}>
+                {formatVnd(charmMoney)}
+              </span>
+            </div>
 
             <div className="flex items-center justify-between border-t border-slate-200 pt-3">
               <span className="font-semibold text-slate-900">Tổng thu</span>
@@ -292,7 +277,7 @@ export default function PosView({ onCreated }: { onCreated: (created: CreatedOrd
               Thanh toán: {payment === "cash" ? "Tiền mặt tại quầy" : "Chuyển khoản"}. Tặng kèm thiệp số và thẻ nhung QR.
             </p>
 
-            <button type="submit" disabled={submitting} className={`${primaryButton} w-full py-3`}>
+            <button type="submit" disabled={submitting || !chain} className={`${primaryButton} w-full py-3`}>
               {submitting ? (
                 <>
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -315,7 +300,7 @@ export default function PosView({ onCreated }: { onCreated: (created: CreatedOrd
           <p className="text-xs text-slate-500">Tổng thu</p>
           <p className="text-lg font-bold text-primary-container">{formatVnd(total)}</p>
         </div>
-        <button type="submit" disabled={submitting} className={`${primaryButton} px-5`}>
+        <button type="submit" disabled={submitting || !chain} className={`${primaryButton} px-5`}>
           {submitting ? "Đang tạo..." : "Tạo đơn"}
         </button>
       </div>

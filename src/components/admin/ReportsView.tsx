@@ -6,11 +6,12 @@ import { Card, CardHeader, EmptyState, Icon, Skeleton, formatVnd } from "./ui";
 export interface AnalyticsStats {
   totalOrders: number;
   totalRevenue: number;
+  chainRevenue: number;
+  charmRevenue: number;
   cashRevenue: number;
   transferRevenue: number;
   pendingCount: number;
   completedCount: number;
-  topCharms: Array<{ id: string; name: string; count: number; icon: string }>;
 }
 
 function StatCard({ label, value, note, icon }: { label: string; value: string; note: string; icon: string }) {
@@ -70,9 +71,6 @@ export default function ReportsView({
   }
 
   const pct = (part: number) => (stats.totalRevenue > 0 ? Math.round((part / stats.totalRevenue) * 100) : 0);
-  const topCharms = stats.topCharms.slice(0, 8);
-  const maxCount = Math.max(1, ...topCharms.map((c) => c.count));
-
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -88,26 +86,25 @@ export default function ReportsView({
       </div>
 
       <Card>
-        <CardHeader title="Hạt charm bán chạy" subtitle="Xếp theo số lượng đã bán." />
-        {topCharms.length === 0 ? (
-          <EmptyState icon="diamond" title="Chưa có hạt charm nào được bán" />
-        ) : (
-          <ol className="divide-y divide-slate-100">
-            {topCharms.map((c, i) => (
-              <li key={c.id} className="flex items-center gap-4 px-5 py-3">
-                <span className="w-5 text-sm font-semibold text-slate-400">{i + 1}</span>
-                <Icon name={c.icon} className="text-[22px] text-primary-container" />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-900">{c.name}</p>
-                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-100">
-                    <div className="h-full rounded-full bg-primary-container" style={{ width: `${(c.count / maxCount) * 100}%` }} />
-                  </div>
-                </div>
-                <span className="shrink-0 text-sm font-semibold text-slate-700">{c.count} hạt</span>
-              </li>
-            ))}
-          </ol>
-        )}
+        <CardHeader title="Cơ cấu doanh thu" subtitle="Dây vòng bán qua hệ thống và tiền charm khách mua thêm tại quầy." />
+        <div className="space-y-5 p-5">
+          {[
+            { label: "Dây vòng", value: stats.chainRevenue, color: "bg-primary-container" },
+            { label: "Tiền charm", value: stats.charmRevenue, color: "bg-amber-500" },
+          ].map((row) => (
+            <div key={row.label}>
+              <div className="mb-1.5 flex items-center justify-between text-sm">
+                <span className="font-medium text-slate-800">{row.label}</span>
+                <span className="text-slate-600">
+                  {formatVnd(row.value)} · {pct(row.value)}%
+                </span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                <div className={`h-full rounded-full ${row.color}`} style={{ width: `${pct(row.value)}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
       </Card>
     </div>
   );

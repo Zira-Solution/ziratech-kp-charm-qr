@@ -1,20 +1,13 @@
 import { NextResponse } from "next/server";
+import { createAuthClient } from "@/lib/supabase/auth";
 
 export async function POST() {
-  const res = NextResponse.json({
-    success: true,
-    message: "Đã đăng xuất phiên làm việc",
-  });
-
-  res.cookies.set({
-    name: "kp_admin_token",
-    value: "",
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-  });
-
-  return res;
+  try {
+    const supabase = await createAuthClient();
+    // Ends the session on the Auth server and clears the auth cookies.
+    if (supabase) await supabase.auth.signOut({ scope: "local" });
+  } catch (err) {
+    console.error("[Admin Logout Error]:", err);
+  }
+  return NextResponse.json({ success: true, message: "Đã đăng xuất phiên làm việc" });
 }

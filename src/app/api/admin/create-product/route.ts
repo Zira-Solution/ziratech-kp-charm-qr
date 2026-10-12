@@ -4,7 +4,8 @@ import { sendGiftActivationEmail } from "@/lib/mail/mailer";
 import { CreateProductPayload } from "@/types/gift-order";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { isValidEmail } from "@/lib/validation/security";
-import { priceOrder } from "@/config/catalog";
+import { getActiveChain } from "@/lib/supabase/chains";
+import { MAX_CHARM_AMOUNT } from "@/config/catalog";
 
 const PHONE_PATTERN = /^[0-9+\s().-]{8,20}$/;
 
@@ -40,22 +41,27 @@ export async function POST(req: NextRequest) {
       return badRequest("Số điện thoại không hợp lệ");
     }
 
-    // --- product: the server prices the order from the catalog; client-sent prices and names are ignored ---
-    const charmIds = Array.isArray(body.charms) ? body.charms.map((c: { id?: unknown }) => c?.id) : [];
-    const priced = priceOrder(body.chainId, charmIds);
-    if (!priced.ok) {
-      return badRequest(priced.error);
+    // --- product: the chain price comes from the database; the browser only sends the chain id ---
+    const chain = await getActiveChain(body.chainId);
+    if (!chain) {
+      return badRequest("Loại dây vòng không hợp lệ hoặc đã bị ẩn");
+    }
+
+    // Charms are bought separately at the counter; staff enter the money collected for them.
+    const charmAmount = body.charmAmount === undefined || body.charmAmount === "" ? 0 : Number(body.charmAmount);
+    if (!Number.isInteger(charmAmount) || charmAmount < 0 || charmAmount > MAX_CHARM_AMOUNT) {
+      return badRequest("Tiền charm không hợp lệ");
     }
 
     const payload: CreateProductPayload = {
       customerName,
       customerEmail,
       customerPhone: customerPhone || undefined,
-      chainId: priced.chain.id,
-      chainName: priced.chain.name,
-      chainPrice: priced.chainPrice,
-      charms: priced.charms.map((c) => ({ id: c.id, name: c.name, price: c.price, icon: c.icon })),
-      totalPrice: priced.totalPrice,
+      chainId: chain.id,
+      chainName: chain.name,
+      chainPrice: chain.price,
+      charms: [],
+      totalPrice: chain.price + charmAmount,
       paymentMethod: body.paymentMethod === "transfer" ? "transfer" : "cash",
     };
 
@@ -71,7 +77,6 @@ export async function POST(req: NextRequest) {
       creatorKey: issued.creatorKey,
       unlockPin: issued.unlockPin,
       chainName: order.chainName,
-      charms: order.charms,
       siteUrl: origin,
     });
 

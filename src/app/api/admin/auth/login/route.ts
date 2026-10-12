@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  authenticateWithCredentials,
-  signSessionToken,
-} from "@/lib/auth/admin-auth";
-import { checkRateLimit } from "@/lib/validation/security";
+import { checkRateLimit, isValidEmail } from "@/lib/validation/security";
 import { clearFailures, getLockRemainingMs, recordFailure } from "@/lib/supabase/attempts";
+import { createAuthClient } from "@/lib/supabase/auth";
+import { toAdminEmail } from "@/config/auth";
+
+// One message for every failure (unknown email, wrong password, not an admin) so the
+// endpoint cannot be used to discover which accounts exist.
+const INVALID_LOGIN = "Tên đăng nhập hoặc mật khẩu không chính xác.";
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,24 +20,22 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { identifier, password } = body;
+    const identifier = typeof body.email === "string" ? body.email : typeof body.identifier === "string" ? body.identifier : "";
+    const email = toAdminEmail(identifier) ?? "";
+    const password = typeof body.password === "string" ? body.password : "";
 
-    if (!identifier || !password) {
+    if (!identifier.trim() || !password) {
       return NextResponse.json(
-        { success: false, error: "Vui lòng nhập tài khoản và mật khẩu." },
+        { success: false, error: "Vui lòng nhập tên đăng nhập và mật khẩu." },
         { status: 400 }
       );
     }
-
-    if (typeof identifier !== "string" || typeof password !== "string" || identifier.length > 120 || password.length > 200) {
-      return NextResponse.json(
-        { success: false, error: "Tài khoản hoặc mật khẩu không hợp lệ." },
-        { status: 400 }
-      );
+    if (!email || !isValidEmail(email) || password.length > 200) {
+      return NextResponse.json({ success: false, error: INVALID_LOGIN }, { status: 401 });
     }
 
-    // Lock the account (not just the IP) for 15 minutes after repeated failures.
-    const lockKey = `admin:${identifier.trim().toLowerCase()}`;
+    // Lock the account (not just the IP) for 15 minutes after 10 failed attempts.
+    const lockKey = `admin:${email}`;
     const lockedMs = await getLockRemainingMs(lockKey);
     if (lockedMs > 0) {
       return NextResponse.json(
@@ -47,42 +47,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = authenticateWithCredentials(identifier, password);
-    if (!user) {
-      await recordFailure(lockKey, 10);
+    const supabase = await createAuthClient();
+    if (!supabase) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Tài khoản hoặc mật khẩu không chính xác! Vui lòng kiểm tra lại quyền truy cập.",
-        },
-        { status: 401 }
+        { success: false, error: "Hệ thống chưa cấu hình Supabase. Vui lòng liên hệ quản trị." },
+        { status: 503 }
       );
     }
 
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const isAdmin = !error && data.user?.app_metadata?.role === "admin";
+
+    if (!isAdmin) {
+      // Valid credentials but not an admin: drop the session that was just created.
+      if (!error) await supabase.auth.signOut({ scope: "local" });
+      await recordFailure(lockKey, 10);
+      return NextResponse.json({ success: false, error: INVALID_LOGIN }, { status: 401 });
+    }
+
     await clearFailures(lockKey);
-
-    // Sign session token (hạn 24 giờ)
-    const token = signSessionToken(user, 24 * 60 * 60 * 1000);
-
-    const res = NextResponse.json({
+    return NextResponse.json({
       success: true,
-      user,
-      token,
-      message: `Đăng nhập thành công với vai trò ${user.roleTitle}`,
+      user: { id: data.user.id, email: data.user.email ?? email },
+      message: "Đăng nhập thành công",
     });
-
-    // Set secure cookie
-    res.cookies.set({
-      name: "kp_admin_token",
-      value: token,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 24 * 60 * 60, // 1 day
-    });
-
-    return res;
   } catch (err: any) {
     console.error("[Admin Login Error]:", err);
     return NextResponse.json(

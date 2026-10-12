@@ -1,0 +1,83 @@
+import { NextRequest, NextResponse } from "next/server";
+import { updateGiftProductCustomData } from "@/lib/supabase/products";
+import { checkRateLimit, sanitizeText } from "@/lib/validation/security";
+import { hasGiftSession, normalizeToken } from "@/lib/auth/gift-session";
+
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{ token: string }> }
+) {
+  try {
+    const ip = req.headers.get("x-forwarded-for") || "client-ip";
+    const rateCheck = checkRateLimit(`gift-save:${ip}`, 25, 60 * 1000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: "Thao tác quá nhanh. Vui lòng chờ 1 phút rồi thử lại." },
+        { status: 429 }
+      );
+    }
+
+    const params = await context.params;
+    const token = normalizeToken(params.token);
+    if (!token) {
+      return NextResponse.json({ error: "Mã token không hợp lệ" }, { status: 400 });
+    }
+
+    // Only a caller who entered the creator key for this token may overwrite its card.
+    if (!hasGiftSession(req, "create", token)) {
+      return NextResponse.json(
+        { error: "Phiên tạo thiệp đã hết hạn hoặc chưa xác thực. Vui lòng nhập lại mật khẩu tạo thiệp tại cổng /gift." },
+        { status: 401 }
+      );
+    }
+
+    const body = await req.json();
+    const { giftData } = body;
+
+    if (!giftData || typeof giftData !== "object") {
+      return NextResponse.json({ error: "Thiếu dữ liệu thiệp" }, { status: 400 });
+    }
+
+    // The PIN is only ever stored as a hash, never inside gift_data.
+    const { pinCode, ...giftFields } = giftData;
+    const newUnlockPin = typeof pinCode === "string" && /^\d{4}$/.test(pinCode) ? pinCode : undefined;
+
+    // Validate & sanitize inputs
+    const sanitizedGiftData = {
+      ...giftFields,
+      recipientName: sanitizeText(giftData.recipientName, 100) || "Người nhận",
+      senderName: sanitizeText(giftData.senderName, 100) || "Người gửi",
+      letterTitle: sanitizeText(giftData.letterTitle, 200) || "LỜI NHẮN",
+      letterSubtitle: sanitizeText(giftData.letterSubtitle, 200),
+      letterContent: sanitizeText(giftData.letterContent, 3000),
+      letterSignature: sanitizeText(giftData.letterSignature, 100),
+      template: ["vintage-scrapbook", "retro-nostalgia", "storybook-sunset"].includes(giftData.template)
+        ? giftData.template
+        : "vintage-scrapbook",
+      memoryPhotos: Array.isArray(giftData.memoryPhotos)
+        ? giftData.memoryPhotos.slice(0, 6).map((p: any) => ({
+            url: typeof p.url === "string" ? p.url.slice(0, 500) : "",
+            caption: sanitizeText(p.caption, 200),
+            date: sanitizeText(p.date, 50),
+          }))
+        : [],
+    };
+
+    const updated = await updateGiftProductCustomData(token, sanitizedGiftData, newUnlockPin);
+    if (!updated) {
+      return NextResponse.json({ error: "Không tìm thấy sản phẩm hoặc lưu thất bại" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Đã lưu và kích hoạt thiệp kỷ niệm thành công!",
+      viewUrl: `/g/${token}`,
+    });
+  } catch (err: any) {
+    console.error("[API Save Gift Data Error]:", err);
+    return NextResponse.json(
+      { error: "Lỗi lưu thiệp kỷ niệm" },
+      { status: 500 }
+    );
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import GiftTemplateViewer from "@/components/gift-templates/GiftTemplateViewer";
@@ -15,10 +15,89 @@ export default function RecipientGiftPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [holding, setHolding] = useState(false);
   const [revealProgress, setRevealProgress] = useState(0);
+  const [loadedGiftData, setLoadedGiftData] = useState<any>(null);
+  const [activeTemplate, setActiveTemplate] = useState<GiftTemplateId>(initialTemplateParam);
+
+  // PIN Unlock State
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [enteredPin, setEnteredPin] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [pinChecking, setPinChecking] = useState(false);
+  // null = still checking, true = this browser already proved the code (via /gift), false = PIN needed
+  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [notReady, setNotReady] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const holdStartRef = useRef<number>(0);
+
+  // Loads the card. The server only answers once this browser holds a valid session cookie.
+  // Resolves true only when the card content is available.
+  const fetchGift = useCallback(async (): Promise<boolean> => {
+    if (!token) return false;
+    try {
+      const res = await fetch(`/api/gifts/${token}`);
+      if (!res.ok) {
+        setAuthed(false);
+        return false;
+      }
+      const data = await res.json();
+      setAuthed(true);
+      if (data.success && data.product?.giftData) {
+        setLoadedGiftData(data.product.giftData);
+        setNotReady(false);
+        if (data.product.giftData.template) {
+          setActiveTemplate(data.product.giftData.template);
+        }
+        return true;
+      }
+      setNotReady(true); // verified, but the sender has not finished the card yet
+      return false;
+    } catch (err) {
+      console.warn("Could not load custom gift data:", err);
+      setAuthed(false);
+      return false;
+    }
+  }, [token]);
+
+  // Opens the card: straight away if already verified, otherwise asks for the PIN.
+  const requestUnlock = useCallback(() => {
+    if (!authed) {
+      setShowPinModal(true);
+    } else if (!notReady) {
+      setUnlocked(true);
+    }
+  }, [authed, notReady]);
+
+  const handleCheckPin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pinChecking) return;
+    setPinChecking(true);
+    setPinError("");
+    try {
+      const res = await fetch("/api/gifts/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, passcode: enteredPin, mode: "open" }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setPinError(data.error || "Mã PIN không đúng!");
+        return;
+      }
+      setEnteredPin("");
+      setShowPinModal(false);
+      if (await fetchGift()) setUnlocked(true);
+    } catch {
+      setPinError("Không thể kiểm tra mã PIN. Vui lòng thử lại.");
+    } finally {
+      setPinChecking(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGift();
+  }, [fetchGift]);
 
   // Initialize Canvas Heart Particle System (porting Heart.html)
   useEffect(() => {
@@ -208,7 +287,6 @@ export default function RecipientGiftPage() {
       interval = setInterval(() => {
         setRevealProgress((prev) => {
           if (prev >= 100) {
-            setUnlocked(true);
             return 100;
           }
           return prev + 4;
@@ -219,6 +297,14 @@ export default function RecipientGiftPage() {
     }
     return () => clearInterval(interval);
   }, [holding, unlocked]);
+
+  // Holding long enough opens the card (or asks for the PIN when this browser is not verified yet).
+  useEffect(() => {
+    if (holding && !unlocked && revealProgress >= 100) {
+      setHolding(false);
+      requestUnlock();
+    }
+  }, [holding, unlocked, revealProgress, requestUnlock]);
 
   const handleStartHold = () => {
     setHolding(true);
@@ -237,7 +323,7 @@ export default function RecipientGiftPage() {
 
       {/* Top Welcome Title */}
       <div className="relative z-10 pt-10 text-center px-6 pointer-events-none">
-        <span className="text-[10px] uppercase font-bold tracking-widest text-[#fea095] block mb-1">
+        <span className="text-[10px] uppercase font-bold tracking-widest text-secondary-container block mb-1">
           K&amp;P Atelier · Digital Gift Experience
         </span>
         <h2 className="font-serif text-xl sm:text-2xl font-bold text-white drop-shadow-md">
@@ -246,13 +332,18 @@ export default function RecipientGiftPage() {
         <p className="text-xs text-white/70 mt-1">
           Nhấn và giữ nút bên dưới để đánh thức trái tim
         </p>
+        {notReady && (
+          <p className="text-xs text-amber-300 mt-2 font-bold">
+            Người gửi đang nắn nót chuẩn bị thiệp cho bạn. Hãy quay lại sau nhé!
+          </p>
+        )}
       </div>
 
       {/* Bottom Hold-to-Reveal Button (#reveal-btn in Heart.html) */}
       <div className="relative z-10 pb-16 flex flex-col items-center">
         {/* Progress Circular Bar / Indicator */}
         {holding && (
-          <div className="mb-3 text-[11px] font-mono text-[#fea095] animate-pulse">
+          <div className="mb-3 text-[11px] font-mono text-secondary-container animate-pulse">
             Đang truyền năng lượng: {revealProgress}%
           </div>
         )}
@@ -280,48 +371,100 @@ export default function RecipientGiftPage() {
           {holding ? "GIỮ CHẶT ĐỂ MỞ QUÀ..." : "NHẤN VÀ GIỮ NÚT TRÒN"}
         </span>
 
-        {/* Quick click to test open */}
-        <button
-          onClick={() => {
-            setUnlocked(true);
-          }}
-          className="mt-3 text-[10px] text-white/40 hover:text-white underline"
-        >
-          [Mở quà trực tiếp (Bỏ qua giữ)]
-        </button>
+        {/* PIN Unlock & Bypass options */}
+        <div className="flex items-center gap-3 mt-3">
+          <button
+            onClick={() => setShowPinModal(true)}
+            className="text-[11px] text-secondary-container hover:text-white flex items-center gap-1 cursor-pointer bg-neutral-900/80 px-3 py-1 rounded-full border border-neutral-700"
+          >
+            <span className="material-symbols-outlined text-sm">pin</span>
+            <span>Mở bằng mã PIN</span>
+          </button>
+
+        </div>
       </div>
+
+      {/* PIN Unlock Modal */}
+      {showPinModal && (
+        <div className="absolute inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="w-full max-w-xs p-6 rounded-3xl bg-neutral-950 border border-neutral-700 text-center shadow-2xl">
+            <span className="material-symbols-outlined text-3xl text-secondary-container mb-2">lock</span>
+            <h3 className="font-serif text-lg font-bold text-white">Nhập Mã PIN 4 Số</h3>
+            <p className="text-xs text-neutral-400 mt-1 mb-4">
+              Người tặng đã cài mã PIN bảo mật cho món quà này.
+            </p>
+
+            <form onSubmit={handleCheckPin} className="space-y-3">
+              {pinError && (
+                <div className="text-xs text-rose-400 font-bold bg-rose-950/60 p-2 rounded-xl border border-rose-800">
+                  {pinError}
+                </div>
+              )}
+
+              <input
+                type="password"
+                inputMode="numeric"
+                maxLength={4}
+                value={enteredPin}
+                onChange={(e) => setEnteredPin(e.target.value.replace(/\D/g, ""))}
+                placeholder="••••"
+                className="w-full py-3 text-center font-mono text-2xl tracking-[0.5em] rounded-xl bg-black/60 border border-neutral-700 text-white focus:outline-none focus:border-secondary-container"
+                autoFocus
+              />
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPinModal(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-neutral-800 text-neutral-300 text-xs font-bold"
+                >
+                  Đóng
+                </button>
+                <button
+                  type="submit"
+                  disabled={pinChecking || enteredPin.length !== 4}
+                  className="flex-1 py-2.5 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 shadow-md disabled:opacity-50"
+                >
+                  {pinChecking ? "Đang kiểm tra..." : "Mở Khóa"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 
   if (unlocked) {
     return (
       <GiftTemplateViewer
-        initialTemplate={initialTemplateParam}
+        initialTemplate={activeTemplate}
+        giftData={loadedGiftData || undefined}
         onBackToLock={() => setUnlocked(false)}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#1b1716] flex flex-col items-center justify-center relative">
+    <div className="min-h-screen bg-neutral-900 flex flex-col items-center justify-center relative">
       {/* Top Controls */}
       <div className="fixed top-3 right-4 z-50 flex items-center gap-2 bg-neutral-900/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-neutral-700 text-white">
         <Link
           href="/"
           className="text-xs font-bold text-neutral-300 hover:text-white flex items-center gap-1 mr-2"
         >
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span className="material-symbols-outlined text-base">arrow_back</span>
           Trang Chủ
         </Link>
       </div>
 
-      {/* Phone View (390 x 844 iPhone Frame matching Heart Phone View) */}
-      <div className="py-10 px-4 flex items-center justify-center w-full min-h-screen">
-        <div className="w-[390px] h-[844px] p-3 bg-[#111] rounded-[56px] shadow-[0_30px_80px_rgba(0,0,0,0.8)] border border-neutral-800 relative shrink-0 flex flex-col">
-          {/* Dynamic Island / Notch */}
-          <div className="absolute top-[22px] left-1/2 -translate-x-1/2 w-[120px] h-[34px] bg-black rounded-full z-50 pointer-events-none border border-neutral-900" />
+      {/* Responsive Viewport: Fullscreen Native on Mobile, Luxury iPhone Chassis on Desktop */}
+      <div className="w-full min-h-screen md:py-10 md:px-4 flex items-center justify-center">
+        <div className="w-full min-h-screen md:min-h-0 md:w-97.5 md:h-211 md:p-3 md:bg-neutral-950 md:rounded-4xl md:shadow-[0_30px_80px_rgba(0,0,0,0.8)] md:border md:border-neutral-800 relative shrink-0 flex flex-col bg-black">
+          {/* Dynamic Island / Notch (Desktop frame only) */}
+          <div className="hidden md:block absolute top-5.5 left-1/2 -translate-x-1/2 w-30 h-8.5 bg-black rounded-full z-50 pointer-events-none border border-neutral-900" />
           {/* Screen Container */}
-          <div className="w-full h-full rounded-[44px] overflow-hidden bg-black relative flex flex-col">
+          <div className="w-full flex-1 md:h-full md:rounded-3xl overflow-hidden bg-black relative flex flex-col">
             <div className="flex-1 overflow-y-auto">
               {renderLockedHeart()}
             </div>

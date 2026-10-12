@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGiftProductByToken, markProductEmailSent, setGiftSecretHash } from "@/lib/supabase/products";
 import { sendGiftActivationEmail } from "@/lib/mail/mailer";
-import { getAuthenticatedUser } from "@/lib/auth/admin-auth";
+import { getAdminUser } from "@/lib/supabase/auth";
 import { generateCreatorKey, hashSecret, normalizeCreatorKey } from "@/lib/auth/crypto";
 import { normalizeToken } from "@/lib/auth/gift-session";
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieToken = req.cookies.get("kp_admin_token")?.value;
-    const user = getAuthenticatedUser(req.headers, cookieToken);
+    const user = await getAdminUser();
 
     if (!user) {
       return NextResponse.json(
@@ -17,12 +16,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!user.permissions.canResendEmail) {
-      return NextResponse.json(
-        { error: `Từ chối truy cập (403): Vai trò "${user.roleTitle}" không có quyền gửi lại email mã kích hoạt.` },
-        { status: 403 }
-      );
-    }
 
     const body = await req.json();
     const token = normalizeToken(body.token);
@@ -51,7 +44,7 @@ export async function POST(req: NextRequest) {
       siteUrl: origin,
     });
 
-    if (mailRes.success) {
+    if (mailRes.success && !mailRes.simulated) {
       await markProductEmailSent(product.token);
     }
 

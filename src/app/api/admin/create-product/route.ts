@@ -2,80 +2,61 @@ import { NextRequest, NextResponse } from "next/server";
 import { createGiftProductInDb, markProductEmailSent, toAdminView } from "@/lib/supabase/products";
 import { sendGiftActivationEmail } from "@/lib/mail/mailer";
 import { CreateProductPayload } from "@/types/gift-order";
-import { getAuthenticatedUser } from "@/lib/auth/admin-auth";
+import { getAdminUser } from "@/lib/supabase/auth";
 import { isValidEmail } from "@/lib/validation/security";
+import { priceOrder } from "@/config/catalog";
+
+const PHONE_PATTERN = /^[0-9+\s().-]{8,20}$/;
+
+const badRequest = (error: string) => NextResponse.json({ success: false, error }, { status: 400 });
 
 export async function POST(req: NextRequest) {
   try {
-    const cookieToken = req.cookies.get("kp_admin_token")?.value;
-    const user = getAuthenticatedUser(req.headers, cookieToken);
-
+    const user = await getAdminUser();
     if (!user) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Unauthorized - Vui lòng đăng nhập tài khoản nhân viên quầy POS để tiếp tục.",
-        },
+        { success: false, error: "Unauthorized - Vui lòng đăng nhập để tiếp tục." },
         { status: 401 }
       );
     }
 
-    // PHÂN QUYỀN: Kiểm tra quyền tạo đơn / add POS
-    if (!user.permissions.canCreateOrder) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Từ chối truy cập (403): Tài khoản mang vai trò "${user.roleTitle}" không có phân quyền tạo/thêm đơn hàng tại quầy POS. Chỉ Quản trị viên (Admin) hoặc Nhân viên Thu Ngân (Cashier) mới được phép tạo đơn!`,
-        },
-        { status: 403 }
-      );
-    }
-
     const body = await req.json();
-    const {
-      customerName,
-      customerEmail,
-      customerPhone,
-      chainId,
-      chainName,
-      chainPrice,
-      charms,
-      totalPrice,
-      paymentMethod,
-    } = body;
 
-    // Validation
-    if (typeof customerName !== "string" || typeof customerEmail !== "string" || !customerName.trim() || !customerEmail.trim()) {
-      return NextResponse.json(
-        { error: "Vui lòng nhập đầy đủ tên và email của khách hàng" },
-        { status: 400 }
-      );
+    // --- customer ---
+    const customerName = typeof body.customerName === "string" ? body.customerName.trim() : "";
+    const customerEmail = typeof body.customerEmail === "string" ? body.customerEmail.trim() : "";
+    const customerPhone = typeof body.customerPhone === "string" ? body.customerPhone.trim() : "";
+
+    if (!customerName || !customerEmail) {
+      return badRequest("Vui lòng nhập đầy đủ tên và email của khách hàng");
+    }
+    if (customerName.length > 120) {
+      return badRequest("Tên khách hàng quá dài (tối đa 120 ký tự)");
+    }
+    if (!isValidEmail(customerEmail)) {
+      return badRequest("Email của khách hàng không hợp lệ");
+    }
+    if (customerPhone && !PHONE_PATTERN.test(customerPhone)) {
+      return badRequest("Số điện thoại không hợp lệ");
     }
 
-    if (!isValidEmail(customerEmail) || customerName.length > 120) {
-      return NextResponse.json(
-        { error: "Tên hoặc email của khách hàng không hợp lệ" },
-        { status: 400 }
-      );
-    }
-
-    if (!chainId || !chainName) {
-      return NextResponse.json(
-        { error: "Vui lòng chọn loại dây vòng" },
-        { status: 400 }
-      );
+    // --- product: the server prices the order from the catalog; client-sent prices and names are ignored ---
+    const charmIds = Array.isArray(body.charms) ? body.charms.map((c: { id?: unknown }) => c?.id) : [];
+    const priced = priceOrder(body.chainId, charmIds);
+    if (!priced.ok) {
+      return badRequest(priced.error);
     }
 
     const payload: CreateProductPayload = {
       customerName,
       customerEmail,
-      customerPhone,
-      chainId,
-      chainName,
-      chainPrice: Number(chainPrice) || 0,
-      charms: Array.isArray(charms) ? charms : [],
-      totalPrice: Number(totalPrice) || 0,
-      paymentMethod: paymentMethod === "transfer" ? "transfer" : "cash",
+      customerPhone: customerPhone || undefined,
+      chainId: priced.chain.id,
+      chainName: priced.chain.name,
+      chainPrice: priced.chainPrice,
+      charms: priced.charms.map((c) => ({ id: c.id, name: c.name, price: c.price, icon: c.icon })),
+      totalPrice: priced.totalPrice,
+      paymentMethod: body.paymentMethod === "transfer" ? "transfer" : "cash",
     };
 
     // 1. Create product & generate unique token
@@ -94,7 +75,8 @@ export async function POST(req: NextRequest) {
       siteUrl: origin,
     });
 
-    if (mailRes.success) {
+    // Simulated mode (no SMTP configured) does not count as sent.
+    if (mailRes.success && !mailRes.simulated) {
       await markProductEmailSent(order.token);
       order.emailSent = true;
     }
@@ -108,15 +90,13 @@ export async function POST(req: NextRequest) {
       emailSent: order.emailSent,
       isSimulatedEmail: mailRes.simulated || false,
       createdBy: {
-        staffName: user.name,
-        role: user.role,
-        roleTitle: user.roleTitle,
+        staffEmail: user.email,
       },
     });
   } catch (err: any) {
     console.error("[API Create Product Error]:", err);
     return NextResponse.json(
-      { error: err.message || "Lỗi tạo sản phẩm tại quầy" },
+      { success: false, error: "Không thể tạo đơn lúc này. Vui lòng thử lại." },
       { status: 500 }
     );
   }

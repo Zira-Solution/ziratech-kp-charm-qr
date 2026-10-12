@@ -58,3 +58,11 @@ create table if not exists public.access_attempts (
 );
 
 alter table public.access_attempts enable row level security; -- no policies: server only
+
+-- 5. Table privileges for the Data API.
+-- With "Automatically expose new tables" turned off, Supabase no longer grants anything by default,
+-- so the server role needs explicit grants. anon/authenticated get nothing (defence in depth on top of RLS).
+revoke all on public.gift_products from anon, authenticated;
+revoke all on public.access_attempts from anon, authenticated;
+grant select, insert, update, delete on public.gift_products to service_role;
+grant select, insert, update, delete on public.access_attempts to service_role;

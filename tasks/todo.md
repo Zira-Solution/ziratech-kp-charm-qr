@@ -27,9 +27,9 @@ Chú thích: `[ ]` chưa làm · `[x]` xong. Mỗi nhiệm vụ = 1 commit nhỏ
 ## Phase 3 — Ghi âm thật
 
 - [x] **T7 Thư viện media + API voice + link ký** (M).
-- [ ] **T8 Khối ghi âm trong studio** (M).
+- [x] **T8 Khối ghi âm trong studio** (M). Ghi âm bằng MediaRecorder (tối đa 120 giây, tự dừng), tải lên, nghe lại, bỏ ghi âm (chỉ xoá khỏi bản nháp), thử tải lại khi lỗi mạng; phần thuần có test (`scripts/recorder.test.ts`).
 
-**Checkpoint C:** (chờ T8) API ✅ 22/22 trên Supabase thật; còn khối ghi âm trong studio.
+**Checkpoint C:** ✅ API 22/22 trên Supabase thật; khối ghi âm đã vào studio. `npm test` 38/38, `tsc`, `eslint`, `next build` đều qua. Micro thật + nén ảnh chưa chạy trong trình duyệt thật → bạn tự test.
 
 ## Phase 4 — Rà soát
 

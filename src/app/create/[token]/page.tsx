@@ -20,6 +20,7 @@ import AnniversaryBlock from "@/components/studio/blocks/AnniversaryBlock";
 import TimelineBlock from "@/components/studio/blocks/TimelineBlock";
 import VideoBlock from "@/components/studio/blocks/VideoBlock";
 import MusicBlock from "@/components/studio/blocks/MusicBlock";
+import VoiceBlock from "@/components/studio/blocks/VoiceBlock";
 import { parseGiftData } from "@/lib/validation/gift";
 
 interface StudioProduct {
@@ -213,6 +214,8 @@ export default function CardStudioPage() {
         return <TimelineBlock key={block} step={next()} items={draft.timeline} onChange={(timeline) => update({ timeline })} />;
       case "music":
         return <MusicBlock key={block} step={next()} draft={draft} onChange={update} />;
+      case "voice":
+        return <VoiceBlock key={block} step={next()} token={token} draft={draft} onChange={update} />;
       case "video":
         return <VideoBlock key={block} step={next()} draft={draft} onChange={update} />;
       default:

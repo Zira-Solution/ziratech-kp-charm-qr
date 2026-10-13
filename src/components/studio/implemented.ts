@@ -24,5 +24,6 @@ export const IMPLEMENTED_BLOCKS: ReadonlySet<BlockId> = new Set<BlockId>([
   "anniversary",
   "timeline",
   "music",
+  "voice",
   "video",
 ]);

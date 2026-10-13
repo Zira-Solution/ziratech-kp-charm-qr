@@ -16,6 +16,19 @@ export type BlockId =
   | "anniversary"
   | "timeline";
 
+/** Names shown to the buyer for each block. */
+export const BLOCK_LABELS: Record<BlockId, string> = {
+  letter: "Thư tay",
+  photos: "Album ảnh",
+  highlight: "Ảnh nổi bật",
+  finalMessage: "Lời kết",
+  music: "Nhạc nền",
+  voice: "Ghi âm",
+  video: "Video",
+  anniversary: "Ngày kỷ niệm",
+  timeline: "Mốc thời gian",
+};
+
 export interface TemplateInfo {
   id: GiftTemplateId;
   name: string;

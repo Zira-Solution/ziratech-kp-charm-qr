@@ -20,9 +20,9 @@ Chú thích: `[ ]` chưa làm · `[x]` xong. Mỗi nhiệm vụ = 1 commit nhỏ
 - [x] **T3 Khung studio** (M): chọn mẫu, tên (xưng hô, ẩn danh), thư, lời kết, lưu/khôi phục; bỏ dữ liệu mẫu điền sẵn, AI giả, nhãn sai; câu mẫu có xác nhận trước khi ghi đè.
 - [x] **T4 Ảnh album + ảnh nổi bật** (M).
 - [x] **T5 Ngày kỷ niệm + mốc thời gian + video** (M).
-- [ ] **T6 Nhạc**: giai điệu có sẵn (nghe thử) + link (M).
+- [x] **T6 Nhạc**: giai điệu có sẵn (nghe thử) + link (M).
 
-**Checkpoint B:** điền mọi khối của từng mẫu, lưu, tải lại còn nguyên.
+**Checkpoint B:** ✅ bài test đầu-cuối: lưu bằng payload của studio, đọc lại còn nguyên (chữ, ảnh, nổi bật, lời kết, mốc, video, nhạc), PIN không lưu trong thiệp, đổi mẫu thì bỏ khối không hỗ trợ.
 
 ## Phase 3 — Ghi âm thật
 

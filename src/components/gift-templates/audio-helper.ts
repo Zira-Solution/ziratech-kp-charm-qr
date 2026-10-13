@@ -1,29 +1,97 @@
-// Interactive Web Audio synthesizer for background melody and audio playback simulation
+// Interactive Web Audio synthesizer for background melodies. Nothing is downloaded: every melody is
+// generated in the browser, so there is no audio file to host and no copyright to clear.
+
+export interface MelodyVoice {
+  /** Notes in Hz, played in a loop. */
+  notes: readonly number[];
+  /** Milliseconds between notes. */
+  stepMs: number;
+  type: OscillatorType;
+  /** Peak gain (keep low: this plays under the card). */
+  volume: number;
+  /** Seconds a note takes to fade out. */
+  decay: number;
+}
+
+// The melody the cards have always used (gentle arpeggio, C major / A minor pentatonic).
+const DEFAULT_VOICE: MelodyVoice = {
+  notes: [
+    261.63, 329.63, 392.0, 523.25, // C4, E4, G4, C5
+    293.66, 369.99, 440.0, 587.33, // D4, F#4, A4, D5
+    220.0, 261.63, 329.63, 440.0, // A3, C4, E4, A4
+    349.23, 440.0, 523.25, 659.25, // F4, A4, C5, E5
+  ],
+  stepMs: 420,
+  type: "sine",
+  volume: 0.08,
+  decay: 1.2,
+};
+
+/** One voice per id in MUSIC_PRESETS (music-presets.ts); a test keeps the two lists in sync. */
+export const PRESET_VOICES: Record<string, MelodyVoice> = {
+  lofi: {
+    notes: [220.0, 261.63, 329.63, 392.0, 349.23, 261.63, 329.63, 440.0, 196.0, 246.94, 329.63, 392.0],
+    stepMs: 520,
+    type: "triangle",
+    volume: 0.07,
+    decay: 1.6,
+  },
+  piano: {
+    notes: [392.0, 440.0, 523.25, 440.0, 392.0, 329.63, 293.66, 329.63, 392.0, 349.23, 329.63, 293.66],
+    stepMs: 620,
+    type: "sine",
+    volume: 0.09,
+    decay: 2.0,
+  },
+  musicbox: {
+    notes: [783.99, 659.25, 523.25, 659.25, 783.99, 1046.5, 987.77, 783.99, 698.46, 587.33, 698.46, 880.0],
+    stepMs: 380,
+    type: "triangle",
+    volume: 0.05,
+    decay: 0.95,
+  },
+  guitar: {
+    notes: [196.0, 246.94, 293.66, 392.0, 293.66, 246.94, 220.0, 261.63, 329.63, 440.0, 329.63, 261.63],
+    stepMs: 460,
+    type: "triangle",
+    volume: 0.09,
+    decay: 1.1,
+  },
+};
 
 class MusicSynthesizer {
   private ctx: AudioContext | null = null;
   private isPlaying = false;
-  private timer: any = null;
+  private timer: ReturnType<typeof setTimeout> | null = null;
   private noteIndex = 0;
+  private voice: MelodyVoice = DEFAULT_VOICE;
+  private currentId: string | null = null;
 
-  // Lofi / Gentle romantic arpeggio notes in Hz (C major / A minor pentatonic)
-  private melody = [
-    261.63, 329.63, 392.00, 523.25, // C4, E4, G4, C5
-    293.66, 369.99, 440.00, 587.33, // D4, F#4, A4, D5
-    220.00, 261.63, 329.63, 440.00, // A3, C4, E4, A4
-    349.23, 440.00, 523.25, 659.25  // F4, A4, C5, E5
-  ];
+  /** Id of the preset that is playing right now, or null (also null for the default melody). */
+  public get playingId(): string | null {
+    return this.isPlaying ? this.currentId : null;
+  }
 
-  public play() {
-    if (this.isPlaying) return;
+  /** Starts a melody. With no id it plays the default one. Playing another id switches to it. */
+  public play(presetId?: string) {
+    const voice = presetId ? PRESET_VOICES[presetId] : DEFAULT_VOICE;
+    if (!voice) return;
+    if (this.isPlaying) {
+      if (this.currentId === (presetId ?? null)) return;
+      this.stop();
+    }
+
     try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!this.ctx) {
         this.ctx = new AudioCtx();
       }
       if (this.ctx.state === "suspended") {
         this.ctx.resume();
       }
+      this.voice = voice;
+      this.currentId = presetId ?? null;
+      this.noteIndex = 0;
       this.isPlaying = true;
       this.scheduleNextNote();
     } catch {
@@ -33,6 +101,7 @@ class MusicSynthesizer {
 
   public stop() {
     this.isPlaying = false;
+    this.currentId = null;
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
@@ -42,28 +111,30 @@ class MusicSynthesizer {
   private scheduleNextNote() {
     if (!this.isPlaying || !this.ctx) return;
 
-    const freq = this.melody[this.noteIndex % this.melody.length];
+    const { notes, stepMs, type, volume, decay } = this.voice;
+    const freq = notes[this.noteIndex % notes.length];
     this.noteIndex++;
 
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
+    const now = this.ctx.currentTime;
 
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
 
-    gain.gain.setValueAtTime(0.001, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.08, this.ctx.currentTime + 0.08);
-    gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 1.2);
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.exponentialRampToValueAtTime(volume, now + 0.08);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + decay);
 
     osc.connect(gain);
     gain.connect(this.ctx.destination);
 
     osc.start();
-    osc.stop(this.ctx.currentTime + 1.25);
+    osc.stop(now + decay + 0.05);
 
     this.timer = setTimeout(() => {
       this.scheduleNextNote();
-    }, 420);
+    }, stepMs);
   }
 }
 

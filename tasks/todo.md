@@ -33,8 +33,8 @@ Chú thích: `[ ]` chưa làm · `[x]` xong. Mỗi nhiệm vụ = 1 commit nhỏ
 
 ## Phase 4 — Rà soát
 
-- [ ] **T9 Rà soát bảo mật + hiệu năng** (S).
-- [ ] **T10 Build, push, ghi chú việc còn lại** (S).
+- [x] **T9 Rà soát bảo mật + hiệu năng** (S). Đã sửa: `save` giờ từ chối body >3,5 MB (413) và JSON hỏng/null/mảng (400) thay vì 500; kiểm bằng script thật (6/6). Đã rà và ổn: mọi route gifts đều cần phiên đúng phạm vi, voice kiểm byte đầu file + giới hạn 2 MB + chỉ link ký 1 giờ trên bucket riêng, đường dẫn ghi âm khoá theo thư mục thiệp, link nhạc/video https + danh sách host, không dùng `dangerouslySetInnerHTML`. Ghi nhận chưa sửa: (1) giới hạn tốc độ nằm trong bộ nhớ và dựa vào `x-forwarded-for` → khi chạy nhiều instance cần kho dùng chung; (2) GET thiệp trả cả ảnh inline (tới ~2,5 MB) → chuyển ảnh sang Storage sẽ giải quyết; (3) OTP vẫn là mã cố định.
+- [x] **T10 Build, push, ghi chú việc còn lại** (S). `npm test` 38/38, `tsc`, `eslint`, `next build` qua; đã quét commit chưa push: không có secret/co-author.
 
 ## Ngoài phạm vi (giai đoạn sau)
 

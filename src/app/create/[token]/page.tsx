@@ -6,6 +6,7 @@ import Link from "next/link";
 import confetti from "canvas-confetti";
 import { GiftProductOrder } from "@/types/gift-order";
 import { GiftTemplateId, DEFAULT_GIFT_DATA, RecipientGiftData } from "@/components/gift-templates/types";
+import { compressImageToDataUrl } from "@/lib/image-compress";
 
 export default function CustomerGiftStudioPage() {
   const params = useParams();
@@ -17,6 +18,7 @@ export default function CustomerGiftStudioPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [needsAuth, setNeedsAuth] = useState(false); // no valid creator session for this token
   const [isSaving, setIsSaving] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false); // a photo is being compressed
   const [showMobilePreview, setShowMobilePreview] = useState(false);
 
   // Customer Customization State
@@ -105,47 +107,43 @@ export default function CustomerGiftStudioPage() {
     }
   };
 
-  // Handle Photo File Upload
-  const handlePhotoFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  // Handle Photo File Upload: the photo is compressed in the browser before it joins the card.
+  const handlePhotoFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const file = input.files?.[0];
+    input.value = ""; // allow picking the same file again
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Vui lòng chọn ảnh dung lượng dưới 5MB để tải nhanh.");
+    if (!file.type.startsWith("image/")) {
+      alert("Vui lòng chọn một tệp ảnh.");
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      alert("Ảnh quá lớn (trên 20MB). Vui lòng chọn ảnh nhỏ hơn.");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const result = event.target?.result as string;
-      if (!result) return;
+    const targetIdx = uploadTargetIdx;
+    setUploadTargetIdx(null);
+    setPhotoBusy(true);
+    try {
+      const url = await compressImageToDataUrl(file);
 
-      if (uploadTargetIdx !== null && uploadTargetIdx < photos.length) {
-        // Replace existing
-        const updated = [...photos];
-        updated[uploadTargetIdx] = {
-          ...updated[uploadTargetIdx],
-          url: result,
-        };
-        setPhotos(updated);
+      if (targetIdx !== null && targetIdx < photos.length) {
+        // Replace an existing photo
+        setPhotos((prev) => prev.map((p, i) => (i === targetIdx ? { ...p, url } : p)));
       } else {
-        // Add new
         if (photos.length >= 6) {
           alert("Tối đa 6 ảnh kỷ niệm.");
           return;
         }
-        setPhotos((prev) => [
-          ...prev,
-          {
-            url: result,
-            caption: "Kỷ niệm mới thêm...",
-            date: "20/10/2026",
-          },
-        ]);
+        setPhotos((prev) => [...prev, { url, caption: "Kỷ niệm mới thêm...", date: "20/10/2026" }]);
       }
-      setUploadTargetIdx(null);
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Không xử lý được ảnh này.");
+    } finally {
+      setPhotoBusy(false);
+    }
   };
 
   const handleRemovePhoto = (idx: number) => {
@@ -585,10 +583,11 @@ export default function CustomerGiftStudioPage() {
                         setUploadTargetIdx(null);
                         fileInputRef.current?.click();
                       }}
-                      className="px-3 py-1 rounded-xl liquid-glass-btn-primary text-white text-xs font-bold font-sans flex items-center gap-1 cursor-pointer shadow-xs"
+                      disabled={photoBusy}
+                      className="px-3 py-1 rounded-xl liquid-glass-btn-primary text-white text-xs font-bold font-sans flex items-center gap-1 cursor-pointer shadow-xs disabled:opacity-60"
                     >
                       <span className="material-symbols-outlined text-[15px]">add_photo_alternate</span>
-                      <span>Thêm Ảnh</span>
+                      <span>{photoBusy ? "Đang xử lý ảnh..." : "Thêm Ảnh"}</span>
                     </button>
                   )}
                 </div>

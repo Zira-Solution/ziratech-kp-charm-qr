@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateGiftProductCustomData } from "@/lib/supabase/products";
 import { checkRateLimit } from "@/lib/validation/security";
-import { cleanText } from "@/lib/validation/gift";
+import { cleanText, parsePhotos } from "@/lib/validation/gift";
 import { hasGiftSession, normalizeToken } from "@/lib/auth/gift-session";
 
 export async function POST(
@@ -43,7 +43,12 @@ export async function POST(
     const { pinCode, ...giftFields } = giftData;
     const newUnlockPin = typeof pinCode === "string" && /^\d{4}$/.test(pinCode) ? pinCode : undefined;
 
-    // Validate & sanitize inputs
+    // Text is stored as typed (React escapes it on render); photos are kept whole or rejected.
+    const photos = parsePhotos(giftData.memoryPhotos);
+    if (!photos.ok) {
+      return NextResponse.json({ error: photos.error }, { status: 400 });
+    }
+
     const sanitizedGiftData = {
       ...giftFields,
       recipientName: cleanText(giftData.recipientName, 100) || "Người nhận",
@@ -55,13 +60,7 @@ export async function POST(
       template: ["vintage-scrapbook", "retro-nostalgia", "storybook-sunset"].includes(giftData.template)
         ? giftData.template
         : "vintage-scrapbook",
-      memoryPhotos: Array.isArray(giftData.memoryPhotos)
-        ? giftData.memoryPhotos.slice(0, 6).map((p: any) => ({
-            url: typeof p.url === "string" ? p.url.slice(0, 500) : "",
-            caption: cleanText(p.caption, 200),
-            date: cleanText(p.date, 50),
-          }))
-        : [],
+      memoryPhotos: photos.photos,
     };
 
     const updated = await updateGiftProductCustomData(token, sanitizedGiftData, newUnlockPin);

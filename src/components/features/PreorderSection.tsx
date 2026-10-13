@@ -150,43 +150,43 @@ export default function PreorderSection({
   return (
     <section
       id="preorder-section"
-      className="scroll-mt-24 w-full py-16 sm:py-24 bg-gradient-to-b from-[#fbf1ed] via-[#fff8f6] to-[#faece7] border-t border-[#ebd5cf] relative overflow-hidden"
+      className="scroll-mt-24 w-full py-16 sm:py-24 bg-linear-to-b from-brand-bg via-brand-bg to-surface-container border-t border-vintage-blush relative overflow-hidden"
     >
       {/* Decorative ambient background glows */}
-      <div className="absolute top-10 right-10 w-96 h-96 bg-[#ffd8d2]/40 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#f9dad3]/50 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 right-10 w-96 h-96 bg-rose-petal/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-rose-petal/50 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-320 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* ========================================================= */}
         {/* SECTION HEADER: Editorial Luxury Pre-order */}
         {/* ========================================================= */}
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#540114] text-white text-xs font-semibold shadow-md mb-3 transform hover:scale-105 transition-transform border border-[#fea095]/30">
-            <span className="material-symbols-outlined text-[16px] text-[#fea095]">local_shipping</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary text-white text-xs font-semibold shadow-md mb-3 transform hover:scale-105 transition-transform border border-secondary-container/30">
+            <span className="material-symbols-outlined text-base text-secondary-container">local_shipping</span>
             <span className="tracking-wide">Hẹn Giờ Nhận Quà 20/10 • Booth ĐH FPT</span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#540114] tracking-tight leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-extrabold text-primary tracking-tight leading-tight">
             Đặt Trước Kỷ Vật 20/10.<br />
-            <span className="text-[#934841]">Nhận Quà Trọn Vẹn Tại Booth ĐH FPT.</span>
+            <span className="text-secondary">Nhận Quà Trọn Vẹn Tại Booth ĐH FPT.</span>
           </h2>
 
-          <p className="text-sm sm:text-base text-[#564243] mt-3.5 leading-relaxed max-w-2xl">
+          <p className="text-sm sm:text-base text-on-surface-variant mt-3.5 leading-relaxed max-w-2xl">
             Đặt trước ngay hôm nay để K&amp;P chuẩn bị thiệp viết tay theo yêu cầu, khắc thẻ mã QR cá nhân và đóng gói hộp nhung nơ lụa. Nhận hàng đúng khung giờ hẹn tại Booth hoặc nhờ giao tận phòng học.
           </p>
 
           {/* Micro Guarantee Badges */}
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-5 text-xs text-[#6e5550]">
-            <span className="inline-flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-[#ebd5cf] shadow-2xs font-medium">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-5 text-xs text-warm-neutral">
+            <span className="inline-flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-vintage-blush shadow-xs font-medium">
               <span className="material-symbols-outlined text-[15px] text-emerald-600">check_circle</span>
               Miễn phí hộp nhung &amp; nơ lụa
             </span>
-            <span className="inline-flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-[#ebd5cf] shadow-2xs font-medium">
+            <span className="inline-flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-vintage-blush shadow-xs font-medium">
               <span className="material-symbols-outlined text-[15px] text-emerald-600">check_circle</span>
               Tặng kèm Thẻ Thông Minh khắc QR
             </span>
-            <span className="inline-flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-[#ebd5cf] shadow-2xs font-medium">
+            <span className="inline-flex items-center gap-1.5 bg-white/80 px-3 py-1 rounded-full border border-vintage-blush shadow-xs font-medium">
               <span className="material-symbols-outlined text-[15px] text-emerald-600">check_circle</span>
               Thanh toán linh hoạt tiền mặt / VietQR
             </span>
@@ -200,7 +200,7 @@ export default function PreorderSection({
           /* ======================================================= */
           /* SUCCESS CONFIRMATION VIEW */
           /* ======================================================= */
-          <div className="max-w-2xl mx-auto bg-white rounded-3xl p-6 sm:p-10 shadow-[0_20px_50px_rgba(84,1,20,0.15)] border-2 border-[#540114]/20 text-center animate-in fade-in zoom-in-95 duration-400">
+          <div className="max-w-2xl mx-auto bg-white rounded-3xl p-6 sm:p-10 shadow-[0_20px_50px_rgba(84,1,20,0.15)] border-2 border-primary/20 text-center animate-in fade-in zoom-in-95 duration-400">
             
             <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-emerald-500 shadow-sm animate-bounce">
               <span className="material-symbols-outlined text-[42px] text-emerald-600">
@@ -212,19 +212,19 @@ export default function PreorderSection({
               Đặt Trước Thành Công
             </span>
 
-            <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#540114]">
+            <h3 className="font-serif text-2xl sm:text-3xl font-extrabold text-primary">
               Cảm Ơn Bạn Đã Đồng Hành!
             </h3>
 
-            <p className="text-sm text-[#564243] mt-2 max-w-md mx-auto">
+            <p className="text-sm text-on-surface-variant mt-2 max-w-md mx-auto">
               Đơn hàng của bạn đã được tiếp nhận và lưu vào hệ thống đối soát quà tặng 20/10 của K&amp;P Atelier.
             </p>
 
             {/* Order Code Callout Box */}
-            <div className="my-6 p-4 rounded-2xl bg-[#fff8f6] border border-[#ebd5cf] flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
+            <div className="my-6 p-4 rounded-2xl bg-brand-bg border border-vintage-blush flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
               <div>
-                <span className="text-xs text-[#897172] block font-mono">MÃ ĐƠN HÀNG TRA CỨU:</span>
-                <span className="font-mono text-2xl font-black text-[#540114] tracking-wider">
+                <span className="text-xs text-outline block font-mono">MÃ ĐƠN HÀNG TRA CỨU:</span>
+                <span className="font-mono text-2xl font-black text-primary tracking-wider">
                   {confirmedOrder.orderCode}
                 </span>
               </div>
@@ -233,45 +233,45 @@ export default function PreorderSection({
                   navigator.clipboard.writeText(confirmedOrder.orderCode);
                   alert(`Đã sao chép mã đơn: ${confirmedOrder.orderCode}`);
                 }}
-                className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#faece7] border border-[#dcc0c0] text-xs font-semibold text-[#540114] flex items-center gap-1 shadow-2xs active:scale-95 transition-all"
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-surface-container border border-outline-variant text-xs font-semibold text-primary flex items-center gap-1 shadow-xs active:scale-95 transition-all"
               >
-                <span className="material-symbols-outlined text-[16px]">content_copy</span>
+                <span className="material-symbols-outlined text-base">content_copy</span>
                 <span>Sao chép mã</span>
               </button>
             </div>
 
             {/* Order Summary Details */}
-            <div className="bg-[#faf5eb] p-4.5 rounded-2xl border border-[#ebd5cf] text-left text-xs sm:text-sm text-[#443a36] space-y-2 mb-6">
-              <div className="flex justify-between border-b border-[#ebd5cf]/60 pb-1.5">
-                <span className="text-[#765e55]">Người nhận quà:</span>
-                <span className="font-bold text-[#540114]">{confirmedOrder.recipientName}</span>
+            <div className="bg-parchment-light p-4.5 rounded-2xl border border-vintage-blush text-left text-xs sm:text-sm text-charcoal-warm space-y-2 mb-6">
+              <div className="flex justify-between border-b border-vintage-blush/60 pb-1.5">
+                <span className="text-warm-neutral">Người nhận quà:</span>
+                <span className="font-bold text-primary">{confirmedOrder.recipientName}</span>
               </div>
-              <div className="flex justify-between border-b border-[#ebd5cf]/60 pb-1.5">
-                <span className="text-[#765e55]">Số điện thoại liên hệ:</span>
-                <span className="font-mono font-bold text-[#221a18]">{confirmedOrder.senderPhone}</span>
+              <div className="flex justify-between border-b border-vintage-blush/60 pb-1.5">
+                <span className="text-warm-neutral">Số điện thoại liên hệ:</span>
+                <span className="font-mono font-bold text-on-surface">{confirmedOrder.senderPhone}</span>
               </div>
-              <div className="flex justify-between border-b border-[#ebd5cf]/60 pb-1.5">
-                <span className="text-[#765e55]">Khung giờ hẹn nhận:</span>
-                <span className="font-bold text-[#934841]">{confirmedOrder.timeSlot}</span>
+              <div className="flex justify-between border-b border-vintage-blush/60 pb-1.5">
+                <span className="text-warm-neutral">Khung giờ hẹn nhận:</span>
+                <span className="font-bold text-secondary">{confirmedOrder.timeSlot}</span>
               </div>
-              <div className="flex justify-between border-b border-[#ebd5cf]/60 pb-1.5">
-                <span className="text-[#765e55]">Địa điểm nhận:</span>
-                <span className="font-medium text-[#221a18] text-right">{confirmedOrder.deliveryLocation}</span>
+              <div className="flex justify-between border-b border-vintage-blush/60 pb-1.5">
+                <span className="text-warm-neutral">Địa điểm nhận:</span>
+                <span className="font-medium text-on-surface text-right">{confirmedOrder.deliveryLocation}</span>
               </div>
-              <div className="flex justify-between border-b border-[#ebd5cf]/60 pb-1.5">
-                <span className="text-[#765e55]">Hình thức thanh toán:</span>
-                <span className="font-bold text-[#540114]">{confirmedOrder.paymentStatus}</span>
+              <div className="flex justify-between border-b border-vintage-blush/60 pb-1.5">
+                <span className="text-warm-neutral">Hình thức thanh toán:</span>
+                <span className="font-bold text-primary">{confirmedOrder.paymentStatus}</span>
               </div>
-              <div className="flex justify-between pt-1 font-bold text-base text-[#540114]">
+              <div className="flex justify-between pt-1 font-bold text-base text-primary">
                 <span>Tổng giá trị đơn:</span>
-                <span className="text-lg font-extrabold text-[#721a28]">{formatMoney(confirmedOrder.totalPrice)}</span>
+                <span className="text-lg font-extrabold text-primary-container">{formatMoney(confirmedOrder.totalPrice)}</span>
               </div>
             </div>
 
             {/* Charity Impact Box (TUÂN THỦ: chỉ nói số bữa ăn) */}
-            <div className="p-3.5 rounded-2xl bg-[#f0f7f2] border border-[#c4e3cc] flex items-center gap-3 text-left mb-6">
+            <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-left mb-6">
               <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-[20px]">pets</span>
+                <span className="material-symbols-outlined text-xl">pets</span>
               </div>
               <div>
                 <span className="text-xs font-bold text-emerald-900 block">
@@ -287,13 +287,13 @@ export default function PreorderSection({
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <button
                 onClick={handleResetForm}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#540114] hover:bg-[#721a28] text-white font-serif font-bold text-sm shadow-md transition-all active:scale-95"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-primary hover:bg-primary-container text-white font-serif font-bold text-sm shadow-md transition-all active:scale-95"
               >
                 Đặt Thêm Đơn Hàng Mới
               </button>
               <a
                 href="#digital-gift"
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white hover:bg-[#fff8f6] border border-[#dcc0c0] text-[#540114] font-serif font-bold text-sm shadow-2xs transition-all"
+                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white hover:bg-brand-bg border border-outline-variant text-primary font-serif font-bold text-sm shadow-xs transition-all"
               >
                 Xem Lại Mẫu Thiệp Quà Số
               </a>
@@ -311,32 +311,32 @@ export default function PreorderSection({
             {/* ===================================================== */}
             <div className="lg:col-span-5 flex flex-col gap-4">
               
-              <div className="bg-white/95 rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(84,1,20,0.06)] border border-[#ebd5cf]">
+              <div className="bg-white/95 rounded-3xl p-5 sm:p-6 shadow-[0_10px_30px_rgba(84,1,20,0.06)] border border-vintage-blush">
                 
-                <div className="flex items-center justify-between pb-3 border-b border-[#ebd5cf]">
+                <div className="flex items-center justify-between pb-3 border-b border-vintage-blush">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#540114] text-[22px]">shopping_bag</span>
-                    <h3 className="font-serif font-bold text-base sm:text-lg text-[#540114]">
+                    <span className="material-symbols-outlined text-primary text-[22px]">shopping_bag</span>
+                    <h3 className="font-serif font-bold text-base sm:text-lg text-primary">
                       Giỏ Quà Đang Chọn ({items.length})
                     </h3>
                   </div>
-                  <span className="text-xs font-mono font-bold text-[#934841] bg-[#ffdad6] px-2.5 py-0.5 rounded-full">
+                  <span className="text-xs font-mono font-bold text-secondary bg-secondary-fixed px-2.5 py-0.5 rounded-full">
                     20/10 Edition
                   </span>
                 </div>
 
                 {/* Items List */}
-                <div className="divide-y divide-[#f5e4e0] my-2 max-h-[360px] overflow-y-auto pr-1">
+                <div className="divide-y divide-vintage-blush my-2 max-h-90 overflow-y-auto pr-1">
                   {items.length === 0 ? (
-                    <div className="py-8 text-center text-[#897172] space-y-3">
-                      <span className="material-symbols-outlined text-[42px] text-[#cca59b]">
+                    <div className="py-8 text-center text-outline space-y-3">
+                      <span className="material-symbols-outlined text-[42px] text-outline">
                         inventory_2
                       </span>
                       <p className="text-xs">Giỏ quà chưa có set vòng nào.</p>
                       
                       {/* Quick Add Suggestions */}
                       <div className="pt-2 text-left space-y-2">
-                        <span className="text-[11px] font-bold text-[#540114] block">
+                        <span className="text-[11px] font-bold text-primary block">
                           Thêm nhanh set quà được yêu thích:
                         </span>
                         <div className="flex flex-col gap-1.5">
@@ -348,10 +348,10 @@ export default function PreorderSection({
                                 "Ngôi Sao Tri Kỷ",
                               ])
                             }
-                            className="p-2 rounded-xl bg-[#fff8f6] hover:bg-[#fceae6] border border-[#ebd5cf] text-left text-xs font-semibold text-[#540114] flex items-center justify-between transition-colors"
+                            className="p-2 rounded-xl bg-brand-bg hover:bg-surface-container border border-vintage-blush text-left text-xs font-semibold text-primary flex items-center justify-between transition-colors"
                           >
                             <span>🌻 Set Vòng Hướng Dương (49k)</span>
-                            <span className="material-symbols-outlined text-[16px]">add_circle</span>
+                            <span className="material-symbols-outlined text-base">add_circle</span>
                           </button>
                           <button
                             type="button"
@@ -362,10 +362,10 @@ export default function PreorderSection({
                                 "Sao Biển",
                               ])
                             }
-                            className="p-2 rounded-xl bg-[#fff8f6] hover:bg-[#fceae6] border border-[#ebd5cf] text-left text-xs font-semibold text-[#540114] flex items-center justify-between transition-colors"
+                            className="p-2 rounded-xl bg-brand-bg hover:bg-surface-container border border-vintage-blush text-left text-xs font-semibold text-primary flex items-center justify-between transition-colors"
                           >
                             <span>🌊 Vòng Lam Ngọc Trai (59k)</span>
-                            <span className="material-symbols-outlined text-[16px]">add_circle</span>
+                            <span className="material-symbols-outlined text-base">add_circle</span>
                           </button>
                           <button
                             type="button"
@@ -375,10 +375,10 @@ export default function PreorderSection({
                                 "Cánh Bướm Tinh Khôi",
                               ])
                             }
-                            className="p-2 rounded-xl bg-[#fff8f6] hover:bg-[#fceae6] border border-[#ebd5cf] text-left text-xs font-semibold text-[#540114] flex items-center justify-between transition-colors"
+                            className="p-2 rounded-xl bg-brand-bg hover:bg-surface-container border border-vintage-blush text-left text-xs font-semibold text-primary flex items-center justify-between transition-colors"
                           >
                             <span>❤️ Set Trái Tim Hồng Nhung (65k)</span>
-                            <span className="material-symbols-outlined text-[16px]">add_circle</span>
+                            <span className="material-symbols-outlined text-base">add_circle</span>
                           </button>
                         </div>
                       </div>
@@ -387,7 +387,7 @@ export default function PreorderSection({
                     items.map((item, idx) => (
                       <div key={idx} className="py-3 flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-serif font-bold text-xs sm:text-sm text-[#2e1d1b] leading-tight">
+                          <h4 className="font-serif font-bold text-xs sm:text-sm text-espresso leading-tight">
                             {item.title}
                           </h4>
                           
@@ -397,7 +397,7 @@ export default function PreorderSection({
                               {item.charms.map((c, ci) => (
                                 <span
                                   key={ci}
-                                  className="text-[10px] bg-[#fff0ed] text-[#76322b] px-1.5 py-0.5 rounded border border-[#f5d5ce]"
+                                  className="text-[10px] bg-surface-container-low text-on-secondary-fixed-variant px-1.5 py-0.5 rounded border border-vintage-blush"
                                 >
                                   {c.name}
                                 </span>
@@ -406,20 +406,20 @@ export default function PreorderSection({
                           )}
 
                           {item.message && (
-                            <p className="text-[11px] text-[#705652] italic line-clamp-1 mt-1">
+                            <p className="text-[11px] text-warm-neutral italic line-clamp-1 mt-1">
                               "{item.message}"
                             </p>
                           )}
                         </div>
 
                         <div className="text-right shrink-0">
-                          <span className="font-serif font-bold text-xs sm:text-sm text-[#721a28] block">
+                          <span className="font-serif font-bold text-xs sm:text-sm text-primary-container block">
                             {formatMoney(item.totalPrice || item.price)}
                           </span>
                           <button
                             type="button"
                             onClick={() => onRemoveItem(idx)}
-                            className="text-[11px] text-[#bda099] hover:text-red-600 transition-colors mt-0.5"
+                            className="text-[11px] text-outline hover:text-red-600 transition-colors mt-0.5"
                           >
                             Xóa
                           </button>
@@ -431,23 +431,23 @@ export default function PreorderSection({
 
                 {/* Subtotal & Free Gifts */}
                 {items.length > 0 && (
-                  <div className="pt-3 border-t border-[#ebd5cf] space-y-2 text-xs">
-                    <div className="flex justify-between text-[#6e5550]">
+                  <div className="pt-3 border-t border-vintage-blush space-y-2 text-xs">
+                    <div className="flex justify-between text-warm-neutral">
                       <span>Hộp nhung nơ lụa cao cấp:</span>
                       <span className="font-bold text-emerald-700">Miễn phí (Tặng kèm)</span>
                     </div>
-                    <div className="flex justify-between text-[#6e5550]">
+                    <div className="flex justify-between text-warm-neutral">
                       <span>Thẻ thông minh khắc QR &amp; Thiệp in:</span>
                       <span className="font-bold text-emerald-700">Miễn phí (Tặng kèm)</span>
                     </div>
-                    <div className="flex justify-between text-[#6e5550]">
+                    <div className="flex justify-between text-warm-neutral">
                       <span>Phí giao tại khuôn viên ĐH FPT:</span>
                       <span className="font-bold text-emerald-700">0₫ (Freeship)</span>
                     </div>
                     
-                    <div className="flex justify-between items-center pt-2 border-t border-dashed border-[#ebd5cf] text-sm sm:text-base font-bold text-[#540114]">
+                    <div className="flex justify-between items-center pt-2 border-t border-dashed border-vintage-blush text-sm sm:text-base font-bold text-primary">
                       <span>Tổng thanh toán:</span>
-                      <span className="text-lg sm:text-xl font-serif font-extrabold text-[#721a28]">
+                      <span className="text-lg sm:text-xl font-serif font-extrabold text-primary-container">
                         {formatMoney(subtotal)}
                       </span>
                     </div>
@@ -457,9 +457,9 @@ export default function PreorderSection({
               </div>
 
               {/* Charity Impact Box (TUÂN THỦ: KHÔNG NÓI TIỀN MẶT, CHỈ NÓI SỐ BỮA ĂN) */}
-              <div className="p-4 rounded-3xl bg-gradient-to-br from-[#f2f8f4] to-[#e4f2e7] border border-[#bfe0c7] shadow-xs flex items-center gap-3.5">
+              <div className="p-4 rounded-3xl bg-linear-to-br from-emerald-50 to-emerald-100 border border-emerald-200 shadow-xs flex items-center gap-3.5">
                 <div className="w-11 h-11 rounded-2xl bg-emerald-700 text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <span className="material-symbols-outlined text-[24px]">pets</span>
+                  <span className="material-symbols-outlined text-2xl">pets</span>
                 </div>
                 <div>
                   <h4 className="font-serif font-bold text-xs sm:text-sm text-emerald-950">
@@ -481,23 +481,23 @@ export default function PreorderSection({
             <div className="lg:col-span-7">
               <form
                 onSubmit={handleSubmitOrder}
-                className="bg-white rounded-3xl p-5 sm:p-7 shadow-[0_14px_35px_rgba(84,1,20,0.08)] border border-[#ebd5cf] space-y-5"
+                className="bg-white rounded-3xl p-5 sm:p-7 shadow-[0_14px_35px_rgba(84,1,20,0.08)] border border-vintage-blush space-y-5"
               >
                 
                 {/* Step 1: Thông tin người nhận & người đặt */}
                 <div>
-                  <div className="flex items-center gap-2 mb-3 pb-1 border-b border-[#ebd5cf]">
-                    <span className="w-5 h-5 rounded-full bg-[#540114] text-white text-[11px] font-bold flex items-center justify-center">
+                  <div className="flex items-center gap-2 mb-3 pb-1 border-b border-vintage-blush">
+                    <span className="w-5 h-5 rounded-full bg-primary text-white text-[11px] font-bold flex items-center justify-center">
                       1
                     </span>
-                    <h3 className="font-serif font-bold text-sm sm:text-base text-[#540114]">
+                    <h3 className="font-serif font-bold text-sm sm:text-base text-primary">
                       Thông Tin Người Nhận &amp; Người Tặng
                     </h3>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-[#443a36] mb-1">
+                      <label className="block text-xs font-bold text-charcoal-warm mb-1">
                         Tên người nhận quà 20/10 <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -506,12 +506,12 @@ export default function PreorderSection({
                         value={recipientName}
                         onChange={(e) => setRecipientName(e.target.value)}
                         placeholder="VD: Mai Anh, Cô Thu Hà..."
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#fff8f6] border border-[#ebd5cf] text-xs sm:text-sm text-[#221a18] placeholder:text-[#a08882] focus:outline-none focus:ring-1 focus:ring-[#540114]"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-brand-bg border border-vintage-blush text-xs sm:text-sm text-on-surface placeholder:text-dusty-rose focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-[#443a36] mb-1">
+                      <label className="block text-xs font-bold text-charcoal-warm mb-1">
                         Số điện thoại người đặt (đối soát) <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -520,12 +520,12 @@ export default function PreorderSection({
                         value={senderPhone}
                         onChange={(e) => setSenderPhone(e.target.value)}
                         placeholder="VD: 0987654321"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#fff8f6] border border-[#ebd5cf] text-xs sm:text-sm text-[#221a18] placeholder:text-[#a08882] focus:outline-none focus:ring-1 focus:ring-[#540114]"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-brand-bg border border-vintage-blush text-xs sm:text-sm text-on-surface placeholder:text-dusty-rose focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-[#443a36] mb-1">
+                      <label className="block text-xs font-bold text-charcoal-warm mb-1">
                         Email người đặt (nhận Thẻ QR dự phòng &amp; hóa đơn)
                       </label>
                       <input
@@ -533,20 +533,20 @@ export default function PreorderSection({
                         value={senderEmail}
                         onChange={(e) => setSenderEmail(e.target.value)}
                         placeholder="VD: ban.fpt@fe.edu.vn"
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#fff8f6] border border-[#ebd5cf] text-xs sm:text-sm text-[#221a18] placeholder:text-[#a08882] focus:outline-none focus:ring-1 focus:ring-[#540114]"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-brand-bg border border-vintage-blush text-xs sm:text-sm text-on-surface placeholder:text-dusty-rose focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
 
                     {/* Anonymous Checkbox */}
                     <div className="sm:col-span-2">
-                      <label className="inline-flex items-center gap-2 cursor-pointer bg-[#fff8f6] p-2.5 rounded-xl border border-[#ebd5cf] w-full">
+                      <label className="inline-flex items-center gap-2 cursor-pointer bg-brand-bg p-2.5 rounded-xl border border-vintage-blush w-full">
                         <input
                           type="checkbox"
                           checked={isAnonymous}
                           onChange={(e) => setIsAnonymous(e.target.checked)}
-                          className="w-4 h-4 rounded text-[#540114] focus:ring-[#540114] border-[#dcc0c0]"
+                          className="w-4 h-4 rounded text-primary focus:ring-primary border-outline-variant"
                         />
-                        <span className="text-xs text-[#540114] font-semibold">
+                        <span className="text-xs text-primary font-semibold">
                           🤫 Tặng quà ẩn danh (Secret Admirer — Không để lộ tên người gửi trên thiệp)
                         </span>
                       </label>
@@ -556,11 +556,11 @@ export default function PreorderSection({
 
                 {/* Step 2: Hẹn giờ & Địa điểm nhận tại Booth ĐH FPT */}
                 <div>
-                  <div className="flex items-center gap-2 mb-3 pb-1 border-b border-[#ebd5cf]">
-                    <span className="w-5 h-5 rounded-full bg-[#934841] text-white text-[11px] font-bold flex items-center justify-center">
+                  <div className="flex items-center gap-2 mb-3 pb-1 border-b border-vintage-blush">
+                    <span className="w-5 h-5 rounded-full bg-secondary text-white text-[11px] font-bold flex items-center justify-center">
                       2
                     </span>
-                    <h3 className="font-serif font-bold text-sm sm:text-base text-[#540114]">
+                    <h3 className="font-serif font-bold text-sm sm:text-base text-primary">
                       Hẹn Giờ &amp; Địa Điểm Nhận Hàng (Ngày 20/10)
                     </h3>
                   </div>
@@ -568,7 +568,7 @@ export default function PreorderSection({
                   <div className="space-y-3">
                     {/* Time Slot Radio Options */}
                     <div>
-                      <label className="block text-xs font-bold text-[#443a36] mb-1.5">
+                      <label className="block text-xs font-bold text-charcoal-warm mb-1.5">
                         Chọn khung giờ nhận quà tại trường:
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -582,8 +582,8 @@ export default function PreorderSection({
                             key={slot}
                             className={`p-2.5 rounded-xl border cursor-pointer text-xs flex items-center gap-2 transition-all ${
                               timeSlot === slot
-                                ? "bg-[#fff0ed] border-[#540114] text-[#540114] font-bold shadow-2xs"
-                                : "bg-white border-[#ebd5cf] text-[#564243] hover:bg-[#fff8f6]"
+                                ? "bg-surface-container-low border-primary text-primary font-bold shadow-xs"
+                                : "bg-white border-vintage-blush text-on-surface-variant hover:bg-brand-bg"
                             }`}
                           >
                             <input
@@ -591,7 +591,7 @@ export default function PreorderSection({
                               name="timeSlot"
                               checked={timeSlot === slot}
                               onChange={() => setTimeSlot(slot)}
-                              className="text-[#540114] focus:ring-[#540114]"
+                              className="text-primary focus:ring-primary"
                             />
                             <span>{slot}</span>
                           </label>
@@ -601,15 +601,15 @@ export default function PreorderSection({
 
                     {/* Delivery Location Options */}
                     <div>
-                      <label className="block text-xs font-bold text-[#443a36] mb-1.5">
+                      <label className="block text-xs font-bold text-charcoal-warm mb-1.5">
                         Địa điểm giao nhận tại ĐH FPT:
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <label
                           className={`p-2.5 rounded-xl border cursor-pointer text-xs flex items-center gap-2 transition-all ${
                             deliveryType === "booth"
-                              ? "bg-[#fff0ed] border-[#540114] text-[#540114] font-bold shadow-2xs"
-                              : "bg-white border-[#ebd5cf] text-[#564243] hover:bg-[#fff8f6]"
+                              ? "bg-surface-container-low border-primary text-primary font-bold shadow-xs"
+                              : "bg-white border-vintage-blush text-on-surface-variant hover:bg-brand-bg"
                           }`}
                         >
                           <input
@@ -617,7 +617,7 @@ export default function PreorderSection({
                             name="deliveryType"
                             checked={deliveryType === "booth"}
                             onChange={() => setDeliveryType("booth")}
-                            className="text-[#540114] focus:ring-[#540114]"
+                            className="text-primary focus:ring-primary"
                           />
                           <span>🏛️ Nhận tại Booth K&amp;P (Sảnh Alpha/Beta)</span>
                         </label>
@@ -625,8 +625,8 @@ export default function PreorderSection({
                         <label
                           className={`p-2.5 rounded-xl border cursor-pointer text-xs flex items-center gap-2 transition-all ${
                             deliveryType === "classroom"
-                              ? "bg-[#fff0ed] border-[#540114] text-[#540114] font-bold shadow-2xs"
-                              : "bg-white border-[#ebd5cf] text-[#564243] hover:bg-[#fff8f6]"
+                              ? "bg-surface-container-low border-primary text-primary font-bold shadow-xs"
+                              : "bg-white border-vintage-blush text-on-surface-variant hover:bg-brand-bg"
                           }`}
                         >
                           <input
@@ -634,7 +634,7 @@ export default function PreorderSection({
                             name="deliveryType"
                             checked={deliveryType === "classroom"}
                             onChange={() => setDeliveryType("classroom")}
-                            className="text-[#540114] focus:ring-[#540114]"
+                            className="text-primary focus:ring-primary"
                           />
                           <span>🚪 Giao tận phòng học / hội trường</span>
                         </label>
@@ -648,7 +648,7 @@ export default function PreorderSection({
                             value={roomNote}
                             onChange={(e) => setRoomNote(e.target.value)}
                             placeholder="Nhập tòa nhà & số phòng học (VD: Tòa Alpha - Phòng 204, Ca 2)"
-                            className="w-full px-3.5 py-2 rounded-xl bg-[#fff8f6] border border-[#540114] text-xs text-[#221a18] focus:outline-none focus:ring-1 focus:ring-[#540114]"
+                            className="w-full px-3.5 py-2 rounded-xl bg-brand-bg border border-primary text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
                           />
                         </div>
                       )}
@@ -658,11 +658,11 @@ export default function PreorderSection({
 
                 {/* Step 3: Phương thức thanh toán */}
                 <div>
-                  <div className="flex items-center gap-2 mb-3 pb-1 border-b border-[#ebd5cf]">
-                    <span className="w-5 h-5 rounded-full bg-[#721a28] text-white text-[11px] font-bold flex items-center justify-center">
+                  <div className="flex items-center gap-2 mb-3 pb-1 border-b border-vintage-blush">
+                    <span className="w-5 h-5 rounded-full bg-primary-container text-white text-[11px] font-bold flex items-center justify-center">
                       3
                     </span>
-                    <h3 className="font-serif font-bold text-sm sm:text-base text-[#540114]">
+                    <h3 className="font-serif font-bold text-sm sm:text-base text-primary">
                       Phương Thức Thanh Toán
                     </h3>
                   </div>
@@ -671,8 +671,8 @@ export default function PreorderSection({
                     <label
                       className={`p-3 rounded-xl border cursor-pointer text-xs flex items-start gap-2.5 transition-all ${
                         paymentMethod === "cod"
-                          ? "bg-[#fff0ed] border-[#540114] text-[#540114] shadow-2xs"
-                          : "bg-white border-[#ebd5cf] text-[#564243] hover:bg-[#fff8f6]"
+                          ? "bg-surface-container-low border-primary text-primary shadow-xs"
+                          : "bg-white border-vintage-blush text-on-surface-variant hover:bg-brand-bg"
                       }`}
                     >
                       <input
@@ -680,19 +680,19 @@ export default function PreorderSection({
                         name="paymentMethod"
                         checked={paymentMethod === "cod"}
                         onChange={() => setPaymentMethod("cod")}
-                        className="mt-0.5 text-[#540114] focus:ring-[#540114]"
+                        className="mt-0.5 text-primary focus:ring-primary"
                       />
                       <div>
                         <span className="font-bold block">💵 Tiền mặt khi nhận (COD)</span>
-                        <span className="text-[11px] text-[#705652]">Thanh toán trực tiếp tại Booth ngày 20/10</span>
+                        <span className="text-[11px] text-warm-neutral">Thanh toán trực tiếp tại Booth ngày 20/10</span>
                       </div>
                     </label>
 
                     <label
                       className={`p-3 rounded-xl border cursor-pointer text-xs flex items-start gap-2.5 transition-all ${
                         paymentMethod === "vietqr"
-                          ? "bg-[#fff0ed] border-[#540114] text-[#540114] shadow-2xs"
-                          : "bg-white border-[#ebd5cf] text-[#564243] hover:bg-[#fff8f6]"
+                          ? "bg-surface-container-low border-primary text-primary shadow-xs"
+                          : "bg-white border-vintage-blush text-on-surface-variant hover:bg-brand-bg"
                       }`}
                     >
                       <input
@@ -700,18 +700,18 @@ export default function PreorderSection({
                         name="paymentMethod"
                         checked={paymentMethod === "vietqr"}
                         onChange={() => setPaymentMethod("vietqr")}
-                        className="mt-0.5 text-[#540114] focus:ring-[#540114]"
+                        className="mt-0.5 text-primary focus:ring-primary"
                       />
                       <div>
                         <span className="font-bold block">📱 Quét mã VietQR chuyển khoản</span>
-                        <span className="text-[11px] text-[#705652]">Tiện lợi qua App ngân hàng / MoMo</span>
+                        <span className="text-[11px] text-warm-neutral">Tiện lợi qua App ngân hàng / MoMo</span>
                       </div>
                     </label>
                   </div>
 
                   {/* Optional Note */}
                   <div className="mt-3">
-                    <label className="block text-xs font-bold text-[#443a36] mb-1">
+                    <label className="block text-xs font-bold text-charcoal-warm mb-1">
                       Lời dặn dò thêm cho K&amp;P (tùy chọn):
                     </label>
                     <input
@@ -719,7 +719,7 @@ export default function PreorderSection({
                       value={orderNote}
                       onChange={(e) => setOrderNote(e.target.value)}
                       placeholder="VD: Cột nơ màu đỏ rượu, dán kín phong bì giúp mình..."
-                      className="w-full px-3.5 py-2 rounded-xl bg-[#fff8f6] border border-[#ebd5cf] text-xs text-[#221a18] placeholder:text-[#a08882] focus:outline-none focus:ring-1 focus:ring-[#540114]"
+                      className="w-full px-3.5 py-2 rounded-xl bg-brand-bg border border-vintage-blush text-xs text-on-surface placeholder:text-dusty-rose focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 </div>
@@ -732,10 +732,10 @@ export default function PreorderSection({
                     className={`w-full py-3.5 sm:py-4 px-6 rounded-2xl font-serif font-bold text-sm sm:text-base text-white shadow-lg transition-all transform flex items-center justify-center gap-2 ${
                       items.length === 0
                         ? "bg-stone-400 cursor-not-allowed"
-                        : "bg-[#540114] hover:bg-[#721a28] hover:-translate-y-0.5 shadow-[#540114]/25 hover:shadow-xl active:scale-98"
+                        : "bg-primary hover:bg-primary-container hover:-translate-y-0.5 shadow-primary/25 hover:shadow-xl active:scale-[0.98]"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-[20px] text-[#fea095]">
+                    <span className="material-symbols-outlined text-xl text-secondary-container">
                       verified
                     </span>
                     <span>
@@ -743,12 +743,12 @@ export default function PreorderSection({
                         ? "Đang lưu đơn hàng..."
                         : `XÁC NHẬN ĐẶT TRƯỚC (PRE-ORDER) • ${formatMoney(subtotal)}`}
                     </span>
-                    <span className="material-symbols-outlined text-[18px]">
+                    <span className="material-symbols-outlined text-lg">
                       arrow_forward
                     </span>
                   </button>
 
-                  <p className="text-[11px] text-[#897172] text-center mt-2">
+                  <p className="text-[11px] text-outline text-center mt-2">
                     🔒 Thông tin của bạn được bảo mật tuyệt đối • Hỗ trợ hủy/đổi lịch hẹn trước 19/10
                   </p>
                 </div>

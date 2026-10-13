@@ -16,4 +16,12 @@ export const BLOCK_ORDER: readonly BlockId[] = [
   "video",
 ];
 
-export const IMPLEMENTED_BLOCKS: ReadonlySet<BlockId> = new Set<BlockId>(["letter", "photos", "highlight", "finalMessage"]);
+export const IMPLEMENTED_BLOCKS: ReadonlySet<BlockId> = new Set<BlockId>([
+  "letter",
+  "photos",
+  "highlight",
+  "finalMessage",
+  "anniversary",
+  "timeline",
+  "video",
+]);

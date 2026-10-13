@@ -16,6 +16,10 @@ import LetterBlock from "@/components/studio/blocks/LetterBlock";
 import PhotosBlock from "@/components/studio/blocks/PhotosBlock";
 import FinalMessageBlock from "@/components/studio/blocks/FinalMessageBlock";
 import PinBlock from "@/components/studio/blocks/PinBlock";
+import AnniversaryBlock from "@/components/studio/blocks/AnniversaryBlock";
+import TimelineBlock from "@/components/studio/blocks/TimelineBlock";
+import VideoBlock from "@/components/studio/blocks/VideoBlock";
+import { parseGiftData } from "@/lib/validation/gift";
 
 interface StudioProduct {
   token: string;
@@ -100,6 +104,14 @@ export default function CardStudioPage() {
       const firstId = found.recipientName ? "names-recipient" : "letter-content";
       document.getElementById(firstId)?.focus();
       document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
+    // Same checks the server runs, so mistakes in links, dates or milestones are caught before sending.
+    const checked = parseGiftData(draftToPayload(draft).giftData, { token });
+    if (!checked.ok) {
+      setSaveError(checked.error);
+      requestAnimationFrame(() => saveErrorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
       return;
     }
 
@@ -194,6 +206,12 @@ export default function CardStudioPage() {
         );
       case "finalMessage":
         return <FinalMessageBlock key={block} step={next()} draft={draft} onChange={update} />;
+      case "anniversary":
+        return <AnniversaryBlock key={block} step={next()} draft={draft} onChange={update} />;
+      case "timeline":
+        return <TimelineBlock key={block} step={next()} items={draft.timeline} onChange={(timeline) => update({ timeline })} />;
+      case "video":
+        return <VideoBlock key={block} step={next()} draft={draft} onChange={update} />;
       default:
         return null;
     }

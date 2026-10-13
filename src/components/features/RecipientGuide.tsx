@@ -60,16 +60,16 @@ export default function RecipientGuide({ onSelectCombo }: RecipientGuideProps) {
 
   return (
     <section id="recipient-guide" className="w-full py-16 lg:py-24 relative overflow-hidden">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-320 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full liquid-glass-pill text-[#934841] text-xs font-bold uppercase tracking-widest mb-3 shadow-xs">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full liquid-glass-pill text-secondary text-xs font-bold uppercase tracking-widest mb-3 shadow-xs">
             <span className="material-symbols-outlined text-[15px]">tips_and_updates</span>
             Gợi Ý Chọn Quà 20/10
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#540114]">
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-primary">
             Bạn Đang Tìm Quà Gửi Trao Ai?
           </h2>
-          <p className="text-xs sm:text-sm text-[#564243] mt-2">
+          <p className="text-xs sm:text-sm text-on-surface-variant mt-2">
             Chọn nhóm người nhận để xem bộ phối vòng chuẩn gu sinh viên, áp dụng ngay vào bàn xưởng chỉ trong 1 chạm.
           </p>
         </div>
@@ -78,33 +78,33 @@ export default function RecipientGuide({ onSelectCombo }: RecipientGuideProps) {
           {presets.map((preset) => (
             <div
               key={preset.id}
-              className="p-6 rounded-3xl liquid-glass-card flex flex-col justify-between group cursor-pointer"
+              className="p-6 rounded-3xl liquid-glass-card border border-white/85 shadow-lg hover:shadow-2xl flex flex-col justify-between group cursor-pointer"
             >
               <div>
-                <div className="w-12 h-12 rounded-2xl liquid-glass-pill text-[#540114] flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-xs border border-white/80">
+                <div className="w-13 h-13 rounded-2xl liquid-glass-pill text-primary flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-md border border-white/95">
                   <span className="material-symbols-outlined text-[26px]">{preset.icon}</span>
                 </div>
-                <span className="text-[10px] text-[#934841] font-bold uppercase tracking-wider block">
+                <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">
                   {preset.tag}
                 </span>
-                <h3 className="font-serif text-base font-bold text-[#540114] mt-1">
+                <h3 className="font-serif text-base font-bold text-primary mt-1">
                   {preset.title}
                 </h3>
-                <p className="text-xs text-[#564243] mt-2 leading-relaxed">{preset.desc}</p>
+                <p className="text-xs text-on-surface-variant mt-2 leading-relaxed">{preset.desc}</p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/60 flex items-center justify-between">
+              <div className="mt-6 pt-4 border-t border-white/70 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-[#897172] block">Combo trọn gói</span>
-                  <span className="font-serif text-base font-bold text-[#540114]">
+                  <span className="text-[10px] text-outline block font-medium">Combo trọn gói</span>
+                  <span className="font-serif text-base font-bold text-primary">
                     {new Intl.NumberFormat("vi-VN").format(preset.price)}₫
                   </span>
                 </div>
                 <button
                   onClick={() => onSelectCombo(preset)}
-                  className="liquid-glass-btn-primary px-3.5 py-1.5 rounded-full text-white text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                  className="liquid-glass-btn-primary px-4 py-2 rounded-full text-white text-xs font-semibold flex items-center gap-1 shadow-md cursor-pointer"
                 >
-                  Áp dụng <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  Áp dụng <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </button>
               </div>
             </div>

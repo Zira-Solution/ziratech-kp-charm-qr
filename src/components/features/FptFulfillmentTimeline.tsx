@@ -40,16 +40,16 @@ export default function FptFulfillmentTimeline() {
 
   return (
     <section id="fpt-fulfillment" className="w-full py-16 lg:py-24 relative overflow-hidden">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-320 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full liquid-glass-pill text-[#540114] text-xs font-semibold mb-3 shadow-xs">
-            <span className="material-symbols-outlined text-[16px] text-[#934841]">school</span>
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full liquid-glass-pill text-primary text-xs font-semibold mb-3 shadow-xs">
+            <span className="material-symbols-outlined text-base text-secondary">school</span>
             Quy Trình Nhận Quà Tại Đại Học FPT
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#540114]">
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-primary">
             Hành Trình Trao Gửi Yêu Thương Ngày 20/10
           </h2>
-          <p className="text-xs sm:text-sm text-[#564243] mt-2 leading-relaxed">
+          <p className="text-xs sm:text-sm text-on-surface-variant mt-2 leading-relaxed">
             K&amp;P Atelier chỉ phục vụ độc quyền trong khuôn viên Đại học FPT để đảm bảo từng món quà đến tay người nhận đúng giờ và chu đáo nhất.
           </p>
         </div>
@@ -59,29 +59,29 @@ export default function FptFulfillmentTimeline() {
           {steps.map((step) => (
             <div
               key={step.num}
-              className="p-6 rounded-3xl liquid-glass-card flex flex-col justify-between group"
+              className="p-6 rounded-3xl liquid-glass-card border border-white/85 shadow-lg hover:shadow-2xl flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-2xl liquid-glass-pill text-[#540114] font-serif font-bold text-lg flex items-center justify-center border border-white/80 shadow-xs group-hover:scale-105 transition-transform">
+                  <div className="w-13 h-13 rounded-2xl liquid-glass-pill text-primary font-serif font-bold text-lg flex items-center justify-center border border-white/90 shadow-md group-hover:scale-108 transition-transform">
                     {step.num}
                   </div>
-                  <span className="px-3 py-1 rounded-full liquid-glass-pill text-[#934841] text-[10px] font-bold border border-white/70">
+                  <span className="px-3.5 py-1 rounded-full liquid-glass-pill text-secondary text-[10px] font-bold border border-white/80 shadow-xs">
                     {step.tag}
                   </span>
                 </div>
 
-                <h3 className="font-serif text-base font-bold text-[#540114] mb-1">
+                <h3 className="font-serif text-base font-bold text-primary mb-1">
                   {step.title}
                 </h3>
-                <span className="text-[11px] font-semibold text-[#934841] block mb-2">
+                <span className="text-[11px] font-semibold text-secondary block mb-2">
                   {step.subtitle}
                 </span>
-                <p className="text-xs text-[#564243] leading-relaxed">{step.desc}</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed">{step.desc}</p>
               </div>
 
-              <div className="mt-6 pt-3 border-t border-white/60 flex items-center gap-2 text-xs text-[#540114] font-semibold">
-                <span className="material-symbols-outlined text-[18px] text-[#934841]">
+              <div className="mt-6 pt-3.5 border-t border-white/70 flex items-center gap-2 text-xs text-primary font-semibold">
+                <span className="material-symbols-outlined text-lg text-secondary">
                   {step.icon}
                 </span>
                 <span>K&amp;P Atelier FPT</span>
@@ -91,16 +91,16 @@ export default function FptFulfillmentTimeline() {
         </div>
 
         {/* Callout Notice about Shipping Scope */}
-        <div className="mt-10 p-6 rounded-3xl liquid-glass border-2 border-white/80 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="mt-10 p-6 rounded-3xl liquid-glass border-2 border-white/90 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
           <div className="flex items-start gap-3.5">
-            <span className="material-symbols-outlined text-[#540114] text-[26px] shrink-0 mt-0.5">
+            <span className="material-symbols-outlined text-primary text-[28px] shrink-0 mt-0.5">
               local_shipping
             </span>
             <div>
-              <h4 className="text-xs sm:text-sm font-bold text-[#540114]">
+              <h4 className="text-xs sm:text-sm font-bold text-primary">
                 Quy định phạm vi giao nhận (Fulfillment Scope)
               </h4>
-              <p className="text-xs text-[#564243] mt-0.5 leading-relaxed">
+              <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
                 Dự án không hỗ trợ ship ngoài trường FPT và tuyệt đối không thu thập địa chỉ nhà riêng nhằm đảm bảo quyền riêng tư. Mọi đơn hàng nhận trực tiếp tại sảnh hoặc giao trong khuôn viên trường ngày 20/10/2026.
               </p>
             </div>
@@ -108,7 +108,7 @@ export default function FptFulfillmentTimeline() {
 
           <a
             href="#customizer-workspace"
-            className="liquid-glass-btn-primary px-5 py-2.5 rounded-full text-white text-xs font-semibold whitespace-nowrap shrink-0 shadow-xs cursor-pointer"
+            className="liquid-glass-btn-primary px-6 py-3 rounded-full text-white text-xs font-semibold whitespace-nowrap shrink-0 shadow-md cursor-pointer"
           >
             Đặt trước trước 18/10
           </a>

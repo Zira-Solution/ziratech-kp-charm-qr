@@ -1,19 +1,6 @@
 /**
- * Security utilities: Sanitization, Rate Limiting, and Input Validation
+ * Security utilities: Rate Limiting and Input Validation
  */
-
-// Simple XSS Sanitizer for user-provided text (letters, captions, names)
-export function sanitizeText(input: unknown, maxLength = 2000): string {
-  if (typeof input !== "string") return "";
-  const trimmed = input.trim().slice(0, maxLength);
-  return trimmed
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#x27;")
-    .replace(/\//g, "&#x2F;");
-}
 
 // In-Memory Rate Limiter (IP-based)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();

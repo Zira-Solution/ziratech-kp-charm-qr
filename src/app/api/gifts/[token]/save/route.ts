@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateGiftProductCustomData } from "@/lib/supabase/products";
-import { checkRateLimit, sanitizeText } from "@/lib/validation/security";
+import { checkRateLimit } from "@/lib/validation/security";
+import { cleanText } from "@/lib/validation/gift";
 import { hasGiftSession, normalizeToken } from "@/lib/auth/gift-session";
 
 export async function POST(
@@ -45,20 +46,20 @@ export async function POST(
     // Validate & sanitize inputs
     const sanitizedGiftData = {
       ...giftFields,
-      recipientName: sanitizeText(giftData.recipientName, 100) || "Người nhận",
-      senderName: sanitizeText(giftData.senderName, 100) || "Người gửi",
-      letterTitle: sanitizeText(giftData.letterTitle, 200) || "LỜI NHẮN",
-      letterSubtitle: sanitizeText(giftData.letterSubtitle, 200),
-      letterContent: sanitizeText(giftData.letterContent, 3000),
-      letterSignature: sanitizeText(giftData.letterSignature, 100),
+      recipientName: cleanText(giftData.recipientName, 100) || "Người nhận",
+      senderName: cleanText(giftData.senderName, 100) || "Người gửi",
+      letterTitle: cleanText(giftData.letterTitle, 200) || "LỜI NHẮN",
+      letterSubtitle: cleanText(giftData.letterSubtitle, 200),
+      letterContent: cleanText(giftData.letterContent, 3000),
+      letterSignature: cleanText(giftData.letterSignature, 100),
       template: ["vintage-scrapbook", "retro-nostalgia", "storybook-sunset"].includes(giftData.template)
         ? giftData.template
         : "vintage-scrapbook",
       memoryPhotos: Array.isArray(giftData.memoryPhotos)
         ? giftData.memoryPhotos.slice(0, 6).map((p: any) => ({
             url: typeof p.url === "string" ? p.url.slice(0, 500) : "",
-            caption: sanitizeText(p.caption, 200),
-            date: sanitizeText(p.date, 50),
+            caption: cleanText(p.caption, 200),
+            date: cleanText(p.date, 50),
           }))
         : [],
     };

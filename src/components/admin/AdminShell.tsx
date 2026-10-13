@@ -84,7 +84,7 @@ export default function AdminShell({ tab, onTab, user, onLogout, orderCount, toa
             className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/70 hover:bg-white/10 hover:text-white ${focusRing}`}
           >
             <Icon name="key" className="text-[18px]" />
-            Cổng nhập mã
+            Trang tạo thiệp
           </Link>
         </div>
       </aside>

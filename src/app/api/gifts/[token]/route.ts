@@ -41,7 +41,7 @@ export async function GET(
         {
           error: requireCreate
             ? "Cần nhập OTP tạo thiệp để vào studio thiết kế."
-            : "Cần nhập mã xác thực trước khi xem. Vui lòng quay lại cổng /gift.",
+            : "Cần nhập mã thiệp và OTP xem thiệp trước khi xem. Vui lòng nhập tại trang chủ.",
         },
         { status: 401 }
       );

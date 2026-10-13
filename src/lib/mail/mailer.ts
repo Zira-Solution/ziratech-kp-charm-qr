@@ -29,7 +29,7 @@ export async function sendGiftActivationEmail({
   chainName,
   siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
 }: SendActivationEmailParams): Promise<{ success: boolean; simulated?: boolean; error?: string }> {
-  const activationUrl = `${siteUrl}/gift?token=${token}&tab=create`;
+  const activationUrl = `${siteUrl}/gift?token=${token}`;
   const safeName = escapeHtml(customerName);
   const safeChainName = escapeHtml(chainName);
 
@@ -134,7 +134,7 @@ export async function sendGiftActivationEmail({
                 <tr>
                   <td align="center">
                     <a href="${activationUrl}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #721a28 0%, #934841 100%); color: #ffffff; text-decoration: none; font-size: 14px; font-weight: bold; padding: 16px 36px; border-radius: 50px; box-shadow: 0 8px 24px rgba(114, 26, 40, 0.35); text-transform: uppercase; letter-spacing: 1px;">
-                      ⚡ Vào Cổng /gift Để Thiết Kế Thiệp
+                      ⚡ Vào Trang Tạo Thiệp
                     </a>
                   </td>
                 </tr>
@@ -146,9 +146,9 @@ export async function sendGiftActivationEmail({
                   📝 Hướng dẫn dùng mã thiệp và 2 OTP:
                 </span>
                 <ol style="margin: 0; padding-left: 20px; font-size: 12.5px; line-height: 1.7; color: #564243;">
-                  <li><strong>Bạn (Người mua):</strong> Truy cập <strong>${siteUrl}/gift</strong>, chọn tab <em>"Tạo Thiệp"</em>, nhập Mã thiệp (${token}) và OTP tạo thiệp (${creatorKey}).</li>
+                  <li><strong>Bạn (Người mua):</strong> Truy cập <strong>${siteUrl}/gift</strong>, nhập Mã thiệp (${token}) và OTP tạo thiệp (${creatorKey}).</li>
                   <li><strong>Thiết kế:</strong> Tải ảnh Polaroid, ghi âm thì thầm và chọn template thiệp yêu thích.</li>
-                  <li><strong>Người nhận:</strong> Khi nhận được vòng và thẻ quà tặng, truy cập <strong>${siteUrl}/gift</strong> (hoặc quét mã QR), nhập Mã thiệp và OTP xem thiệp${unlockPin ? ` (${unlockPin})` : " in trên thẻ"} để chiêm ngưỡng cuốn thiệp 3D!</li>
+                  <li><strong>Người nhận:</strong> Khi nhận được vòng và thẻ quà tặng, vào <strong>${siteUrl}</strong> (trang chủ), nhập Mã thiệp và OTP xem thiệp${unlockPin ? ` (${unlockPin})` : " in trên thẻ"} để chiêm ngưỡng cuốn thiệp 3D!</li>
                 </ol>
               </div>
 
@@ -217,7 +217,7 @@ export async function sendGiftActivationEmail({
   const reveal = process.env.NODE_ENV !== "production";
   console.log(`[MAILER SIMULATION] OTP tạo thiệp (Người Mua): ${reveal ? creatorKey : "(hidden)"}`);
   console.log(`[MAILER SIMULATION] OTP xem thiệp (Người Nhận): ${reveal ? (unlockPin ?? "(unchanged)") : "(hidden)"}`);
-  console.log(`[MAILER SIMULATION] Cổng /gift Link: ${activationUrl}`);
+  console.log(`[MAILER SIMULATION] Trang tạo thiệp: ${activationUrl}`);
   console.log(`======================================================\n`);
 
   return {

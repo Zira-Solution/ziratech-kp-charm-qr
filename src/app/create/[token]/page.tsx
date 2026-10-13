@@ -284,7 +284,7 @@ export default function CustomerGiftStudioPage() {
           </h2>
           <p className="text-xs text-on-surface-variant font-sans mt-2">{errorMsg || "Không tìm thấy sản phẩm."}</p>
           <Link
-            href={needsAuth ? `/gift?tab=create&token=${encodeURIComponent(token)}` : "/claim"}
+            href={needsAuth ? `/gift?tab=create&token=${encodeURIComponent(token)}` : "/gift"}
             className="mt-6 inline-block py-2.5 px-6 rounded-xl liquid-glass-btn-primary text-white text-xs font-bold font-serif"
           >
             {needsAuth ? "Nhập OTP Tạo Thiệp" : "Nhập Lại Mã Khác"}

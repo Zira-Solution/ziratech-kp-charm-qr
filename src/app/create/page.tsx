@@ -186,7 +186,7 @@ export default function CreateGiftEntryPage() {
                 href="/gift"
                 className="text-xs font-sans font-bold text-primary hover:underline inline-flex items-center gap-1"
               >
-                <span>Chuyển sang Cổng Quà Tặng Đa Năng (/gift)</span>
+                <span>Chuyển sang trang tạo thiệp (/gift)</span>
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </Link>
             </div>

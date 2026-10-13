@@ -193,7 +193,7 @@ export default function AdminPage() {
 
   const copyLink = async (token: string) => {
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/gift?tab=create&token=${token}`);
+      await navigator.clipboard.writeText(`${window.location.origin}/gift?token=${token}`);
       notify("Đã copy link tạo thiệp.");
     } catch {
       notify("Không copy được. Hãy sao chép thủ công.");

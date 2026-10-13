@@ -62,7 +62,8 @@ export function OrderCreatedDialog({ created, onClose }: { created: CreatedOrder
     `Mã thiệp: ${order.token}`,
     `OTP tạo thiệp (cho người mua): ${codes?.creatorKey ?? ""}`,
     `OTP xem thiệp (cho người nhận): ${codes?.unlockPin ?? ""}`,
-    `Cổng nhập mã: ${origin}/gift`,
+    `Tạo thiệp (người mua): ${origin}/gift`,
+    `Xem thiệp (người nhận): nhập mã thiệp và OTP xem thiệp tại ${origin}`,
   ].join("\n");
 
   return (
@@ -75,7 +76,7 @@ export function OrderCreatedDialog({ created, onClose }: { created: CreatedOrder
             Đã ghi lại mã, tạo đơn tiếp
           </button>
           <Link href="/gift" target="_blank" className={`${secondaryButton} sm:flex-1`}>
-            Mở cổng nhập mã
+            Mở trang tạo thiệp
             <Icon name="open_in_new" className="text-[16px]" />
           </Link>
         </>

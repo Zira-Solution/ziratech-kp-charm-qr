@@ -183,7 +183,7 @@ export default function PosView({ chains, chainsLoading, onCreated, onGoProducts
 
         {/* 3. Customer */}
         <Card>
-          <CardHeader title="3. Thông tin khách hàng" subtitle="Mã tạo thiệp sẽ được gửi về email này." />
+          <CardHeader title="3. Thông tin khách hàng" subtitle="Mã thiệp và OTP tạo thiệp sẽ được gửi về email này." />
           <div className="grid gap-4 p-5 sm:grid-cols-2">
             <Field label="Họ và tên" htmlFor="pos-name" required>
               <input

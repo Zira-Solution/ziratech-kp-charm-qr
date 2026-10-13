@@ -26,7 +26,7 @@ export async function POST(
     // Only a caller who entered the creator key for this token may overwrite its card.
     if (!hasGiftSession(req, "create", token)) {
       return NextResponse.json(
-        { error: "Phiên tạo thiệp đã hết hạn hoặc chưa xác thực. Vui lòng nhập lại mật khẩu tạo thiệp tại cổng /gift." },
+        { error: "Phiên tạo thiệp đã hết hạn hoặc chưa xác thực. Vui lòng nhập lại OTP tạo thiệp tại cổng /gift." },
         { status: 401 }
       );
     }

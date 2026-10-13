@@ -41,15 +41,15 @@ function GiftPortalContent() {
     const cleanPasscode = passcodeInput.trim();
 
     if (!cleanToken) {
-      setErrorMsg("Vui lòng nhập mã vòng tay (Mã định danh sản phẩm).");
+      setErrorMsg("Vui lòng nhập mã thiệp.");
       return;
     }
 
     if (!cleanPasscode) {
       setErrorMsg(
         activeTab === "create"
-          ? "Vui lòng nhập mật khẩu tạo thiệp bạn đã nhận qua Gmail."
-          : "Vui lòng nhập mã mở quà (PIN) in trên thẻ vật lý kèm vòng."
+          ? "Vui lòng nhập OTP tạo thiệp bạn đã nhận qua email."
+          : "Vui lòng nhập OTP xem thiệp in trên thẻ."
       );
       return;
     }
@@ -187,11 +187,11 @@ function GiftPortalContent() {
             <div>
               {activeTab === "create" ? (
                 <>
-                  <strong>Dành cho người mua quà:</strong> Nhập <strong>Mã Vòng</strong> kèm <strong>Mật khẩu tạo thiệp (Mã 1)</strong> đã nhận qua Gmail để bắt đầu thiết kế thư tay, ảnh Polaroid &amp; giọng nói.
+                  <strong>Dành cho người mua quà:</strong> Nhập <strong>Mã thiệp</strong> kèm <strong>OTP tạo thiệp</strong> đã nhận qua email để bắt đầu thiết kế thư tay, ảnh Polaroid &amp; giọng nói.
                 </>
               ) : (
                 <>
-                  <strong>Dành cho người nhận quà:</strong> Nhập <strong>Mã Vòng</strong> kèm <strong>Mã mở quà (PIN - Mã 2)</strong> in trên thiệp nhung trao kèm chiếc vòng tay để chiêm ngưỡng cuốn thiệp 3D!
+                  <strong>Dành cho người nhận quà:</strong> Nhập <strong>Mã thiệp</strong> kèm <strong>OTP xem thiệp</strong> in trên thẻ trao kèm chiếc vòng tay để chiêm ngưỡng cuốn thiệp 3D!
                 </>
               )}
             </div>
@@ -217,7 +217,7 @@ function GiftPortalContent() {
             {/* Field 1: Bracelet Token */}
             <div>
               <label className="block text-xs font-sans font-bold text-primary mb-1.5 uppercase tracking-wider">
-                MÃ VÒNG TAY (TOKEN SẢN PHẨM):
+                MÃ THIỆP:
               </label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-3.5 top-3.5 text-xl text-secondary">
@@ -233,14 +233,14 @@ function GiftPortalContent() {
                 />
               </div>
               <span className="text-[11px] font-sans text-on-surface-variant mt-1 block">
-                Mã định danh in trên hóa đơn, email hoặc thẻ gắn kèm chiếc vòng.
+                Mã thiệp in trên thẻ gắn kèm chiếc vòng và trong email.
               </span>
             </div>
 
             {/* Field 2: Password / PIN according to active tab */}
             <div>
               <label className="block text-xs font-sans font-bold text-primary mb-1.5 uppercase tracking-wider">
-                {activeTab === "create" ? "MÃ 1: MẬT KHẨU TẠO THIỆP (GMAIL):" : "MÃ 2: MÃ MỞ QUÀ (PIN THẺ NHUNG):"}
+                {activeTab === "create" ? "OTP TẠO THIỆP (NHẬN QUA EMAIL):" : "OTP XEM THIỆP (IN TRÊN THẺ):"}
               </label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-3.5 top-3.5 text-xl text-secondary">
@@ -249,7 +249,7 @@ function GiftPortalContent() {
                 <input
                   type={showPasscode ? "text" : "password"}
                   required
-                  placeholder={activeTab === "create" ? "Ví dụ: TAO-ABCD1234" : "Mã 4 số in trên thẻ"}
+                  placeholder={activeTab === "create" ? "Ví dụ: TAO-ABCD1234" : "OTP 4 số in trên thẻ"}
                   value={passcodeInput}
                   onChange={(e) => setPasscodeInput(e.target.value)}
                   className="w-full pl-11 pr-11 py-3.5 rounded-2xl liquid-glass-input font-mono font-bold text-base text-primary tracking-wider border border-white/90 focus:outline-none focus:ring-2 focus:ring-primary-container/30"

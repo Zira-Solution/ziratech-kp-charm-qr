@@ -20,12 +20,12 @@ export default function CreateGiftEntryPage() {
     const cleanPasscode = passcodeInput.trim();
 
     if (!cleanToken) {
-      setErrorMsg("Vui lòng nhập mã vòng tay (Mã định danh sản phẩm).");
+      setErrorMsg("Vui lòng nhập mã thiệp.");
       return;
     }
 
     if (!cleanPasscode) {
-      setErrorMsg("Vui lòng nhập mật khẩu tạo thiệp bạn đã nhận qua Gmail.");
+      setErrorMsg("Vui lòng nhập OTP tạo thiệp bạn đã nhận qua email.");
       return;
     }
 
@@ -45,13 +45,13 @@ export default function CreateGiftEntryPage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Mã không hợp lệ hoặc mật khẩu tạo thiệp không đúng.");
+        throw new Error(data.error || "Mã thiệp hoặc OTP tạo thiệp không đúng.");
       }
 
       // Valid token & passcode -> go to customer studio
       router.push(data.redirectUrl || `/create/${cleanToken}`);
     } catch (err: any) {
-      setErrorMsg(err.message || "Không thể xác thực mã tạo thiệp.");
+      setErrorMsg(err.message || "Không thể xác thực OTP tạo thiệp.");
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ export default function CreateGiftEntryPage() {
             Xưởng Tự Tay Thiết Kế Thiệp Quà Số
           </h1>
           <p className="text-xs sm:text-sm text-on-surface-variant font-sans mt-2 leading-relaxed">
-            Trang dành riêng cho người mua quà: Nhập <strong>Mã Vòng</strong> kèm <strong>Mật khẩu tạo thiệp (Mã 1)</strong> nhận qua Gmail để bảo mật quyền thiết kế.
+            Trang dành riêng cho người mua quà: Nhập <strong>Mã thiệp</strong> kèm <strong>OTP tạo thiệp</strong> nhận qua email để bảo mật quyền thiết kế.
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export default function CreateGiftEntryPage() {
             {/* Field 1: Token */}
             <div>
               <label className="block text-xs font-sans font-bold text-primary mb-1.5 uppercase tracking-wider">
-                MÃ VÒNG TAY (TOKEN SẢN PHẨM):
+                MÃ THIỆP:
               </label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-3.5 top-3.5 text-xl text-secondary">
@@ -112,7 +112,7 @@ export default function CreateGiftEntryPage() {
             {/* Field 2: Creator Key */}
             <div>
               <label className="block text-xs font-sans font-bold text-primary mb-1.5 uppercase tracking-wider">
-                MÃ 1: MẬT KHẨU TẠO THIỆP (NHẬN QUA GMAIL):
+                OTP TẠO THIỆP (NHẬN QUA EMAIL):
               </label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-3.5 top-3.5 text-xl text-secondary">

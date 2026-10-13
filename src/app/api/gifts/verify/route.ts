@@ -11,7 +11,7 @@ import { issueGiftSession, normalizeToken } from "@/lib/auth/gift-session";
 import { clearFailures, getLockRemainingMs, recordFailure } from "@/lib/supabase/attempts";
 
 // Same message for "unknown token" and "wrong code" so the endpoint cannot be used to find valid tokens.
-const INVALID_CREDENTIALS = "Mã vòng hoặc mã xác thực không chính xác. Vui lòng kiểm tra lại.";
+const INVALID_CREDENTIALS = "Mã thiệp hoặc mã OTP không chính xác. Vui lòng kiểm tra lại.";
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     const token = normalizeToken(body.token);
     if (!token) {
       return NextResponse.json(
-        { success: false, error: "Vui lòng nhập mã vòng tay (Mã định danh sản phẩm)." },
+        { success: false, error: "Vui lòng nhập mã thiệp." },
         { status: 400 }
       );
     }
@@ -47,8 +47,8 @@ export async function POST(req: NextRequest) {
         {
           success: false,
           error: mode === "create"
-            ? "Vui lòng nhập mật khẩu tạo thiệp bạn đã nhận qua Gmail."
-            : "Vui lòng nhập mã mở quà (PIN) in trên thẻ vật lý.",
+            ? "Vui lòng nhập OTP tạo thiệp bạn đã nhận qua email."
+            : "Vui lòng nhập OTP xem thiệp in trên thẻ.",
         },
         { status: 400 }
       );
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
         mode: "create",
         token: product.token,
         redirectUrl: `/create/${product.token}`,
-        message: "Xác thực mã tạo thiệp thành công! Đang chuyển hướng vào studio thiết kế...",
+        message: "Xác thực OTP tạo thiệp thành công! Đang chuyển vào studio thiết kế...",
       });
       issueGiftSession(res, "create", product.token);
       return res;
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
       redirectUrl: `/g/${product.token}`,
       message: isCompleted
         ? "Đã mở khóa món quà thành công!"
-        : "Đã xác thực mã mở quà. Người gửi đang nắn nót chuẩn bị thiệp cho bạn!",
+        : "Đã xác thực OTP xem thiệp. Người gửi đang nắn nót chuẩn bị thiệp cho bạn!",
     });
     issueGiftSession(res, "open", product.token);
     return res;

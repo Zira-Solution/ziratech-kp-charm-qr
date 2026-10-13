@@ -40,7 +40,7 @@ export async function GET(
       return NextResponse.json(
         {
           error: requireCreate
-            ? "Cần nhập mật khẩu tạo thiệp để vào studio thiết kế."
+            ? "Cần nhập OTP tạo thiệp để vào studio thiết kế."
             : "Cần nhập mã xác thực trước khi xem. Vui lòng quay lại cổng /gift.",
         },
         { status: 401 }
@@ -49,7 +49,7 @@ export async function GET(
 
     const order = await getGiftProductByToken(token);
     if (!order) {
-      return NextResponse.json({ error: "Không tìm thấy sản phẩm với mã định danh này" }, { status: 404 });
+      return NextResponse.json({ error: "Không tìm thấy thiệp với mã này" }, { status: 404 });
     }
 
     const product = toPublicView(order);

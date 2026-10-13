@@ -82,14 +82,14 @@ export default function RecipientGiftPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setPinError(data.error || "Mã PIN không đúng!");
+        setPinError(data.error || "OTP xem thiệp không đúng!");
         return;
       }
       setEnteredPin("");
       setShowPinModal(false);
       if (await fetchGift()) setUnlocked(true);
     } catch {
-      setPinError("Không thể kiểm tra mã PIN. Vui lòng thử lại.");
+      setPinError("Không thể kiểm tra OTP. Vui lòng thử lại.");
     } finally {
       setPinChecking(false);
     }
@@ -378,7 +378,7 @@ export default function RecipientGiftPage() {
             className="text-[11px] text-secondary-container hover:text-white flex items-center gap-1 cursor-pointer bg-neutral-900/80 px-3 py-1 rounded-full border border-neutral-700"
           >
             <span className="material-symbols-outlined text-sm">pin</span>
-            <span>Mở bằng mã PIN</span>
+            <span>Mở bằng OTP xem thiệp</span>
           </button>
 
         </div>
@@ -389,9 +389,9 @@ export default function RecipientGiftPage() {
         <div className="absolute inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
           <div className="w-full max-w-xs p-6 rounded-3xl bg-neutral-950 border border-neutral-700 text-center shadow-2xl">
             <span className="material-symbols-outlined text-3xl text-secondary-container mb-2">lock</span>
-            <h3 className="font-serif text-lg font-bold text-white">Nhập Mã PIN 4 Số</h3>
+            <h3 className="font-serif text-lg font-bold text-white">Nhập OTP Xem Thiệp (4 số)</h3>
             <p className="text-xs text-neutral-400 mt-1 mb-4">
-              Người tặng đã cài mã PIN bảo mật cho món quà này.
+              Nhập OTP in trên thẻ để xem món quà này.
             </p>
 
             <form onSubmit={handleCheckPin} className="space-y-3">

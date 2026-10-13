@@ -156,8 +156,8 @@ export default function AdminPage() {
       if (data.success) {
         notify(
           data.simulated
-            ? `Đã cấp lại mật khẩu cho ${token} (chế độ mô phỏng, chưa gửi email thật)`
-            : `Đã cấp lại mật khẩu và gửi email cho ${token}`
+            ? `Đã cấp lại OTP tạo thiệp cho ${token} (chế độ mô phỏng, chưa gửi email thật)`
+            : `Đã cấp lại OTP tạo thiệp và gửi email cho ${token}`
         );
       } else if (!data.creatorKey) {
         notify(data.error || "Không gửi lại được email.");

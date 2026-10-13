@@ -54,8 +54,8 @@ export async function POST(req: NextRequest) {
       simulated: mailRes.simulated || false,
       ...(emailDelivered ? {} : { creatorKey }),
       message: mailRes.success
-        ? `Đã cấp lại mật khẩu tạo thiệp và gửi email đến ${product.customerEmail}`
-        : "Đã cấp lại mật khẩu tạo thiệp nhưng gửi email thất bại",
+        ? `Đã cấp lại OTP tạo thiệp và gửi email đến ${product.customerEmail}`
+        : "Đã cấp lại OTP tạo thiệp nhưng gửi email thất bại",
       error: mailRes.success ? undefined : mailRes.error || "Gửi email thất bại",
     });
   } catch (err: any) {

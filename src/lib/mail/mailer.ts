@@ -39,7 +39,7 @@ export async function sendGiftActivationEmail({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mã Định Danh & Mật Khẩu Tạo Thiệp 20/10 — K&P Atelier</title>
+  <title>Mã Thiệp & OTP Tạo Thiệp 20/10 — K&P Atelier</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #fceae6; font-family: 'Merriweather', Georgia, serif; color: #443a36;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #fceae6; padding: 30px 15px;">
@@ -70,7 +70,7 @@ export async function sendGiftActivationEmail({
                 Thân gửi <strong>${safeName}</strong>,
               </p>
               <p style="margin: 0 0 22px 0; font-size: 14px; line-height: 1.6; color: #564243;">
-                Cảm ơn bạn đã lựa chọn món quà thủ công tại quầy <strong>K&amp;P Atelier</strong> (ĐH FPT). Dưới đây là <strong>mã vòng và bộ 2 mật khẩu riêng biệt</strong> để bạn thiết kế thiệp và trao tặng cho người nhận:
+                Cảm ơn bạn đã lựa chọn món quà thủ công tại quầy <strong>K&amp;P Atelier</strong> (ĐH FPT). Dưới đây là <strong>mã thiệp và 2 mã OTP riêng biệt</strong> để bạn thiết kế thiệp và trao tặng cho người nhận:
               </p>
 
               <!-- Order Summary Card -->
@@ -81,7 +81,7 @@ export async function sendGiftActivationEmail({
                       ✦ Thông tin vòng tay tại quầy
                     </span>
                     <p style="margin: 0 0 4px 0; font-size: 13px; color: #3d2c2b;">
-                      <strong>Mã vòng (Token):</strong> <span style="font-family: monospace; font-weight: bold; color: #540114;">${token}</span>
+                      <strong>Mã thiệp:</strong> <span style="font-family: monospace; font-weight: bold; color: #540114;">${token}</span>
                     </p>
                     <p style="margin: 0 0 4px 0; font-size: 13px; color: #3d2c2b;">
                       <strong>Dây vòng:</strong> ${safeChainName}
@@ -96,7 +96,7 @@ export async function sendGiftActivationEmail({
                   <!-- CODE 1: Creator Key (For Buyer) -->
                   <td width="48%" style="background: #fff8f5; border: 2px dashed #934841; border-radius: 18px; padding: 18px; text-align: center; vertical-align: top;">
                     <span style="font-size: 11px; font-weight: bold; color: #721a28; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">
-                      ✍️ MÃ 1: MẬT KHẨU TẠO THIỆP
+                      ✍️ OTP TẠO THIỆP
                     </span>
                     <span style="font-size: 10px; color: #765e55; display: block; margin-bottom: 10px;">
                       (Dành riêng cho bạn - Người mua)
@@ -105,7 +105,7 @@ export async function sendGiftActivationEmail({
                       ${creatorKey}
                     </div>
                     <span style="font-size: 10.5px; color: #897172; display: block; margin-top: 8px; line-height: 1.4;">
-                      Nhập cùng mã vòng tại <strong>/gift</strong> để tự tay thiết kế thư tay, ảnh &amp; voice note.
+                      Nhập cùng mã thiệp tại <strong>/gift</strong> để tự tay thiết kế thư tay, ảnh &amp; voice note.
                     </span>
                   </td>
 
@@ -114,10 +114,10 @@ export async function sendGiftActivationEmail({
                   <!-- CODE 2: Unlock PIN (For Recipient) -->
                   <td width="48%" style="background: #f7faf7; border: 2px dashed #2e7d32; border-radius: 18px; padding: 18px; text-align: center; vertical-align: top;">
                     <span style="font-size: 11px; font-weight: bold; color: #2e7d32; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">
-                      🎁 MÃ 2: MÃ MỞ QUÀ (PIN)
+                      🎁 OTP XEM THIỆP
                     </span>
                     <span style="font-size: 10px; color: #765e55; display: block; margin-bottom: 10px;">
-                      (Dành cho Người nhận mở quà)
+                      (Dành cho Người nhận xem thiệp)
                     </span>
                     <div style="background-color: #1b5e20; color: #ffffff; font-family: monospace; font-size: 20px; font-weight: bold; padding: 8px 14px; border-radius: 10px; border: 1px solid #81c784;">
                       ${unlockPin ?? "Đã in trên thẻ"}
@@ -143,12 +143,12 @@ export async function sendGiftActivationEmail({
               <!-- Step-by-step Guide -->
               <div style="background-color: #faf5eb; border-radius: 16px; padding: 18px 20px; border: 1px solid #ebd9c8;">
                 <span style="font-size: 12px; font-weight: bold; color: #540114; display: block; margin-bottom: 10px;">
-                  📝 Hướng dẫn trải nghiệm 2 mã:
+                  📝 Hướng dẫn dùng mã thiệp và 2 OTP:
                 </span>
                 <ol style="margin: 0; padding-left: 20px; font-size: 12.5px; line-height: 1.7; color: #564243;">
-                  <li><strong>Bạn (Người mua):</strong> Truy cập <strong>${siteUrl}/gift</strong>, chọn tab <em>"Tạo Thiệp"</em>, nhập Mã Vòng (${token}) và Mật Khẩu Tạo Thiệp (${creatorKey}).</li>
+                  <li><strong>Bạn (Người mua):</strong> Truy cập <strong>${siteUrl}/gift</strong>, chọn tab <em>"Tạo Thiệp"</em>, nhập Mã thiệp (${token}) và OTP tạo thiệp (${creatorKey}).</li>
                   <li><strong>Thiết kế:</strong> Tải ảnh Polaroid, ghi âm thì thầm và chọn template thiệp yêu thích.</li>
-                  <li><strong>Người nhận:</strong> Khi nhận được vòng và thẻ quà tặng, truy cập <strong>${siteUrl}/gift</strong> (hoặc quét mã QR), nhập Mã Mở Quà${unlockPin ? ` (${unlockPin})` : " in trên thẻ"} để chiêm ngưỡng cuốn thiệp 3D!</li>
+                  <li><strong>Người nhận:</strong> Khi nhận được vòng và thẻ quà tặng, truy cập <strong>${siteUrl}/gift</strong> (hoặc quét mã QR), nhập Mã thiệp và OTP xem thiệp${unlockPin ? ` (${unlockPin})` : " in trên thẻ"} để chiêm ngưỡng cuốn thiệp 3D!</li>
                 </ol>
               </div>
 
@@ -198,7 +198,7 @@ export async function sendGiftActivationEmail({
       await transporter.sendMail({
         from: process.env.MAIL_FROM || `"K&P Atelier" <${smtpUser}>`,
         to: customerEmail,
-        subject: `[K&P Atelier] Mã vòng & Mật khẩu tạo thiệp 20/10: ${token}`,
+        subject: `[K&P Atelier] Mã thiệp & OTP tạo thiệp 20/10: ${token}`,
         html: htmlContent,
       });
 
@@ -212,11 +212,11 @@ export async function sendGiftActivationEmail({
   // Fallback: Simulated mode for local development
   console.log(`\n======================================================`);
   console.log(`[MAILER SIMULATION] To: ${customerEmail}`);
-  console.log(`[MAILER SIMULATION] Mã Vòng: ${token}`);
+  console.log(`[MAILER SIMULATION] Mã thiệp: ${token}`);
   // Codes are only echoed outside production so secrets never end up in production logs.
   const reveal = process.env.NODE_ENV !== "production";
-  console.log(`[MAILER SIMULATION] Mã 1 (Tạo Thiệp - Người Mua): ${reveal ? creatorKey : "(hidden)"}`);
-  console.log(`[MAILER SIMULATION] Mã 2 (Mở Thiệp - Người Nhận): ${reveal ? (unlockPin ?? "(unchanged)") : "(hidden)"}`);
+  console.log(`[MAILER SIMULATION] OTP tạo thiệp (Người Mua): ${reveal ? creatorKey : "(hidden)"}`);
+  console.log(`[MAILER SIMULATION] OTP xem thiệp (Người Nhận): ${reveal ? (unlockPin ?? "(unchanged)") : "(hidden)"}`);
   console.log(`[MAILER SIMULATION] Cổng /gift Link: ${activationUrl}`);
   console.log(`======================================================\n`);
 

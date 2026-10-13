@@ -280,14 +280,14 @@ export default function CustomerGiftStudioPage() {
         <div className="p-8 rounded-3xl liquid-glass bg-white/90 border border-white/95 max-w-md text-center shadow-xl">
           <span className="material-symbols-outlined text-4xl text-rose-600 mb-2">error</span>
           <h2 className="text-xl font-bold text-primary">
-            {needsAuth ? "Cần Nhập Mật Khẩu Tạo Thiệp" : "Mã Định Danh Không Hợp Lệ"}
+            {needsAuth ? "Cần Nhập OTP Tạo Thiệp" : "Mã Thiệp Không Hợp Lệ"}
           </h2>
           <p className="text-xs text-on-surface-variant font-sans mt-2">{errorMsg || "Không tìm thấy sản phẩm."}</p>
           <Link
             href={needsAuth ? `/gift?tab=create&token=${encodeURIComponent(token)}` : "/claim"}
             className="mt-6 inline-block py-2.5 px-6 rounded-xl liquid-glass-btn-primary text-white text-xs font-bold font-serif"
           >
-            {needsAuth ? "Nhập Mật Khẩu Tạo Thiệp" : "Nhập Lại Mã Khác"}
+            {needsAuth ? "Nhập OTP Tạo Thiệp" : "Nhập Lại Mã Khác"}
           </Link>
         </div>
       </div>
@@ -330,7 +330,7 @@ export default function CustomerGiftStudioPage() {
       </div>
 
       <div className="flex items-center justify-between text-[11px] font-mono text-warm-neutral px-1 pt-1 border-t border-parchment-border">
-        <span>Mã PIN: {/^\d{4}$/.test(pinCode) ? "••••" : "giữ nguyên"}</span>
+        <span>OTP xem: {/^\d{4}$/.test(pinCode) ? "••••" : "giữ nguyên"}</span>
         <span className="text-emerald-700 font-bold">● Sẵn sàng mở</span>
       </div>
     </div>
@@ -641,7 +641,7 @@ export default function CustomerGiftStudioPage() {
               <div className="flex items-center gap-2 mb-4">
                 <span className="w-6 h-6 rounded-lg bg-secondary text-amber-300 text-xs font-bold flex items-center justify-center">5</span>
                 <h3 className="font-serif text-base font-bold text-primary">
-                  Voice Note Thì Thầm &amp; Mã PIN 4 Số Bảo Mật
+                  Voice Note Thì Thầm &amp; OTP Xem Thiệp (4 Số)
                 </h3>
               </div>
 
@@ -676,7 +676,7 @@ export default function CustomerGiftStudioPage() {
 
                 <div>
                   <label className="block text-xs font-sans font-bold text-primary mb-1.5">
-                    Đổi Mã PIN 4 Số Mở Quà (Để trống = giữ nguyên)
+                    Đổi OTP xem thiệp 4 số (Để trống = giữ nguyên)
                   </label>
                   <input
                     type="text"
@@ -691,7 +691,7 @@ export default function CustomerGiftStudioPage() {
                     className="w-full px-4 py-2.5 rounded-xl liquid-glass-input font-mono font-bold text-center tracking-widest text-xl text-primary border border-white/90 focus:outline-none focus:ring-2 focus:ring-primary-container/30"
                   />
                   <span className="text-[11px] font-sans text-warm-neutral mt-1 block">
-                    Người nhận sẽ nhập 4 số này để mở khóa thiệp. Nếu để trống, mã PIN in trên thẻ vẫn được giữ nguyên.
+                    Người nhận sẽ nhập 4 số này cùng mã thiệp để xem thiệp. Nếu để trống, OTP in trên thẻ vẫn được giữ nguyên.
                   </span>
                 </div>
               </div>

@@ -59,9 +59,9 @@ export function OrderCreatedDialog({ created, onClose }: { created: CreatedOrder
 
   const summary = [
     "K&P Atelier - Quà Tặng 20/10",
-    `Mã vòng: ${order.token}`,
-    `Mật khẩu tạo thiệp (cho người mua): ${codes?.creatorKey ?? ""}`,
-    `Mã mở quà PIN (cho người nhận): ${codes?.unlockPin ?? ""}`,
+    `Mã thiệp: ${order.token}`,
+    `OTP tạo thiệp (cho người mua): ${codes?.creatorKey ?? ""}`,
+    `OTP xem thiệp (cho người nhận): ${codes?.unlockPin ?? ""}`,
     `Cổng nhập mã: ${origin}/gift`,
   ].join("\n");
 
@@ -94,18 +94,18 @@ export function OrderCreatedDialog({ created, onClose }: { created: CreatedOrder
       )}
 
       <div className="space-y-3">
-        <CodeBox label="Mã vòng" hint="In trên thẻ nhung." value={order.token} copied={copied === "token"} onCopy={() => copy("token", order.token)} />
+        <CodeBox label="Mã thiệp" hint="In trên thẻ nhung." value={order.token} copied={copied === "token"} onCopy={() => copy("token", order.token)} />
         <div className="grid gap-3 sm:grid-cols-2">
           <CodeBox
-            label="Mật khẩu tạo thiệp"
+            label="OTP tạo thiệp"
             hint="Dành cho người mua."
             value={codes?.creatorKey ?? "—"}
             copied={copied === "creator"}
             onCopy={() => codes && copy("creator", codes.creatorKey)}
           />
           <CodeBox
-            label="PIN mở quà"
-            hint="In trên thẻ người nhận."
+            label="OTP xem thiệp"
+            hint="In trên thẻ, dành cho người nhận."
             value={codes?.unlockPin ?? "—"}
             copied={copied === "pin"}
             onCopy={() => codes && copy("pin", codes.unlockPin)}
@@ -124,7 +124,7 @@ export function OrderCreatedDialog({ created, onClose }: { created: CreatedOrder
 
       <p className="mt-4 flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2.5 text-xs text-amber-800 ring-1 ring-amber-200">
         <Icon name="lock" className="mt-0.5 text-[16px]" />
-        Mã được mã hóa và chỉ hiện lần này. Hãy in PIN lên thẻ hoặc đưa cho khách trước khi đóng.
+        Mã được mã hóa và chỉ hiện lần này. Hãy in OTP xem thiệp lên thẻ hoặc đưa cho khách trước khi đóng.
       </p>
 
       <dl className="mt-4 space-y-1.5 border-t border-slate-100 pt-4 text-sm">
@@ -161,8 +161,8 @@ export function ReissuedKeyDialog({
   const { copied, copy } = useCopy();
   return (
     <Dialog
-      eyebrow="Cấp lại mật khẩu tạo thiệp"
-      title={`Mã vòng ${token}`}
+      eyebrow="Cấp lại OTP tạo thiệp"
+      title={`Mã thiệp ${token}`}
       footer={
         <button type="button" onClick={onClose} className={`${primaryButton} sm:flex-1`}>
           Đã ghi lại, đóng
@@ -170,10 +170,10 @@ export function ReissuedKeyDialog({
       }
     >
       <p className="mb-4 text-sm text-slate-600">
-        Email chưa được gửi thật. Mật khẩu cũ đã bị vô hiệu, hãy đưa mật khẩu mới này cho khách. Mã chỉ hiện một lần.
+        Email chưa được gửi thật. OTP cũ đã bị vô hiệu, hãy đưa OTP mới này cho khách. Mã chỉ hiện một lần.
       </p>
       <CodeBox
-        label="Mật khẩu tạo thiệp mới"
+        label="OTP tạo thiệp mới"
         hint="Dành cho người mua."
         value={creatorKey}
         copied={copied === "creator"}

@@ -8,9 +8,9 @@ export interface CharmOrderItem {
 /** Full record as stored. Contains secret hashes - server-side only, never send it to a client. */
 export interface GiftProductOrder {
   id: string;
-  token: string;              // Mã vòng tay (e.g. KP-2010-XXXXXX)
-  creatorKeyHash: string;     // MÃ 1: Mật khẩu tạo thiệp (băm scrypt)
-  unlockPinHash: string;      // MÃ 2: Mã mở thiệp (băm scrypt)
+  token: string;              // Mã thiệp (e.g. KP-2010-XXXXXX)
+  creatorKeyHash: string;     // OTP tạo thiệp, cho người mua (băm scrypt)
+  unlockPinHash: string;      // OTP xem thiệp, cho người nhận (băm scrypt)
   customerName: string;
   customerEmail: string;
   customerPhone?: string;

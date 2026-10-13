@@ -76,18 +76,18 @@ function RowActions({
       <button
         type="button"
         className={iconButton}
-        title="Cấp lại mật khẩu tạo thiệp & gửi email"
-        aria-label={`Cấp lại mật khẩu và gửi email cho ${order.token}`}
+        title="Cấp lại OTP tạo thiệp & gửi email"
+        aria-label={`Cấp lại OTP tạo thiệp và gửi email cho ${order.token}`}
         disabled={resendingToken === order.token}
         onClick={() => onResend(order.token)}
       >
         <Icon name={resendingToken === order.token ? "hourglass_top" : "mail"} className="text-[18px]" />
       </button>
-      <Link href={`/create/${order.token}`} target="_blank" className={iconButton} title="Mở studio tạo thiệp (cần mật khẩu tạo thiệp)" aria-label={`Mở studio tạo thiệp ${order.token}`}>
+      <Link href={`/create/${order.token}`} target="_blank" className={iconButton} title="Mở studio tạo thiệp (cần OTP tạo thiệp)" aria-label={`Mở studio tạo thiệp ${order.token}`}>
         <Icon name="edit" className="text-[18px]" />
       </Link>
       {order.status === "completed" && (
-        <Link href={`/g/${order.token}`} target="_blank" className={iconButton} title="Xem thiệp (cần PIN mở quà)" aria-label={`Xem thiệp ${order.token}`}>
+        <Link href={`/g/${order.token}`} target="_blank" className={iconButton} title="Xem thiệp (cần OTP xem thiệp)" aria-label={`Xem thiệp ${order.token}`}>
           <Icon name="open_in_new" className="text-[18px]" />
         </Link>
       )}

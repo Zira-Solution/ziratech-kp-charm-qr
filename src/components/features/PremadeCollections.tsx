@@ -61,28 +61,28 @@ export default function PremadeCollections({
   return (
     <section id="collections" className="w-full py-16 lg:py-24 relative overflow-hidden">
       {/* Subtle liquid backdrop light */}
-      <div className="absolute top-1/2 left-1/4 w-96 h-96 rounded-full bg-gradient-to-tr from-[#ffe4e6] to-[#fed7aa] opacity-40 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/4 w-96 h-96 rounded-full bg-linear-to-tr from-rose-100 to-amber-200 opacity-40 blur-3xl pointer-events-none" />
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-320 mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-[#934841] mb-1 block">
+            <span className="text-xs font-bold uppercase tracking-widest text-secondary mb-1 block">
               Nếu Bạn Muốn Tiết Kiệm Thời Gian...
             </span>
-            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#540114]">
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-primary">
               Bộ Sưu Tập Phối Sẵn Kèm Thẻ Quà Số 20/10
             </h2>
-            <p className="text-xs sm:text-sm text-[#564243] mt-1">
+            <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
               Đầy đủ vòng, charm, thẻ QR thông minh và đóng gói hộp quà nơ lụa — mức giá sinh viên 45k - 69k.
             </p>
           </div>
 
           <button
             onClick={onCustomize}
-            className="liquid-glass-btn-secondary px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-[#540114] flex items-center gap-1.5 shrink-0 cursor-pointer"
+            className="liquid-glass-btn-secondary px-4 py-2 rounded-full text-xs sm:text-sm font-semibold text-primary flex items-center gap-1.5 shrink-0 cursor-pointer"
           >
             Muốn tự tay chọn charm? Vào Bàn Xưởng{" "}
-            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            <span className="material-symbols-outlined text-base">arrow_forward</span>
           </button>
         </div>
 
@@ -90,40 +90,40 @@ export default function PremadeCollections({
           {collections.map((item) => (
             <div
               key={item.id}
-              className="p-4 rounded-3xl liquid-glass-card flex flex-col justify-between group"
+              className="p-4.5 rounded-3xl liquid-glass-card border border-white/85 shadow-lg hover:shadow-2xl flex flex-col justify-between group"
             >
               <div>
-                <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-white/40 mb-4 border border-white/60 shadow-inner">
+                <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-white/40 mb-4 border border-white/80 shadow-md">
                   <img
                     src={item.img}
                     alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
                   />
-                  <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full liquid-glass-pill text-[#540114] text-[10px] font-bold shadow-md border border-white/80">
+                  <span className="absolute top-3 left-3 px-3.5 py-1 rounded-full liquid-glass-pill text-primary text-[10px] font-bold shadow-md border border-white/90">
                     {item.tag}
                   </span>
                 </div>
 
-                <span className="text-[10px] text-[#934841] font-bold uppercase tracking-wider">
+                <span className="text-[10px] text-secondary font-bold uppercase tracking-wider block">
                   Trọn gói vòng + Quà số
                 </span>
-                <h3 className="font-serif text-base font-bold text-[#540114] mt-1">{item.title}</h3>
-                <p className="text-xs text-[#564243] mt-1.5 leading-relaxed">{item.desc}</p>
+                <h3 className="font-serif text-base font-bold text-primary mt-1">{item.title}</h3>
+                <p className="text-xs text-on-surface-variant mt-1.5 leading-relaxed">{item.desc}</p>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-white/60 flex items-center justify-between">
+              <div className="mt-5 pt-3.5 border-t border-white/70 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-[#76322b] block font-semibold">
+                  <span className="text-[10px] text-on-secondary-fixed-variant block font-semibold">
                     🐾 Góp ~{item.meals} bữa ăn cho các bé
                   </span>
-                  <span className="font-serif text-lg font-bold text-[#540114]">
+                  <span className="font-serif text-lg font-bold text-primary">
                     {new Intl.NumberFormat("vi-VN").format(item.price)}₫
                   </span>
                 </div>
 
                 <button
                   onClick={() => onQuickBuy(item)}
-                  className="liquid-glass-btn-primary px-4 py-2 rounded-full text-white text-xs font-semibold shadow-xs cursor-pointer"
+                  className="liquid-glass-btn-primary px-4.5 py-2 rounded-full text-white text-xs font-semibold shadow-md cursor-pointer"
                 >
                   Đặt trước
                 </button>

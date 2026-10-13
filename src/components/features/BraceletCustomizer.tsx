@@ -236,18 +236,18 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
 
   return (
     <section id="customizer-workspace" className="w-full py-16 lg:py-24">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-320 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full liquid-glass-pill text-[#540114] text-xs font-semibold mb-2 shadow-xs">
-              <span className="material-symbols-outlined text-[14px] text-[#fea095]">brush</span>
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full liquid-glass-pill text-primary text-xs font-semibold mb-2 shadow-xs">
+              <span className="material-symbols-outlined text-sm text-secondary-container">brush</span>
               Atelier Workshop 20/10 • ĐH FPT
             </div>
-            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-[#540114]">
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-primary">
               Bàn Tự Phối Vòng &amp; Thiết Kế Quà Số
             </h2>
-            <p className="text-sm text-[#564243] mt-1">
+            <p className="text-sm text-on-surface-variant mt-1">
               Tùy biến từng hạt charm, soạn trang quà số kèm thẻ QR và cùng chúng mình góp bữa ăn cho các bé cún mèo tại Sân Nhà Nhiều Chó.
             </p>
           </div>
@@ -257,11 +257,11 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
               onClick={handleReset}
               className="liquid-glass-btn-secondary px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-1 cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[16px]">restart_alt</span>
+              <span className="material-symbols-outlined text-base">restart_alt</span>
               Đặt lại vòng
             </button>
-            <div className="liquid-glass-pill px-3.5 py-1.5 rounded-full text-[#76322b] text-xs font-semibold flex items-center gap-1.5 border border-white/80 shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-[#540114] animate-pulse" />
+            <div className="liquid-glass-pill px-3.5 py-1.5 rounded-full text-on-secondary-fixed-variant text-xs font-semibold flex items-center gap-1.5 border border-white/80 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               Định giá sinh viên: 40k – 70k
             </div>
           </div>
@@ -271,25 +271,25 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* LEFT: Visual Bracelet Canvas (7 cols) */}
           <div className="lg:col-span-7 flex flex-col gap-4 lg:sticky lg:top-24">
-            <div className="relative w-full min-h-[460px] rounded-3xl liquid-glass p-6 shadow-xl border-2 border-white/80 flex flex-col justify-between overflow-hidden">
+            <div className="relative w-full min-h-115 rounded-4xl liquid-glass p-6 sm:p-8 shadow-2xl border-2 border-white/90 flex flex-col justify-between overflow-hidden">
               {/* Top Canvas Status */}
               <div className="flex items-center justify-between z-10">
                 <div className="flex items-center gap-2">
-                  <span className="font-serif text-base font-bold text-[#540114]">
+                  <span className="font-serif text-base font-bold text-primary">
                     Vòng {chain.name}
                   </span>
-                  <span className="px-3 py-1 rounded-full liquid-glass-pill text-[11px] text-[#540114] font-bold border border-white/80">
+                  <span className="px-3.5 py-1 rounded-full liquid-glass-pill text-[11px] text-primary font-bold border border-white/90 shadow-xs">
                     Size {wristSize}cm
                   </span>
                 </div>
-                <span className="text-xs font-semibold text-[#564243] px-3.5 py-1 rounded-full liquid-glass-pill border border-white/80">
+                <span className="text-xs font-semibold text-primary px-4 py-1.5 rounded-full liquid-glass-pill border border-white/90 shadow-xs">
                   {charms.length} / 7 Charms
                 </span>
               </div>
 
               {/* Central Bracelet SVG Canvas Graphic */}
               <div className="relative my-auto py-6 flex flex-col items-center justify-center">
-                <div className="relative w-full max-w-[380px] aspect-square flex items-center justify-center">
+                <div className="relative w-full max-w-95 aspect-square flex items-center justify-center">
                   {/* SVG Bracelet Circle Chain */}
                   <svg
                     className="w-full h-full transform rotate-45 transition-transform duration-500"
@@ -344,12 +344,12 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                           }}
                         >
                           <div className="relative w-9 h-9 rounded-full liquid-glass-pill shadow-md flex items-center justify-center border border-white/90 group-hover:scale-125 transition-transform duration-200">
-                            <span className="material-symbols-outlined text-[#540114] text-[18px]">
+                            <span className="material-symbols-outlined text-primary text-lg">
                               {charm.icon}
                             </span>
                             <button
                               onClick={() => handleRemoveCharm(charm.id)}
-                              className="absolute -top-1 -right-1 w-4 h-4 bg-[#540114] text-white rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                               title="Bỏ charm này"
                             >
                               ✕
@@ -363,10 +363,10 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
 
                 {/* Digital QR Badge Preview floating below bracelet */}
                 <div className="mt-2 px-4 py-2 rounded-2xl liquid-glass-pill border border-white/80 shadow-xs flex items-center gap-2 max-w-sm text-center">
-                  <span className="material-symbols-outlined text-[#540114] text-[18px]">
+                  <span className="material-symbols-outlined text-primary text-lg">
                     qr_code_2
                   </span>
-                  <span className="text-xs text-[#221a18] italic truncate">
+                  <span className="text-xs text-on-surface italic truncate">
                     {hasPin ? "🔒 Đã đặt PIN • " : "🔓 Không khóa PIN • "} "{message}"
                   </span>
                 </div>
@@ -375,7 +375,7 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
               {/* Bottom Canvas Controls */}
               <div className="z-10 pt-4 border-t border-white/60 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#564243] font-semibold">Chất liệu:</span>
+                  <span className="text-xs text-on-surface-variant font-semibold">Chất liệu:</span>
                   <div className="inline-flex p-1 liquid-glass-pill rounded-full text-xs">
                     {AVAILABLE_CHAINS.map((c) => (
                       <button
@@ -384,7 +384,7 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                         className={`px-3 py-1 rounded-full transition-all text-[11px] font-bold cursor-pointer ${
                           chain.id === c.id
                             ? "liquid-glass-btn-primary text-white shadow-xs"
-                            : "text-[#564243] hover:text-[#540114]"
+                            : "text-on-surface-variant hover:text-primary"
                         }`}
                       >
                         {c.name.split(" ")[0]}
@@ -394,7 +394,7 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#564243] font-semibold">Cổ tay:</span>
+                  <span className="text-xs text-on-surface-variant font-semibold">Cổ tay:</span>
                   <input
                     type="range"
                     min="14"
@@ -402,36 +402,36 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                     step="0.5"
                     value={wristSize}
                     onChange={(e) => setWristSize(parseFloat(e.target.value))}
-                    className="w-20 accent-[#540114] cursor-pointer"
+                    className="w-20 accent-primary cursor-pointer"
                   />
-                  <span className="text-xs text-[#540114] font-bold">{wristSize} cm</span>
+                  <span className="text-xs text-primary font-bold">{wristSize} cm</span>
                 </div>
               </div>
             </div>
 
             {/* Attached Charms Tray */}
             <div className="p-4 rounded-2xl liquid-glass border border-white/70 shadow-xs">
-              <span className="text-xs font-bold text-[#540114] block mb-2">
+              <span className="text-xs font-bold text-primary block mb-2">
                 Các charm đang treo trên vòng ({charms.length}/7):
               </span>
               <div className="flex items-center gap-2 overflow-x-auto pb-1">
                 {charms.length === 0 ? (
-                  <span className="text-xs text-[#897172] italic">
+                  <span className="text-xs text-outline italic">
                     Chưa có charm nào. Hãy bấm "+ Thêm" ở bảng bên cạnh!
                   </span>
                 ) : (
                   charms.map((c) => (
                     <div
                       key={c.id}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-white/80 text-xs text-[#221a18] whitespace-nowrap shadow-xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-white/80 text-xs text-on-surface whitespace-nowrap shadow-xs"
                     >
-                      <span className="material-symbols-outlined text-[14px] text-[#540114]">
+                      <span className="material-symbols-outlined text-sm text-primary">
                         {c.icon}
                       </span>
                       <span>{c.name}</span>
                       <button
                         onClick={() => handleRemoveCharm(c.id)}
-                        className="text-[#897172] hover:text-[#540114] font-bold ml-1 cursor-pointer"
+                        className="text-outline hover:text-primary font-bold ml-1 cursor-pointer"
                       >
                         ✕
                       </button>
@@ -447,13 +447,13 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
             {/* STEP 1: Chọn Dây Vòng */}
             <div className="p-5 rounded-3xl liquid-glass shadow-md border border-white/80">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-serif text-base font-bold text-[#540114] flex items-center gap-2">
+                <h3 className="font-serif text-base font-bold text-primary flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full liquid-glass-btn-primary text-white text-xs flex items-center justify-center font-sans">
                     1
                   </span>
                   Chọn Kiểu Dây Cơ Bản
                 </h3>
-                <span className="text-[10px] text-[#934841] font-bold uppercase">Bắt buộc</span>
+                <span className="text-[10px] text-secondary font-bold uppercase">Bắt buộc</span>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
@@ -463,15 +463,15 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                     onClick={() => setChain(c)}
                     className={`cursor-pointer p-3 rounded-2xl transition-all border flex flex-col justify-between ${
                       chain.id === c.id
-                        ? "liquid-glass border-white/95 ring-2 ring-[#540114]/20 shadow-md"
+                        ? "liquid-glass border-white/95 ring-2 ring-primary/20 shadow-md"
                         : "liquid-glass-card hover:bg-white/80 border-white/70"
                     }`}
                   >
                     <div>
-                      <span className="text-xs font-bold text-[#221a18] block">{c.name}</span>
-                      <span className="text-[11px] text-[#564243] block mt-0.5">{c.desc}</span>
+                      <span className="text-xs font-bold text-on-surface block">{c.name}</span>
+                      <span className="text-[11px] text-on-surface-variant block mt-0.5">{c.desc}</span>
                     </div>
-                    <span className="text-xs font-bold text-[#540114] mt-2 block">
+                    <span className="text-xs font-bold text-primary mt-2 block">
                       {formatMoney(c.price)}
                     </span>
                   </div>
@@ -482,13 +482,13 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
             {/* STEP 2: Chọn Charm Kỷ Niệm */}
             <div className="p-5 rounded-3xl liquid-glass shadow-md border border-white/80 flex flex-col">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-serif text-base font-bold text-[#540114] flex items-center gap-2">
+                <h3 className="font-serif text-base font-bold text-primary flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full liquid-glass-btn-primary text-white text-xs flex items-center justify-center font-sans">
                     2
                   </span>
                   Chọn Charm Ý Nghĩa
                 </h3>
-                <span className="text-[11px] text-[#897172]">Tối đa 7 charm</span>
+                <span className="text-[11px] text-outline">Tối đa 7 charm</span>
               </div>
 
               {/* Category filter pills */}
@@ -506,7 +506,7 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                     className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                       charmCategory === cat.id
                         ? "liquid-glass-btn-primary text-white shadow-xs"
-                        : "liquid-glass-pill text-[#564243] hover:bg-white/80"
+                        : "liquid-glass-pill text-on-surface-variant hover:bg-white/80"
                     }`}
                   >
                     {cat.label}
@@ -515,7 +515,7 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
               </div>
 
               {/* Charm Grid */}
-              <div className="grid grid-cols-2 gap-2.5 max-h-[290px] overflow-y-auto pr-1 mt-2">
+              <div className="grid grid-cols-2 gap-2.5 max-h-72.5 overflow-y-auto pr-1 mt-2">
                 {AVAILABLE_CHARMS.filter(
                   (c) => charmCategory === "all" || c.category === charmCategory
                 ).map((c) => (
@@ -524,17 +524,17 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                     className="p-3 rounded-2xl liquid-glass-card border border-white/70 flex flex-col justify-between"
                   >
                     <div className="flex items-start justify-between">
-                      <span className="material-symbols-outlined text-[#540114] text-[22px] p-1.5 liquid-glass-pill rounded-xl shadow-xs border border-white/80">
+                      <span className="material-symbols-outlined text-primary text-[22px] p-1.5 liquid-glass-pill rounded-xl shadow-xs border border-white/80">
                         {c.icon}
                       </span>
-                      <span className="text-[10px] text-[#934841] font-bold">
+                      <span className="text-[10px] text-secondary font-bold">
                         +{formatMoney(c.price)}
                       </span>
                     </div>
 
                     <div className="mt-2">
-                      <h4 className="text-xs font-bold text-[#221a18]">{c.name}</h4>
-                      <p className="text-[10px] text-[#564243] line-clamp-1 mt-0.5">{c.meaning}</p>
+                      <h4 className="text-xs font-bold text-on-surface">{c.name}</h4>
+                      <p className="text-[10px] text-on-surface-variant line-clamp-1 mt-0.5">{c.meaning}</p>
                     </div>
 
                     <div className="mt-2 pt-1 border-t border-white/50 flex justify-end">
@@ -553,18 +553,18 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
             {/* STEP 3: Cấu Hình Quà Số & Thiệp QR */}
             <div className="p-5 rounded-3xl liquid-glass shadow-md border border-white/80">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-serif text-base font-bold text-[#540114] flex items-center gap-2">
+                <h3 className="font-serif text-base font-bold text-primary flex items-center gap-2">
                   <span className="w-6 h-6 rounded-full liquid-glass-btn-primary text-white text-xs flex items-center justify-center font-sans">
                     3
                   </span>
                   Cấu Hình Quà Số QR &amp; Lời Chúc
                 </h3>
-                <span className="text-[10px] text-[#934841] font-bold uppercase">Kèm Thẻ QR</span>
+                <span className="text-[10px] text-secondary font-bold uppercase">Kèm Thẻ QR</span>
               </div>
 
               {/* 5 Recipient groups according to Spec Section 4.1 */}
               <div className="mb-3">
-                <label className="text-xs text-[#564243] font-semibold block mb-1.5">
+                <label className="text-xs text-on-surface-variant font-semibold block mb-1.5">
                   Đối tượng nhận quà:
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5">
@@ -581,7 +581,7 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                       className={`px-2 py-1 rounded-xl text-[11px] font-semibold text-center transition-all cursor-pointer ${
                         recipientGroup === rg.id
                           ? "liquid-glass-btn-primary text-white"
-                          : "liquid-glass-pill text-[#564243] hover:bg-white/80"
+                          : "liquid-glass-pill text-on-surface-variant hover:bg-white/80"
                       }`}
                     >
                       {rg.label}
@@ -593,18 +593,18 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
               {/* Message box with AI buttons */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-[#564243] font-semibold">Lời chúc hiển thị khi quét QR:</span>
+                  <span className="text-xs text-on-surface-variant font-semibold">Lời chúc hiển thị khi quét QR:</span>
                   <div className="flex gap-1.5">
                     <button
                       onClick={() => handleApplyAiSuggestion("write")}
-                      className="px-2.5 py-0.5 rounded-lg liquid-glass-btn-secondary text-[#540114] text-[10px] font-bold flex items-center gap-0.5 cursor-pointer"
+                      className="px-2.5 py-0.5 rounded-lg liquid-glass-btn-secondary text-primary text-[10px] font-bold flex items-center gap-0.5 cursor-pointer"
                     >
-                      <span className="material-symbols-outlined text-[12px]">auto_awesome</span>
+                      <span className="material-symbols-outlined text-xs">auto_awesome</span>
                       AI viết
                     </button>
                     <button
                       onClick={() => handleApplyAiSuggestion("polish")}
-                      className="px-2.5 py-0.5 rounded-lg liquid-glass-btn-secondary text-[#540114] text-[10px] font-bold cursor-pointer"
+                      className="px-2.5 py-0.5 rounded-lg liquid-glass-btn-secondary text-primary text-[10px] font-bold cursor-pointer"
                     >
                       Trau chuốt
                     </button>
@@ -616,18 +616,18 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                   maxLength={120}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full p-2.5 rounded-xl liquid-glass-input text-xs text-[#221a18] focus:outline-none resize-none"
+                  className="w-full p-2.5 rounded-xl liquid-glass-input text-xs text-on-surface focus:outline-none resize-none"
                   placeholder="Gõ lời nhắn muốn in thiệp & hiển thị khi quét mã QR..."
                 />
 
                 {/* PIN Code Setup according to Spec Section 3.1 */}
                 <div className="pt-2 border-t border-white/60 flex items-center justify-between">
-                  <label className="flex items-center gap-2 cursor-pointer text-xs text-[#221a18]">
+                  <label className="flex items-center gap-2 cursor-pointer text-xs text-on-surface">
                     <input
                       type="checkbox"
                       checked={hasPin}
                       onChange={(e) => setHasPin(e.target.checked)}
-                      className="rounded accent-[#540114]"
+                      className="rounded accent-primary"
                     />
                     <span>Đặt mã PIN 4 số bảo vệ thẻ quà</span>
                   </label>
@@ -650,12 +650,12 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
             <div className="p-5 rounded-3xl liquid-glass shadow-xl border-2 border-white/90 flex flex-col gap-3">
               {/* Transparency Formula strictly from Spec Section 7 */}
               <div className="liquid-glass-pill p-3.5 rounded-2xl border border-white/80 space-y-2 text-xs">
-                <div className="flex justify-between items-center text-[#564243]">
+                <div className="flex justify-between items-center text-on-surface-variant">
                   <span>Trọn gói vòng + quà số QR:</span>
-                  <span className="font-bold text-sm text-[#221a18]">{formatMoney(totalPrice)}</span>
+                  <span className="font-bold text-sm text-on-surface">{formatMoney(totalPrice)}</span>
                 </div>
-                <div className="pt-2 border-t border-white/60 flex items-center gap-2 text-[#540114]">
-                  <span className="material-symbols-outlined text-[18px] text-[#934841] shrink-0">pets</span>
+                <div className="pt-2 border-t border-white/60 flex items-center gap-2 text-primary">
+                  <span className="material-symbols-outlined text-lg text-secondary shrink-0">pets</span>
                   <span className="text-xs font-semibold leading-relaxed">
                     Với đơn hàng này, <strong>bạn đã góp vào {mealsCount} bữa ăn cho các bé</strong> tại Sân Nhà Nhiều Chó! 🐾
                   </span>
@@ -665,10 +665,10 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
               {/* Total and Order Button */}
               <div className="flex items-center justify-between pt-1">
                 <div>
-                  <span className="text-[10px] text-[#934841] uppercase font-bold tracking-wider block">
+                  <span className="text-[10px] text-secondary uppercase font-bold tracking-wider block">
                     Tổng đơn đặt trước 20/10
                   </span>
-                  <span className="font-serif text-2xl font-bold text-[#540114]">
+                  <span className="font-serif text-2xl font-bold text-primary">
                     {formatMoney(totalPrice)}
                   </span>
                 </div>
@@ -677,7 +677,7 @@ export default function BraceletCustomizer({ onAddToCart }: BraceletCustomizerPr
                   onClick={handleFinishAndOrder}
                   className="liquid-glass-btn-primary px-6 py-3.5 rounded-full text-white text-xs sm:text-sm font-semibold shadow-lg flex items-center gap-2 cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[18px]">shopping_bag</span>
+                  <span className="material-symbols-outlined text-lg">shopping_bag</span>
                   Đặt Trước Cho 20/10
                 </button>
               </div>

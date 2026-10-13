@@ -264,7 +264,7 @@ export default function ComposePage() {
   const appContent = (
     <div
       onClick={handleTapScreen}
-      className="flex flex-col min-h-screen w-full bg-[#fff8f6] text-[#221a18] relative select-none"
+      className="flex flex-col min-h-screen w-full bg-brand-bg text-on-surface relative select-none"
     >
       {/* Floating Hearts Particle Layer */}
       <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
@@ -272,7 +272,7 @@ export default function ComposePage() {
           <span
             key={h.id}
             style={{ left: `${h.x - 10}px`, top: `${h.y - 10}px` }}
-            className="fixed material-symbols-outlined text-[20px] text-[#540114] animate-ping"
+            className="fixed material-symbols-outlined text-xl text-primary animate-ping"
           >
             favorite
           </span>
@@ -280,31 +280,31 @@ export default function ComposePage() {
       </div>
 
       {/* Top Header */}
-      <header className="fixed top-0 inset-x-0 z-40 bg-[#fff8f6]/90 backdrop-blur-xl border-b border-[#dcc0c0]/30 shadow-xs">
+      <header className="fixed top-0 inset-x-0 z-40 bg-brand-bg/90 backdrop-blur-xl border-b border-outline-variant/30 shadow-xs">
         <div className="h-16 px-5 max-w-md mx-auto flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center tracking-widest text-[#540114] font-serif text-2xl font-bold"
+            className="flex items-center tracking-widest text-primary font-serif text-2xl font-bold"
           >
-            K<span className="text-[#934841] text-sm font-sans mx-0.5">&amp;</span>P
+            K<span className="text-secondary text-sm font-sans mx-0.5">&amp;</span>P
           </Link>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setMenuOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#564243] hover:text-[#540114] bg-[#fceae6]/70 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-on-surface-variant hover:text-primary bg-surface-container/70 transition-colors"
             >
               <span className="uppercase tracking-widest text-[11px]">Menu</span>
-              <span className="material-symbols-outlined text-[16px] text-[#540114] animate-pulse">
+              <span className="material-symbols-outlined text-base text-primary animate-pulse">
                 favorite
               </span>
             </button>
 
             <Link
               href="/"
-              className="w-8 h-8 rounded-full bg-[#540114] text-white flex items-center justify-center"
+              className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center"
             >
-              <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+              <span className="material-symbols-outlined text-lg">arrow_back</span>
             </Link>
           </div>
         </div>
@@ -312,55 +312,55 @@ export default function ComposePage() {
 
       {/* Full-screen Curtain Menu */}
       {menuOpen && (
-        <div className="fixed inset-0 z-50 bg-[#fff8f6] flex flex-col justify-between p-6 animate-in slide-in-from-top duration-300">
+        <div className="fixed inset-0 z-50 bg-brand-bg flex flex-col justify-between p-6 animate-in slide-in-from-top duration-300">
           <div className="flex items-center justify-between">
-            <span className="tracking-widest text-[#540114] font-serif text-2xl font-bold">
-              K<span className="text-[#934841] text-sm font-sans mx-0.5">&amp;</span>P
+            <span className="tracking-widest text-primary font-serif text-2xl font-bold">
+              K<span className="text-secondary text-sm font-sans mx-0.5">&amp;</span>P
             </span>
             <button
               onClick={() => setMenuOpen(false)}
-              className="w-10 h-10 rounded-full bg-[#fceae6] text-[#540114] flex items-center justify-center"
+              className="w-10 h-10 rounded-full bg-surface-container text-primary flex items-center justify-center"
             >
-              <span className="material-symbols-outlined text-[24px]">close</span>
+              <span className="material-symbols-outlined text-2xl">close</span>
             </button>
           </div>
 
           <div className="flex flex-col gap-4 py-8 text-center">
-            <span className="text-xs uppercase tracking-widest text-[#934841] font-bold">
+            <span className="text-xs uppercase tracking-widest text-secondary font-bold">
               Mục Lục Kỷ Niệm
             </span>
             <a
               href="#hero-mobile"
               onClick={() => setMenuOpen(false)}
-              className="font-serif text-2xl text-[#540114] italic font-semibold hover:opacity-80 py-2"
+              className="font-serif text-2xl text-primary italic font-semibold hover:opacity-80 py-2"
             >
               Khám Phá
             </a>
             <a
               href="#someone-special"
               onClick={() => setMenuOpen(false)}
-              className="font-serif text-2xl text-[#221a18] hover:text-[#540114] py-2"
+              className="font-serif text-2xl text-on-surface hover:text-primary py-2"
             >
               Đề Tặng Yêu Thương
             </a>
             <a
               href="#givers-perspective"
               onClick={() => setMenuOpen(false)}
-              className="font-serif text-2xl text-[#221a18] hover:text-[#540114] py-2"
+              className="font-serif text-2xl text-on-surface hover:text-primary py-2"
             >
               Soạn Lời Nhắn &amp; Voice
             </a>
             <a
               href="#charms-section"
               onClick={() => setMenuOpen(false)}
-              className="font-serif text-2xl text-[#221a18] hover:text-[#540114] py-2"
+              className="font-serif text-2xl text-on-surface hover:text-primary py-2"
             >
               Hạt Charm Kỷ Niệm
             </a>
             <a
               href="#assembly-section"
               onClick={() => setMenuOpen(false)}
-              className="font-serif text-2xl text-[#221a18] hover:text-[#540114] py-2"
+              className="font-serif text-2xl text-on-surface hover:text-primary py-2"
             >
               Chế Tác Tương Tác
             </a>
@@ -368,9 +368,9 @@ export default function ComposePage() {
 
           <button
             onClick={() => setMenuOpen(false)}
-            className="w-full h-14 bg-[#540114] text-white rounded-full font-semibold text-sm shadow-xl flex items-center justify-center gap-2"
+            className="w-full h-14 bg-primary text-white rounded-full font-semibold text-sm shadow-xl flex items-center justify-center gap-2"
           >
-            <span className="material-symbols-outlined text-[18px]">favorite</span>
+            <span className="material-symbols-outlined text-lg">favorite</span>
             <span>Chế Tác Lời Đề Tặng Riêng</span>
           </button>
         </div>
@@ -380,66 +380,66 @@ export default function ComposePage() {
       <main className="flex-1 w-full pt-16 pb-28">
         {/* HERO SECTION MOBILE */}
         <section id="hero-mobile" className="w-full px-5 pt-8 pb-12 flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#fceae6] shadow-xs mb-5">
-            <span className="material-symbols-outlined text-[14px] text-[#540114] animate-pulse">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container shadow-xs mb-5">
+            <span className="material-symbols-outlined text-sm text-primary animate-pulse">
               favorite
             </span>
-            <span className="text-[11px] uppercase tracking-widest font-bold text-[#540114]">
+            <span className="text-[11px] uppercase tracking-widest font-bold text-primary">
               K&amp;P Atelier · Chương I
             </span>
           </div>
 
-          <h1 className="font-serif text-2xl sm:text-3xl text-[#221a18] tracking-tight max-w-xs mx-auto leading-tight mb-3 font-bold">
+          <h1 className="font-serif text-2xl sm:text-3xl text-on-surface tracking-tight max-w-xs mx-auto leading-tight mb-3 font-bold">
             Hơn cả một món quà.<br />
-            <em className="italic text-[#540114] font-normal">Một câu chuyện lưu giữ mãi mãi.</em>
+            <em className="italic text-primary font-normal">Một câu chuyện lưu giữ mãi mãi.</em>
           </h1>
 
-          <p className="text-xs text-[#564243] max-w-xs mx-auto mb-6 leading-relaxed">
+          <p className="text-xs text-on-surface-variant max-w-xs mx-auto mb-6 leading-relaxed">
             Chiếc vòng tay gia bảo đúc thủ công. Một vũ trụ kỷ niệm số ẩn sau từng hạt charm chạm khắc.
           </p>
 
           {/* Visual Showcase Card */}
-          <div className="relative w-full max-w-xs aspect-[4/5] mx-auto rounded-3xl bg-white p-3 shadow-xl mb-6 border border-[#dcc0c0]/50 overflow-hidden group">
+          <div className="relative w-full max-w-xs aspect-4/5 mx-auto rounded-3xl bg-white p-3 shadow-xl mb-6 border border-outline-variant/50 overflow-hidden group">
             <img
               alt="Vòng tay gia bảo K&P"
               className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-700"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCLB9jNl9PK2_Ybg7Wp9k3dNbJDNqWLgBZiyNrMpmiSe05kkwONHPcfwMT_6fY88eUucouWbV5q-3pARfuEwrudgdy9VTHiEsmY2NkL3_-5SlSKhaLwXqMeV7JBiPIjr4Mj7_6DhRUXQH2Yz1Lt3D9WJyN9Glxi3utYCaXOMJUEGzR0o9iy57RAAxl7W-AdrznKR0qdTiPmD0460l5newas3dckcX-aqlNm3mAH3Zk0Qgskb6zQQmt"
             />
-            <div className="absolute top-5 left-5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md shadow-md flex items-center gap-1.5 border border-[#ffdad6]">
-              <span className="w-2 h-2 rounded-full bg-[#540114] animate-ping" />
-              <span className="text-[10px] font-bold text-[#540114] uppercase">Thẻ QR &amp; NFC</span>
+            <div className="absolute top-5 left-5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md shadow-md flex items-center gap-1.5 border border-secondary-fixed">
+              <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
+              <span className="text-[10px] font-bold text-primary uppercase">Thẻ QR &amp; NFC</span>
             </div>
-            <div className="absolute bottom-5 right-5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md shadow-md flex items-center gap-1 border border-[#ffdad6]">
-              <span className="material-symbols-outlined text-[13px] text-[#540114]">lock_open</span>
-              <span className="text-[10px] font-semibold text-[#564243]">Bí mật số</span>
+            <div className="absolute bottom-5 right-5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md shadow-md flex items-center gap-1 border border-secondary-fixed">
+              <span className="material-symbols-outlined text-[13px] text-primary">lock_open</span>
+              <span className="text-[10px] font-semibold text-on-surface-variant">Bí mật số</span>
             </div>
           </div>
 
           <a
             href="#someone-special"
-            className="w-full max-w-xs h-14 rounded-full bg-[#540114] text-white flex items-center justify-center gap-2 shadow-lg font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform"
+            className="w-full max-w-xs h-14 rounded-full bg-primary text-white flex items-center justify-center gap-2 shadow-lg font-bold text-xs uppercase tracking-wider active:scale-95 transition-transform"
           >
             <span>KHÁM PHÁ K&amp;P</span>
-            <span className="material-symbols-outlined text-[16px] text-[#fea095]">favorite</span>
+            <span className="material-symbols-outlined text-base text-secondary-container">favorite</span>
           </a>
         </section>
 
         {/* SECTION 1: CHỌN NGƯỜI NHẬN (5 PERSONAS) */}
-        <section id="someone-special" className="w-full px-5 py-12 bg-[#fff0ed]">
+        <section id="someone-special" className="w-full px-5 py-12 bg-surface-container-low">
           <div className="max-w-md mx-auto">
             <div className="text-center mb-6">
-              <span className="text-[11px] uppercase tracking-widest text-[#934841] font-bold block mb-1">
+              <span className="text-[11px] uppercase tracking-widest text-secondary font-bold block mb-1">
                 Đề Tặng Yêu Thương
               </span>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#221a18]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-on-surface">
                 Dành cho người thương đặc biệt.
               </h2>
-              <p className="text-xs text-[#564243] mt-1 italic">
+              <p className="text-xs text-on-surface-variant mt-1 italic">
                 Chạm để chọn người đang ngự trị trong tâm trí bạn hôm nay:
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#dcc0c0]/50 space-y-2.5">
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-outline-variant/50 space-y-2.5">
               {[
                 { id: "her", label: "Cho nàng." },
                 { id: "him", label: "Cho chàng." },
@@ -452,23 +452,23 @@ export default function ComposePage() {
                   onClick={() => setRecipient(item.id as any)}
                   className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
                     recipient === item.id
-                      ? "bg-[#fff0ed] border-[#540114] text-[#540114] font-bold shadow-xs"
-                      : "bg-[#fff8f6] border-[#dcc0c0]/40 text-[#221a18] hover:bg-[#fceae6]"
+                      ? "bg-surface-container-low border-primary text-primary font-bold shadow-xs"
+                      : "bg-brand-bg border-outline-variant/40 text-on-surface hover:bg-surface-container"
                   }`}
                 >
                   <span className="font-serif text-sm">{item.label}</span>
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                      recipient === item.id ? "bg-[#540114] text-white" : "bg-[#fceae6] text-[#897172]"
+                      recipient === item.id ? "bg-primary text-white" : "bg-surface-container text-outline"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-[14px]">favorite</span>
+                    <span className="material-symbols-outlined text-sm">favorite</span>
                   </div>
                 </button>
               ))}
 
-              <div className="mt-4 p-3.5 rounded-xl bg-[#fff0ed] border border-[#dcc0c0]/40">
-                <p className="text-xs italic text-[#564243] leading-relaxed">
+              <div className="mt-4 p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/40">
+                <p className="text-xs italic text-on-surface-variant leading-relaxed">
                   {RQ[recipient]}
                 </p>
               </div>
@@ -480,22 +480,22 @@ export default function ComposePage() {
         <section id="givers-perspective" className="w-full px-5 py-12">
           <div className="max-w-md mx-auto">
             <div className="text-center mb-6">
-              <span className="text-[11px] uppercase tracking-widest text-[#934841] font-bold block mb-1">
+              <span className="text-[11px] uppercase tracking-widest text-secondary font-bold block mb-1">
                 Góc Nhìn Người Tặng
               </span>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#221a18]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-on-surface">
                 Bạn là ai trong câu chuyện này?
               </h2>
-              <p className="text-xs text-[#564243] mt-1 italic">
+              <p className="text-xs text-on-surface-variant mt-1 italic">
                 Cung cấp ngữ cảnh để AI trau chuốt lời chúc và giai điệu mở hộp riêng biệt.
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#dcc0c0]/50 space-y-5">
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-outline-variant/50 space-y-5">
               {/* 3 Identifiers */}
               <div className="space-y-3">
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-[#564243] block mb-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant block mb-1">
                     Tên của bạn / Danh xưng đặc biệt
                   </label>
                   <input
@@ -503,12 +503,12 @@ export default function ComposePage() {
                     value={giverName}
                     onChange={(e) => setGiverName(e.target.value)}
                     placeholder="VD: Minh Triết, Chàng ngốc của em..."
-                    className="w-full h-11 px-3 rounded-xl bg-[#fff8f6] border border-[#dcc0c0]/50 text-xs text-[#221a18] focus:outline-none focus:ring-1 focus:ring-[#540114]"
+                    className="w-full h-11 px-3 rounded-xl bg-brand-bg border border-outline-variant/50 text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-[#564243] block mb-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant block mb-1">
                     Tên người nhận
                   </label>
                   <input
@@ -516,12 +516,12 @@ export default function ComposePage() {
                     value={recipName}
                     onChange={(e) => setRecipName(e.target.value)}
                     placeholder="VD: Linh Đan, Em bé của anh..."
-                    className="w-full h-11 px-3 rounded-xl bg-[#fff8f6] border border-[#dcc0c0]/50 text-xs text-[#221a18] focus:outline-none focus:ring-1 focus:ring-[#540114]"
+                    className="w-full h-11 px-3 rounded-xl bg-brand-bg border border-outline-variant/50 text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-[#564243] block mb-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant block mb-1">
                     Xưng hô
                   </label>
                   <input
@@ -529,14 +529,14 @@ export default function ComposePage() {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="VD: Anh – Em, Tớ – Cậu..."
-                    className="w-full h-11 px-3 rounded-xl bg-[#fff8f6] border border-[#dcc0c0]/50 text-xs text-[#221a18] focus:outline-none focus:ring-1 focus:ring-[#540114]"
+                    className="w-full h-11 px-3 rounded-xl bg-brand-bg border border-outline-variant/50 text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
               </div>
 
               {/* Lời nhắn & 4 nút AI */}
-              <div className="pt-2 border-t border-[#fceae6] space-y-2">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-[#564243] block">
+              <div className="pt-2 border-t border-surface-container space-y-2">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant block">
                   Lời nhắn gửi gắm
                 </label>
 
@@ -545,11 +545,11 @@ export default function ComposePage() {
                     rows={3}
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
-                    className="w-full p-3 rounded-xl bg-[#fff8f6] border border-[#dcc0c0]/50 text-xs text-[#221a18] focus:outline-none focus:ring-1 focus:ring-[#540114] resize-none"
+                    className="w-full p-3 rounded-xl bg-brand-bg border border-outline-variant/50 text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary resize-none"
                     placeholder="Viết những lời chân thành từ trái tim..."
                   />
                 ) : (
-                  <div className="p-3 rounded-xl bg-[#fff0ed] border border-dashed border-[#dcc0c0] text-xs text-[#897172] italic text-center">
+                  <div className="p-3 rounded-xl bg-surface-container-low border border-dashed border-outline-variant text-xs text-outline italic text-center">
                     Món quà sẽ được gửi đi không kèm lời nhắn chữ.
                   </div>
                 )}
@@ -559,7 +559,7 @@ export default function ComposePage() {
                   <button
                     disabled={!hasNote}
                     onClick={handleAiWrite}
-                    className="px-3 py-1.5 rounded-full bg-[#fceae6] text-[#540114] text-xs font-bold hover:bg-[#ffdad6] transition-colors flex items-center gap-1 disabled:opacity-40"
+                    className="px-3 py-1.5 rounded-full bg-surface-container text-primary text-xs font-bold hover:bg-secondary-fixed transition-colors flex items-center gap-1 disabled:opacity-40"
                   >
                     <span className="material-symbols-outlined text-[15px]">auto_awesome</span>
                     AI viết giúp
@@ -567,7 +567,7 @@ export default function ComposePage() {
                   <button
                     disabled={!hasNote}
                     onClick={() => setShowIdeas(!showIdeas)}
-                    className="px-3 py-1.5 rounded-full bg-[#fceae6] text-[#540114] text-xs font-bold hover:bg-[#ffdad6] transition-colors flex items-center gap-1 disabled:opacity-40"
+                    className="px-3 py-1.5 rounded-full bg-surface-container text-primary text-xs font-bold hover:bg-secondary-fixed transition-colors flex items-center gap-1 disabled:opacity-40"
                   >
                     <span className="material-symbols-outlined text-[15px]">lightbulb</span>
                     Gợi ý ý tưởng
@@ -575,7 +575,7 @@ export default function ComposePage() {
                   <button
                     disabled={!hasNote}
                     onClick={handleAiPolish}
-                    className="px-3 py-1.5 rounded-full bg-[#fceae6] text-[#540114] text-xs font-bold hover:bg-[#ffdad6] transition-colors flex items-center gap-1 disabled:opacity-40"
+                    className="px-3 py-1.5 rounded-full bg-surface-container text-primary text-xs font-bold hover:bg-secondary-fixed transition-colors flex items-center gap-1 disabled:opacity-40"
                   >
                     <span className="material-symbols-outlined text-[15px]">edit</span>
                     Trau chuốt
@@ -583,25 +583,25 @@ export default function ComposePage() {
                   <button
                     onClick={() => setHasNote(!hasNote)}
                     className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
-                      !hasNote ? "bg-[#540114] text-white" : "bg-[#fceae6] text-[#564243]"
+                      !hasNote ? "bg-primary text-white" : "bg-surface-container text-on-surface-variant"
                     }`}
                   >
                     {!hasNote ? "✓ Đã ẩn lời nhắn" : "Không để lời nhắn"}
                   </button>
                 </div>
 
-                {aiStatus && <p className="text-[11px] text-[#934841] italic animate-pulse">{aiStatus}</p>}
+                {aiStatus && <p className="text-[11px] text-secondary italic animate-pulse">{aiStatus}</p>}
 
                 {showIdeas && (
-                  <div className="p-3 rounded-xl bg-[#fff0ed] border border-[#dcc0c0]/40 space-y-1.5 mt-2">
-                    <span className="text-[10px] uppercase font-bold text-[#934841] block">
+                  <div className="p-3 rounded-xl bg-surface-container-low border border-outline-variant/40 space-y-1.5 mt-2">
+                    <span className="text-[10px] uppercase font-bold text-secondary block">
                       Chạm ý tưởng để đưa vào lời nhắn:
                     </span>
                     {aiIdeas.map((idea, i) => (
                       <button
                         key={i}
                         onClick={() => handlePickIdea(idea)}
-                        className="w-full text-left p-2 rounded-lg bg-white text-xs text-[#221a18] hover:bg-[#fceae6] border border-[#dcc0c0]/30 transition-colors"
+                        className="w-full text-left p-2 rounded-lg bg-white text-xs text-on-surface hover:bg-surface-container border border-outline-variant/30 transition-colors"
                       >
                         • {idea}
                       </button>
@@ -611,18 +611,18 @@ export default function ComposePage() {
               </div>
 
               {/* Voice Studio (Section 3.4) */}
-              <div className="p-4 rounded-2xl bg-gradient-to-b from-[#fceae6] to-[#fff0ed] border border-[#ffdad6] space-y-3">
+              <div className="p-4 rounded-2xl bg-linear-to-b from-surface-container to-surface-container-low border border-secondary-fixed space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[#540114] text-[20px]">mic</span>
-                    <h3 className="font-serif text-sm font-bold text-[#540114]">Lời Nhắn Giọng Nói</h3>
+                    <span className="material-symbols-outlined text-primary text-xl">mic</span>
+                    <h3 className="font-serif text-sm font-bold text-primary">Lời Nhắn Giọng Nói</h3>
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#76322b] bg-[#ffdad6] px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-on-secondary-fixed-variant bg-secondary-fixed px-2 py-0.5 rounded-full">
                     Voice Studio
                   </span>
                 </div>
 
-                <div className="bg-white p-3 rounded-xl border border-[#dcc0c0]/40 flex flex-col items-center gap-2">
+                <div className="bg-white p-3 rounded-xl border border-outline-variant/40 flex flex-col items-center gap-2">
                   {/* Waveform Visualizer */}
                   <div className="flex items-center justify-center gap-1 h-8 w-full">
                     {[35, 60, 85, 45, 95, 75, 40, 90, 65, 50, 80, 30].map((h, i) => (
@@ -630,15 +630,15 @@ export default function ComposePage() {
                         key={i}
                         className={`w-1 rounded-full transition-all duration-300 ${
                           isRecording
-                            ? "bg-[#540114] animate-pulse"
-                            : "bg-[#dcc0c0]"
+                            ? "bg-primary animate-pulse"
+                            : "bg-outline-variant"
                         }`}
                         style={{ height: `${isRecording ? h : 20}%` }}
                       />
                     ))}
                   </div>
 
-                  <div className="flex justify-between items-center w-full text-[11px] text-[#564243] font-mono">
+                  <div className="flex justify-between items-center w-full text-[11px] text-on-surface-variant font-mono">
                     <span className="flex items-center gap-1">
                       {isRecording && <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />}
                       {formatVoiceTime(voiceSeconds)}
@@ -651,9 +651,9 @@ export default function ComposePage() {
                     <button
                       onClick={handleResetVoice}
                       title="Ghi lại từ đầu"
-                      className="w-9 h-9 rounded-full bg-[#fceae6] text-[#540114] flex items-center justify-center hover:bg-[#ffdad6]"
+                      className="w-9 h-9 rounded-full bg-surface-container text-primary flex items-center justify-center hover:bg-secondary-fixed"
                     >
-                      <span className="material-symbols-outlined text-[16px]">replay</span>
+                      <span className="material-symbols-outlined text-base">replay</span>
                     </button>
 
                     <button
@@ -661,10 +661,10 @@ export default function ComposePage() {
                       className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-md transition-all ${
                         isRecording
                           ? "bg-red-600 text-white animate-pulse"
-                          : "bg-[#540114] text-white hover:bg-[#721a28]"
+                          : "bg-primary text-white hover:bg-primary-container"
                       }`}
                     >
-                      <span className="material-symbols-outlined text-[16px]">
+                      <span className="material-symbols-outlined text-base">
                         {isRecording ? "stop" : "fiber_manual_record"}
                       </span>
                       <span>{isRecording ? "Dừng thu" : "Ghi âm"}</span>
@@ -672,9 +672,9 @@ export default function ComposePage() {
 
                     <button
                       onClick={() => setIsPlayingVoice(!isPlayingVoice)}
-                      className="w-9 h-9 rounded-full bg-[#ffdad6] text-[#540114] flex items-center justify-center hover:bg-[#fea095]"
+                      className="w-9 h-9 rounded-full bg-secondary-fixed text-primary flex items-center justify-center hover:bg-secondary-container"
                     >
-                      <span className="material-symbols-outlined text-[18px]">
+                      <span className="material-symbols-outlined text-lg">
                         {isPlayingVoice ? "pause" : "play_arrow"}
                       </span>
                     </button>
@@ -683,26 +683,26 @@ export default function ComposePage() {
               </div>
 
               {/* Polaroid Gallery (Section 3.5) */}
-              <div className="p-4 rounded-2xl bg-[#fff0ed] border border-[#dcc0c0]/40 space-y-3">
+              <div className="p-4 rounded-2xl bg-surface-container-low border border-outline-variant/40 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[#540114] text-[20px]">photo_library</span>
-                    <h3 className="font-serif text-sm font-bold text-[#540114]">Ảnh Kỷ Niệm Polaroid</h3>
+                    <span className="material-symbols-outlined text-primary text-xl">photo_library</span>
+                    <h3 className="font-serif text-sm font-bold text-primary">Ảnh Kỷ Niệm Polaroid</h3>
                   </div>
-                  <span className="text-[10px] text-[#897172]">{photos.length} khoảnh khắc</span>
+                  <span className="text-[10px] text-outline">{photos.length} khoảnh khắc</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5 pt-1">
                   {photos.map((p, idx) => (
                     <div
                       key={idx}
-                      className={`bg-white p-2 rounded-xl shadow-xs border border-[#dcc0c0]/40 ${p.rot} hover:rotate-0 transition-transform`}
+                      className={`bg-white p-2 rounded-xl shadow-xs border border-outline-variant/40 ${p.rot} hover:rotate-0 transition-transform`}
                     >
-                      <div className="aspect-square bg-[#fceae6] rounded-lg overflow-hidden mb-1.5">
+                      <div className="aspect-square bg-surface-container rounded-lg overflow-hidden mb-1.5">
                         <img src={p.img} alt={p.title} className="w-full h-full object-cover" />
                       </div>
-                      <p className="text-[10px] font-bold text-[#221a18] truncate">{p.title}</p>
-                      <span className="text-[9px] text-[#897172] block">{p.sub}</span>
+                      <p className="text-[10px] font-bold text-on-surface truncate">{p.title}</p>
+                      <span className="text-[9px] text-outline block">{p.sub}</span>
                     </div>
                   ))}
                 </div>
@@ -712,10 +712,10 @@ export default function ComposePage() {
                   className={`w-full py-2.5 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-colors ${
                     photoAdded
                       ? "bg-white text-emerald-700 border-emerald-300"
-                      : "bg-white text-[#540114] border-[#dcc0c0] hover:bg-[#fceae6]"
+                      : "bg-white text-primary border-outline-variant hover:bg-surface-container"
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[16px]">
+                  <span className="material-symbols-outlined text-base">
                     {photoAdded ? "check" : "add_photo_alternate"}
                   </span>
                   <span>{photoAdded ? "✓ Đã đính kèm ảnh kỷ niệm" : "+ Thêm ảnh kỷ niệm vào chip NFC"}</span>
@@ -723,10 +723,10 @@ export default function ComposePage() {
               </div>
 
               {/* Memory Song (Section 3.6) */}
-              <div className="p-4 rounded-2xl bg-[#fff0ed] border border-[#dcc0c0]/40 space-y-2">
+              <div className="p-4 rounded-2xl bg-surface-container-low border border-outline-variant/40 space-y-2">
                 <div className="flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[#540114] text-[20px]">music_note</span>
-                  <h3 className="font-serif text-sm font-bold text-[#540114]">Bản Nhạc Của Chúng Ta</h3>
+                  <span className="material-symbols-outlined text-primary text-xl">music_note</span>
+                  <h3 className="font-serif text-sm font-bold text-primary">Bản Nhạc Của Chúng Ta</h3>
                 </div>
 
                 <input
@@ -734,22 +734,22 @@ export default function ComposePage() {
                   value={song}
                   onChange={(e) => setSong(e.target.value)}
                   placeholder="Tên bài hát hoặc link YouTube / Spotify..."
-                  className="w-full h-10 px-3 rounded-xl bg-white border border-[#dcc0c0]/40 text-xs text-[#221a18] focus:outline-none"
+                  className="w-full h-10 px-3 rounded-xl bg-white border border-outline-variant/40 text-xs text-on-surface focus:outline-none"
                 />
 
                 {song && (
-                  <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-[#dcc0c0]/30">
+                  <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white border border-outline-variant/30">
                     <button
                       onClick={() => setIsPlayingSong(!isPlayingSong)}
-                      className="w-8 h-8 rounded-full bg-[#540114] text-white flex items-center justify-center shrink-0"
+                      className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shrink-0"
                     >
-                      <span className="material-symbols-outlined text-[16px]">
+                      <span className="material-symbols-outlined text-base">
                         {isPlayingSong ? "pause" : "play_arrow"}
                       </span>
                     </button>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-bold text-[#221a18] truncate">{song}</p>
-                      <span className="text-[9px] text-[#897172]">
+                      <p className="text-[11px] font-bold text-on-surface truncate">{song}</p>
+                      <span className="text-[9px] text-outline">
                         {isPlayingSong ? "Đang phát thử..." : "Phát khi mở quà"}
                       </span>
                     </div>
@@ -758,18 +758,18 @@ export default function ComposePage() {
               </div>
 
               {/* Recipient Template Selection (3 Templates from user's spec) */}
-              <div className="p-4 rounded-2xl bg-gradient-to-b from-[#fceae6] to-[#fff0ed] border border-[#ffdad6] space-y-3">
+              <div className="p-4 rounded-2xl bg-linear-to-b from-surface-container to-surface-container-low border border-secondary-fixed space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[#540114] text-[20px]">style</span>
-                    <h3 className="font-serif text-sm font-bold text-[#540114]">Giao Diện Người Nhận Mở Quà</h3>
+                    <span className="material-symbols-outlined text-primary text-xl">style</span>
+                    <h3 className="font-serif text-sm font-bold text-primary">Giao Diện Người Nhận Mở Quà</h3>
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#76322b] bg-[#ffdad6] px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-on-secondary-fixed-variant bg-secondary-fixed px-2 py-0.5 rounded-full">
                     3 Mẫu 20/10
                   </span>
                 </div>
 
-                <p className="text-[11px] text-[#564243] leading-relaxed">
+                <p className="text-[11px] text-on-surface-variant leading-relaxed">
                   Chọn phong cách câu chuyện số mà người nhận sẽ khám phá khi quét mã QR trên vòng tay:
                 </p>
 
@@ -779,13 +779,13 @@ export default function ComposePage() {
                     onClick={() => setSelectedTemplate("vintage-scrapbook")}
                     className={`p-2.5 rounded-xl border text-left flex flex-col items-center justify-between transition-all ${
                       selectedTemplate === "vintage-scrapbook"
-                        ? "bg-white border-[#8b263e] ring-2 ring-[#8b263e]/30 shadow-sm"
-                        : "bg-white/60 border-[#dcc0c0]/50 hover:bg-white"
+                        ? "bg-white border-primary-container ring-2 ring-primary-container/30 shadow-sm"
+                        : "bg-white/60 border-outline-variant/50 hover:bg-white"
                     }`}
                   >
                     <span className="text-xl mb-1">🌸</span>
-                    <span className="text-[10px] font-bold text-[#540114] text-center">Sổ Kỷ Niệm</span>
-                    <span className="text-[8px] text-[#897172] text-center">Washi Tape</span>
+                    <span className="text-[10px] font-bold text-primary text-center">Sổ Kỷ Niệm</span>
+                    <span className="text-[8px] text-outline text-center">Washi Tape</span>
                   </button>
 
                   <button
@@ -793,13 +793,13 @@ export default function ComposePage() {
                     onClick={() => setSelectedTemplate("retro-nostalgia")}
                     className={`p-2.5 rounded-xl border text-left flex flex-col items-center justify-between transition-all ${
                       selectedTemplate === "retro-nostalgia"
-                        ? "bg-white border-[#c13d28] ring-2 ring-[#c13d28]/30 shadow-sm"
-                        : "bg-white/60 border-[#dcc0c0]/50 hover:bg-white"
+                        ? "bg-white border-rust ring-2 ring-rust/30 shadow-sm"
+                        : "bg-white/60 border-outline-variant/50 hover:bg-white"
                     }`}
                   >
                     <span className="text-xl mb-1">🎞️</span>
-                    <span className="text-[10px] font-bold text-[#540114] text-center">Hoài Niệm</span>
-                    <span className="text-[8px] text-[#897172] text-center">Poster 90s</span>
+                    <span className="text-[10px] font-bold text-primary text-center">Hoài Niệm</span>
+                    <span className="text-[8px] text-outline text-center">Poster 90s</span>
                   </button>
 
                   <button
@@ -807,21 +807,21 @@ export default function ComposePage() {
                     onClick={() => setSelectedTemplate("storybook-sunset")}
                     className={`p-2.5 rounded-xl border text-left flex flex-col items-center justify-between transition-all ${
                       selectedTemplate === "storybook-sunset"
-                        ? "bg-white border-[#2b4c6f] ring-2 ring-[#2b4c6f]/30 shadow-sm"
-                        : "bg-white/60 border-[#dcc0c0]/50 hover:bg-white"
+                        ? "bg-white border-ocean-depth ring-2 ring-ocean-depth/30 shadow-sm"
+                        : "bg-white/60 border-outline-variant/50 hover:bg-white"
                     }`}
                   >
                     <span className="text-xl mb-1">🌅</span>
-                    <span className="text-[10px] font-bold text-[#540114] text-center">Thanh Xuân</span>
-                    <span className="text-[8px] text-[#897172] text-center">Anime Sunset</span>
+                    <span className="text-[10px] font-bold text-primary text-center">Thanh Xuân</span>
+                    <span className="text-[8px] text-outline text-center">Anime Sunset</span>
                   </button>
                 </div>
 
                 <Link
                   href={`/g/demo-token?tpl=${selectedTemplate}`}
-                  className="w-full py-2.5 px-3 rounded-xl bg-white border border-[#dcc0c0] text-[#540114] hover:bg-[#fff0ed] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                  className="w-full py-2.5 px-3 rounded-xl bg-white border border-outline-variant text-primary hover:bg-surface-container-low text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-xs"
                 >
-                  <span className="material-symbols-outlined text-[16px]">visibility</span>
+                  <span className="material-symbols-outlined text-base">visibility</span>
                   <span>Xem trước trang mở quà ({selectedTemplate === "vintage-scrapbook" ? "Sổ Kỷ Niệm" : selectedTemplate === "retro-nostalgia" ? "Hoài Niệm" : "Thanh Xuân"})</span>
                 </Link>
               </div>
@@ -830,22 +830,22 @@ export default function ComposePage() {
         </section>
 
         {/* SECTION 3: BIỂU TƯỢNG XÚC CẢM - 4 CHARM STORYTELLING */}
-        <section id="charms-section" className="w-full px-5 py-12 bg-[#fff0ed]">
+        <section id="charms-section" className="w-full px-5 py-12 bg-surface-container-low">
           <div className="max-w-md mx-auto flex flex-col items-center">
             <div className="text-center mb-6">
-              <span className="text-[11px] uppercase tracking-widest text-[#934841] font-bold block mb-1">
+              <span className="text-[11px] uppercase tracking-widest text-secondary font-bold block mb-1">
                 Biểu Tượng Xúc Cảm
               </span>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#221a18]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-on-surface">
                 Mỗi chiếc charm là một câu chuyện.
               </h2>
-              <p className="text-xs text-[#564243] mt-1">
+              <p className="text-xs text-on-surface-variant mt-1">
                 Chạm vào từng hạt charm để khám phá ý nghĩa riêng biệt.
               </p>
             </div>
 
-            <div className="w-full bg-white rounded-2xl p-4 shadow-sm border border-[#dcc0c0]/50 flex flex-col items-center">
-              <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#fceae6] mb-4">
+            <div className="w-full bg-white rounded-2xl p-4 shadow-sm border border-outline-variant/50 flex flex-col items-center">
+              <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-surface-container mb-4">
                 <img
                   alt="Bốn hạt charm K&P"
                   className="w-full h-full object-cover"
@@ -865,8 +865,8 @@ export default function ComposePage() {
                     onClick={() => setActiveCharm(c.key as any)}
                     className={`py-1.5 rounded-lg text-[10px] font-bold transition-all ${
                       activeCharm === c.key
-                        ? "bg-[#540114] text-white shadow-xs"
-                        : "bg-[#fceae6] text-[#564243] hover:bg-[#ffdad6]"
+                        ? "bg-primary text-white shadow-xs"
+                        : "bg-surface-container text-on-surface-variant hover:bg-secondary-fixed"
                     }`}
                   >
                     {c.label}
@@ -874,16 +874,16 @@ export default function ComposePage() {
                 ))}
               </div>
 
-              <div className="w-full p-3.5 rounded-xl bg-[#fff8f6] border border-[#dcc0c0]/40">
+              <div className="w-full p-3.5 rounded-xl bg-brand-bg border border-outline-variant/40">
                 <div className="flex items-center justify-between mb-1">
-                  <h4 className="font-serif text-xs font-bold text-[#540114]">
+                  <h4 className="font-serif text-xs font-bold text-primary">
                     {CH[activeCharm].title}
                   </h4>
-                  <span className="text-[9px] uppercase font-bold text-[#76322b] bg-[#ffdad6] px-2 py-0.5 rounded-full">
+                  <span className="text-[9px] uppercase font-bold text-on-secondary-fixed-variant bg-secondary-fixed px-2 py-0.5 rounded-full">
                     {CH[activeCharm].tag}
                   </span>
                 </div>
-                <p className="text-xs text-[#564243] leading-relaxed">{CH[activeCharm].story}</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed">{CH[activeCharm].story}</p>
               </div>
             </div>
           </div>
@@ -893,28 +893,28 @@ export default function ComposePage() {
         <section id="assembly-section" className="w-full px-5 py-12">
           <div className="max-w-md mx-auto">
             <div className="text-center mb-6">
-              <span className="text-[11px] uppercase tracking-widest text-[#934841] font-bold block mb-1">
+              <span className="text-[11px] uppercase tracking-widest text-secondary font-bold block mb-1">
                 Chế Tác Tương Tác
               </span>
-              <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#221a18]">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold text-on-surface">
                 Câu chuyện kết tinh qua từng chiếc charm.
               </h2>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#dcc0c0]/50 flex flex-col items-center">
-              <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#fceae6] mb-4">
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-outline-variant/50 flex flex-col items-center">
+              <div className="relative w-full aspect-4/3 rounded-xl overflow-hidden bg-surface-container mb-4">
                 <img
                   src={stepDetails[assemblyStep - 1].img}
                   alt={stepDetails[assemblyStep - 1].title}
                   className="w-full h-full object-cover"
                 />
-                <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#540114] text-white text-[10px] font-bold uppercase tracking-wider">
+                <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider">
                   {stepDetails[assemblyStep - 1].badge}
                 </span>
 
                 {/* Heart Burst Layer when reaching step 4 */}
                 {bursting && (
-                  <div className="absolute inset-0 bg-[#540114]/20 flex items-center justify-center animate-pulse">
+                  <div className="absolute inset-0 bg-primary/20 flex items-center justify-center animate-pulse">
                     <span className="material-symbols-outlined text-[64px] text-white animate-bounce">
                       favorite
                     </span>
@@ -923,10 +923,10 @@ export default function ComposePage() {
               </div>
 
               <div className="text-center mb-4">
-                <h3 className="font-serif text-base font-bold text-[#540114]">
+                <h3 className="font-serif text-base font-bold text-primary">
                   {stepDetails[assemblyStep - 1].title}
                 </h3>
-                <p className="text-xs text-[#564243] mt-1 leading-relaxed">
+                <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
                   {stepDetails[assemblyStep - 1].desc}
                 </p>
               </div>
@@ -945,8 +945,8 @@ export default function ComposePage() {
                     }}
                     className={`py-1 rounded-lg text-[10px] font-semibold transition-all ${
                       assemblyStep === s.num
-                        ? "bg-[#540114] text-white font-bold"
-                        : "bg-[#fceae6] text-[#564243]"
+                        ? "bg-primary text-white font-bold"
+                        : "bg-surface-container text-on-surface-variant"
                     }`}
                   >
                     Bước {s.num}
@@ -956,7 +956,7 @@ export default function ComposePage() {
 
               <button
                 onClick={handleNextAssembly}
-                className="w-full py-3 rounded-full bg-[#540114] text-white text-xs font-semibold hover:bg-[#721a28] transition-colors flex items-center justify-center gap-1 shadow-sm"
+                className="w-full py-3 rounded-full bg-primary text-white text-xs font-semibold hover:bg-primary-container transition-colors flex items-center justify-center gap-1 shadow-sm"
               >
                 <span>{assemblyStep === 4 ? "Kỷ vật đã trọn vẹn ♥ (Làm lại)" : "Gắn charm tiếp theo →"}</span>
               </button>
@@ -965,18 +965,18 @@ export default function ComposePage() {
         </section>
 
         {/* SECTION 5: KHÓA GIA BẢO SỐ 204 */}
-        <section className="w-full px-5 py-8 bg-[#fff0ed]">
-          <div className="max-w-md mx-auto bg-white rounded-2xl p-4 shadow-sm border border-[#dcc0c0]/50 flex items-center justify-between">
+        <section className="w-full px-5 py-8 bg-surface-container-low">
+          <div className="max-w-md mx-auto bg-white rounded-2xl p-4 shadow-sm border border-outline-variant/50 flex items-center justify-between">
             <div>
-              <span className="text-[10px] uppercase font-bold text-[#934841] block">
+              <span className="text-[10px] uppercase font-bold text-secondary block">
                 Mã số chế tác độc bản
               </span>
-              <p className="font-serif text-sm font-bold text-[#221a18]">
+              <p className="font-serif text-sm font-bold text-on-surface">
                 Khóa gia bảo K&amp;P số 204
               </p>
             </div>
-            <div className="w-9 h-9 rounded-full bg-[#fceae6] text-[#540114] flex items-center justify-center">
-              <span className="material-symbols-outlined text-[18px]">verified</span>
+            <div className="w-9 h-9 rounded-full bg-surface-container text-primary flex items-center justify-center">
+              <span className="material-symbols-outlined text-lg">verified</span>
             </div>
           </div>
         </section>
@@ -988,9 +988,9 @@ export default function ComposePage() {
           <div className="max-w-md mx-auto pointer-events-auto">
             <Link
               href="/#customizer-workspace"
-              className="flex items-center justify-center gap-2 h-13 px-6 bg-[#540114] text-white rounded-full shadow-xl hover:bg-[#721a28] active:scale-95 transition-all text-xs font-bold"
+              className="flex items-center justify-center gap-2 h-13 px-6 bg-primary text-white rounded-full shadow-xl hover:bg-primary-container active:scale-95 transition-all text-xs font-bold"
             >
-              <span className="material-symbols-outlined text-[18px] text-[#fea095]">favorite</span>
+              <span className="material-symbols-outlined text-lg text-secondary-container">favorite</span>
               <span>Tạo Món Quà Của Bạn</span>
             </Link>
           </div>
@@ -998,34 +998,34 @@ export default function ComposePage() {
       )}
 
       {/* Fixed Bottom Tab Bar */}
-      <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-[#dcc0c0]/40 shadow-lg">
+      <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-outline-variant/40 shadow-lg">
         <div className="flex justify-around items-center h-16 max-w-md mx-auto px-2">
           <a
             href="#hero-mobile"
-            className="flex flex-col items-center justify-center gap-0.5 text-[#540114] text-[10px] font-bold"
+            className="flex flex-col items-center justify-center gap-0.5 text-primary text-[10px] font-bold"
           >
-            <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
+            <span className="material-symbols-outlined text-xl">auto_awesome</span>
             <span>Khám Phá</span>
           </a>
           <a
             href="#charms-section"
-            className="flex flex-col items-center justify-center gap-0.5 text-[#564243] hover:text-[#540114] text-[10px] font-bold"
+            className="flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-primary text-[10px] font-bold"
           >
-            <span className="material-symbols-outlined text-[20px]">diamond</span>
+            <span className="material-symbols-outlined text-xl">diamond</span>
             <span>Hạt Charm</span>
           </a>
           <a
             href="#assembly-section"
-            className="flex flex-col items-center justify-center gap-0.5 text-[#564243] hover:text-[#540114] text-[10px] font-bold"
+            className="flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-primary text-[10px] font-bold"
           >
-            <span className="material-symbols-outlined text-[20px]">history_edu</span>
+            <span className="material-symbols-outlined text-xl">history_edu</span>
             <span>Chế Tác</span>
           </a>
           <Link
             href={`/g/demo-token?tpl=${selectedTemplate}`}
-            className="flex flex-col items-center justify-center gap-0.5 text-[#564243] hover:text-[#540114] text-[10px] font-bold"
+            className="flex flex-col items-center justify-center gap-0.5 text-on-surface-variant hover:text-primary text-[10px] font-bold"
           >
-            <span className="material-symbols-outlined text-[20px]">favorite</span>
+            <span className="material-symbols-outlined text-xl">favorite</span>
             <span>Mở Quà</span>
           </Link>
         </div>
@@ -1034,19 +1034,19 @@ export default function ComposePage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#e9e4e3] flex flex-col items-center justify-center relative">
+    <div className="min-h-screen bg-slate-100 flex flex-col items-center justify-center relative">
       {/* Top Floating Control Bar */}
-      <div className="fixed top-3 right-4 z-50 flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-[#dcc0c0]/60">
+      <div className="fixed top-3 right-4 z-50 flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-lg border border-outline-variant/60">
         <Link
           href="/"
-          className="text-xs font-bold text-[#540114] hover:underline flex items-center gap-1 mr-2"
+          className="text-xs font-bold text-primary hover:underline flex items-center gap-1 mr-2"
         >
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span className="material-symbols-outlined text-base">arrow_back</span>
           Về Trang Chủ
         </Link>
         <button
           onClick={() => setPhoneFrameMode(!phoneFrameMode)}
-          className="px-3 py-1 rounded-full bg-[#540114] text-white text-xs font-semibold hover:bg-[#721a28] transition-colors flex items-center gap-1.5"
+          className="px-3 py-1 rounded-full bg-primary text-white text-xs font-semibold hover:bg-primary-container transition-colors flex items-center gap-1.5"
         >
           <span className="material-symbols-outlined text-[15px]">
             {phoneFrameMode ? "fullscreen" : "stay_current_portrait"}
@@ -1058,18 +1058,18 @@ export default function ComposePage() {
       {phoneFrameMode ? (
         /* Phone View Mode (390 x 844 iPhone Frame) matching KP Atelier Phone View */
         <div className="py-10 px-4 flex items-center justify-center w-full min-h-screen">
-          <div className="w-[390px] h-[844px] p-3 bg-[#1b1716] rounded-[56px] shadow-[0_30px_80px_rgba(34,26,24,0.35)] relative shrink-0 flex flex-col">
+          <div className="w-97.5 h-211 p-3 bg-neutral-900 rounded-4xl shadow-[0_30px_80px_rgba(34,26,24,0.35)] relative shrink-0 flex flex-col">
             {/* Dynamic Island / Notch */}
-            <div className="absolute top-[22px] left-1/2 -translate-x-1/2 w-[120px] h-[34px] bg-[#1b1716] rounded-full z-50 pointer-events-none" />
+            <div className="absolute top-5.5 left-1/2 -translate-x-1/2 w-30 h-8.5 bg-neutral-900 rounded-full z-50 pointer-events-none" />
             {/* Phone Screen Container */}
-            <div className="w-full h-full rounded-[44px] overflow-hidden bg-[#fff8f6] relative flex flex-col">
+            <div className="w-full h-full rounded-3xl overflow-hidden bg-brand-bg relative flex flex-col">
               <div className="flex-1 overflow-y-auto">{appContent}</div>
             </div>
           </div>
         </div>
       ) : (
         /* Full width mobile / responsive mode */
-        <div className="w-full max-w-md min-h-screen bg-[#fff8f6] shadow-2xl">{appContent}</div>
+        <div className="w-full max-w-md min-h-screen bg-brand-bg shadow-2xl">{appContent}</div>
       )}
     </div>
   );

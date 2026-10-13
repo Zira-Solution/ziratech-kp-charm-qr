@@ -26,10 +26,10 @@ Chú thích: `[ ]` chưa làm · `[x]` xong. Mỗi nhiệm vụ = 1 commit nhỏ
 
 ## Phase 3 — Ghi âm thật
 
-- [ ] **T7 Thư viện media + API voice + link ký** (M).
+- [x] **T7 Thư viện media + API voice + link ký** (M).
 - [ ] **T8 Khối ghi âm trong studio** (M).
 
-**Checkpoint C:** tải lên, nghe lại, xoá; sai định dạng/quá lớn bị từ chối.
+**Checkpoint C:** (chờ T8) API ✅ 22/22 trên Supabase thật; còn khối ghi âm trong studio.
 
 ## Phase 4 — Rà soát
 

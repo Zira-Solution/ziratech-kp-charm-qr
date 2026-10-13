@@ -71,11 +71,12 @@ Mọi lỗi của nhóm `/api/gifts/*`: `{ "error": "<tiếng Việt>" }` + mã 
 | Endpoint | Quyền | Vào | Ra / lỗi |
 |---|---|---|---|
 | `POST /api/gifts/[token]/save` | phiên **create** | `{ giftData }` | `200 {success, message, viewUrl}`; `400` dữ liệu sai; `401` chưa xác thực |
-| `POST /api/gifts/[token]/voice` | phiên **create** | `multipart/form-data`: `audio` (file), `durationSec` | `200 {success, voice:{audioPath,duration}}`; `400`, `401`, `413` quá lớn, `415` sai định dạng, `503` chưa cấu hình Storage |
-| `DELETE /api/gifts/[token]/voice` | phiên **create** | – | `200 {success}` (idempotent: xoá khi không có vẫn `200`) |
+| `POST /api/gifts/[token]/voice` | phiên **create** | `multipart/form-data`: `audio` (file), `durationSec` | `200 {success, voice:{audioPath,durationSec,audioUrl}}`; `400`, `401`, `413` quá lớn, `415` sai định dạng (đọc từ byte đầu file), `429`, `503` chưa cấu hình Storage |
 | `GET /api/gifts/[token]` | create/open | – | như cũ, thêm `giftData.voiceNote.audioUrl` (link ký, hết hạn sau 1 giờ) khi có ghi âm |
 
 Lưu thiệp **ghi đè toàn bộ** `gift_data` bằng bản đã làm sạch (whitelist trường, không nhận trường lạ).
+
+Ghi âm: không có endpoint xoá. "Bỏ ghi âm" trong studio chỉ xoá khỏi bản nháp; file không còn được thiệp dùng sẽ bị dọn **lúc lưu thiệp** (và lúc tải bản mới lên, trừ bản đang được thiệp đã lưu dùng). Lý do: xoá ngay khi tải bản mới sẽ làm thiệp đã lưu mất giọng nói nếu khách chưa lưu. Lúc lưu, đường dẫn ghi âm phải thuộc thư mục của thiệp và file phải thật sự tồn tại.
 
 ## Code style
 

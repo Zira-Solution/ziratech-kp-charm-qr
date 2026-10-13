@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getGiftProductByToken, updateGiftProductCustomData } from "@/lib/supabase/products";
 import { checkRateLimit } from "@/lib/validation/security";
 import { parseGiftData } from "@/lib/validation/gift";
+import { mediaConfigured, pruneVoices, voiceExists } from "@/lib/supabase/media";
 import { hasGiftSession, normalizeToken } from "@/lib/auth/gift-session";
 
 export async function POST(
@@ -55,6 +56,12 @@ export async function POST(
       return NextResponse.json({ error: "Không tìm thấy thiệp với mã này" }, { status: 404 });
     }
 
+    // A recording path is only trusted if the file really is in this card's folder.
+    const voicePath = parsed.value.voiceNote?.audioPath;
+    if (voicePath && (!mediaConfigured() || !(await voiceExists(voicePath)))) {
+      return NextResponse.json({ error: "Bản ghi âm không còn tồn tại. Vui lòng ghi âm lại." }, { status: 400 });
+    }
+
     // The bracelet name comes from the order, not from the browser.
     const sanitizedGiftData = { ...parsed.value, braceletTitle: order.chainName };
 
@@ -62,6 +69,9 @@ export async function POST(
     if (!updated) {
       return NextResponse.json({ error: "Không tìm thấy sản phẩm hoặc lưu thất bại" }, { status: 404 });
     }
+
+    // Remove recordings the saved card no longer uses (best effort, never blocks the save).
+    await pruneVoices(token, voicePath ? [voicePath] : []);
 
     return NextResponse.json({
       success: true,

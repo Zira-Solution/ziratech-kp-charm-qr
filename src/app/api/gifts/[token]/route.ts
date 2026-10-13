@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getGiftProductByToken, toPublicView } from "@/lib/supabase/products";
 import { checkRateLimit } from "@/lib/validation/security";
 import { hasGiftSession, normalizeToken } from "@/lib/auth/gift-session";
+import { signedVoiceUrl } from "@/lib/supabase/media";
 
 /**
  * Returns gift content only to a caller that already proved knowledge of a code for this token:
@@ -53,6 +54,14 @@ export async function GET(
     }
 
     const product = toPublicView(order);
+
+    // The recording is private: hand out a link that works for one hour.
+    const voice = product.giftData?.voiceNote as { audioPath?: string; audioUrl?: string } | undefined;
+    if (product.giftData && voice?.audioPath) {
+      const audioUrl = await signedVoiceUrl(voice.audioPath);
+      product.giftData = { ...product.giftData, voiceNote: { ...voice, audioUrl } };
+    }
+
     if (scope === "open") {
       return NextResponse.json({
         success: true,

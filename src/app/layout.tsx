@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Merriweather } from "next/font/google";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const merriweather = Merriweather({
+  variable: "--font-merriweather",
   subsets: ["latin", "vietnamese"],
-  weight: ["500", "600", "700", "800"],
-  display: "swap",
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "700", "900"],
   display: "swap",
 });
 
@@ -39,27 +32,28 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${playfair.variable} ${plusJakarta.variable} h-full antialiased scroll-smooth`}
+      className={`${merriweather.variable} ${merriweather.className} h-full antialiased scroll-smooth`}
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Abril+Fatface&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap&subset=vietnamese"
+          href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Patrick+Hand&family=Abril+Fatface&display=swap&subset=vietnamese"
         />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         />
       </head>
-      <body className="min-h-full flex flex-col font-sans bg-[#fff6f7] text-[#221a18] relative overflow-x-hidden selection:bg-[#fea095]/40 selection:text-[#540114]">
-        {/* Ambient Floating Liquid Mesh Lights */}
+      <body className="min-h-full flex flex-col font-serif bg-brand-bg text-on-surface relative overflow-x-hidden selection:bg-secondary-container/40 selection:text-primary">
+        {/* Ambient Floating Liquid Mesh Lights with Iridescent Shimmer */}
         <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="absolute -top-32 -left-32 w-[36rem] h-[36rem] rounded-full bg-gradient-to-tr from-[#ffdad6]/70 via-[#fea095]/50 to-[#ffd1d9]/60 blur-[100px] animate-liquid-float-slow" />
-          <div className="absolute top-40 -right-24 w-[38rem] h-[38rem] rounded-full bg-gradient-to-bl from-[#fed7aa]/50 via-[#ffd6dc]/60 to-[#ffe4e6]/70 blur-[110px] animate-liquid-float-fast" />
-          <div className="absolute top-[65vh] -left-20 w-[32rem] h-[32rem] rounded-full bg-gradient-to-r from-[#ffd3cb]/60 via-[#ffdad6]/50 to-[#fceae6]/60 blur-[95px] animate-liquid-float-slow" />
-          <div className="absolute -bottom-20 right-10 w-[42rem] h-[42rem] rounded-full bg-gradient-to-tl from-[#fed7aa]/45 via-[#ffe3ea]/60 to-[#ffccd4]/50 blur-[120px] animate-liquid-float-fast" />
+          <div className="absolute -top-40 -left-40 w-2xl h-168 rounded-full bg-linear-to-tr from-secondary-fixed/80 via-secondary-container/60 to-rose-petal blur-[120px] animate-liquid-float-slow" />
+          <div className="absolute top-32 -right-32 w-176 h-176 rounded-full bg-linear-to-bl from-amber-200/50 via-rose-petal/70 to-rose-100/70 blur-[130px] animate-liquid-float-fast" />
+          <div className="absolute top-[60vh] -left-28 w-152 h-152 rounded-full bg-linear-to-r from-rose-petal/60 via-secondary-fixed/60 to-surface-container/70 blur-[110px] animate-liquid-float-slow" />
+          <div className="absolute -bottom-28 right-0 w-3xl h-192 rounded-full bg-linear-to-tl from-amber-200/40 via-rose-100/60 to-rose-petal/60 blur-[140px] animate-liquid-float-fast" />
+          <div className="absolute top-1/2 left-1/3 w-104 h-104 rounded-full bg-linear-to-r from-white/40 to-rose-50/50 blur-[90px] animate-liquid-pulse" />
         </div>
         <div className="relative z-10 flex flex-col min-h-screen">
           {children}
@@ -68,4 +62,5 @@ export default function RootLayout({
     </html>
   );
 }
+
 

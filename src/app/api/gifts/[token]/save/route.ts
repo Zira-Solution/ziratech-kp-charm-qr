@@ -5,6 +5,8 @@ import { parseGiftData } from "@/lib/validation/gift";
 import { mediaConfigured, pruneVoices, voiceExists } from "@/lib/supabase/media";
 import { hasGiftSession, normalizeToken } from "@/lib/auth/gift-session";
 
+const MAX_SAVE_BODY_BYTES = 3_500_000; // 2.5M chars of photos + text, with headroom for JSON escaping
+
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ token: string }> }
@@ -33,10 +35,22 @@ export async function POST(
       );
     }
 
-    const body = await req.json();
-    const { giftData } = body;
+    // Photos are the bulk of a card (see MAX_TOTAL_PHOTO_CHARS); anything far beyond that is refused
+    // before the body is read into memory.
+    const declared = Number(req.headers.get("content-length") ?? 0);
+    if (declared > MAX_SAVE_BODY_BYTES) {
+      return NextResponse.json({ error: "Thiệp quá lớn. Hãy bớt ảnh hoặc chọn ảnh nhỏ hơn." }, { status: 413 });
+    }
 
-    if (!giftData || typeof giftData !== "object") {
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Dữ liệu gửi lên không hợp lệ" }, { status: 400 });
+    }
+    const giftData = (body as { giftData?: Record<string, unknown> } | null)?.giftData;
+
+    if (!giftData || typeof giftData !== "object" || Array.isArray(giftData)) {
       return NextResponse.json({ error: "Thiếu dữ liệu thiệp" }, { status: 400 });
     }
 

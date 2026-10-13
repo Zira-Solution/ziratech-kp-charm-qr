@@ -1,8 +1,25 @@
 export type GiftTemplateId = "vintage-scrapbook" | "retro-nostalgia" | "storybook-sunset";
 
+export interface TimelineItem {
+  date: string; // YYYY-MM-DD
+  title: string;
+  text: string;
+}
+
+/** Where the background music comes from. "none" = the buyer chose no music. */
+export type SongSource = "none" | "preset" | "link";
+
 export interface RecipientGiftData {
   recipientName: string;
   senderName: string;
+  /** How the sender addresses the recipient, e.g. "Anh - Em". Optional. */
+  addressing?: string;
+  /** Hide the sender's name from the recipient. Optional. */
+  anonymous?: boolean;
+  /** An important date, shown as "X days together". Optional. */
+  anniversary?: { date: string; label: string };
+  /** Up to 5 memory milestones. Optional. */
+  timeline?: TimelineItem[];
   braceletImg: string;
   braceletTitle: string;
   braceletStoryQuote: string;
@@ -25,9 +42,16 @@ export interface RecipientGiftData {
     artist: string;
     audioUrl?: string;
     duration: string;
+    source?: SongSource;
+    presetId?: string;
+    /** External link (YouTube, Spotify, SoundCloud) when source is "link". */
+    link?: string;
   };
   voiceNote: {
+    /** Short-lived signed link, filled in by the API when a recording exists. */
     audioUrl?: string;
+    /** Storage path of the recording (never sent to other people's browsers as a link). */
+    audioPath?: string;
     duration: string;
     noteText: string;
   };

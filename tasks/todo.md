@@ -4,16 +4,16 @@ Chú thích: `[ ]` chưa làm · `[x]` xong. Mỗi nhiệm vụ = 1 commit nhỏ
 
 ## Phase 1 — Hợp đồng và server
 
-- [ ] **T1 Kiểu dữ liệu, cấu hình mẫu, validation + test** (M)
+- [x] **T1 Kiểu dữ liệu, cấu hình mẫu, validation + test** (M)
   - Acceptance: `RecipientGiftData` có trường mới tuỳ chọn; `template-config.ts` khai báo khối theo mẫu; `parseGiftData` làm sạch toàn bộ thiệp theo whitelist, link allowlist, ngày hợp lệ, ảnh, mốc, giai điệu; `npm test` chạy test cho từng quy tắc.
   - Verify: `npm test`, `npx tsc --noEmit`.
   - Files: `components/gift-templates/types.ts`, `template-config.ts`, `lib/validation/gift.ts`, `scripts/gift-validation.test.ts`, `package.json`.
-- [ ] **T2 Save API dùng whitelist** (S)
+- [x] **T2 Save API dùng whitelist** (S)
   - Acceptance: `/save` dựng `gift_data` chỉ từ `parseGiftData`; trường lạ bị bỏ; lỗi `400` nêu rõ mục sai; `braceletTitle` lấy từ đơn.
   - Verify: curl lưu/đọc/từ chối trên DB thật.
   - Files: `app/api/gifts/[token]/save/route.ts`.
 
-**Checkpoint A:** test + tsc qua, API đúng.
+**Checkpoint A:** ✅ `npm test` 22/22, `tsc` sạch, API lưu/đọc/từ chối đúng trên DB thật.
 
 ## Phase 2 — Studio
 

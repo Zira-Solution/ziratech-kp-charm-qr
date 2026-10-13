@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateGiftProductCustomData } from "@/lib/supabase/products";
+import { getGiftProductByToken, updateGiftProductCustomData } from "@/lib/supabase/products";
 import { checkRateLimit } from "@/lib/validation/security";
-import { cleanText, parsePhotos } from "@/lib/validation/gift";
+import { parseGiftData } from "@/lib/validation/gift";
 import { hasGiftSession, normalizeToken } from "@/lib/auth/gift-session";
 
 export async function POST(
@@ -40,28 +40,23 @@ export async function POST(
     }
 
     // The PIN is only ever stored as a hash, never inside gift_data.
-    const { pinCode, ...giftFields } = giftData;
+    const { pinCode } = giftData;
     const newUnlockPin = typeof pinCode === "string" && /^\d{4}$/.test(pinCode) ? pinCode : undefined;
 
-    // Text is stored as typed (React escapes it on render); photos are kept whole or rejected.
-    const photos = parsePhotos(giftData.memoryPhotos);
-    if (!photos.ok) {
-      return NextResponse.json({ error: photos.error }, { status: 400 });
+    // The card is rebuilt from allowlisted, validated fields: unknown fields are dropped, text is kept as
+    // typed, photos and links are kept whole or rejected with a message.
+    const parsed = parseGiftData(giftData, { token });
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
-    const sanitizedGiftData = {
-      ...giftFields,
-      recipientName: cleanText(giftData.recipientName, 100) || "Người nhận",
-      senderName: cleanText(giftData.senderName, 100) || "Người gửi",
-      letterTitle: cleanText(giftData.letterTitle, 200) || "LỜI NHẮN",
-      letterSubtitle: cleanText(giftData.letterSubtitle, 200),
-      letterContent: cleanText(giftData.letterContent, 3000),
-      letterSignature: cleanText(giftData.letterSignature, 100),
-      template: ["vintage-scrapbook", "retro-nostalgia", "storybook-sunset"].includes(giftData.template)
-        ? giftData.template
-        : "vintage-scrapbook",
-      memoryPhotos: photos.photos,
-    };
+    const order = await getGiftProductByToken(token);
+    if (!order) {
+      return NextResponse.json({ error: "Không tìm thấy thiệp với mã này" }, { status: 404 });
+    }
+
+    // The bracelet name comes from the order, not from the browser.
+    const sanitizedGiftData = { ...parsed.value, braceletTitle: order.chainName };
 
     const updated = await updateGiftProductCustomData(token, sanitizedGiftData, newUnlockPin);
     if (!updated) {

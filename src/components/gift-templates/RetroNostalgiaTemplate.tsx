@@ -64,15 +64,15 @@ export default function RetroNostalgiaTemplate({
   const renderCard1 = (isMini = false) => (
     <div
       key="card-1"
-      className="relative w-full h-full min-h-[640px] retro-card-bg text-[#1c1a19] overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-[#1c3f50]/40 rounded-3xl shadow-sm transition-all"
+      className="relative w-full h-full min-h-160 retro-card-bg text-ink overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-dusk/40 rounded-3xl shadow-sm transition-all"
     >
       {/* Retro Star Sparkles */}
-      <div className="absolute top-2 right-3 text-[#d99b26] text-xl font-bold pointer-events-none z-10">✦</div>
-      <div className="absolute top-8 left-2 text-[#c13d28] text-sm font-bold pointer-events-none z-10">✦</div>
+      <div className="absolute top-2 right-3 text-gold-accent text-xl font-bold pointer-events-none z-10">✦</div>
+      <div className="absolute top-8 left-2 text-rust text-sm font-bold pointer-events-none z-10">✦</div>
 
       {/* Header with 3D Drop Shadow Typography */}
       <div className="text-center mt-1 w-full flex flex-col items-center z-10">
-        <span className="font-serif italic text-xl text-[#1c3f50] font-bold">
+        <span className="font-serif italic text-xl text-dusk font-bold">
           Có một
         </span>
 
@@ -82,14 +82,14 @@ export default function RetroNostalgiaTemplate({
 
         {/* Retro Stripes Bar */}
         <div className="flex items-center gap-1.5 my-1">
-          <div className="w-7 h-1 bg-[#1c3f50] rounded-full" />
-          <div className="w-7 h-1 bg-[#d99b26] rounded-full" />
-          <div className="w-7 h-1 bg-[#c13d28] rounded-full" />
+          <div className="w-7 h-1 bg-dusk rounded-full" />
+          <div className="w-7 h-1 bg-gold-accent rounded-full" />
+          <div className="w-7 h-1 bg-rust rounded-full" />
         </div>
 
-        <div className="flex items-center justify-center gap-1 mt-0.5 text-sm sm:text-base text-[#1c3f50] whitespace-nowrap">
+        <div className="flex items-center justify-center gap-1 mt-0.5 text-sm sm:text-base text-dusk whitespace-nowrap">
           <span className="font-serif italic font-bold">dành cho</span>
-          <span className="font-retro font-bold text-[#c13d28]">
+          <span className="font-retro font-bold text-rust">
             [{data.recipientName}].
           </span>
         </div>
@@ -98,10 +98,10 @@ export default function RetroNostalgiaTemplate({
       {/* Bracelet Photo in Retro Frame with Stamp Lines */}
       <div
         onClick={() => (isMini ? onGoToSlide(1) : onNextSlide())}
-        className="cursor-pointer group relative my-2 max-w-[250px] mx-auto w-full z-10"
+        className="cursor-pointer group relative my-2 max-w-62.5 mx-auto w-full z-10"
       >
-        <div className="bg-[#fffdfa] p-2.5 pb-4 rounded-md shadow-xl border-2 border-[#1c3f50] relative group-hover:scale-[1.02] transition-transform duration-300">
-          <div className="aspect-square w-full rounded-xs overflow-hidden bg-[#24342f] relative border border-[#d8c8b4]">
+        <div className="bg-cream-paper p-2.5 pb-4 rounded-md shadow-xl border-2 border-dusk relative group-hover:scale-[1.02] transition-transform duration-300">
+          <div className="aspect-square w-full rounded-xs overflow-hidden bg-slate-900 relative border border-craft-border">
             <img
               src={data.braceletImg}
               alt={data.braceletTitle}
@@ -109,33 +109,33 @@ export default function RetroNostalgiaTemplate({
             />
           </div>
 
-          <div className="mt-1.5 text-center border-t border-[#1c3f50]/20 pt-1">
-            <span className="font-mono text-[9px] tracking-widest text-[#1c3f50] uppercase font-bold">
+          <div className="mt-1.5 text-center border-t border-dusk/20 pt-1">
+            <span className="font-mono text-[9px] tracking-widest text-dusk uppercase font-bold">
               K&amp;P ATELIER • NO. 2010
             </span>
           </div>
         </div>
 
         {/* Stamp Lines */}
-        <div className="absolute -right-2 -bottom-2 flex flex-col gap-0.5 text-[#1c3f50] opacity-80 pointer-events-none">
-          <div className="w-8 h-0.5 bg-[#1c3f50]" />
-          <div className="w-8 h-0.5 bg-[#1c3f50]" />
-          <div className="w-8 h-0.5 bg-[#1c3f50]" />
+        <div className="absolute -right-2 -bottom-2 flex flex-col gap-0.5 text-dusk opacity-80 pointer-events-none">
+          <div className="w-8 h-0.5 bg-dusk" />
+          <div className="w-8 h-0.5 bg-dusk" />
+          <div className="w-8 h-0.5 bg-dusk" />
         </div>
       </div>
 
       {/* Quote & Button */}
       <div className="w-full flex flex-col items-center gap-2.5 z-10 pb-1">
-        <p className="font-serif italic text-xs sm:text-sm text-[#3d322d] text-center max-w-xs leading-relaxed px-2 font-medium">
+        <p className="font-serif italic text-xs sm:text-sm text-dark-timber text-center max-w-xs leading-relaxed px-2 font-medium">
           Có những kỷ niệm không cần phải thật lớn, chỉ cần đủ đặc biệt để chúng ta muốn nhớ mãi.
         </p>
 
         <button
           onClick={() => (isMini ? onGoToSlide(1) : onNextSlide())}
-          className="w-full max-w-[290px] py-2.5 px-4 rounded-full bg-[#e8a391] hover:bg-[#df927e] active:scale-95 text-[#1c1a19] font-serif font-bold text-xs sm:text-sm shadow-md border-2 border-[#1c1a19] transition-all flex items-center justify-center gap-2 group"
+          className="w-full max-w-72.5 py-2.5 px-4 rounded-full bg-terracotta hover:bg-terracotta active:scale-95 text-ink font-serif font-bold text-xs sm:text-sm shadow-md border-2 border-ink transition-all flex items-center justify-center gap-2 group"
         >
           <span>Chạm vào chiếc vòng để mở những kỷ niệm.</span>
-          <span className="w-5 h-5 rounded-full border border-[#1c1a19] flex items-center justify-center group-hover:translate-x-1 transition-transform">
+          <span className="w-5 h-5 rounded-full border border-ink flex items-center justify-center group-hover:translate-x-1 transition-transform">
             →
           </span>
         </button>
@@ -147,13 +147,13 @@ export default function RetroNostalgiaTemplate({
   const renderCard2 = (isMini = false) => (
     <div
       key="card-2"
-      className="relative w-full h-full min-h-[640px] retro-card-bg text-[#1c1a19] overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-[#1c3f50]/40 rounded-3xl shadow-sm transition-all"
+      className="relative w-full h-full min-h-160 retro-card-bg text-ink overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-dusk/40 rounded-3xl shadow-sm transition-all"
     >
       <div className="text-center mt-1 flex flex-col items-center z-10">
         <div className="flex items-center gap-2 mb-0.5">
-          <div className="w-5 h-1 bg-[#1c3f50]" />
-          <span className="text-[#d99b26] text-xs">✦</span>
-          <div className="w-5 h-1 bg-[#c13d28]" />
+          <div className="w-5 h-1 bg-dusk" />
+          <span className="text-gold-accent text-xs">✦</span>
+          <div className="w-5 h-1 bg-rust" />
         </div>
 
         <h2 className="font-retro text-3xl sm:text-4xl uppercase tracking-wider whitespace-nowrap retro-3d-title-red">
@@ -161,32 +161,32 @@ export default function RetroNostalgiaTemplate({
         </h2>
       </div>
 
-      <div className="relative w-full max-w-[290px] mx-auto my-auto z-10">
-        <div className="absolute inset-0 bg-[#c54b38] rounded-xl transform rotate-2 shadow-lg border border-[#a83827]" />
+      <div className="relative w-full max-w-72.5 mx-auto my-auto z-10">
+        <div className="absolute inset-0 bg-rust rounded-xl transform rotate-2 shadow-lg border border-rust" />
 
-        <div className="relative bg-[#fffdfa] p-4 pt-5 rounded-lg shadow-xl border border-[#d8c8b4] transform -rotate-1">
+        <div className="relative bg-cream-paper p-4 pt-5 rounded-lg shadow-xl border border-craft-border transform -rotate-1">
           <div className="w-14 h-4.5 washi-tape-green absolute -top-2 right-4 transform rotate-3" />
 
           <div className="mb-1.5">
-            <span className="font-handwriting text-2xl font-bold text-[#1c3f50]">
+            <span className="font-handwriting text-2xl font-bold text-dusk">
               Gửi bạn
             </span>
           </div>
 
-          <div className="w-full h-px bg-[#d8c8b4] my-1.5" />
+          <div className="w-full h-px bg-craft-border my-1.5" />
 
-          <p className="font-serif text-xs sm:text-sm text-[#2b2420] whitespace-pre-line leading-relaxed min-h-[140px]">
+          <p className="font-serif text-xs sm:text-sm text-dark-espresso whitespace-pre-line leading-relaxed min-h-35">
             {data.letterContent}
           </p>
 
-          <div className="text-right mt-2 border-t border-[#d8c8b4]/60 pt-1.5">
-            <span className="font-serif italic text-xs text-[#c13d28] font-bold">
+          <div className="text-right mt-2 border-t border-craft-border/60 pt-1.5">
+            <span className="font-serif italic text-xs text-rust font-bold">
               {data.letterSignature}
             </span>
           </div>
         </div>
 
-        <div className="absolute -bottom-4 -left-3 pointer-events-none text-[#2e5a44]">
+        <div className="absolute -bottom-4 -left-3 pointer-events-none text-emerald-800">
           <svg width="36" height="36" viewBox="0 0 100 100" fill="none">
             <path d="M20,90 Q45,55 70,20" stroke="#2e5a44" strokeWidth="3" />
             <circle cx="68" cy="25" r="6" fill="#d99b26" />
@@ -196,7 +196,7 @@ export default function RetroNostalgiaTemplate({
       </div>
 
       <div className="text-center z-10 pb-1">
-        <p className="font-serif italic text-xs sm:text-sm text-[#3d322d]">
+        <p className="font-serif italic text-xs sm:text-sm text-dark-timber">
           Vẫn còn vài điều mình muốn kể bạn nghe...
         </p>
       </div>
@@ -207,29 +207,29 @@ export default function RetroNostalgiaTemplate({
   const renderCard3 = (isMini = false) => (
     <div
       key="card-3"
-      className="relative w-full h-full min-h-[640px] retro-card-bg text-[#1c1a19] overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-[#1c3f50]/40 rounded-3xl shadow-sm transition-all"
+      className="relative w-full h-full min-h-160 retro-card-bg text-ink overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-dusk/40 rounded-3xl shadow-sm transition-all"
     >
       <div className="text-center mt-1 flex flex-col items-center z-10">
-        <span className="font-serif italic text-base text-[#2e5a44] font-bold">
+        <span className="font-serif italic text-base text-emerald-800 font-bold">
           Mình đã có
         </span>
         <h2 className="font-retro text-2xl sm:text-3xl uppercase tracking-wider whitespace-nowrap retro-3d-title-green">
           NHỮNG NGÀY
         </h2>
-        <span className="font-serif italic text-xs text-[#1c1a19] bg-[#d99b26]/30 px-2.5 py-0.2 rounded-sm mt-0.5 border border-[#d99b26]/50">
+        <span className="font-serif italic text-xs text-ink bg-gold-accent/30 px-2.5 py-0.2 rounded-sm mt-0.5 border border-gold-accent/50">
           như thế
         </span>
       </div>
 
-      <div className="relative w-full max-w-[290px] h-[330px] mx-auto my-auto z-10">
+      <div className="relative w-full max-w-72.5 h-82.5 mx-auto my-auto z-10">
         {/* Film Strip Left Frame */}
-        <div className="absolute top-1 left-1 w-32 bg-[#1a1817] p-1.5 pb-2 rounded-sm shadow-xl border border-black transform -rotate-4">
+        <div className="absolute top-1 left-1 w-32 bg-neutral-950 p-1.5 pb-2 rounded-sm shadow-xl border border-black transform -rotate-4">
           <div className="flex justify-between px-1 py-0.5 mb-1 opacity-70">
             <div className="w-1.5 h-1.5 bg-white rounded-2xs" />
             <div className="w-1.5 h-1.5 bg-white rounded-2xs" />
             <div className="w-1.5 h-1.5 bg-white rounded-2xs" />
           </div>
-          <div className="aspect-[4/3] rounded-xs overflow-hidden bg-slate-800">
+          <div className="aspect-4/3 rounded-xs overflow-hidden bg-slate-800">
             <img
               src={data.memoryPhotos[0]?.url}
               alt={data.memoryPhotos[0]?.caption}
@@ -239,7 +239,7 @@ export default function RetroNostalgiaTemplate({
         </div>
 
         {/* Polaroid Center */}
-        <div className="absolute top-6 right-1 w-34 bg-[#fffdfa] p-2 pb-3.5 rounded-xs shadow-xl border border-[#d8c8b4] transform rotate-3 z-10">
+        <div className="absolute top-6 right-1 w-34 bg-cream-paper p-2 pb-3.5 rounded-xs shadow-xl border border-craft-border transform rotate-3 z-10">
           <div className="w-10 h-3 washi-tape-pink absolute -top-1.5 left-1/2 -translate-x-1/2" />
           <div className="aspect-square rounded-2xs overflow-hidden bg-slate-100 mb-1">
             <img
@@ -251,9 +251,9 @@ export default function RetroNostalgiaTemplate({
         </div>
 
         {/* Photo 3 Bottom Left */}
-        <div className="absolute bottom-1 left-8 w-44 bg-[#fffdfa] p-2 pb-2.5 rounded-xs shadow-2xl border border-[#d8c8b4] transform -rotate-1 z-20">
+        <div className="absolute bottom-1 left-8 w-44 bg-cream-paper p-2 pb-2.5 rounded-xs shadow-2xl border border-craft-border transform -rotate-1 z-20">
           <div className="w-10 h-3 washi-tape-green absolute -top-1.5 left-1/2 -translate-x-1/2" />
-          <div className="aspect-[16/10] rounded-2xs overflow-hidden bg-slate-100">
+          <div className="aspect-16/10 rounded-2xs overflow-hidden bg-slate-100">
             <img
               src={data.memoryPhotos[2]?.url}
               alt={data.memoryPhotos[2]?.caption}
@@ -264,7 +264,7 @@ export default function RetroNostalgiaTemplate({
       </div>
 
       <div className="text-center z-10 pb-1">
-        <p className="font-serif italic text-xs sm:text-sm text-[#1c1a19] font-medium">
+        <p className="font-serif italic text-xs sm:text-sm text-ink font-medium">
           Và thật may vì những ngày ấy có bạn.
         </p>
       </div>
@@ -275,24 +275,24 @@ export default function RetroNostalgiaTemplate({
   const renderCard4 = (isMini = false) => (
     <div
       key="card-4"
-      className="relative w-full h-full min-h-[640px] retro-card-bg text-[#1c1a19] overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-[#1c3f50]/40 rounded-3xl shadow-sm transition-all"
+      className="relative w-full h-full min-h-160 retro-card-bg text-ink overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-dusk/40 rounded-3xl shadow-sm transition-all"
     >
       <div className="text-center mt-1 flex flex-col items-center z-10">
-        <span className="font-serif italic text-base text-[#1c3f50] font-bold">
+        <span className="font-serif italic text-base text-dusk font-bold">
           Những
         </span>
         <h2 className="font-retro text-2xl sm:text-3xl uppercase tracking-wider whitespace-nowrap retro-3d-title-blue">
           KHOẢNH KHẮC
         </h2>
-        <span className="font-serif italic text-xs text-[#c13d28] font-bold mt-0.5">
+        <span className="font-serif italic text-xs text-rust font-bold mt-0.5">
           của chúng ta
         </span>
       </div>
 
-      <div className="w-full max-w-[280px] space-y-3 mx-auto my-auto z-10">
-        <div className="bg-[#fffdfa] p-2 pb-2.5 rounded-xs shadow-lg border border-[#d8c8b4] transform -rotate-2 relative">
+      <div className="w-full max-w-70 space-y-3 mx-auto my-auto z-10">
+        <div className="bg-cream-paper p-2 pb-2.5 rounded-xs shadow-lg border border-craft-border transform -rotate-2 relative">
           <div className="w-14 h-3.5 washi-tape-pink absolute -top-1.5 left-1/2 -translate-x-1/2 z-10" />
-          <div className="aspect-[16/9] rounded-2xs overflow-hidden bg-slate-100">
+          <div className="aspect-16/9 rounded-2xs overflow-hidden bg-slate-100">
             <img
               src={data.momentPhotos[0]?.url}
               alt={data.momentPhotos[0]?.caption}
@@ -301,9 +301,9 @@ export default function RetroNostalgiaTemplate({
           </div>
         </div>
 
-        <div className="bg-[#fffdfa] p-2 pb-2.5 rounded-xs shadow-lg border border-[#d8c8b4] transform rotate-2 relative ml-3">
+        <div className="bg-cream-paper p-2 pb-2.5 rounded-xs shadow-lg border border-craft-border transform rotate-2 relative ml-3">
           <div className="w-14 h-3.5 washi-tape-green absolute -top-1.5 left-1/2 -translate-x-1/2 z-10" />
-          <div className="aspect-[16/9] rounded-2xs overflow-hidden bg-slate-100">
+          <div className="aspect-16/9 rounded-2xs overflow-hidden bg-slate-100">
             <img
               src={data.momentPhotos[1]?.url}
               alt={data.momentPhotos[1]?.caption}
@@ -314,7 +314,7 @@ export default function RetroNostalgiaTemplate({
       </div>
 
       <div className="text-center px-2 z-10 pb-1">
-        <p className="font-serif italic text-xs text-[#3d322d] leading-relaxed font-medium">
+        <p className="font-serif italic text-xs text-dark-timber leading-relaxed font-medium">
           Và đây chỉ mới là một phần nhỏ trong những kỷ niệm của chúng ta.
         </p>
       </div>
@@ -325,32 +325,32 @@ export default function RetroNostalgiaTemplate({
   const renderCard5 = (isMini = false) => (
     <div
       key="card-5"
-      className="relative w-full h-full min-h-[640px] retro-card-bg text-[#1c1a19] overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-[#1c3f50]/40 rounded-3xl shadow-sm transition-all"
+      className="relative w-full h-full min-h-160 retro-card-bg text-ink overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-dusk/40 rounded-3xl shadow-sm transition-all"
     >
       <div className="text-center mt-1 flex flex-col items-center z-10">
-        <span className="font-serif italic text-base text-[#1c3f50] font-bold">
+        <span className="font-serif italic text-base text-dusk font-bold">
           Còn một điều
         </span>
         <h2 className="font-retro text-2xl sm:text-3xl uppercase tracking-wider whitespace-nowrap retro-3d-title-red">
           MÌNH MUỐN NÓI
         </h2>
-        <span className="font-serif italic text-xs text-[#1c3f50] font-bold">
+        <span className="font-serif italic text-xs text-dusk font-bold">
           với bạn
         </span>
       </div>
 
-      <div className="inline-flex items-center px-4 py-0.5 mx-auto rounded-sm bg-[#d99b26] text-[#1c1a19] font-serif font-bold text-xs border border-[#1c1a19] z-10">
+      <div className="inline-flex items-center px-4 py-0.5 mx-auto rounded-sm bg-gold-accent text-ink font-serif font-bold text-xs border border-ink z-10">
         Nghe lại một chút nhé!
       </div>
 
-      <div className="w-full max-w-[280px] mx-auto bg-[#fffdfa] p-4 rounded-lg shadow-xl border-2 border-[#1c1a19] my-auto space-y-3 z-10">
-        <div className="h-12 bg-[#1c1a19] rounded-md p-1.5 flex items-center justify-center gap-1 border border-[#d8c8b4]">
+      <div className="w-full max-w-70 mx-auto bg-cream-paper p-4 rounded-lg shadow-xl border-2 border-ink my-auto space-y-3 z-10">
+        <div className="h-12 bg-ink rounded-md p-1.5 flex items-center justify-center gap-1 border border-craft-border">
           {[30, 70, 95, 40, 85, 100, 60, 45, 90, 65, 80, 50, 75, 90, 35, 60, 80, 45, 95, 70].map(
             (h, i) => (
               <div
                 key={i}
                 className={`w-1 rounded-xs transition-all duration-300 ${
-                  isPlayingMusic ? "bg-[#e8a391] animate-pulse" : "bg-[#555]"
+                  isPlayingMusic ? "bg-terracotta animate-pulse" : "bg-slate-600"
                 }`}
                 style={{ height: `${isPlayingMusic ? h : 20}%` }}
               />
@@ -359,13 +359,13 @@ export default function RetroNostalgiaTemplate({
         </div>
 
         <div className="space-y-1">
-          <div className="w-full bg-[#d8c8b4] h-1.5 rounded-full overflow-hidden relative">
+          <div className="w-full bg-craft-border h-1.5 rounded-full overflow-hidden relative">
             <div
-              className="bg-[#c13d28] h-full transition-all duration-300"
+              className="bg-rust h-full transition-all duration-300"
               style={{ width: `${isPlayingMusic ? musicProgress : 25}%` }}
             />
           </div>
-          <div className="flex justify-between text-[10px] text-[#1c1a19] font-mono">
+          <div className="flex justify-between text-[10px] text-ink font-mono">
             <span>{isPlayingMusic ? "01:15" : "0:00"}</span>
             <span>-{data.song.duration}</span>
           </div>
@@ -374,31 +374,31 @@ export default function RetroNostalgiaTemplate({
         <div className="flex items-center justify-center gap-5 pt-0.5">
           <button
             onClick={() => setMusicProgress(Math.max(0, musicProgress - 15))}
-            className="w-7 h-7 rounded-full border border-[#1c1a19] flex items-center justify-center text-[#1c1a19] hover:bg-[#d99b26]/30"
+            className="w-7 h-7 rounded-full border border-ink flex items-center justify-center text-ink hover:bg-gold-accent/30"
           >
-            <span className="material-symbols-outlined text-[16px]">fast_rewind</span>
+            <span className="material-symbols-outlined text-base">fast_rewind</span>
           </button>
 
           <button
             onClick={toggleMusic}
-            className="w-10 h-10 rounded-full bg-[#c13d28] hover:bg-[#a6301f] text-white flex items-center justify-center shadow-md border-2 border-[#1c1a19] active:scale-95 transition-all"
+            className="w-10 h-10 rounded-full bg-rust hover:bg-rust text-white flex items-center justify-center shadow-md border-2 border-ink active:scale-95 transition-all"
           >
-            <span className="material-symbols-outlined text-[24px]">
+            <span className="material-symbols-outlined text-2xl">
               {isPlayingMusic ? "pause" : "play_arrow"}
             </span>
           </button>
 
           <button
             onClick={() => setMusicProgress(Math.min(100, musicProgress + 15))}
-            className="w-7 h-7 rounded-full border border-[#1c1a19] flex items-center justify-center text-[#1c1a19] hover:bg-[#d99b26]/30"
+            className="w-7 h-7 rounded-full border border-ink flex items-center justify-center text-ink hover:bg-gold-accent/30"
           >
-            <span className="material-symbols-outlined text-[16px]">fast_forward</span>
+            <span className="material-symbols-outlined text-base">fast_forward</span>
           </button>
         </div>
       </div>
 
       <div className="text-center z-10 pb-1">
-        <span className="text-[#c13d28] text-lg">✦</span>
+        <span className="text-rust text-lg">✦</span>
       </div>
     </div>
   );
@@ -407,37 +407,37 @@ export default function RetroNostalgiaTemplate({
   const renderCard6 = (isMini = false) => (
     <div
       key="card-6"
-      className="relative w-full h-full min-h-[640px] retro-card-bg text-[#1c1a19] overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-[#1c3f50]/40 rounded-3xl shadow-sm transition-all"
+      className="relative w-full h-full min-h-160 retro-card-bg text-ink overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-dusk/40 rounded-3xl shadow-sm transition-all"
     >
       <div className="text-center mt-1 flex flex-col items-center z-10">
-        <span className="font-serif italic text-base text-[#1c3f50] font-bold">
+        <span className="font-serif italic text-base text-dusk font-bold">
           Và cuối cùng...
         </span>
         <h2 className="font-retro text-2xl sm:text-3xl uppercase tracking-wider whitespace-nowrap retro-3d-title-red">
           là giọng nói
         </h2>
-        <span className="font-retro text-xl uppercase tracking-wider text-[#1c3f50] whitespace-nowrap">
+        <span className="font-retro text-xl uppercase tracking-wider text-dusk whitespace-nowrap">
           của mình
         </span>
       </div>
 
       <div className="relative my-auto flex flex-col items-center z-10">
-        <div className="relative w-20 h-20 rounded-full bg-[#3a6351] border-2 border-[#1c1a19] flex items-center justify-center mb-2 shadow-lg">
-          <span className="material-symbols-outlined text-[42px] text-[#f5ede2]">
+        <div className="relative w-20 h-20 rounded-full bg-emerald-700 border-2 border-ink flex items-center justify-center mb-2 shadow-lg">
+          <span className="material-symbols-outlined text-[42px] text-parchment-light">
             settings_voice
           </span>
-          <div className="absolute -top-2 text-[#d99b26] text-lg">✦</div>
+          <div className="absolute -top-2 text-gold-accent text-lg">✦</div>
         </div>
 
-        <div className="w-full max-w-[270px] bg-[#fffdfa] p-3 rounded-lg shadow-xl border-2 border-[#1c1a19] space-y-2">
+        <div className="w-full max-w-67.5 bg-cream-paper p-3 rounded-lg shadow-xl border-2 border-ink space-y-2">
           <div className="space-y-1">
-            <div className="w-full bg-[#d8c8b4] h-1.5 rounded-full overflow-hidden relative">
+            <div className="w-full bg-craft-border h-1.5 rounded-full overflow-hidden relative">
               <div
-                className="bg-[#c13d28] h-full transition-all duration-300"
+                className="bg-rust h-full transition-all duration-300"
                 style={{ width: `${isPlayingVoice ? voiceProgress : 45}%` }}
               />
             </div>
-            <div className="flex justify-between text-[10px] text-[#1c1a19] font-mono">
+            <div className="flex justify-between text-[10px] text-ink font-mono">
               <span>{isPlayingVoice ? "01:05" : "0:00"}</span>
               <span>-{data.voiceNote.duration}</span>
             </div>
@@ -446,32 +446,32 @@ export default function RetroNostalgiaTemplate({
           <div className="flex items-center justify-center gap-5">
             <button
               onClick={() => setVoiceProgress(Math.max(0, voiceProgress - 20))}
-              className="text-[#1c1a19]"
+              className="text-ink"
             >
-              <span className="material-symbols-outlined text-[18px]">skip_previous</span>
+              <span className="material-symbols-outlined text-lg">skip_previous</span>
             </button>
 
             <button
               onClick={toggleVoice}
-              className="w-10 h-10 rounded-full bg-[#c13d28] text-white flex items-center justify-center shadow-md border border-[#1c1a19] active:scale-95 transition-transform"
+              className="w-10 h-10 rounded-full bg-rust text-white flex items-center justify-center shadow-md border border-ink active:scale-95 transition-transform"
             >
-              <span className="material-symbols-outlined text-[20px]">
+              <span className="material-symbols-outlined text-xl">
                 {isPlayingVoice ? "pause" : "play_arrow"}
               </span>
             </button>
 
             <button
               onClick={() => setVoiceProgress(Math.min(100, voiceProgress + 20))}
-              className="text-[#1c1a19]"
+              className="text-ink"
             >
-              <span className="material-symbols-outlined text-[18px]">skip_next</span>
+              <span className="material-symbols-outlined text-lg">skip_next</span>
             </button>
           </div>
         </div>
       </div>
 
       <div className="text-center px-3 z-10 pb-1">
-        <p className="font-serif italic text-xs text-[#3d322d] leading-relaxed">
+        <p className="font-serif italic text-xs text-dark-timber leading-relaxed">
           {data.voiceNote.noteText}
         </p>
       </div>
@@ -482,44 +482,44 @@ export default function RetroNostalgiaTemplate({
   const renderCard7 = (isMini = false) => (
     <div
       key="card-7"
-      className="relative w-full h-full min-h-[640px] retro-card-bg text-[#1c1a19] overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-[#1c3f50]/40 rounded-3xl shadow-sm transition-all"
+      className="relative w-full h-full min-h-160 retro-card-bg text-ink overflow-hidden flex flex-col justify-between p-4 sm:p-6 select-none border-2 border-dusk/40 rounded-3xl shadow-sm transition-all"
     >
       <div className="text-center mt-1 flex flex-col items-center z-10">
         <h2 className="font-retro text-2xl sm:text-3xl uppercase tracking-wider whitespace-nowrap retro-3d-title-red">
           Cảm ơn bạn
         </h2>
-        <p className="font-serif italic text-xs text-[#1c1a19] mt-0.5 font-medium whitespace-nowrap">
+        <p className="font-serif italic text-xs text-ink mt-0.5 font-medium whitespace-nowrap">
           đã đi qua những ngày này cùng mình
         </p>
       </div>
 
-      <div className="relative my-auto w-full max-w-[260px] mx-auto bg-[#fffdfa] p-2.5 pb-3 rounded-xl shadow-2xl border-2 border-[#1c1a19] transform -rotate-1 z-10">
-        <div className="w-full aspect-[4/3] rounded-t-full overflow-hidden bg-slate-100 mb-1.5 border border-[#d8c8b4]">
+      <div className="relative my-auto w-full max-w-65 mx-auto bg-cream-paper p-2.5 pb-3 rounded-xl shadow-2xl border-2 border-ink transform -rotate-1 z-10">
+        <div className="w-full aspect-4/3 rounded-t-full overflow-hidden bg-slate-100 mb-1.5 border border-craft-border">
           <img
             src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80"
             alt="Hoàng hôn kỷ niệm"
             className="w-full h-full object-cover"
           />
         </div>
-        <p className="font-serif italic text-[11px] text-[#1c1a19] text-center font-medium">
+        <p className="font-serif italic text-[11px] text-ink text-center font-medium">
           {data.finalMessage}
         </p>
       </div>
 
-      <div className="w-full max-w-[280px] mx-auto grid grid-cols-2 gap-2.5 mt-1.5 z-10 pb-1">
+      <div className="w-full max-w-70 mx-auto grid grid-cols-2 gap-2.5 mt-1.5 z-10 pb-1">
         <button
           onClick={() => onGoToSlide(1)}
-          className="py-2.5 px-3 rounded-lg bg-[#2c4c3b] hover:bg-[#38634c] text-white font-serif font-bold text-xs flex items-center justify-center gap-1 shadow-md border-2 border-[#1c1a19] active:scale-95 transition-all"
+          className="py-2.5 px-3 rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white font-serif font-bold text-xs flex items-center justify-center gap-1 shadow-md border-2 border-ink active:scale-95 transition-all"
         >
-          <span className="material-symbols-outlined text-[16px]">replay</span>
+          <span className="material-symbols-outlined text-base">replay</span>
           <span>Xem lại</span>
         </button>
 
         <button
           onClick={onSaveKeepsake}
-          className="py-2.5 px-3 rounded-lg bg-[#c13d28] hover:bg-[#aa321e] text-white font-serif font-bold text-xs flex items-center justify-center gap-1 shadow-md border-2 border-[#1c1a19] active:scale-95 transition-all"
+          className="py-2.5 px-3 rounded-lg bg-rust hover:bg-rust text-white font-serif font-bold text-xs flex items-center justify-center gap-1 shadow-md border-2 border-ink active:scale-95 transition-all"
         >
-          <span className="material-symbols-outlined text-[16px]">download</span>
+          <span className="material-symbols-outlined text-base">download</span>
           <span>Lưu lại</span>
         </button>
       </div>
@@ -531,13 +531,13 @@ export default function RetroNostalgiaTemplate({
     return (
       <div className="w-full max-w-6xl mx-auto py-4 px-2 space-y-5">
         <div className="text-center mb-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-[#c13d28] font-bold">
+          <span className="text-xs font-mono uppercase tracking-widest text-rust font-bold">
             BẢN THẢO HOÀN THIỆN • 7 TRANG KỶ NIỆM 20/10
           </span>
-          <h2 className="font-retro text-2xl sm:text-3xl font-bold text-[#1c3f50]">
+          <h2 className="font-retro text-2xl sm:text-3xl font-bold text-dusk">
             Hoài Niệm Retro 90s Poster
           </h2>
-          <p className="text-xs text-[#6e5d57] mt-1">
+          <p className="text-xs text-warm-neutral mt-1">
             Bấm vào bất kỳ trang nào để lướt xem chi tiết toàn màn hình
           </p>
         </div>
@@ -600,11 +600,11 @@ export default function RetroNostalgiaTemplate({
         {activeSlide === 7 && renderCard7()}
       </div>
 
-      <div className="py-2.5 px-4 bg-[#fffdfa] rounded-full shadow-md border-2 border-[#1c1a19] mt-2 flex items-center justify-between text-xs text-[#1c1a19]">
+      <div className="py-2.5 px-4 bg-cream-paper rounded-full shadow-md border-2 border-ink mt-2 flex items-center justify-between text-xs text-ink">
         <button
           onClick={onPrevSlide}
           disabled={activeSlide === 1}
-          className={`flex items-center gap-1 font-serif font-bold hover:text-[#c13d28] transition-colors ${
+          className={`flex items-center gap-1 font-serif font-bold hover:text-rust transition-colors ${
             activeSlide === 1 ? "opacity-30 cursor-not-allowed" : ""
           }`}
         >
@@ -618,8 +618,8 @@ export default function RetroNostalgiaTemplate({
               onClick={() => onGoToSlide(num)}
               className={`w-2.5 h-2.5 rounded-full transition-all ${
                 activeSlide === num
-                  ? "w-6 bg-[#c13d28]"
-                  : "bg-[#1c3f50]/40 hover:bg-[#c13d28]/60"
+                  ? "w-6 bg-rust"
+                  : "bg-dusk/40 hover:bg-rust/60"
               }`}
               title={`Trang ${num}`}
             />
@@ -629,7 +629,7 @@ export default function RetroNostalgiaTemplate({
         <button
           onClick={onNextSlide}
           disabled={activeSlide === 7}
-          className={`flex items-center gap-1 font-serif font-bold hover:text-[#c13d28] transition-colors ${
+          className={`flex items-center gap-1 font-serif font-bold hover:text-rust transition-colors ${
             activeSlide === 7 ? "opacity-30 cursor-not-allowed" : ""
           }`}
         >

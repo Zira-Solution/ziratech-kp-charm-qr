@@ -121,7 +121,7 @@ export default function Keepsake() {
                   &quot;Gửi cô gái luôn mang nụ cười ấm áp như hoa hướng dương...&quot;
                 </p>
                 <p className="font-sans text-xs text-on-surface-variant leading-relaxed">
-                  Mong rằng chiếc vòng charm nhỏ bé luồn cước này sẽ luôn bên bạn những ngày thi cử áp lực tại FPT. Cảm ơn vì đã cùng mình tiếp thêm bữa ăn cho các bé cún tại trạm cứu hộ nhé!
+                  Mong rằng chiếc vòng charm nhỏ bé luồn cước này sẽ luôn bên bạn những ngày thi cử áp lực tại FPT. Cảm ơn vì đã cùng mình ủng hộ các bé cún tại trạm cứu hộ nhé!
                 </p>
                 <div className="mt-3 text-right">
                   <span className="font-sans text-xs text-secondary-dark font-bold">— Người bạn thầm lặng</span>

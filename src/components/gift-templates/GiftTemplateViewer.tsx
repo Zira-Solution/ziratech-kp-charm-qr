@@ -364,7 +364,7 @@ export default function GiftTemplateViewer({
 
       {/* Bottom Footer Note */}
       <footer className="text-center text-xs text-warm-neutral pt-4 pb-2 flex items-center justify-center gap-2">
-        <span>🐾 Kỷ vật số K&amp;P Atelier 20/10 • Góp bữa ăn cho các bé Sân Nhà Nhiều Chó</span>
+        <span>🐾 Kỷ vật số K&amp;P Atelier 20/10 • Ủng hộ các bé Sân Nhà Nhiều Chó</span>
       </footer>
 
       {/* Saved Keepsake Celebration Modal */}
@@ -387,7 +387,7 @@ export default function GiftTemplateViewer({
             <div className="p-3.5 liquid-glass-pill rounded-2xl text-[11px] text-on-secondary-fixed-variant text-left space-y-1 border border-white/70">
               <p>👤 <strong>Người nhận:</strong> {fullData.recipientName}</p>
               <p>🎁 <strong>Mẫu thiệp:</strong> {selectedTemplate === "vintage-scrapbook" ? "Sổ Kỷ Niệm Hoa Khô & Washi Tape" : selectedTemplate === "retro-nostalgia" ? "Hoài Niệm Retro 90s" : "Thanh Xuân Anime"}</p>
-              <p>🐾 <strong>Ý nghĩa:</strong> Đã góp bữa ăn no cho các bé tại Sân Nhà Nhiều Chó</p>
+              <p>🐾 <strong>Ý nghĩa:</strong> Đã chung tay ủng hộ các bé tại Sân Nhà Nhiều Chó</p>
             </div>
 
             <button

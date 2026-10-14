@@ -10,8 +10,8 @@ const TRUST = [
 ];
 
 const IMPACT = [
-  { icon: "rice_bowl", tone: "text-primary", value: "1.250+", label: "Bữa ăn no ấm cho chó" },
-  { icon: "healing", tone: "text-secondary-dark", value: "100%", label: "Quỹ minh bạch công khai" },
+  { icon: "pets", tone: "text-primary", value: "100%", label: "Lợi nhuận ủng hộ trạm cứu hộ" },
+  { icon: "receipt_long", tone: "text-secondary-dark", value: "Công khai", label: "Sao kê quỹ minh bạch" },
   { icon: "diversity_3", tone: "text-primary", value: "45", label: "Sinh viên FPT chế tác" },
   { icon: "qr_code", tone: "text-secondary-dark", value: "1:1", label: "Trang quà tặng số riêng biệt" },
 ];
@@ -99,7 +99,7 @@ export function Hero() {
               <div className="flex items-center gap-2.5">
                 <span className="material-symbols-outlined text-secondary-dark text-[18px]">pets</span>
                 <span className="font-sans text-xs text-on-surface-variant font-medium">
-                  100% lợi nhuận chuyển đổi thành bữa ăn cứu trợ
+                  100% lợi nhuận dành cho quỹ cứu trợ
                 </span>
               </div>
               <span className="font-sans text-xs text-primary font-bold shrink-0">Sân Nhà Nhiều Chó</span>

@@ -5,9 +5,9 @@ import React, { useEffect, useState } from "react";
 const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(Math.round(n))}đ`;
 
 const QUICK = [
-  { amount: 20000, label: "20.000đ (1 Bữa)" },
-  { amount: 50000, label: "50.000đ (3 Bữa)" },
-  { amount: 100000, label: "100.000đ (Tuần ăn)" },
+  { amount: 20000, label: "20.000đ" },
+  { amount: 50000, label: "50.000đ" },
+  { amount: 100000, label: "100.000đ" },
 ];
 
 // Receiving account (the one linked to SePay). Public by nature: it is what the QR code encodes.
@@ -109,13 +109,13 @@ export default function Shelter() {
           id="shelter-donate"
         >
           <div className="flex items-center justify-between gap-3 mb-4">
-            <h3 className="font-headline text-2xl text-primary font-bold">Ủng Hộ Trực Tiếp Bữa Ăn</h3>
+            <h3 className="font-headline text-2xl text-primary font-bold">Ủng Hộ Trực Tiếp Cho Trạm</h3>
             <span className="px-3.5 py-1 rounded-full bg-white/80 backdrop-blur-md text-primary font-sans text-xs font-bold border border-white/80 shadow-xs">
               Tùy tâm
             </span>
           </div>
           <p className="font-sans text-xs text-on-surface-variant mb-6 leading-relaxed">
-            Nếu bạn không có nhu cầu nhận hoa hoặc quà, bạn vẫn có thể gửi gắm bữa ăn tới trạm cứu hộ thông qua cổng tiếp nhận của sinh viên K&amp;P:
+            Nếu bạn không có nhu cầu nhận hoa hoặc quà, bạn vẫn có thể gửi gắm tấm lòng tới trạm cứu hộ thông qua cổng tiếp nhận của sinh viên K&amp;P:
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4" role="group" aria-label="Chọn nhanh số tiền">

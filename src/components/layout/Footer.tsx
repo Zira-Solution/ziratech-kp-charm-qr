@@ -29,10 +29,10 @@ export default function Footer() {
             </span>
             <div>
               <h4 className="font-serif text-base font-bold text-primary">
-                Góp Bữa Ăn Cho Các Bé
+                Đồng Hành Cùng Các Bé
               </h4>
               <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
-                Mỗi món quà bạn đặt trước là bạn đã góp vào các bữa ăn no cho thú cưng cơ nhỡ tại trạm cứu hộ <strong>Sân Nhà Nhiều Chó</strong> (Thanh Oai, Hà Nội).
+                Lợi nhuận từ mỗi món quà được dành ủng hộ thú cưng cơ nhỡ tại trạm cứu hộ <strong>Sân Nhà Nhiều Chó</strong> (Thanh Oai, Hà Nội).
               </p>
             </div>
           </div>

@@ -7,7 +7,7 @@ export default function ClaimGiftPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/#hero");
+    router.replace("/#keepsake");
   }, [router]);
 
   return (

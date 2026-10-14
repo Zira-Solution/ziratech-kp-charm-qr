@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Dancing+Script:wght@600;700&family=Abril+Fatface&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -7,6 +8,18 @@
   --font-merriweather: var(--font-merriweather), "Merriweather", Georgia, serif;
   --font-handwriting: "Caveat", "Dancing Script", cursive;
   --font-retro: "Abril Fatface", Georgia, serif;
+  --font-headline: "Playfair Display", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", "Merriweather", sans-serif;
+
+  --color-secondary-dark: #b84f45;
+  --color-tertiary: #f4c2c2;
+  --color-neutral: #271e1c;
+
+  --shadow-soft-glow: 0 20px 40px -15px rgba(114, 26, 40, 0.08), 0 0 20px 0 rgba(232, 141, 131, 0.12);
+  --shadow-pill: 0 10px 25px -4px rgba(114, 26, 40, 0.28), 0 2px 6px rgba(114, 26, 40, 0.12);
+  --shadow-liquid-card: 0 20px 50px rgba(114, 26, 40, 0.06), 0 1px 3px rgba(255, 255, 255, 0.9) inset;
+  --shadow-liquid-card-hover: 0 28px 60px rgba(114, 26, 40, 0.12), 0 1px 4px rgba(255, 255, 255, 0.95) inset;
+  --shadow-glass-nav: 0 15px 35px -5px rgba(114, 26, 40, 0.08), 0 1px 2px rgba(255, 255, 255, 0.9) inset;
 
   --color-primary: #540114;
   --color-primary-container: #721a28;
@@ -523,3 +536,48 @@ body {
   backface-visibility: hidden;
 }
 
+
+/* ========================================================= */
+/* Home page ("kp-home"): rose / burgundy liquid-glass look.  */
+/* Palette + font overrides are scoped here so the admin and   */
+/* the gift pages keep their own theme.                        */
+/* ========================================================= */
+.kp-home {
+  --color-primary: #721a28;
+  --color-secondary: #e88d83;
+  --color-secondary-container: #fea095;
+  --color-on-surface: #271e1c;
+  --color-on-surface-variant: #634e4d;
+  --color-outline-variant: #ebd6d3;
+  --color-surface-container-low: #fff0ed;
+  --font-sans: "Plus Jakarta Sans", "Be Vietnam Pro", sans-serif;
+  background-color: #fff8f6;
+  color: #271e1c;
+  font-family: "Plus Jakarta Sans", "Be Vietnam Pro", sans-serif;
+  letter-spacing: 0;
+}
+
+.kp-home .material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+@keyframes kpFloatSlow {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.08); }
+}
+
+@keyframes kpFloatReverse {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(-25px, 25px) scale(0.95); }
+}
+
+.kp-blob-1 { animation: kpFloatSlow 14s ease-in-out infinite; }
+.kp-blob-2 { animation: kpFloatReverse 18s ease-in-out infinite; }
+.kp-blob-3 { animation: kpFloatSlow 16s ease-in-out infinite reverse; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kp-blob-1, .kp-blob-2, .kp-blob-3 { animation: none; }
+}

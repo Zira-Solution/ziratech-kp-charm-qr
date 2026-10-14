@@ -21,7 +21,7 @@ function CreatorPortalContent() {
 
   // Old links such as /gift?tab=open belonged to recipients: send them to the home page form.
   useEffect(() => {
-    if (searchParams.get("tab") === "open") router.replace("/#hero");
+    if (searchParams.get("tab") === "open") router.replace("/#keepsake");
   }, [searchParams, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {

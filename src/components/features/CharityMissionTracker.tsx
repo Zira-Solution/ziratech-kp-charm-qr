@@ -1,8 +1,26 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+
+const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(Math.round(n))}đ`;
 
 export default function CharityMissionTracker() {
+  // Live fund total from the SePay webhook; the card stays hidden until at least one transfer arrived.
+  const [fund, setFund] = useState<{ total: number; count: number } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/donations/summary")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled && data.success && data.count > 0) setFund({ total: data.total, count: data.count });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <section id="charity-mission" className="w-full py-16 lg:py-24 relative overflow-hidden">
       {/* Background ambient accents */}
@@ -115,6 +133,17 @@ export default function CharityMissionTracker() {
             </div>
           </div>
         </div>
+
+        {fund && (
+          <div className="mb-4 p-5 rounded-3xl liquid-glass-card border border-white/85 shadow-md flex flex-col items-center text-center">
+            <span className="material-symbols-outlined text-primary text-[26px] mb-1">savings</span>
+            <span className="font-mono text-2xl sm:text-3xl font-bold text-primary">{vnd(fund.total)}</span>
+            <span className="text-xs text-on-secondary-fixed-variant font-bold mt-1">Quỹ đã nhận được</span>
+            <span className="text-[10px] text-on-secondary-fixed-variant mt-0.5">
+              Từ {fund.count} lượt ủng hộ, cập nhật trực tiếp
+            </span>
+          </div>
+        )}
 
         {/* 4 REAL-TIME IMPACT METRICS CARDS - Liquid Glass Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

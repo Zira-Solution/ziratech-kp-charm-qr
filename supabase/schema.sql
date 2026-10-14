@@ -96,3 +96,23 @@ grant select, insert, update, delete on public.chains to service_role;
 -- stops opening for customers, but the row stays and can be restored from the "Thùng rác" view.
 alter table public.gift_products add column if not exists deleted_at timestamptz;
 create index if not exists idx_gift_products_deleted_at on public.gift_products (deleted_at);
+
+-- 8. Charity fund donations, filled automatically by the SePay webhook (bank transfers into the fund account).
+-- `sepay_id` is SePay's transaction id: the unique constraint makes webhook retries idempotent.
+create table if not exists public.donations (
+  id uuid primary key default gen_random_uuid(),
+  sepay_id bigint unique not null,
+  gateway text not null default '',            -- bank brand name
+  account_number text not null default '',
+  amount bigint not null check (amount > 0),   -- VND
+  content text not null default '',            -- transfer note written by the donor
+  reference_code text not null default '',    -- bank reference code
+  transaction_date timestamptz not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_donations_transaction_date on public.donations (transaction_date desc);
+
+alter table public.donations enable row level security; -- no policies: server only
+revoke all on public.donations from anon, authenticated;
+grant select, insert, update, delete on public.donations to service_role;

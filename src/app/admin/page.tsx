@@ -8,6 +8,7 @@ import PosView, { type CreatedOrder } from "@/components/admin/PosView";
 import OrdersView from "@/components/admin/OrdersView";
 import ReportsView, { type AnalyticsStats } from "@/components/admin/ReportsView";
 import ProductsView from "@/components/admin/ProductsView";
+import DonationsView, { type DonationsData } from "@/components/admin/DonationsView";
 import type { StoredChain } from "@/lib/supabase/chains";
 import { OrderCreatedDialog, ReissuedKeyDialog } from "@/components/admin/AdminDialogs";
 import { ConfirmDialog, adminFontStyle, formatVnd } from "@/components/admin/ui";
@@ -36,6 +37,10 @@ export default function AdminPage() {
   const [stats, setStats] = useState<AnalyticsStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState("");
+
+  const [fund, setFund] = useState<DonationsData | null>(null);
+  const [fundLoading, setFundLoading] = useState(false);
+  const [fundError, setFundError] = useState("");
 
   const [created, setCreated] = useState<CreatedOrder | null>(null);
   const [reissued, setReissued] = useState<{ token: string; creatorKey: string } | null>(null);
@@ -119,12 +124,29 @@ export default function AdminPage() {
     }
   }, [handleExpired]);
 
+  const loadFund = useCallback(async () => {
+    setFundLoading(true);
+    setFundError("");
+    try {
+      const res = await fetch("/api/admin/donations");
+      if (res.status === 401) return handleExpired();
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data.donations)) throw new Error(data.error || "Không tải được sao kê quỹ.");
+      setFund({ donations: data.donations, ready: data.ready !== false, total: data.total, count: data.count });
+    } catch (err) {
+      setFundError(err instanceof Error ? err.message : "Không tải được sao kê quỹ.");
+    } finally {
+      setFundLoading(false);
+    }
+  }, [handleExpired]);
+
   // Keep the orders count in the sidebar fresh, and load the report when it is opened.
   useEffect(() => {
     if (!user) return;
     if (tab === "orders" || orders.length === 0) loadOrders();
     if (tab === "pos" || tab === "products" || chains.length === 0) loadChains();
     if (tab === "reports") loadStats();
+    if (tab === "fund") loadFund();
   }, [user, tab, trash]);
 
   const logout = async () => {
@@ -136,6 +158,7 @@ export default function AdminPage() {
     setUser(null);
     setOrders([]);
     setStats(null);
+    setFund(null);
     setChains([]);
     setTrash(false);
     setTab("pos");
@@ -271,6 +294,7 @@ export default function AdminPage() {
         />
       )}
       {tab === "reports" && <ReportsView stats={stats} loading={statsLoading} error={statsError} onRetry={loadStats} />}
+      {tab === "fund" && <DonationsView data={fund} loading={fundLoading} error={fundError} onRefresh={loadFund} />}
 
       {orderToDelete && (
         <ConfirmDialog

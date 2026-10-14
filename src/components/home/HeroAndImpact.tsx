@@ -4,9 +4,9 @@ const HERO_IMG =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCc7nnfHXxUOfha53a1o_9bNbtqKnnttmUa4NjPK96JAiZfGiklPSDzAHT7tSA2gUb446MwpiHi55PsMwbOtB0lJzQkkJFl01ATCuh90DTBrYmUwQ0KpRJOlggMtRD_2vyQXac5evM3AjtJRzeQTI3jfkcvvwzAyAkOq3FPMITWqFqmD52FCD670eaDpE_VnVkB3px06kuJnROnD2G823IQKvXR-qBNYCwRZFPSHnHADgCRTl0ezejadg";
 
 const TRUST = [
-  { icon: "qr_code_2", text: "Kèm thiệp & mã quà số QR" },
+  { icon: "qr_code_2", text: "Mã QR quà số gửi qua email" },
   { icon: "inventory_2", text: "Đóng hộp thủ công cẩn trọng" },
-  { icon: "storefront", text: "Nhận tại sảnh tòa Alpha FPTU" },
+  { icon: "storefront", text: "Nhận tại sảnh lầu 2 ngày 20/10" },
 ];
 
 const IMPACT = [
@@ -26,7 +26,7 @@ export function Hero() {
             <span>Bộ Sưu Tập Quà Tặng 20/10 • Gây Quỹ Cứu Trợ Động Vật</span>
           </div>
 
-          <h1 className="font-headline text-4xl sm:text-5xl lg:text-[54px] text-primary tracking-tight leading-[1.15]">
+          <h1 className="font-headline text-4xl sm:text-5xl lg:text-[54px] text-primary tracking-tight leading-[1.3]">
             Một kỷ vật trao tay.
             <br />
             <span className="italic font-normal text-secondary-dark">Một mái ấm được chở che.</span>

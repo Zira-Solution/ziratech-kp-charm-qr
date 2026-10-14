@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 
 const STEPS = [
   {
-    title: "Quét mã QR trên thiệp",
-    text: "Dùng camera điện thoại thông minh quét trực tiếp mã QR in chìm trên tấm thiệp mộc mạc K&P.",
+    title: "Quét mã QR trong email",
+    text: "Mở email K&P Atelier gửi tới và dùng camera điện thoại quét mã QR để vào trang quà tặng.",
   },
   {
     title: "Nhập OTP xem thiệp",
-    text: "Nhập OTP 4 số in trên thẻ quà tặng để mở khóa trang kỷ niệm riêng tư của bạn.",
+    text: "Nhập OTP xem thiệp 4 số có trong email để mở khóa trang kỷ niệm riêng tư của bạn.",
   },
   {
     title: "Chạm mở không gian quà",
@@ -39,8 +39,8 @@ export default function Keepsake() {
     setFeedback(null);
     const token = code.trim().toUpperCase();
     const passcode = otp.trim();
-    if (!token) return setFeedback({ type: "error", message: "Vui lòng nhập mã thiệp in trên thẻ quà tặng." });
-    if (!passcode) return setFeedback({ type: "error", message: "Vui lòng nhập OTP xem thiệp (4 số) in trên thẻ." });
+    if (!token) return setFeedback({ type: "error", message: "Vui lòng nhập mã thiệp có trong email." });
+    if (!passcode) return setFeedback({ type: "error", message: "Vui lòng nhập OTP xem thiệp (4 số) có trong email." });
 
     setBusy(true);
     try {
@@ -80,7 +80,7 @@ export default function Keepsake() {
             Quét QR, mở ra cả thế giới kỷ niệm bí mật
           </h2>
           <p className="font-body text-base text-on-surface-variant leading-relaxed">
-            Không cần cài app, không đăng ký tài khoản rườm rà. Người tặng tự tay soạn quà; người nhận chỉ cần quét camera mã QR đính kèm thiệp để mở cánh cửa tâm tình riêng tư.
+            Không cần cài app, không đăng ký tài khoản rườm rà. Người tặng tự tay soạn quà; người nhận chỉ cần quét mã QR được gửi qua email để mở cánh cửa tâm tình riêng tư.
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export default function Keepsake() {
                   <div className="w-full aspect-4/3 rounded-[18px] bg-surface-container-low overflow-hidden mb-2">
                     <img className="w-full h-full object-cover" alt="Ảnh polaroid hai bạn sinh viên cười trong sân trường" loading="lazy" src={POLAROID_IMG} />
                   </div>
-                  <span className="font-sans text-xs text-on-surface-variant italic">Kỷ niệm sảnh Alpha 2024</span>
+                  <span className="font-sans text-xs text-on-surface-variant italic">Kỷ niệm ở trường FPT</span>
                 </div>
 
                 <div className="flex flex-col justify-between gap-3">
@@ -175,11 +175,11 @@ export default function Keepsake() {
             <div className="p-8 rounded-[36px] bg-linear-to-br from-white/75 via-white/55 to-white/35 backdrop-blur-2xl border border-white/85 shadow-liquid-card">
               <div className="flex items-center gap-2 text-secondary-dark mb-2">
                 <span className="material-symbols-outlined text-[20px]">key</span>
-                <span className="font-sans text-xs uppercase tracking-wider font-bold">Mở thiệp bằng mã in trên thẻ</span>
+                <span className="font-sans text-xs uppercase tracking-wider font-bold">Mở thiệp bằng mã trong email</span>
               </div>
               <h3 className="font-headline text-2xl text-primary font-bold mb-2">Tra cứu hoặc nhập mã trực tiếp</h3>
               <p className="font-sans text-xs text-on-surface-variant mb-6 leading-relaxed">
-                Nếu camera điện thoại không đọc được mã QR, hãy nhập mã thiệp và OTP xem thiệp in dưới thẻ vào các ô dưới đây để mở ngay.
+                Nếu camera điện thoại không đọc được mã QR, hãy nhập mã thiệp và OTP xem thiệp trong email vào các ô dưới đây để mở ngay.
               </p>
               <form className="space-y-4" onSubmit={submit} noValidate>
                 <div>

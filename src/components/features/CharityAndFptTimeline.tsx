@@ -19,7 +19,7 @@ export default function CharityAndFptTimeline() {
     {
       num: "03",
       title: "Điểm Hẹn Tại FPT",
-      desc: "Gian hàng trải nghiệm tại sảnh Alpha — ĐH FPT Hòa Lạc.",
+      desc: "Gian hàng trải nghiệm tại sảnh lầu 2 — ĐH FPT.",
       icon: "school",
     },
     {
@@ -122,7 +122,7 @@ export default function CharityAndFptTimeline() {
             </div>
 
             <div className="pt-4 border-t border-white/70 flex items-center justify-between text-xs font-sans text-warm-neutral">
-              <span>📍 Booth chính: Sảnh Tòa Nhà Alpha — FPTU Hòa Lạc</span>
+              <span>📍 Booth chính: Sảnh lầu 2 — FPTU</span>
               <span className="font-bold text-primary-container">15/10 — 20/10</span>
             </div>
           </div>

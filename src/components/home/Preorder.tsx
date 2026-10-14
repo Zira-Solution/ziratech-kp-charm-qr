@@ -43,7 +43,7 @@ export default function Preorder() {
             <span className="material-symbols-outlined text-secondary-dark text-2xl mt-0.5">info</span>
             <div className="font-sans text-xs text-on-surface-variant leading-relaxed">
               <strong className="text-primary font-semibold">Quy định giao nhận:</strong> Toàn bộ hoa tươi đặt trước sẽ được phát{" "}
-              <strong className="text-primary">trực tiếp tại sảnh tòa nhà Alpha, khuôn viên FPT University</strong> trong ngày 20/10. K&amp;P Atelier cam kết giữ form hoa tươi mới nhất và không thu thập địa chỉ ship ngoài khuôn viên.
+              <strong className="text-primary">trực tiếp tại sảnh lầu 2, FPT University</strong> trong ngày 20/10. K&amp;P Atelier cam kết giữ form hoa tươi mới nhất và không thu thập địa chỉ ship ngoài khuôn viên.
             </div>
           </div>
 
@@ -67,7 +67,7 @@ export default function Preorder() {
               <legend className="block font-sans text-xs text-neutral font-semibold mb-2">Chọn loại hoa đặt trước *</legend>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { title: "Hoa lẻ tinh tế (40.000 – 70.000đ)", sub: "Kèm thiệp chúc & mã QR riêng", checked: true },
+                  { title: "Hoa lẻ tinh tế (40.000 – 70.000đ)", sub: "Mã QR thiệp số gửi qua email", checked: true },
                   { title: "Hoa bó kết tay (40.000 – 70.000đ)", sub: "Phối hoa nhập, bọc giấy mỹ thuật" },
                 ].map((o) => (
                   <label
@@ -87,7 +87,7 @@ export default function Preorder() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block font-sans text-xs text-neutral font-semibold mb-2" htmlFor="po-slot">
-                  Khung giờ nhận tại sảnh Alpha ngày 20/10 *
+                  Khung giờ nhận tại sảnh lầu 2 ngày 20/10 *
                 </label>
                 <select className={field} id="po-slot">
                   {SLOTS.map((s) => (
@@ -118,7 +118,7 @@ export default function Preorder() {
 
             {notice && (
               <p role="status" className="p-4 rounded-2xl bg-amber-50 text-amber-900 border border-amber-200 text-xs leading-relaxed">
-                Biểu mẫu đặt trước online chưa mở nhận đơn nên thông tin bạn vừa nhập chưa được lưu. Hãy ghé gian hàng ở sảnh Alpha FPTU để đặt hoa trực tiếp nhé.
+                Biểu mẫu đặt trước online chưa mở nhận đơn nên thông tin bạn vừa nhập chưa được lưu. Hãy ghé gian hàng ở sảnh lầu 2 FPTU để đặt hoa trực tiếp nhé.
               </p>
             )}
           </form>

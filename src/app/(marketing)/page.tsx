@@ -1,6 +1,8 @@
 import React from "react";
+import { Be_Vietnam_Pro, Lora } from "next/font/google";
 import HomeHeader from "@/components/home/HomeHeader";
 import { Hero, ImpactTicker } from "@/components/home/HeroAndImpact";
+import EventInfo from "@/components/home/EventInfo";
 import Catalog from "@/components/home/Catalog";
 import Keepsake from "@/components/home/Keepsake";
 import Workshop from "@/components/home/Workshop";
@@ -9,9 +11,24 @@ import LuckyWheel from "@/components/home/LuckyWheel";
 import Shelter from "@/components/home/Shelter";
 import HomeFooter, { ClosingBanner } from "@/components/home/HomeFooter";
 
+// Both families ship real Vietnamese glyphs; loading them through next/font keeps the diacritics intact.
+const headline = Lora({
+  variable: "--font-kp-headline",
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+const body = Be_Vietnam_Pro({
+  variable: "--font-kp-body",
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
 export default function MarketingHomePage() {
   return (
-    <div className="kp-home relative min-h-screen overflow-x-hidden antialiased selection:bg-tertiary selection:text-primary">
+    <div className={`${headline.variable} ${body.variable} kp-home relative min-h-screen overflow-x-hidden antialiased selection:bg-tertiary selection:text-primary`}>
       {/* Ambient liquid-glass backdrop */}
       <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="kp-blob-1 absolute -top-40 right-[-10%] w-155 h-155 rounded-full bg-linear-to-br from-[#721a28]/14 via-[#e88d83]/22 to-transparent blur-[110px]" />
@@ -26,6 +43,7 @@ export default function MarketingHomePage() {
         <main>
           <Hero />
           <ImpactTicker />
+          <EventInfo />
           <Catalog />
           <Keepsake />
           <Workshop />

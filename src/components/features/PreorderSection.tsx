@@ -100,7 +100,7 @@ export default function PreorderSection({
       timeSlot,
       deliveryLocation:
         deliveryType === "booth"
-          ? "Booth K&P Atelier (Sảnh Tòa Nhà Alpha / Beta ĐH FPT)"
+          ? "Booth K&P Atelier (Sảnh lầu 2 ĐH FPT)"
           : `Giao tận phòng: ${roomNote}`,
       paymentMethod,
       isAnonymous,
@@ -619,7 +619,7 @@ export default function PreorderSection({
                             onChange={() => setDeliveryType("booth")}
                             className="text-primary focus:ring-primary"
                           />
-                          <span>🏛️ Nhận tại Booth K&amp;P (Sảnh Alpha/Beta)</span>
+                          <span>🏛️ Nhận tại Booth K&amp;P (Sảnh lầu 2)</span>
                         </label>
 
                         <label
@@ -647,7 +647,7 @@ export default function PreorderSection({
                             required
                             value={roomNote}
                             onChange={(e) => setRoomNote(e.target.value)}
-                            placeholder="Nhập tòa nhà & số phòng học (VD: Tòa Alpha - Phòng 204, Ca 2)"
+                            placeholder="Nhập tòa nhà & số phòng học (VD: Phòng 204, Ca 2)"
                             className="w-full px-3.5 py-2 rounded-xl bg-brand-bg border border-primary text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
                           />
                         </div>

@@ -17,8 +17,8 @@ const PRODUCTS: Product[] = [
   {
     title: "Hoa lẻ tinh khôi",
     price: "40.000 – 70.000đ",
-    desc: "Đặt trước hoa tươi tuyển chọn cẩn trọng, nhận trực tiếp ngày 20/10 tại sảnh Alpha ĐH FPT kèm mã thiệp số cá nhân hóa.",
-    tags: [{ label: "Đặt trước", solid: true }, { label: "Kèm thẻ QR", outline: true }],
+    desc: "Đặt trước hoa tươi tuyển chọn cẩn trọng, nhận trực tiếp ngày 20/10 tại sảnh lầu 2 ĐH FPT. Mã thiệp số cá nhân hóa được gửi qua email.",
+    tags: [{ label: "Đặt trước", solid: true }, { label: "QR gửi qua email", outline: true }],
     footNote: "Cung cấp 1 bữa ăn trạm chó",
     action: { href: "#preorder", label: "Đặt trước hoa" },
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB_4mDGS0xffxwcJ71txa5wOeoYAvBOOf2uSojK2uCxd0_K1mApojDPFpzJJzHwG-rSs428EPPcvkFHfaVkbPQRWsmzJ4MBkWCoYKrXo4tcrbRLmHQGrRmRFVCBO9Z1ewOVplxgniYaHTZRX1fE_IdOx3Zbehs_9VULa56Ps0AbRa6Lzv9n9nxgin7RQyxw_ZBQb82VB4GdGxV9dPVBKdiGaRspudRIjX7sovyPsjqdGkOD6HQ8yIN8-w",
@@ -28,7 +28,7 @@ const PRODUCTS: Product[] = [
     title: "Hoa bó kết tay nghệ thuật",
     price: "40.000 – 70.000đ",
     desc: "Bó hoa trang nhã phối hoa nhập khẩu và baby breath dịu dàng, gói giấy mỹ thuật thủ công sang trọng đón chào 20/10.",
-    tags: [{ label: "Đặt trước", solid: true }, { label: "Kèm thẻ QR", outline: true }],
+    tags: [{ label: "Đặt trước", solid: true }, { label: "QR gửi qua email", outline: true }],
     footNote: "Cung cấp 3 bữa ăn trạm chó",
     action: { href: "#preorder", label: "Đặt trước bó" },
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAC3K_So8EnaedBp3w8ybRFGrZGmfOzQ7AGm2KAfs2IW48IriCTvT46WO72wBJc_uUEFiqbAuUC_eiOWIiPX7cgWeSpGAyT9liUlSjgPl6hNItKi_zF7qCkhGpS6CAHrnCFXRXXuUDm__yueYCEPUJKdgWPegxKFFGIZXH-4Vr6wbOOCzOzCXMkjS9ZmqFknuxBPa-JwjtD1ppTYBSVsGG2knAGnxAiIki4oQnolTsf0snehIEVFmDegQ",
@@ -36,9 +36,9 @@ const PRODUCTS: Product[] = [
   },
   {
     title: "Vòng Charm hoàn thiện",
-    priceNote: "Chọn tại sảnh Alpha",
-    desc: "Được đan sẵn bởi đội ngũ thủ công K&P Atelier với các phối màu phong phú. Ghé gian hàng để ướm tay và gắn mã QR thiệp.",
-    tags: [{ label: "Tại gian hàng" }, { label: "Kèm thẻ QR", outline: true }],
+    priceNote: "Chọn tại sảnh lầu 2",
+    desc: "Được đan sẵn bởi đội ngũ thủ công K&P Atelier với các phối màu phong phú. Ghé gian hàng để ướm tay, mã QR thiệp số sẽ được gửi qua email.",
+    tags: [{ label: "Tại gian hàng" }, { label: "QR gửi qua email", outline: true }],
     footNote: "Đóng hộp nhung cao cấp",
     footRight: "Trực tiếp tại quầy",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD5m2wDNd4OwHHnmjxnlJMk31SL8ttNLfiKEQ_kRaDY1apRpAMVq8GR8vX1eL6z3ztycvYlSfp1UZ9aCGTu6wKryXicXuYGHbRhnQGSJW5Uxt6w-nzFNkx0ZzsUf9r86-XcDM9Ct2bKmeKhWIOTetQktsDxofjZ2fBsOAEbJ4zMEk8G5cletflhsx3JXd3cBTDQ3wVWv22hs6VJIKrA6A9xVzk7LLk5bNsGQvXlWuqm_y8ybHQj3KNF9A",
@@ -46,8 +46,8 @@ const PRODUCTS: Product[] = [
   },
   {
     title: "Trải nghiệm tự làm vòng",
-    priceNote: "Kèm thẻ QR",
-    desc: "Trải nghiệm tự tay lựa chọn charm ý nghĩa, luồn dây cước và gắn mã kỷ vật số để trao tặng món quà có một không hai.",
+    priceNote: "QR gửi qua email",
+    desc: "Trải nghiệm tự tay lựa chọn charm ý nghĩa, luồn dây cước và nhận mã kỷ vật số qua email để trao tặng món quà có một không hai.",
     tags: [{ label: "Bàn Workshop", solid: true }, { label: "Tự tay xâu chuỗi", outline: true }],
     footNote: "Bàn hỗ trợ kỹ thuật tận tình",
     action: { href: "#workshop", label: "Xem quy trình" },
@@ -60,7 +60,7 @@ const PRODUCTS: Product[] = [
     desc: "Chất giấy mỹ thuật ép xơ thực vật tự nhiên, độ dày 300gsm giữ mực hoàn hảo cùng phong bì ép nhũ đồng tinh xảo.",
     tags: [{ label: "Giấy mỹ thuật" }],
     footNote: "Miễn phí bút nhũ nắn nót",
-    footRight: "Sảnh Alpha",
+    footRight: "Sảnh lầu 2",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBmORgE6vzg_pg9LspCZ7YSCeG5POoBnpxwviP2dz4DgSjQZV_LYnIzAzdfMEBXa5fB9SU1WO4CKOLAAZkjZekCdgma1yEua6JJ2CXTLByeCqLDUGpksWS_gzywBkdr14ysLrEOAM4NxoBEnkp7IRTW-jMARi5QjpCNgHxJZncld7ve8eOhXZKDsquoSfl3yuJmEGPIx0iGjfJtWptKJBpyIXO6CVDUL-MtnT5UxcMjFFhRqNMFBkf3zA",
     alt: "Thiệp giấy mỹ thuật viền xé cùng bút mực và sáp niêm phong",
   },
@@ -95,7 +95,7 @@ export default function Catalog() {
           <h2 className="font-headline text-3xl sm:text-4xl text-primary tracking-tight">Kỷ Vật Yêu Thương &amp; Trao Gửi</h2>
         </div>
         <p className="font-sans text-xs text-on-surface-variant max-w-md mt-4 md:mt-0 italic border-l-2 border-secondary pl-3 leading-relaxed">
-          * Lưu ý: Chỉ hoa tươi được mở đặt trước trực tuyến. Các sản phẩm thủ công khác phục vụ trực tiếp tại bàn workshop &amp; sảnh Alpha.
+          * Lưu ý: Chỉ hoa tươi được mở đặt trước trực tuyến. Các sản phẩm thủ công khác phục vụ trực tiếp tại bàn workshop &amp; sảnh lầu 2.
         </p>
       </div>
 

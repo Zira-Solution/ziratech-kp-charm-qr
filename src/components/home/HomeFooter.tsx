@@ -31,7 +31,7 @@ export default function HomeFooter() {
             </p>
             <div className="flex items-center gap-2 text-xs text-white/60">
               <span className="material-symbols-outlined text-[16px] text-tertiary">pin_drop</span>
-              <span>Sảnh tòa Alpha, FPT University Hà Nội</span>
+              <span>Sảnh lầu 2, FPT University Hà Nội</span>
             </div>
           </div>
 
@@ -72,7 +72,7 @@ export default function HomeFooter() {
               Handcrafted with warmth
             </span>
             <span>•</span>
-            <span>Alpha Hall FPTU</span>
+            <span>Sảnh lầu 2 FPTU</span>
           </div>
         </div>
       </div>

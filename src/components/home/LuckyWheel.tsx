@@ -15,7 +15,7 @@ export default function LuckyWheel() {
             </div>
             <h2 className="font-headline text-3xl sm:text-4xl text-white leading-tight font-bold">Vòng Quay May Mắn K&amp;P Atelier</h2>
             <p className="font-body text-sm sm:text-base text-white/90 max-w-xl leading-relaxed">
-              Diễn ra duy nhất trong ngày 20/10 tại gian hàng sảnh tòa nhà Alpha ĐH FPT. Mỗi đơn hàng hoặc trải nghiệm làm vòng đều nhận được 01 lượt quay trúng thưởng kỷ niệm ấm áp.
+              Diễn ra duy nhất trong ngày 20/10 tại gian hàng sảnh lầu 2 ĐH FPT. Mỗi đơn hàng hoặc trải nghiệm làm vòng đều nhận được 01 lượt quay trúng thưởng kỷ niệm ấm áp.
             </p>
             <div className="pt-2 flex items-center gap-3">
               <div className="px-5 py-2.5 rounded-full bg-white/15 backdrop-blur-xl border border-white/25 text-white text-xs font-semibold shadow-xs">

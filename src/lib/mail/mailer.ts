@@ -123,7 +123,7 @@ export async function sendGiftActivationEmail({
                       ${unlockPin ?? "Đã in trên thẻ"}
                     </div>
                     <span style="font-size: 10.5px; color: #897172; display: block; margin-top: 8px; line-height: 1.4;">
-                      In kèm thẻ nhung trao cho người nhận để mở thiệp 3D.
+                      Gửi cùng mã thiệp cho người nhận để mở thiệp 3D.
                     </span>
                   </td>
                 </tr>
@@ -148,7 +148,7 @@ export async function sendGiftActivationEmail({
                 <ol style="margin: 0; padding-left: 20px; font-size: 12.5px; line-height: 1.7; color: #564243;">
                   <li><strong>Bạn (Người mua):</strong> Truy cập <strong>${siteUrl}/gift</strong>, nhập Mã thiệp (${token}) và OTP tạo thiệp (${creatorKey}).</li>
                   <li><strong>Thiết kế:</strong> Tải ảnh Polaroid, ghi âm thì thầm và chọn template thiệp yêu thích.</li>
-                  <li><strong>Người nhận:</strong> Khi nhận được vòng và thẻ quà tặng, vào <strong>${siteUrl}</strong> (trang chủ), nhập Mã thiệp và OTP xem thiệp${unlockPin ? ` (${unlockPin})` : " in trên thẻ"} để chiêm ngưỡng cuốn thiệp 3D!</li>
+                  <li><strong>Người nhận:</strong> Khi nhận được quà, vào <strong>${siteUrl}</strong> (trang chủ), nhập Mã thiệp và OTP xem thiệp${unlockPin ? ` (${unlockPin})` : " in trên thẻ"} để chiêm ngưỡng cuốn thiệp 3D!</li>
                 </ol>
               </div>
 

@@ -20,9 +20,9 @@ const STAGES = [
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD740MSkdcMAS-1j7Z80Usuk4Yp6XxX306D92jg9HA5k5uij8NJaQRM1PZb9yytUIGV3e6q5DYtXoBJeLEBf20SgZqr6OflAs2HntqPo6Hrl4vANFKCnVCyL5EcsfxPlTWz2Z2QaoAYMuo0ZC6Ilhj5yUv4rjBch-K1vZL4zRL-uKvR3EuIdEssAv1XTJ5v3tvNhUjZPJB_0dQIa510fi1R0UsBOKgQLh2lNn_enO9rqa7VtQTM_5eA9w",
   },
   {
-    title: "Gắn thẻ hoa & mã QR",
-    text: "Cài nhánh hoa baby khô xinh xắn và kẹp mã QR thiệp số đã lưu giữ tâm tư để hoàn thiện kỷ vật trao tặng.",
-    alt: "Hộp quà hoàn thiện với nhánh baby khô và thẻ mã QR",
+    title: "Gắn nhánh hoa & gửi mã QR",
+    text: "Cài nhánh hoa baby khô xinh xắn để hoàn thiện kỷ vật trao tặng. Mã QR thiệp số được gửi riêng qua email, không đính kèm trong hộp.",
+    alt: "Hộp quà hoàn thiện với nhánh baby khô",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDWMJbd_8QoJcGOoqSNCntJnFbDJhsVwwhU1a9IHmKEjVLehFq4JyWQD5qrzp3qgM8zD2__tiClYKOt2M_7pDC0Ir2n9iA2kjJn9khNyrwlugf30wMkmwxaVONZJRylB2tcfBH9-KwvJmHM0Pb6lDVNH-5j0ML-bvxk0pbQpb40iQk9i_c4uM3aYKxXR6gPww3wZm1TniticU37w2x4v-MbM2KrG9EUb0CxR4MayfoDQkmee7Rt0vxX4Q",
   },
 ];
@@ -37,7 +37,7 @@ export default function Workshop() {
         </div>
         <h2 className="font-headline text-3xl sm:text-4xl text-primary mb-3 tracking-tight">Tự Tay Luồn Vòng Kỷ Vật</h2>
         <p className="font-body text-base text-on-surface-variant leading-relaxed">
-          Tận hưởng từng phút giây thư thái tự tay kết từng hạt charm thủy tinh, dây cước trong veo gửi trọn chân tình tại gian hàng sảnh tòa Alpha.
+          Tận hưởng từng phút giây thư thái tự tay kết từng hạt charm thủy tinh, dây cước trong veo gửi trọn chân tình tại gian hàng sảnh lầu 2.
         </p>
       </div>
 

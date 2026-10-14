@@ -4,8 +4,9 @@ import React from "react";
 import Link from "next/link";
 
 const NAV = [
-  { href: "#catalog", label: "Bộ sưu tập 20/10", active: true },
-  { href: "#workshop", label: "Tự làm vòng (Workshop)" },
+  { href: "#event", label: "Ngày & giờ", active: true },
+  { href: "#catalog", label: "Bộ sưu tập" },
+  { href: "#workshop", label: "Workshop" },
   { href: "#keepsake", label: "Mã quà tặng" },
   { href: "#preorder", label: "Đặt trước hoa" },
   { href: "#shelter", label: "Nhật ký cứu trợ" },

@@ -24,7 +24,7 @@ export default function FptFulfillmentTimeline() {
       num: "03",
       title: "Nhận Quà Duy Nhất Ngày 20/10",
       subtitle: "Tại khuôn viên Đại học FPT",
-      desc: "Nhận tại Bàn phát quà sảnh trung tâm (Alpha / Beta / Gamma) hoặc giao tận phòng học/lớp theo khung giờ bạn đã chọn.",
+      desc: "Nhận tại Bàn phát quà sảnh lầu 2 hoặc giao tận phòng học/lớp theo khung giờ bạn đã chọn.",
       icon: "storefront",
       tag: "Độc quyền tại trường",
     },

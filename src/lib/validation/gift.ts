@@ -6,7 +6,8 @@
  * kept whole or rejected with a message, never truncated; the result is rebuilt from an allowlist of
  * fields, so unknown fields sent by the browser never reach the database.
  */
-import { DEFAULT_TEMPLATE, getTemplate, templateHasBlock } from "../../components/gift-templates/template-config.ts";
+import { DEFAULT_TEMPLATE, getTemplate } from "../../components/gift-templates/template-config.ts";
+import { BLOCK_LABELS, deriveBlocks, isBlockId, type BlockId } from "../../components/gift-templates/blocks.ts";
 import { getMusicPreset } from "../../components/gift-templates/music-presets.ts";
 import type { GiftTemplateId, SongSource, TimelineItem } from "../../components/gift-templates/types.ts";
 
@@ -27,8 +28,6 @@ export function cleanText(input: unknown, maxLength = 2000): string {
 export const MAX_PHOTOS = 6;
 /** Longest accepted photo data URL, in characters (~300 KB of image data). The studio compresses below this. */
 export const MAX_PHOTO_CHARS = 400_000;
-/** Cap on every photo of one card together, so a card cannot become a huge database row. */
-export const MAX_TOTAL_PHOTO_CHARS = 2_500_000;
 const MAX_PHOTO_LINK_CHARS = 500;
 export const MAX_TIMELINE = 5;
 export const MAX_LINK_CHARS = 300;
@@ -217,20 +216,20 @@ export function parseVoice(input: unknown, token: string): Parsed<CleanVoice> {
 }
 
 // ---------------------------------------------------------------- the whole card
-/** What is stored in `gift_products.gift_data`. Every block except names/letter is optional. */
+/** What is stored in `gift_products.gift_data`. Content exists only for the messages listed in `blocks`. */
 export interface StoredGiftData {
   template: GiftTemplateId;
+  /** The messages the buyer ticked, in the order they are shown. */
+  blocks: BlockId[];
   recipientName: string;
   senderName: string;
   addressing?: string;
   anonymous?: boolean;
-  letterTitle: string;
-  letterSubtitle: string;
-  letterContent: string;
-  letterSignature: string;
+  letterTitle?: string;
+  letterSubtitle?: string;
+  letterContent?: string;
+  letterSignature?: string;
   memoryPhotos: CleanPhoto[];
-  momentPhotos?: { url: string; caption: string }[];
-  coverIllustrationUrl?: string;
   finalMessage?: string;
   videoUrl?: string;
   song?: CleanSong;
@@ -239,31 +238,42 @@ export interface StoredGiftData {
   timeline?: TimelineItem[];
 }
 
+/** The ticked messages: known ids only, no repeats, at least one. Their order is kept. */
+export function parseBlocks(input: unknown): Parsed<BlockId[]> {
+  if (!Array.isArray(input)) return fail("Danh sách thông điệp không hợp lệ");
+  const seen = new Set<BlockId>();
+  for (const id of input) {
+    if (!isBlockId(id)) return fail("Có loại thông điệp không hợp lệ");
+    if (seen.has(id)) return fail(`Thông điệp "${BLOCK_LABELS[id]}" bị chọn hai lần`);
+    seen.add(id);
+  }
+  if (seen.size === 0) return fail("Hãy chọn ít nhất một thông điệp");
+  return ok([...seen]);
+}
+
 /**
- * Rebuilds the card from allowlisted fields. Blocks the chosen template does not support are dropped,
- * so nothing hidden in the studio can be saved.
+ * Rebuilds the card from allowlisted fields. Only the ticked messages (`blocks`) are kept, and each of
+ * them must have content. A payload without `blocks` (an older studio tab) gets its list worked out
+ * from what it contains. Only the recipient's name is required.
  */
 export function parseGiftData(input: unknown, ctx: { token: string }): Parsed<StoredGiftData> {
   if (!input || typeof input !== "object" || Array.isArray(input)) return fail("Thiếu dữ liệu thiệp");
   const g = input as Record<string, unknown>;
 
-  const template = getTemplate(g.template)?.id ?? DEFAULT_TEMPLATE;
-  const info = getTemplate(template)!;
-  const has = (block: Parameters<typeof templateHasBlock>[1]) => templateHasBlock(template, block);
-
   const recipientName = cleanText(g.recipientName, 100);
   if (!recipientName) return fail("Vui lòng nhập tên người nhận");
-  const letterContent = cleanText(g.letterContent, 3000);
-  if (!letterContent) return fail("Vui lòng viết lời nhắn gửi vào bức thư");
+
+  const list = parseBlocks(g.blocks === undefined ? deriveBlocks(g) : g.blocks);
+  if (!list.ok) return list;
+  const blocks = list.value;
+  const has = (block: BlockId) => blocks.includes(block);
+  const empty = (block: BlockId) => fail(`Mục ${BLOCK_LABELS[block]} đang trống, hãy điền hoặc bỏ tích`);
 
   const out: StoredGiftData = {
-    template,
+    template: getTemplate(g.template)?.id ?? DEFAULT_TEMPLATE,
+    blocks,
     recipientName,
     senderName: cleanText(g.senderName, 100) || "Người gửi",
-    letterTitle: cleanText(g.letterTitle, 200) || "LỜI NHẮN",
-    letterSubtitle: cleanText(g.letterSubtitle, 200),
-    letterContent,
-    letterSignature: cleanText(g.letterSignature, 100),
     memoryPhotos: [],
   };
 
@@ -271,59 +281,61 @@ export function parseGiftData(input: unknown, ctx: { token: string }): Parsed<St
   if (addressing) out.addressing = addressing;
   if (g.anonymous === true) out.anonymous = true;
 
-  let photoChars = 0;
+  if (has("letter")) {
+    const content = cleanText(g.letterContent, 3000);
+    if (!content) return empty("letter");
+    out.letterContent = content;
+    out.letterTitle = cleanText(g.letterTitle, 200) || "LỜI NHẮN";
+    out.letterSubtitle = cleanText(g.letterSubtitle, 200);
+    out.letterSignature = cleanText(g.letterSignature, 100);
+  }
 
   if (has("photos")) {
     const photos = parsePhotos(g.memoryPhotos, { max: MAX_PHOTOS, label: "Ảnh" });
     if (!photos.ok) return photos;
+    if (photos.value.length === 0) return empty("photos");
     out.memoryPhotos = photos.value;
-    photoChars += photos.value.reduce((n, p) => n + p.url.length, 0);
   }
 
-  if (has("highlight")) {
-    const moments = parsePhotos(g.momentPhotos, { max: info.highlightMax, label: "Ảnh nổi bật" });
-    if (!moments.ok) return moments;
-    out.momentPhotos = moments.value.map((p) => ({ url: p.url, caption: p.caption }));
-    if (moments.value[0]) out.coverIllustrationUrl = moments.value[0].url;
-    photoChars += moments.value.reduce((n, p) => n + p.url.length, 0);
+  if (has("finalMessage")) {
+    const message = cleanText(g.finalMessage, 200);
+    if (!message) return empty("finalMessage");
+    out.finalMessage = message;
   }
-
-  if (photoChars > MAX_TOTAL_PHOTO_CHARS) {
-    return fail("Tổng dung lượng ảnh quá lớn. Hãy bớt ảnh hoặc chọn ảnh nhỏ hơn");
-  }
-
-  if (has("finalMessage")) out.finalMessage = cleanText(g.finalMessage, 200);
 
   if (has("anniversary")) {
     const a = parseAnniversary(g.anniversary);
     if (!a.ok) return a;
-    if (a.value) out.anniversary = a.value;
+    if (!a.value) return empty("anniversary");
+    out.anniversary = a.value;
   }
 
   if (has("timeline")) {
     const t = parseTimeline(g.timeline);
     if (!t.ok) return t;
+    if (t.value.length === 0) return empty("timeline");
     out.timeline = t.value;
   }
 
   if (has("video")) {
     const raw = typeof g.videoUrl === "string" ? g.videoUrl.trim() : "";
-    if (raw) {
-      const v = parseHttpsLink(raw, VIDEO_HOSTS, "Liên kết video");
-      if (!v.ok) return v;
-      out.videoUrl = v.value;
-    }
+    if (!raw) return empty("video");
+    const v = parseHttpsLink(raw, VIDEO_HOSTS, "Liên kết video");
+    if (!v.ok) return v;
+    out.videoUrl = v.value;
   }
 
   if (has("music")) {
     const s = parseSong(g.song);
     if (!s.ok) return s;
+    if (s.value.source === "none") return empty("music");
     out.song = s.value;
   }
 
   if (has("voice")) {
     const v = parseVoice(g.voiceNote, ctx.token);
     if (!v.ok) return v;
+    if (!v.value.audioPath) return empty("voice");
     out.voiceNote = v.value;
   }
 

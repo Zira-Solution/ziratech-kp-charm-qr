@@ -185,83 +185,125 @@ const base = {
   senderName: "An",
   letterContent: "Chúc mừng 20/10 & mãi bên nhau",
 };
+const VOICE = `${TOKEN}/voice-1760000000000.webm`;
+const full = {
+  ...base,
+  memoryPhotos: [{ url: "https://e.com/a.jpg", caption: "a", date: "" }],
+  finalMessage: "Mãi mãi",
+  anniversary: { date: "2024-02-14", label: "Ngày yêu" },
+  timeline: [{ date: "2024-02-14", title: "Gặp nhau", text: "" }],
+  videoUrl: "https://youtu.be/abc",
+  song: { source: "preset", presetId: "piano" },
+  voiceNote: { audioPath: VOICE, durationSec: 30, noteText: "xin chào" },
+};
+const parse = (input: unknown) => parseGiftData(input, { token: TOKEN });
 
-test("parseGiftData requires a recipient name and a letter", () => {
-  assert.equal(parseGiftData({ ...base, template: "retro-nostalgia", recipientName: "  " }, { token: TOKEN }).ok, false);
-  assert.equal(parseGiftData({ ...base, template: "retro-nostalgia", letterContent: "" }, { token: TOKEN }).ok, false);
-  assert.equal(parseGiftData(null, { token: TOKEN }).ok, false);
+test("parseGiftData only requires a recipient name; the letter is optional", () => {
+  assert.equal(parse({ ...full, blocks: ["letter"], recipientName: "  " }).ok, false);
+  assert.equal(parse(null).ok, false);
+  const photosOnly = parse({ recipientName: "Lan", memoryPhotos: full.memoryPhotos, blocks: ["photos"] });
+  assert.equal(photosOnly.ok, true);
+  if (photosOnly.ok) assert.equal(photosOnly.value.letterContent, undefined);
 });
+
+test("parseGiftData needs at least one valid, unique message kind in blocks", () => {
+  const empty = parse({ ...full, blocks: [] });
+  assert.equal(empty.ok, false);
+  if (!empty.ok) assert.match(empty.error, /ít nhất một thông điệp/);
+  assert.equal(parse({ ...full, blocks: "letter" }).ok, false);
+  assert.equal(parse({ ...full, blocks: ["letter", "letter"] }).ok, false);
+  assert.equal(parse({ ...full, blocks: ["letter", "highlight"] }).ok, false);
+  assert.equal(parse({ ...full, blocks: ["letter", 3] }).ok, false);
+});
+
+test("parseGiftData keeps the order of blocks", () => {
+  const r = parse({ ...full, blocks: ["video", "letter", "photos"] });
+  assert.equal(r.ok, true);
+  if (r.ok) assert.deepEqual(r.value.blocks, ["video", "letter", "photos"]);
+});
+
+test("parseGiftData without blocks works out which messages the payload has", () => {
+  const r = parse(full);
+  assert.equal(r.ok, true);
+  if (r.ok) assert.deepEqual(r.value.blocks, ["letter", "photos", "video", "music", "voice", "anniversary", "timeline", "finalMessage"]);
+  const letterOnly = parse(base);
+  assert.equal(letterOnly.ok, true);
+  if (letterOnly.ok) assert.deepEqual(letterOnly.value.blocks, ["letter"]);
+  assert.equal(parse({ recipientName: "Lan" }).ok, false); // nothing to send
+});
+
+test("parseGiftData keeps only the content of ticked messages", () => {
+  const r = parse({ ...full, blocks: ["letter", "video"] });
+  assert.equal(r.ok, true);
+  if (!r.ok) return;
+  const v = r.value as unknown as Record<string, unknown>;
+  assert.equal(v.letterContent, base.letterContent);
+  assert.equal(v.videoUrl, "https://youtu.be/abc");
+  assert.deepEqual(v.memoryPhotos, []);
+  for (const dropped of ["finalMessage", "anniversary", "timeline", "song", "voiceNote"]) {
+    assert.equal(v[dropped], undefined, `${dropped} is dropped`);
+  }
+});
+
+test("parseGiftData rejects a ticked message that is empty and names it", () => {
+  const cases: [string, Record<string, unknown>][] = [
+    ["letter", { letterContent: "  " }],
+    ["photos", { memoryPhotos: [] }],
+    ["voice", { voiceNote: { noteText: "chỉ có chữ" } }],
+    ["video", { videoUrl: "" }],
+    ["music", { song: { source: "none" } }],
+    ["anniversary", { anniversary: { date: "" } }],
+    ["timeline", { timeline: [] }],
+    ["finalMessage", { finalMessage: "" }],
+  ];
+  for (const [block, patch] of cases) {
+    const r = parse({ ...full, ...patch, blocks: [block] });
+    assert.equal(r.ok, false, block);
+    if (!r.ok) assert.match(r.error, /đang trống/, block);
+  }
+  const video = parse({ ...full, videoUrl: "", blocks: ["letter", "video"] });
+  if (!video.ok) assert.match(video.error, /Video/);
+});
+
 test("parseGiftData falls back to the default template and keeps text exactly as typed", () => {
-  const r = parseGiftData({ ...base, template: "no-such-template" }, { token: TOKEN });
+  const r = parse({ ...base, template: "no-such-template", blocks: ["letter"] });
   assert.equal(r.ok, true);
   if (r.ok) {
     assert.equal(r.value.template, DEFAULT_TEMPLATE);
     assert.equal(r.value.letterContent, "Chúc mừng 20/10 & mãi bên nhau");
   }
 });
-test("parseGiftData drops unknown fields and the PIN", () => {
-  const r = parseGiftData({ ...base, template: "retro-nostalgia", pinCode: "1234", evil: { a: 1 }, __proto__x: 1 }, { token: TOKEN });
+
+test("parseGiftData drops unknown fields, the PIN and old highlight photos", () => {
+  const r = parse({
+    ...base,
+    blocks: ["letter"],
+    pinCode: "1234",
+    evil: { a: 1 },
+    __proto__x: 1,
+    momentPhotos: [{ url: "https://e.com/h.jpg", caption: "" }],
+    coverIllustrationUrl: "https://e.com/h.jpg",
+  });
   assert.equal(r.ok, true);
   if (r.ok) {
     const keys = Object.keys(r.value);
-    assert.equal(keys.includes("pinCode"), false);
-    assert.equal(keys.includes("evil"), false);
+    for (const dropped of ["pinCode", "evil", "momentPhotos", "coverIllustrationUrl"]) assert.equal(keys.includes(dropped), false, dropped);
   }
 });
-test("parseGiftData keeps only the blocks the chosen template supports", () => {
-  const payload = {
-    ...base,
-    finalMessage: "Mãi mãi",
-    anniversary: { date: "2024-02-14", label: "Ngày yêu" },
-    timeline: [{ date: "2024-02-14", title: "Gặp nhau", text: "" }],
-    videoUrl: "https://youtu.be/abc",
-    song: { source: "preset", presetId: "piano" },
-    voiceNote: { audioPath: `${TOKEN}/voice-1760000000000.webm`, durationSec: 30, noteText: "xin chào" },
-    momentPhotos: [{ url: "https://e.com/a.jpg", caption: "a" }],
-  };
-  const vintage = parseGiftData({ ...payload, template: "vintage-scrapbook" }, { token: TOKEN });
-  assert.equal(vintage.ok, true);
-  if (vintage.ok) {
-    const v = vintage.value as unknown as Record<string, unknown>;
-    assert.ok(v.anniversary, "vintage keeps the anniversary");
-    assert.ok(v.finalMessage, "vintage keeps the final message");
-    for (const dropped of ["timeline", "videoUrl", "song", "voiceNote", "momentPhotos"]) {
-      assert.equal(dropped in v && v[dropped] !== undefined && (v[dropped] as unknown[]).length !== 0, false, `vintage drops ${dropped}`);
-    }
-  }
 
-  const storybook = parseGiftData({ ...payload, template: "storybook-sunset" }, { token: TOKEN });
-  assert.equal(storybook.ok, true);
-  if (storybook.ok) {
-    const s = storybook.value as unknown as Record<string, unknown>;
-    assert.ok(s.timeline, "storybook keeps the timeline");
-    assert.ok(s.voiceNote, "storybook keeps the voice note");
-    assert.equal(s.anniversary, undefined, "storybook has no anniversary block");
-    assert.equal(s.videoUrl, "https://youtu.be/abc");
-  }
-});
-test("parseGiftData limits highlight photos by template", () => {
-  const photos = (n: number) => Array.from({ length: n }, (_, i) => ({ url: `https://e.com/${i}.jpg`, caption: "" }));
-  assert.equal(parseGiftData({ ...base, template: "retro-nostalgia", momentPhotos: photos(2) }, { token: TOKEN }).ok, true);
-  assert.equal(parseGiftData({ ...base, template: "retro-nostalgia", momentPhotos: photos(3) }, { token: TOKEN }).ok, false);
-  assert.equal(parseGiftData({ ...base, template: "storybook-sunset", momentPhotos: photos(2) }, { token: TOKEN }).ok, false);
-  const one = parseGiftData({ ...base, template: "storybook-sunset", momentPhotos: photos(1) }, { token: TOKEN });
-  assert.equal(one.ok, true);
-  if (one.ok) assert.equal(one.value.coverIllustrationUrl, "https://e.com/0.jpg"); // first highlight becomes the cover
-});
-test("parseGiftData rejects bad blocks with a message", () => {
-  const bad = parseGiftData({ ...base, template: "retro-nostalgia", videoUrl: "https://evil.com/v" }, { token: TOKEN });
+test("parseGiftData rejects bad content of a ticked message with a message", () => {
+  const bad = parse({ ...full, videoUrl: "https://evil.com/v", blocks: ["video"] });
   assert.equal(bad.ok, false);
   if (!bad.ok) assert.match(bad.error, /video/i);
-  assert.equal(parseGiftData({ ...base, template: "storybook-sunset", timeline: "x" }, { token: TOKEN }).ok, false);
-  assert.equal(parseGiftData({ ...base, template: "vintage-scrapbook", anniversary: { date: "2024-13-40" } }, { token: TOKEN }).ok, false);
+  assert.equal(parse({ ...full, timeline: "x", blocks: ["timeline"] }).ok, false);
+  assert.equal(parse({ ...full, anniversary: { date: "2024-13-40" }, blocks: ["anniversary"] }).ok, false);
+  assert.equal(parse({ ...full, voiceNote: { audioPath: "KP-2010-OTHER9/voice-1760000000000.webm" }, blocks: ["voice"] }).ok, false);
 });
-test("parseGiftData caps the total size of all photos", () => {
+
+test("parseGiftData accepts the largest album the limits allow", () => {
   const big = jpeg(390_000);
   const album = Array.from({ length: 6 }, () => ({ url: big, caption: "" }));
-  const r = parseGiftData(
-    { ...base, template: "retro-nostalgia", memoryPhotos: album, momentPhotos: [{ url: big }, { url: big }] },
-    { token: TOKEN }
-  );
-  assert.equal(r.ok, false); // 8 x 390k = 3.1M > 2.5M
+  assert.equal(parse({ recipientName: "Lan", memoryPhotos: album, blocks: ["photos"] }).ok, true);
+  const seven = Array.from({ length: 7 }, () => ({ url: "https://e.com/a.jpg", caption: "" }));
+  assert.equal(parse({ recipientName: "Lan", memoryPhotos: seven, blocks: ["photos"] }).ok, false);
 });

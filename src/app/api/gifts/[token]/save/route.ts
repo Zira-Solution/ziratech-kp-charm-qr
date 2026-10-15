@@ -35,7 +35,7 @@ export async function POST(
       );
     }
 
-    // Photos are the bulk of a card (see MAX_TOTAL_PHOTO_CHARS); anything far beyond that is refused
+    // Photos are the bulk of a card (at most 6 x MAX_PHOTO_CHARS); anything far beyond that is refused
     // before the body is read into memory.
     const declared = Number(req.headers.get("content-length") ?? 0);
     if (declared > MAX_SAVE_BODY_BYTES) {

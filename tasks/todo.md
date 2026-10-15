@@ -13,7 +13,7 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
 
 ## Phase 1 — Dữ liệu và server
 
-- [ ] **T1 `blocks` + `parseGiftData` mới + test** (M)
+- [x] **T1 `blocks` + `parseGiftData` mới + test** (M)
   - Acceptance:
     - `src/components/gift-templates/blocks.ts`: `BlockId` (8 loại), `BLOCK_LABELS`, `BLOCK_ORDER_DEFAULT`, `isBlockId`.
     - `parseGiftData` nhận `blocks`: lỗi khi rỗng / id lạ / trùng / quá 8; chỉ giữ nội dung của khối có trong `blocks`; khối đã tích mà trống → lỗi nêu tên mục; chỉ tên người nhận là bắt buộc (thư không còn bắt buộc).
@@ -21,6 +21,7 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
     - Test cập nhật + test mới cho từng quy tắc trên.
   - Verify: `npm test`, `npx tsc --noEmit`.
   - Deps: T0 · Files: `blocks.ts` (mới), `template-config.ts`, `types.ts`, `lib/validation/gift.ts`, `scripts/gift-validation.test.ts`
+  - Đã làm (khác kế hoạch một chút): `deriveBlocks` nằm trong `blocks.ts` (không phải T2) để payload của studio cũ chưa có `blocks` vẫn lưu được; `template-config.ts` giữ nguyên tới T19 vì `PreviewCard`/`TemplatePicker`/trang tạo thiệp còn dùng; bỏ `MAX_TOTAL_PHOTO_CHARS` (6 ảnh × giới hạn mỗi ảnh không thể vượt). Test: 47/47.
 - [ ] **T2 `deriveBlocks` + `normalizeGift` + test** (S)
   - Acceptance: `deriveBlocks(saved)` suy ra danh sách cho thiệp chưa có `blocks` theo thứ tự mặc định, chỉ lấy mục có nội dung; `normalizeGift(saved)` trả thiệp để hiển thị (tên, người tặng/xưng hô/ẩn danh, `blocks`, nội dung từng loại) và **không trộn dữ liệu mẫu**; ảnh nổi bật cũ được đưa lên đầu album (tối đa 6).
   - Verify: `npm test` với thiệp mới, thiệp cũ đủ trường, thiệp cũ thiếu trường, dữ liệu hỏng.

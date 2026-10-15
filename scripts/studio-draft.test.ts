@@ -34,7 +34,7 @@ test("a filled draft becomes a valid card and survives a save/reload round trip"
   assert.equal(back.recipientName, "Lan");
   assert.equal(back.letterContent, "Chúc mừng 20/10 & mãi bên nhau");
   assert.equal(back.photos[0].caption, "Ảnh 1");
-  assert.equal(back.highlights[0].url, "https://e.com/cover.jpg");
+  assert.equal(back.highlights.length, 0); // highlight photos are no longer saved; T4 removes them from the draft
   assert.equal(back.timeline[0].title, "Gặp nhau");
   assert.equal(back.videoUrl, "https://youtu.be/abc");
   assert.equal(back.song.source, "link");

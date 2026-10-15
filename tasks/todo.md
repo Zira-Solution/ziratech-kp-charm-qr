@@ -46,10 +46,12 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Verify: `tsc`, `eslint`, `next build`; thử tay ở 390 / 768 / 1280px.
   - Deps: T4 · Files: `studio/MessagePicker.tsx` (mới), `studio/ui.tsx` (BlockFrame), `app/create/[token]/page.tsx`, `studio/TemplatePicker.tsx`, `studio/blocks/PhotosBlock.tsx`
   - Đã làm: `MessagePicker` (lưới 8 thẻ, `role=checkbox`), `BlockFrame` (nút Lên/Xuống/Bỏ qua context, có nhãn đọc màn hình + thông báo vị trí), trang tạo thiệp theo thứ tự Gửi cho ai → Chọn → Soạn → Giao diện → OTP; xoá `implemented.ts`; `PreviewCard` đã đọc `draft.blocks` (làm trước phần của T6). Chưa xem bằng mắt.
-- [ ] **T6 Báo lỗi mục trống + bưu thiếp mini theo `blocks`** (S)
+- [x] **T6 Báo lỗi mục trống + bưu thiếp mini theo `blocks`** (S)
   - Acceptance: hàm thuần `blockProblems(draft)` (không có tên người nhận / chưa tích mục nào / mục đã tích còn trống) có test; lỗi cuộn tới đúng khung; `PreviewCard` hiện tóm tắt theo `blocks`.
   - Verify: `npm test`, `tsc`, thử tay.
   - Deps: T5 · Files: `studio/draft.ts`, `scripts/studio-draft.test.ts`, `studio/PreviewCard.tsx`, `app/create/[token]/page.tsx`
+  - Đã làm: `emptyBlocks(draft)` (hàm thuần, có test), lỗi cuộn tới đúng khung / bảng tích chọn, bưu thiếp mini chỉ hiện thư khi đã tích. Test: 63/63; `tsc`, `eslint`, `next build` qua.
+  - Đã xem bằng mắt (server bộ nhớ, trình duyệt desktop): tích/bỏ tích, Lên/Xuống, nút khoá ở hai đầu, lưu lỗi khi Video trống, lưu thành công, nạp lại đúng thứ tự, không lỗi console. **Chưa xem:** màn hình điện thoại (cửa sổ trình duyệt của tôi không thu nhỏ được), ghi âm, nén ảnh.
 
 **Checkpoint B:** tích, soạn, đổi thứ tự, lưu, tải lại → còn nguyên; thiệp cũ mở được trong studio; `tsc`, `eslint`, `npm test`, `next build` qua. **Bạn thử tay studio.**
 

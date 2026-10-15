@@ -187,6 +187,24 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
   return { giftData };
 }
 
+/**
+ * The ticked messages that have no content yet, in the buyer's order. The server refuses to save a
+ * ticked message that is empty, so the studio points at it first.
+ */
+export function emptyBlocks(d: GiftDraft): BlockId[] {
+  const filled: Record<BlockId, boolean> = {
+    letter: d.letterContent.trim() !== "",
+    photos: d.photos.length > 0,
+    voice: d.voice.audioPath !== "",
+    video: d.videoUrl.trim() !== "",
+    music: d.song.source !== "none",
+    anniversary: d.anniversaryDate.trim() !== "",
+    timeline: d.timeline.length > 0,
+    finalMessage: d.finalMessage.trim() !== "",
+  };
+  return d.blocks.filter((block) => !filled[block]);
+}
+
 /** Whole days from `date` (YYYY-MM-DD) to `today`; negative when the date is still ahead. */
 export function daysSince(date: string, today: Date = new Date()): number | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);

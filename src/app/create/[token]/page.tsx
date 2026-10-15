@@ -6,7 +6,7 @@ import Link from "next/link";
 import confetti from "canvas-confetti";
 import { BLOCK_LABELS, type BlockId } from "@/components/gift-templates/blocks";
 import type { GiftTemplateId } from "@/components/gift-templates/types";
-import { draftFromSaved, draftToPayload, emptyDraft, type GiftDraft } from "@/components/studio/draft";
+import { draftFromSaved, draftToPayload, emptyBlocks, emptyDraft, type GiftDraft } from "@/components/studio/draft";
 import { Icon } from "@/components/studio/ui";
 import MessagePicker from "@/components/studio/MessagePicker";
 import BlockFrame from "@/components/studio/BlockFrame";
@@ -127,6 +127,15 @@ export default function CardStudioPage() {
       const firstId = found.recipientName ? "names-recipient" : "letter-content";
       document.getElementById(firstId)?.focus();
       document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
+    // Point at the first problem the server would refuse: nothing ticked, or a ticked message with nothing in it.
+    const emptyOne = emptyBlocks(draft).find((b) => b !== "letter"); // the letter has its own inline error above
+    if (draft.blocks.length === 0 || emptyOne) {
+      setSaveError(emptyOne ? `Mục ${BLOCK_LABELS[emptyOne]} đang trống, hãy điền hoặc bỏ tích` : "Hãy chọn ít nhất một thông điệp");
+      const target = emptyOne ? `block-${emptyOne}` : "messages-title";
+      requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "center" }));
       return;
     }
 

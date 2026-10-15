@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { emptyDraft, draftFromSaved, draftToPayload, daysSince } from "../src/components/studio/draft.ts";
+import { emptyDraft, draftFromSaved, draftToPayload, daysSince, emptyBlocks } from "../src/components/studio/draft.ts";
 import { parseGiftData } from "../src/lib/validation/gift.ts";
 import { DEFAULT_TEMPLATE } from "../src/components/gift-templates/template-config.ts";
 
@@ -121,4 +121,42 @@ test("daysSince counts whole days and rejects bad dates", () => {
   assert.equal(daysSince("2024-10-20", today), 365);
   assert.equal(daysSince("2025-10-25", today), -5);
   assert.equal(daysSince("nope", today), null);
+});
+
+test("emptyBlocks lists ticked messages that have no content, in the buyer's order", () => {
+  const d = emptyDraft();
+  d.blocks = ["video", "letter", "photos", "voice", "music", "anniversary", "timeline", "finalMessage"];
+  assert.deepEqual(emptyBlocks(d), d.blocks);
+
+  d.letterContent = "Xin chào";
+  d.photos = [{ url: "https://e.com/a.jpg", caption: "", date: "" }];
+  d.videoUrl = "https://youtu.be/a";
+  d.voice.audioPath = "KP-2010-ABC123/voice-1760000000000.webm";
+  d.song = { source: "preset", presetId: "piano", link: "", title: "", artist: "" };
+  d.anniversaryDate = "2024-02-14";
+  d.timeline = [{ date: "2024-02-14", title: "Gặp nhau", text: "" }];
+  d.finalMessage = "Mãi mãi";
+  assert.deepEqual(emptyBlocks(d), []);
+});
+
+test("emptyBlocks ignores messages that are not ticked and treats blank text as empty", () => {
+  const d = emptyDraft();
+  d.blocks = ["letter", "finalMessage"];
+  d.letterContent = "   ";
+  d.videoUrl = ""; // not ticked, so not reported
+  d.finalMessage = "Mãi mãi";
+  assert.deepEqual(emptyBlocks(d), ["letter"]);
+});
+
+test("a draft without empty ticked messages passes the server check", () => {
+  const d = emptyDraft();
+  d.recipientName = "Lan";
+  d.blocks = ["letter", "photos"];
+  d.letterContent = "Xin chào";
+  d.photos = [{ url: "https://e.com/a.jpg", caption: "", date: "" }];
+  assert.deepEqual(emptyBlocks(d), []);
+  assert.equal(parseGiftData(draftToPayload(d).giftData, { token: TOKEN }).ok, true);
+  d.photos = [];
+  assert.deepEqual(emptyBlocks(d), ["photos"]);
+  assert.equal(parseGiftData(draftToPayload(d).giftData, { token: TOKEN }).ok, false);
 });

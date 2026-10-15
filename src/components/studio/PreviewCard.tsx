@@ -47,12 +47,19 @@ export default function PreviewCard({ draft }: { draft: GiftDraft }) {
           </div>
         )}
 
-        <h3 className="mt-3 text-center font-serif text-sm font-bold text-primary">{draft.letterTitle.trim() || "LỜI NHẮN"}</h3>
-        <p className="mt-1 line-clamp-4 whitespace-pre-line text-center text-xs font-sans leading-relaxed text-espresso">
-          {draft.letterContent.trim() || "Lời nhắn của bạn sẽ hiện ở đây..."}
-        </p>
-        {draft.letterSignature.trim() && (
-          <p className="mt-2 text-right font-handwriting text-base text-secondary">{draft.letterSignature.trim()}</p>
+        {has("letter") && (
+          <>
+            <h3 className="mt-3 text-center font-serif text-sm font-bold text-primary">{draft.letterTitle.trim() || "LỜI NHẮN"}</h3>
+            <p className="mt-1 line-clamp-4 whitespace-pre-line text-center text-xs font-sans leading-relaxed text-espresso">
+              {draft.letterContent.trim() || "Lời nhắn của bạn sẽ hiện ở đây..."}
+            </p>
+            {draft.letterSignature.trim() && (
+              <p className="mt-2 text-right font-handwriting text-base text-secondary">{draft.letterSignature.trim()}</p>
+            )}
+          </>
+        )}
+        {draft.blocks.length === 0 && (
+          <p className="mt-3 text-center text-xs font-sans text-warm-neutral">Tích những thứ bạn muốn gửi để xem trước ở đây.</p>
         )}
         {has("finalMessage") && draft.finalMessage.trim() && (
           <p className="mt-3 border-t border-parchment-border pt-2 text-center text-[11px] font-sans italic text-warm-neutral">

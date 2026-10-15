@@ -62,10 +62,11 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Verify: `npm test` (nhiều dạng link: watch, youtu.be, shorts, playlist, link lạ).
   - Deps: T1 · Files: `lib/media/embed.ts` (mới), `scripts/embed.test.ts` (mới)
   - Đã làm: đối chiếu tài liệu chính thức (nguồn ghi ở đầu `embed.ts`). Đã xác nhận: YouTube (+ miền youtube-nocookie), Vimeo, SoundCloud widget, Spotify `track`. **Chưa xác nhận bằng tài liệu chính thức:** Drive `/preview`, mã băm Vimeo riêng tư (bỏ), Spotify loại khác `track` và chiều cao, SoundCloud nhận link trang công khai; giữ nút "mở link gốc" dự phòng. Test: 71/71.
-- [ ] **T8 VoicePlayer + VideoEmbed** (M)
+- [x] **T8 VoicePlayer + VideoEmbed** (M)
   - Acceptance: `VoicePlayer` phát `<audio>` thật (phát/dừng, tua, thời lượng), lỗi hoặc hết hạn → xin link mới một lần rồi thông báo; `VideoEmbed` dựng `<iframe>` (`sandbox`, `referrerpolicy`, `loading="lazy"`, `title`), không nhúng được thì hiện nút mở link gốc; nhận `className`/kiểu dáng từ mẫu.
   - Verify: `tsc`, `eslint`; thử tay (ghi âm thật, video YouTube công khai và riêng tư).
   - Deps: T7 · Files: `gift-templates/media/VoicePlayer.tsx`, `media/VideoEmbed.tsx`
+  - Đã làm: `useVoicePlayer` (hook trạng thái, xin link mới một lần khi lỗi, chỉ tải khi bấm phát) + `VoicePlayer` mặc định + `VideoEmbed` (iframe `sandbox`, `referrerpolicy`, luôn có nút mở link gốc). `tsc`, `eslint` sạch. **Chưa nghe/xem thật** (cần ghi âm thật và video thật; kiểm ở T10/T12).
 - [ ] **T9 MusicPlayer + AnniversaryCounter + TimelineList** (M)
   - Acceptance: `MusicPlayer` — giai điệu có sẵn dùng `musicPlayerSynth`, chỉ bắt đầu sau thao tác người dùng, có nút tạm dừng; link dùng khung nhúng, người nhận tự bấm phát; `AnniversaryCounter` đếm ngày (dùng `daysSince`); `TimelineList` hiện tối đa 5 mốc theo ngày.
   - Verify: `tsc`, `eslint`; thử tay trên điện thoại.

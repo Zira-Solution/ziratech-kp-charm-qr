@@ -244,6 +244,19 @@ export default function Keepsake() {
               </form>
               <div className="mt-4 text-center">
                 <span className="text-[11px] text-on-surface-variant">Mã và OTP chỉ dùng để mở đúng thiệp này. Nhập sai 5 lần sẽ bị khóa 15 phút.</span>
+                <div className="mt-2.5 pt-2 border-t border-white/60">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCode("KP-2010-DEMO");
+                      setOtp("2010");
+                      setFeedback(null);
+                    }}
+                    className="text-[11px] font-sans font-bold text-secondary-dark hover:text-primary hover:underline cursor-pointer"
+                  >
+                    ✦ Điền mã xem thử nghiệm (KP-2010-DEMO / 2010)
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -443,3 +443,135 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .kp-blob-1, .kp-blob-2, .kp-blob-3 { animation: none; }
 }
+
+/* ========================================================= */
+/* Writing desk ("studio-light"): plain white, high contrast,  */
+/* one readable font, never dark. Scoped like kp-home so the   */
+/* other pages keep their own look.                            */
+/* ========================================================= */
+body:has(.studio-light) {
+  background: #ffffff;
+}
+
+.studio-light {
+  color-scheme: light;
+  --font-serif: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
+  --font-sans: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
+  --font-handwriting: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
+  --font-merriweather: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
+
+  /* Text: near-black and dark slate on white (all above 7:1). */
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #334155;
+  --color-espresso: #0f172a;
+  --color-warm-neutral: #475569;
+  --color-warm-muted: #475569;
+  --color-secondary: #475569;
+  --color-primary: #7a1626;
+  --color-primary-container: #8a1c2c;
+
+  /* Surfaces and borders: white and cool grey instead of rose. */
+  --color-rose-cream: #ffffff;
+  --color-blush-light: #ffffff;
+  --color-cream-paper: #ffffff;
+  --color-parchment-light: #ffffff;
+  --color-surface-container-low: #f8fafc;
+  --color-surface-container: #f1f5f9;
+  --color-surface-container-high: #e2e8f0;
+  --color-rose-petal: #cbd5e1;
+  --color-parchment-border: #cbd5e1;
+  --color-outline-variant: #cbd5e1;
+
+  background: #ffffff;
+  color: #0f172a;
+  font-family: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
+  letter-spacing: 0;
+  min-height: 100vh;
+}
+
+.studio-light .material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* Cards, pills and fields: flat white with a visible grey edge (the glass look blends into white). */
+.studio-light .liquid-glass,
+.studio-light .liquid-glass-card,
+.studio-light .liquid-glass-pill {
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.studio-light .liquid-glass-card::before {
+  display: none;
+}
+
+.studio-light .liquid-glass-card:hover,
+.studio-light .liquid-glass-pill:hover {
+  background: #f8fafc;
+  transform: none;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.studio-light .liquid-glass-input {
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid #94a3b8;
+  box-shadow: none;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.studio-light .liquid-glass-input:focus {
+  background: #ffffff;
+  border-color: #8a1c2c;
+  box-shadow: 0 0 0 3px rgba(138, 28, 44, 0.2);
+}
+
+.studio-light .liquid-glass-btn-primary {
+  background: #8a1c2c;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid #8a1c2c;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.15);
+}
+
+.studio-light .liquid-glass-btn-primary::after {
+  display: none;
+}
+
+.studio-light .liquid-glass-btn-primary:hover {
+  background: #6f1523;
+  border-color: #6f1523;
+  transform: none;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.15);
+}
+
+/* White borders and white tints vanish on a white page: give them a real colour. */
+.studio-light [class*="border-white"] {
+  border-color: #cbd5e1;
+}
+
+.studio-light [class*="bg-white/"] {
+  background-color: #ffffff;
+}
+
+/* The smallest sizes were hard to read: lift them a notch. */
+.studio-light .text-xs {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.studio-light [class*="text-[11px]"] {
+  font-size: 0.8125rem;
+}
+
+.studio-light [class*="text-[10px]"] {
+  font-size: 0.75rem;
+}

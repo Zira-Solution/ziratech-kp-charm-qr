@@ -12,6 +12,7 @@ import MessagePicker from "@/components/studio/MessagePicker";
 import BlockFrame from "@/components/studio/BlockFrame";
 import TemplatePicker from "@/components/studio/TemplatePicker";
 import PreviewCard from "@/components/studio/PreviewCard";
+import Stepper, { type Stage } from "@/components/studio/Stepper";
 import NamesBlock from "@/components/studio/blocks/NamesBlock";
 import LetterBlock from "@/components/studio/blocks/LetterBlock";
 import PhotosBlock from "@/components/studio/blocks/PhotosBlock";
@@ -48,7 +49,6 @@ export default function CardStudioPage() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
-  const saveErrorRef = useRef<HTMLDivElement>(null);
 
   // Load the order and any card that was already saved.
   useEffect(() => {
@@ -102,7 +102,6 @@ export default function CardStudioPage() {
     const ticked = draft.blocks.includes(block);
     update({ blocks: ticked ? draft.blocks.filter((b) => b !== block) : [...draft.blocks, block] });
     setAnnouncement(ticked ? `Đã bỏ mục ${BLOCK_LABELS[block]}` : `Đã thêm mục ${BLOCK_LABELS[block]}`);
-    if (!ticked) requestAnimationFrame(() => document.getElementById(`block-${block}`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
   const moveBlock = (block: BlockId, direction: -1 | 1) => {
@@ -115,29 +114,76 @@ export default function CardStudioPage() {
     setAnnouncement(`Mục ${BLOCK_LABELS[block]} đang ở vị trí ${to + 1} trên ${blocks.length}`);
   };
 
+  // The writing desk has three steps: choose what to send, write it, finish. Each step is confirmed with "Tiếp tục".
+  const [stage, setStage] = useState<Stage>(1);
+  const [reached, setReached] = useState<Stage>(1);
+  const [stageError, setStageError] = useState("");
+  const focusTarget = useRef<string | null>(null);
+
+  // After a step opens, land on the field that needs attention, or at the top of the new step.
+  useEffect(() => {
+    const target = focusTarget.current;
+    focusTarget.current = null;
+    if (!target) {
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    const el = document.getElementById(target);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    el?.focus({ preventScroll: true });
+  }, [stage]);
+
+  const go = (to: Stage) => {
+    setStage(to);
+    setStageError("");
+    setSaveError("");
+  };
+
+  /** The first thing the server would refuse, and which step and field it lives in. */
+  const firstProblem = (): { stage: Stage; message: string; target: string } | null => {
+    if (!draft.recipientName.trim()) return { stage: 1, message: "Vui lòng nhập tên người nhận", target: "names-recipient" };
+    if (draft.blocks.length === 0) return { stage: 1, message: "Hãy chọn ít nhất một thông điệp", target: "messages-title" };
+    const empty = emptyBlocks(draft)[0];
+    if (empty) {
+      return {
+        stage: 2,
+        message: `Mục ${BLOCK_LABELS[empty]} đang trống, hãy điền hoặc bỏ tích`,
+        target: empty === "letter" ? "letter-content" : `block-${empty}`,
+      };
+    }
+    return null;
+  };
+
+  const showProblem = (p: { stage: Stage; message: string; target: string }) => {
+    setErrors(p.target === "names-recipient" ? { recipientName: p.message } : p.target === "letter-content" ? { letterContent: p.message } : {});
+    setStageError(p.message);
+    if (p.stage === stage) {
+      requestAnimationFrame(() => {
+        const el = document.getElementById(p.target);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        el?.focus({ preventScroll: true });
+      });
+    } else {
+      focusTarget.current = p.target;
+      setStage(p.stage);
+    }
+  };
+
+  const goNext = () => {
+    const p = firstProblem();
+    if (p && p.stage <= stage) return showProblem(p);
+    const to = (stage + 1) as Stage;
+    setReached((r) => (to > r ? to : r));
+    go(to);
+  };
+
   const save = async () => {
     if (saving) return;
     setSaveError("");
+    setStageError("");
 
-    const found: FieldErrors = {};
-    if (!draft.recipientName.trim()) found.recipientName = "Vui lòng nhập tên người nhận";
-    if (draft.blocks.includes("letter") && !draft.letterContent.trim()) found.letterContent = "Vui lòng viết lời nhắn gửi vào bức thư";
-    setErrors(found);
-    if (found.recipientName || found.letterContent) {
-      const firstId = found.recipientName ? "names-recipient" : "letter-content";
-      document.getElementById(firstId)?.focus();
-      document.getElementById(firstId)?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-
-    // Point at the first problem the server would refuse: nothing ticked, or a ticked message with nothing in it.
-    const emptyOne = emptyBlocks(draft).find((b) => b !== "letter"); // the letter has its own inline error above
-    if (draft.blocks.length === 0 || emptyOne) {
-      setSaveError(emptyOne ? `Mục ${BLOCK_LABELS[emptyOne]} đang trống, hãy điền hoặc bỏ tích` : "Hãy chọn ít nhất một thông điệp");
-      const target = emptyOne ? `block-${emptyOne}` : "messages-title";
-      requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "center" }));
-      return;
-    }
+    const problem = firstProblem();
+    if (problem) return showProblem(problem);
 
     const body = draftToPayload(draft);
 
@@ -145,7 +191,6 @@ export default function CardStudioPage() {
     const checked = parseGiftData(body.giftData, { token });
     if (!checked.ok) {
       setSaveError(checked.error);
-      requestAnimationFrame(() => saveErrorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
       return;
     }
 
@@ -168,7 +213,6 @@ export default function CardStudioPage() {
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : "Không lưu được thiệp");
       setSaving(false);
-      requestAnimationFrame(() => saveErrorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
     }
   };
 
@@ -202,18 +246,18 @@ export default function CardStudioPage() {
   }
 
   let step = 0;
-  const next = () => ++step;
+  const nextStep = () => ++step;
 
   const renderBlock = (block: BlockId) => {
     switch (block) {
       case "letter":
-        return <LetterBlock key={block} step={next()} draft={draft} onChange={update} errors={errors} />;
+        return <LetterBlock key={block} step={nextStep()} draft={draft} onChange={update} errors={errors} />;
       case "photos":
         return (
           <PhotosBlock
             key={block}
             id="photos"
-            step={next()}
+            step={nextStep()}
             title="Album ảnh kỷ niệm"
             hint="Tối đa 6 ảnh, ảnh đầu tiên là ảnh bìa. Ảnh được tự thu nhỏ để tải nhanh, bạn không cần chỉnh trước."
             items={draft.photos}
@@ -223,47 +267,50 @@ export default function CardStudioPage() {
           />
         );
       case "finalMessage":
-        return <FinalMessageBlock key={block} step={next()} draft={draft} onChange={update} />;
+        return <FinalMessageBlock key={block} step={nextStep()} draft={draft} onChange={update} />;
       case "anniversary":
-        return <AnniversaryBlock key={block} step={next()} draft={draft} onChange={update} />;
+        return <AnniversaryBlock key={block} step={nextStep()} draft={draft} onChange={update} />;
       case "timeline":
-        return <TimelineBlock key={block} step={next()} items={draft.timeline} onChange={(timeline) => update({ timeline })} />;
+        return <TimelineBlock key={block} step={nextStep()} items={draft.timeline} onChange={(timeline) => update({ timeline })} />;
       case "music":
-        return <MusicBlock key={block} step={next()} draft={draft} onChange={update} />;
+        return <MusicBlock key={block} step={nextStep()} draft={draft} onChange={update} />;
       case "voice":
-        return <VoiceBlock key={block} step={next()} token={token} draft={draft} onChange={update} />;
+        return <VoiceBlock key={block} step={nextStep()} token={token} draft={draft} onChange={update} />;
       case "video":
-        return <VideoBlock key={block} step={next()} draft={draft} onChange={update} />;
+        return <VideoBlock key={block} step={nextStep()} draft={draft} onChange={update} />;
       default:
         return null;
     }
   };
 
+  const problemText = stageError || saveError;
+  const last = stage === 3;
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-rose-cream via-blush-light to-surface-container font-serif text-on-surface pb-28 lg:pb-12">
-      <header className="mx-auto max-w-6xl px-4 pb-6 pt-8 sm:px-6">
-        <Link href="/" className="inline-flex items-center gap-1 text-xs font-sans font-bold text-secondary hover:text-primary">
-          <Icon name="arrow_back" className="text-[16px]" />
+    <div className="min-h-screen bg-white text-on-surface pb-40 lg:pb-32">
+      <header className="mx-auto max-w-6xl px-4 pb-4 pt-8 sm:px-6">
+        <Link href="/" className="inline-flex items-center gap-1 text-sm font-semibold text-secondary hover:text-primary">
+          <Icon name="arrow_back" className="text-[18px]" />
           K&amp;P Atelier
         </Link>
-        <h1 className="mt-2 font-serif text-2xl font-black text-primary sm:text-3xl">Bàn viết thiệp</h1>
-        <p className="mt-1 max-w-2xl text-sm font-sans leading-relaxed text-on-surface-variant">
-          Chọn những gì bạn muốn gửi, soạn từng phần rồi sắp xếp theo ý mình. Bạn có thể lưu, quay lại sửa tiếp bất cứ lúc nào.
+        <h1 className="mt-2 text-2xl font-bold text-on-surface sm:text-3xl">Bàn viết thiệp</h1>
+        <p className="mt-1 max-w-2xl text-base leading-relaxed text-on-surface-variant">
+          Làm theo 3 bước: chọn những gì muốn gửi, soạn nội dung, rồi hoàn tất. Bạn có thể lưu và quay lại sửa tiếp bất cứ lúc nào.
         </p>
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-sans font-bold">
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold">
           <span className="rounded-full border border-rose-petal bg-surface-container-low px-3 py-1 font-mono text-primary-container">{product.token}</span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-white/90 bg-white/70 px-3 py-1 text-primary">
-            <Icon name="diamond" className="text-[14px]" />
+          <span className="inline-flex items-center gap-1 rounded-full border border-rose-petal bg-white px-3 py-1 text-on-surface">
+            <Icon name="diamond" className="text-[16px]" />
             {product.chainName}
           </span>
           <span
             className={`rounded-full border px-3 py-1 ${
-              product.status === "completed" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-amber-200 bg-amber-50 text-amber-800"
+              product.status === "completed" ? "border-emerald-300 bg-emerald-50 text-emerald-800" : "border-amber-300 bg-amber-50 text-amber-900"
             }`}
           >
             {product.status === "completed" ? "Đã có bản lưu" : "Chưa lưu thiệp"}
           </span>
-          {dirty && <span className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-rose-700">Có thay đổi chưa lưu</span>}
+          {dirty && <span className="rounded-full border border-rose-300 bg-rose-50 px-3 py-1 text-rose-800">Có thay đổi chưa lưu</span>}
         </div>
       </header>
 
@@ -273,84 +320,134 @@ export default function CardStudioPage() {
 
       <main className="mx-auto grid max-w-6xl items-start gap-6 px-4 sm:px-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-8">
-          <NamesBlock step={next()} draft={draft} onChange={update} errors={errors} />
-          <MessagePicker step={next()} value={draft.blocks} onToggle={toggleBlock} />
-          {draft.blocks.map((block, index) => (
-            <BlockFrame
-              key={block}
-              block={block}
-              index={index}
-              count={draft.blocks.length}
-              onMove={(direction) => moveBlock(block, direction)}
-              onRemove={() => toggleBlock(block)}
-            >
-              {renderBlock(block)}
-            </BlockFrame>
-          ))}
-          <TemplatePicker step={next()} value={draft.template} onChange={(template: GiftTemplateId) => update({ template })} />
-          <PinBlock step={next()} draft={draft} onChange={update} />
+          <Stepper stage={stage} reached={reached} onGo={go} />
+
+          {stage === 1 && (
+            <>
+              <NamesBlock step={nextStep()} draft={draft} onChange={update} errors={errors} />
+              <MessagePicker step={nextStep()} value={draft.blocks} onToggle={toggleBlock} />
+            </>
+          )}
+
+          {stage === 2 &&
+            (draft.blocks.length === 0 ? (
+              <div role="status" className="rounded-2xl border border-rose-petal bg-white p-6 text-center">
+                <p className="text-base font-semibold text-on-surface">Bạn chưa chọn thông điệp nào.</p>
+                <button
+                  type="button"
+                  onClick={() => go(1)}
+                  className="mt-3 inline-flex min-h-11 items-center rounded-xl border-2 border-primary-container px-4 text-sm font-bold text-primary-container cursor-pointer hover:bg-surface-container-low"
+                >
+                  Quay lại để chọn
+                </button>
+              </div>
+            ) : (
+              draft.blocks.map((block, index) => (
+                <BlockFrame
+                  key={block}
+                  block={block}
+                  index={index}
+                  count={draft.blocks.length}
+                  onMove={(direction) => moveBlock(block, direction)}
+                  onRemove={() => toggleBlock(block)}
+                >
+                  {renderBlock(block)}
+                </BlockFrame>
+              ))
+            ))}
+
+          {stage === 3 && (
+            <>
+              <section aria-labelledby="summary-title" className="rounded-2xl border border-rose-petal bg-white p-5 shadow-sm sm:p-6">
+                <h2 id="summary-title" className="text-lg font-bold text-on-surface sm:text-xl">
+                  Thiệp của bạn gồm
+                </h2>
+                <ol className="mt-3 flex flex-wrap gap-2">
+                  {draft.blocks.map((b, i) => (
+                    <li key={b} className="rounded-full border border-rose-petal bg-surface-container-low px-3 py-1 text-sm font-semibold text-on-surface">
+                      {i + 1}. {BLOCK_LABELS[b]}
+                    </li>
+                  ))}
+                </ol>
+                <button
+                  type="button"
+                  onClick={() => go(2)}
+                  className="mt-3 inline-flex min-h-11 items-center rounded-xl border-2 border-primary-container px-4 text-sm font-bold text-primary-container cursor-pointer hover:bg-surface-container-low"
+                >
+                  Sửa nội dung hoặc thứ tự
+                </button>
+              </section>
+              <TemplatePicker step={nextStep()} value={draft.template} onChange={(template: GiftTemplateId) => update({ template })} />
+              <PinBlock step={nextStep()} draft={draft} onChange={update} />
+            </>
+          )}
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-6 lg:col-span-4">
+        <aside className="hidden space-y-4 lg:sticky lg:top-6 lg:col-span-4 lg:block">
           <PreviewCard draft={draft} />
+          <p className="px-1 text-sm leading-relaxed text-warm-neutral">
+            Người nhận mở thiệp ở trang chủ bằng <strong>mã thiệp</strong> và <strong>OTP xem thiệp</strong>.
+          </p>
+        </aside>
+      </main>
 
-          <div className="rounded-3xl border border-white/90 bg-white/80 p-4 shadow-sm">
-            {saveError && (
-              <div
-                ref={saveErrorRef}
-                role="alert"
-                className="mb-3 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs font-sans font-bold text-rose-700"
+      {/* Always in reach: go back, or confirm this step and move on. */}
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-rose-petal bg-white px-4 py-3">
+        <div className="mx-auto max-w-6xl">
+          {problemText && (
+            <div role="alert" className="mb-3 flex items-start gap-2 rounded-xl border border-rose-300 bg-rose-50 px-3 py-2.5 text-sm font-semibold text-rose-800">
+              <Icon name="error" className="mt-0.5 text-[20px]" />
+              <span>
+                {problemText}
+                {needsAuth && (
+                  <>
+                    {" "}
+                    <Link href={`/gift?token=${encodeURIComponent(token)}`} className="underline">
+                      Nhập lại OTP tạo thiệp
+                    </Link>
+                  </>
+                )}
+              </span>
+            </div>
+          )}
+          <div className="flex items-center justify-between gap-3">
+            {stage > 1 ? (
+              <button
+                type="button"
+                onClick={() => go((stage - 1) as Stage)}
+                className="inline-flex min-h-12 items-center gap-1 rounded-xl border-2 border-rose-petal bg-white px-4 text-base font-bold text-on-surface cursor-pointer hover:border-primary-container"
               >
-                <Icon name="error" className="mt-0.5 text-[16px]" />
-                <span>
-                  {saveError}
-                  {needsAuth && (
-                    <>
-                      {" "}
-                      <Link href={`/gift?token=${encodeURIComponent(token)}`} className="underline">
-                        Nhập lại OTP tạo thiệp
-                      </Link>
-                    </>
-                  )}
-                </span>
-              </div>
+                <Icon name="arrow_back" className="text-[20px]" />
+                Quay lại
+              </button>
+            ) : (
+              <span />
             )}
             <button
               type="button"
-              onClick={save}
+              onClick={last ? save : goNext}
               disabled={saving}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl liquid-glass-btn-primary px-4 py-3.5 text-sm font-serif font-bold text-white shadow-lg cursor-pointer transition-all disabled:opacity-60"
+              className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl liquid-glass-btn-primary px-6 text-base font-bold text-white cursor-pointer disabled:opacity-60 sm:flex-none sm:min-w-56"
             >
               {saving ? (
                 <>
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   Đang lưu thiệp...
                 </>
+              ) : last ? (
+                <>
+                  <Icon name="favorite" className="text-[20px]" />
+                  Lưu thiệp
+                </>
               ) : (
                 <>
-                  <Icon name="favorite" className="text-[18px] text-amber-300" />
-                  Lưu thiệp
+                  Tiếp tục
+                  <Icon name="arrow_forward" className="text-[20px]" />
                 </>
               )}
             </button>
-            <p className="mt-2.5 text-center text-[11px] font-sans leading-relaxed text-warm-neutral">
-              Người nhận mở thiệp ở trang chủ bằng <strong>mã thiệp</strong> và <strong>OTP xem thiệp</strong>.
-            </p>
           </div>
-        </aside>
-      </main>
-
-      {/* Mobile: keep the save button within reach on a long form */}
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/90 bg-white/95 px-4 py-3 backdrop-blur lg:hidden">
-        <button
-          type="button"
-          onClick={save}
-          disabled={saving}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl liquid-glass-btn-primary px-4 py-3 text-sm font-serif font-bold text-white shadow-lg cursor-pointer disabled:opacity-60"
-        >
-          <Icon name="favorite" className="text-[18px] text-amber-300" />
-          {saving ? "Đang lưu thiệp..." : "Lưu thiệp"}
-        </button>
+        </div>
       </div>
     </div>
   );

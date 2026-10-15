@@ -53,6 +53,10 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Đã làm: `emptyBlocks(draft)` (hàm thuần, có test), lỗi cuộn tới đúng khung / bảng tích chọn, bưu thiếp mini chỉ hiện thư khi đã tích. Test: 63/63; `tsc`, `eslint`, `next build` qua.
   - Đã xem bằng mắt (server bộ nhớ, trình duyệt desktop): tích/bỏ tích, Lên/Xuống, nút khoá ở hai đầu, lưu lỗi khi Video trống, lưu thành công, nạp lại đúng thứ tự, không lỗi console. **Chưa xem:** màn hình điện thoại (cửa sổ trình duyệt của tôi không thu nhỏ được), ghi âm, nén ảnh.
 
+- [x] **T6b Studio trắng, font dễ đọc, 3 bước** (M) — theo yêu cầu của bạn sau khi thử
+  - Đã làm: nền trắng, khoá sáng (`colorScheme: light`), font Be Vietnam Pro, viền xám rõ, chữ nhỏ nhất 13px, số bước trong vòng tròn; studio thành 3 bước Chọn → Soạn → Hoàn tất với thanh Quay lại / Tiếp tục cố định ở đáy, thanh các bước, mỗi bước kiểm tra riêng; tích không còn tự cuộn. Đã xem bằng mắt trên desktop; **chưa xem trên điện thoại**.
+  - Files: `app/create/layout.tsx` (mới), `studio/Stepper.tsx` (mới), `globals.css` (`.studio-light`), `studio/ui.tsx`, `MessagePicker.tsx`, `TemplatePicker.tsx`, `app/create/[token]/page.tsx`, `docs/specs/card-messages.md`
+
 **Checkpoint B:** tích, soạn, đổi thứ tự, lưu, tải lại → còn nguyên; thiệp cũ mở được trong studio; `tsc`, `eslint`, `npm test`, `next build` qua. **Bạn thử tay studio.**
 
 ## Phase 3 — Bộ phát và khung xem

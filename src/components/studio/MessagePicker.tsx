@@ -39,28 +39,26 @@ export default function MessagePicker({ step, value, onToggle }: Props) {
               role="checkbox"
               aria-checked={checked}
               onClick={() => onToggle(id)}
-              className={`flex items-center gap-3 rounded-2xl border p-3 text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container ${
-                checked
-                  ? "liquid-glass bg-white/95 border-amber-400 ring-2 ring-primary-container/20 shadow-md"
-                  : "liquid-glass-card border-white/70 hover:bg-white/80"
+              className={`flex items-center gap-3 rounded-xl border-2 p-3 text-left transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container ${
+                checked ? "border-primary-container bg-surface-container-low" : "border-rose-petal bg-white hover:border-primary-container"
               }`}
             >
               <span
                 aria-hidden="true"
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${checked ? "bg-primary text-white" : "bg-surface-container text-secondary"}`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${checked ? "bg-primary text-white" : "bg-surface-container text-on-surface-variant"}`}
               >
                 <Icon name={INFO[id].icon} className="text-[22px]" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block font-serif text-sm font-bold text-primary">{BLOCK_LABELS[id]}</span>
-                <span className="block text-[11px] font-sans text-warm-neutral">{INFO[id].desc}</span>
+                <span className="block text-base font-bold text-on-surface">{BLOCK_LABELS[id]}</span>
+                <span className="block text-sm text-warm-neutral">{INFO[id].desc}</span>
               </span>
-              <Icon name={checked ? "check_circle" : "radio_button_unchecked"} className={`text-[22px] ${checked ? "text-primary" : "text-warm-neutral/60"}`} />
+              <Icon name={checked ? "check_circle" : "radio_button_unchecked"} className={`text-[24px] ${checked ? "text-primary" : "text-warm-neutral"}`} />
             </button>
           );
         })}
       </div>
-      <p role="status" className="mt-3 text-xs font-sans font-bold text-secondary">
+      <p role="status" className="mt-3 text-sm font-semibold text-on-surface-variant">
         {value.length === 0 ? "Chưa chọn mục nào. Hãy tích ít nhất một mục." : `Đã chọn ${value.length}/${BLOCK_IDS.length} mục. Sắp xếp thứ tự ở phần soạn bên dưới.`}
       </p>
     </StudioSection>

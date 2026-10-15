@@ -48,12 +48,18 @@ Thiệp cũ (chưa có `blocks`): khi đọc, `deriveBlocks` suy ra từ nội d
 
 ## Studio
 
-Thứ tự trang: (1) Gửi cho ai, (2) Bạn muốn gửi những gì? (lưới 8 thẻ, bấm để tích; ban đầu chưa tích mục nào), (3) Soạn nội dung (mỗi mục đã tích một khung theo đúng thứ tự, có nút Lên / Xuống / Bỏ mục này), (4) Giao diện thiệp (3 mẫu, mẫu nào cũng dùng được), (5) OTP xem thiệp.
+Ba bước, mỗi bước xác nhận bằng nút **Tiếp tục** (thanh nút Quay lại / Tiếp tục cố định ở đáy màn hình; thanh các bước ở đầu trang, bước đã qua mở lại được, bước chưa tới bị khoá):
+
+1. **Chọn:** người nhận (bắt buộc) và người tặng, xưng hô, ẩn danh; rồi lưới 8 thẻ "Bạn muốn gửi những gì?" (bấm để tích; ban đầu chưa tích mục nào). Tích không làm trang cuộn.
+2. **Soạn:** mỗi mục đã tích một khung theo đúng thứ tự, có nút Lên / Xuống / Bỏ mục này.
+3. **Hoàn tất:** tóm tắt các mục đã chọn (có nút sửa), chọn giao diện thiệp (3 mẫu, mẫu nào cũng dùng được), đổi OTP xem thiệp, rồi **Lưu thiệp**.
+
+Giao diện của studio: nền **trắng, không dark mode** (khai báo `colorScheme: light`), một font dễ đọc là **Be Vietnam Pro**, chữ không nhỏ hơn 13px, viền xám rõ ràng thay cho kính mờ màu hồng; phạm vi chỉ trong nhóm trang `/create` (lớp `studio-light`), các trang khác giữ giao diện riêng.
 
 - Bỏ tích không xoá nội dung đã nhập; tích lại thì hiện lại. Chỉ mục đang tích được lưu.
 - Các khung soạn tái sử dụng khối hiện có; khối ảnh nổi bật bị bỏ.
-- Cột bên phải: bưu thiếp mini, nút Xem thử, nút Lưu thiệp (thanh dưới cùng trên điện thoại).
-- Lưu: kiểm tra tên người nhận, ít nhất một mục, không mục nào trống; lỗi cuộn tới đúng khung.
+- Cột bên phải (màn hình rộng): bưu thiếp mini; nút Xem thử toàn màn hình sẽ nằm ở bước Hoàn tất (làm ở T18).
+- Mỗi bước kiểm tra phần của nó trước khi cho đi tiếp (bước 1: tên người nhận, ít nhất một mục; bước 2: không mục nào trống); Lưu thiệp kiểm tra lại tất cả và đưa về đúng bước, đúng ô nếu có lỗi. Lỗi hiện ở thanh đáy, luôn nhìn thấy.
 - `GiftDraft` thêm `blocks`; `draftFromSaved` / `draftToPayload` đọc và gửi `blocks`.
 
 ## Trang xem thiệp
@@ -99,7 +105,7 @@ Nút "Tặng" khoá thiệp, AI viết lời nhắn, email thông báo, tải b�
 
 ## Success criteria
 
-1. Mở studio: chưa mục nào được tích; tích mục nào thì khung soạn mục đó hiện, bỏ tích thì ẩn, nội dung đã nhập không mất.
+1. Mở studio: chưa mục nào được tích; tích xong bấm Tiếp tục thì sang bước soạn, mỗi mục đã tích một khung; bỏ tích thì khung ẩn, nội dung đã nhập không mất.
 2. Đổi thứ tự bằng Lên / Xuống, lưu, mở lại: thứ tự giữ nguyên.
 3. Lưu bị từ chối với thông báo rõ khi: không có tên người nhận, không mục nào được tích, mục đã tích còn trống.
 4. Thiệp của người nhận chỉ hiện các mục đã tích, đúng thứ tự, ở cả 3 mẫu; không có ảnh, tên hay video mẫu nào do hệ thống tự điền.

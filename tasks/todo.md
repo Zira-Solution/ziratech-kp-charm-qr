@@ -5,9 +5,10 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
 
 ## Phase 0 — Nền
 
-- [ ] **T0 Chốt tiêu chuẩn chất lượng** (XS)
+- [x] **T0 Chốt tiêu chuẩn chất lượng** (XS)
   - Acceptance: có `CONSTRAINTS.md` ghi ngưỡng đã thống nhất với bạn (a11y cho khung soạn và bộ phát, kích thước dữ liệu thiệp, kiểm tra bắt buộc: tsc/eslint/test/build); không tắt lint hay bỏ test để qua.
   - Verify: bạn đọc và đồng ý.
+  - Đã làm: sàn + tsc/eslint/test/secret chặn ngay; bảo mật, a11y, hiệu năng chỉ cảnh báo đến 2026-10-30 rồi chặn. Lệnh: `npm run check:fast | check:task | check:web | check:full`. Semgrep chưa bật (chưa có CI).
   - Deps: không · Files: `CONSTRAINTS.md`
 
 ## Phase 1 — Dữ liệu và server

@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --no-warnings --test scripts/*.test.ts"
+    "test": "node --experimental-strip-types --no-warnings --test scripts/*.test.ts",
+    "check:fast": "tsc --noEmit && eslint && node scripts/floor-guard.mjs && gitleaks detect --redact --no-banner",
+    "check:task": "npm run check:fast && npm test",
+    "check:web": "node scripts/check-web.mjs",
+    "check:full": "npm run check:task && osv-scanner scan source -r . && npm run check:web"
   },
   "dependencies": {
     "@google/genai": "^2.27.0",
@@ -30,6 +34,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
+    "lighthouse": "^13.5.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

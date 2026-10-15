@@ -1,0 +1,5 @@
+# Tracked exception W1 in CONSTRAINTS.md. Remove when a fixed `braces` release exists.
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm"
+ignoreUntil = 2027-01-14
+reason = "braces 3.0.3 via eslint-config-next > fast-glob > micromatch (dev only). No fixed version published."

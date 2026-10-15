@@ -1,0 +1,32 @@
+{
+  "measuredOn": "2026-10-15",
+  "pages": {
+    "/": {
+      "perf": 54,
+      "a11y": 95,
+      "lcp": 27865,
+      "cls": 0.063,
+      "a11yFailing": [
+        "color-contrast",
+        "heading-order"
+      ]
+    },
+    "/gift": {
+      "perf": 53,
+      "a11y": 94,
+      "lcp": 26770,
+      "cls": 0.087,
+      "a11yFailing": [
+        "landmark-one-main",
+        "target-size"
+      ]
+    },
+    "/thamkhao": {
+      "perf": 55,
+      "a11y": 100,
+      "lcp": 38510,
+      "cls": 0,
+      "a11yFailing": []
+    }
+  }
+}

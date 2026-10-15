@@ -26,10 +26,11 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Acceptance: `deriveBlocks(saved)` suy ra danh sách cho thiệp chưa có `blocks` theo thứ tự mặc định, chỉ lấy mục có nội dung; `normalizeGift(saved)` trả thiệp để hiển thị (tên, người tặng/xưng hô/ẩn danh, `blocks`, nội dung từng loại) và **không trộn dữ liệu mẫu**; ảnh nổi bật cũ được đưa lên đầu album (tối đa 6).
   - Verify: `npm test` với thiệp mới, thiệp cũ đủ trường, thiệp cũ thiếu trường, dữ liệu hỏng.
   - Deps: T1 · Files: `gift-templates/normalize.ts` (mới), `scripts/normalize.test.ts` (mới)
-- [ ] **T3 Kiểm tra API lưu/đọc trên DB thật** (S)
+- [x] **T3 Kiểm tra API lưu/đọc trên DB thật** (S)
   - Acceptance: lưu thiệp mới có `blocks` → đọc lại đúng thứ tự; thiệp cũ (không `blocks`) đọc vẫn ra; lưu bị `400` với thông báo rõ cho các lỗi ở T1; ghi âm chỉ được giữ khi `voice` nằm trong `blocks`.
   - Verify: curl trên dev server (port 5000) với DB thật, dọn dữ liệu thử sau test.
   - Deps: T1, T2 · Files: chỉ sửa `api/gifts/[token]/save/route.ts` nếu phát hiện lệch
+  - Đã làm: chạy dev server riêng (port 5002) với biến Supabase để trống, dùng kho bộ nhớ + bản ghi demo `KP-2010-DEMO`, **không động vào DB thật** (sự kiện đang diễn ra, đơn thử sẽ hiện trong danh sách của nhân viên). 12/12 trường hợp đúng (401 thiếu phiên, 200 lưu đúng thứ tự, 400 cho rỗng / id lạ / mục trống / host lạ / thiếu tên, payload cũ không có `blocks` vẫn lưu, PIN mới có hiệu lực, người nhận không vào được studio). **Chưa kiểm:** ghi âm trên Supabase Storage và đọc một thiệp cũ thật trong DB; kiểm khi bạn đồng ý dùng đơn thử.
 
 **Checkpoint A:** `npm test`, `tsc`, `eslint` sạch; API lưu/đọc/từ chối đúng trên DB thật.
 

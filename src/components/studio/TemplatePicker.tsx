@@ -2,8 +2,7 @@
 
 import React from "react";
 import type { GiftTemplateId } from "../gift-templates/types";
-import { BLOCK_LABELS, TEMPLATES } from "../gift-templates/template-config";
-import { IMPLEMENTED_BLOCKS } from "./implemented";
+import { TEMPLATES } from "../gift-templates/template-config";
 import { StudioSection } from "./ui";
 
 interface Props {
@@ -17,13 +16,12 @@ export default function TemplatePicker({ step, value, onChange }: Props) {
     <StudioSection
       id="template"
       step={step}
-      title="Chọn mẫu thiệp"
-      hint="Mỗi mẫu có những phần thông tin riêng. Đổi mẫu không làm mất nội dung bạn đã nhập, bạn chỉ thấy phần phù hợp với mẫu đang chọn."
+      title="Giao diện thiệp"
+      hint="Chỉ là cách trình bày: mẫu nào cũng hiện đầy đủ những gì bạn đã chọn, đổi mẫu không làm mất nội dung."
     >
       <div role="radiogroup" aria-label="Mẫu thiệp" className="grid gap-3 sm:grid-cols-3">
         {TEMPLATES.map((tpl) => {
           const selected = tpl.id === value;
-          const labels = ["Tên", ...tpl.blocks.filter((b) => IMPLEMENTED_BLOCKS.has(b)).map((b) => BLOCK_LABELS[b])];
           return (
             <button
               key={tpl.id}
@@ -42,13 +40,6 @@ export default function TemplatePicker({ step, value, onChange }: Props) {
               </span>
               <span className="font-serif text-sm font-bold text-primary">{tpl.name}</span>
               <span className="mt-0.5 text-[11px] font-sans text-warm-neutral">{tpl.desc}</span>
-              <span className="mt-2 flex flex-wrap gap-1">
-                {labels.map((l) => (
-                  <span key={l} className="rounded-full bg-surface-container px-2 py-0.5 text-[10px] font-sans font-bold text-secondary">
-                    {l}
-                  </span>
-                ))}
-              </span>
             </button>
           );
         })}

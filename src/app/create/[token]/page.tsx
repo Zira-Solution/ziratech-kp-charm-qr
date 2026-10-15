@@ -4,11 +4,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import confetti from "canvas-confetti";
-import { getTemplate, templateHasBlock, type BlockId } from "@/components/gift-templates/template-config";
+import { BLOCK_LABELS, type BlockId } from "@/components/gift-templates/blocks";
 import type { GiftTemplateId } from "@/components/gift-templates/types";
 import { draftFromSaved, draftToPayload, emptyDraft, type GiftDraft } from "@/components/studio/draft";
-import { BLOCK_ORDER, IMPLEMENTED_BLOCKS } from "@/components/studio/implemented";
 import { Icon } from "@/components/studio/ui";
+import MessagePicker from "@/components/studio/MessagePicker";
+import BlockFrame from "@/components/studio/BlockFrame";
 import TemplatePicker from "@/components/studio/TemplatePicker";
 import PreviewCard from "@/components/studio/PreviewCard";
 import NamesBlock from "@/components/studio/blocks/NamesBlock";
@@ -22,7 +23,6 @@ import VideoBlock from "@/components/studio/blocks/VideoBlock";
 import MusicBlock from "@/components/studio/blocks/MusicBlock";
 import VoiceBlock from "@/components/studio/blocks/VoiceBlock";
 import { parseGiftData } from "@/lib/validation/gift";
-import { deriveBlocks } from "@/components/gift-templates/blocks";
 
 interface StudioProduct {
   token: string;
@@ -95,13 +95,33 @@ export default function CardStudioPage() {
     }));
   }, []);
 
+  // The announcement is read out by screen readers when a message is moved or removed.
+  const [announcement, setAnnouncement] = useState("");
+
+  const toggleBlock = (block: BlockId) => {
+    const ticked = draft.blocks.includes(block);
+    update({ blocks: ticked ? draft.blocks.filter((b) => b !== block) : [...draft.blocks, block] });
+    setAnnouncement(ticked ? `Đã bỏ mục ${BLOCK_LABELS[block]}` : `Đã thêm mục ${BLOCK_LABELS[block]}`);
+    if (!ticked) requestAnimationFrame(() => document.getElementById(`block-${block}`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  };
+
+  const moveBlock = (block: BlockId, direction: -1 | 1) => {
+    const from = draft.blocks.indexOf(block);
+    const to = from + direction;
+    if (from < 0 || to < 0 || to >= draft.blocks.length) return;
+    const blocks = [...draft.blocks];
+    [blocks[from], blocks[to]] = [blocks[to], blocks[from]];
+    update({ blocks });
+    setAnnouncement(`Mục ${BLOCK_LABELS[block]} đang ở vị trí ${to + 1} trên ${blocks.length}`);
+  };
+
   const save = async () => {
     if (saving) return;
     setSaveError("");
 
     const found: FieldErrors = {};
     if (!draft.recipientName.trim()) found.recipientName = "Vui lòng nhập tên người nhận";
-    if (!draft.letterContent.trim()) found.letterContent = "Vui lòng viết lời nhắn gửi vào bức thư";
+    if (draft.blocks.includes("letter") && !draft.letterContent.trim()) found.letterContent = "Vui lòng viết lời nhắn gửi vào bức thư";
     setErrors(found);
     if (found.recipientName || found.letterContent) {
       const firstId = found.recipientName ? "names-recipient" : "letter-content";
@@ -110,10 +130,7 @@ export default function CardStudioPage() {
       return;
     }
 
-    // Interim until the tick-boxes land: this form has no picker yet, so tick whatever the chosen
-    // template shows and the buyer has filled in.
-    const shown = BLOCK_ORDER.filter((b) => IMPLEMENTED_BLOCKS.has(b) && templateHasBlock(draft.template, b)) as string[];
-    const body = draftToPayload({ ...draft, blocks: deriveBlocks(draftToPayload(draft).giftData).filter((b) => shown.includes(b)) });
+    const body = draftToPayload(draft);
 
     // Same checks the server runs, so mistakes in links, dates or milestones are caught before sending.
     const checked = parseGiftData(body.giftData, { token });
@@ -175,9 +192,6 @@ export default function CardStudioPage() {
     );
   }
 
-  const info = getTemplate(draft.template);
-  const visible = BLOCK_ORDER.filter((b) => IMPLEMENTED_BLOCKS.has(b) && templateHasBlock(draft.template, b));
-
   let step = 0;
   const next = () => ++step;
 
@@ -192,7 +206,7 @@ export default function CardStudioPage() {
             id="photos"
             step={next()}
             title="Album ảnh kỷ niệm"
-            hint="Tối đa 6 ảnh. Ảnh được tự thu nhỏ để tải nhanh, bạn không cần chỉnh trước."
+            hint="Tối đa 6 ảnh, ảnh đầu tiên là ảnh bìa. Ảnh được tự thu nhỏ để tải nhanh, bạn không cần chỉnh trước."
             items={draft.photos}
             max={6}
             showDate
@@ -225,7 +239,7 @@ export default function CardStudioPage() {
         </Link>
         <h1 className="mt-2 font-serif text-2xl font-black text-primary sm:text-3xl">Bàn viết thiệp</h1>
         <p className="mt-1 max-w-2xl text-sm font-sans leading-relaxed text-on-surface-variant">
-          Chọn một mẫu, điền những điều bạn muốn gửi. Bạn có thể lưu, quay lại sửa tiếp bất cứ lúc nào.
+          Chọn những gì bạn muốn gửi, soạn từng phần rồi sắp xếp theo ý mình. Bạn có thể lưu, quay lại sửa tiếp bất cứ lúc nào.
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-sans font-bold">
           <span className="rounded-full border border-rose-petal bg-surface-container-low px-3 py-1 font-mono text-primary-container">{product.token}</span>
@@ -244,11 +258,27 @@ export default function CardStudioPage() {
         </div>
       </header>
 
+      <p aria-live="polite" className="sr-only">
+        {announcement}
+      </p>
+
       <main className="mx-auto grid max-w-6xl items-start gap-6 px-4 sm:px-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-8">
-          <TemplatePicker step={next()} value={draft.template} onChange={(template: GiftTemplateId) => update({ template })} />
           <NamesBlock step={next()} draft={draft} onChange={update} errors={errors} />
-          {visible.map(renderBlock)}
+          <MessagePicker step={next()} value={draft.blocks} onToggle={toggleBlock} />
+          {draft.blocks.map((block, index) => (
+            <BlockFrame
+              key={block}
+              block={block}
+              index={index}
+              count={draft.blocks.length}
+              onMove={(direction) => moveBlock(block, direction)}
+              onRemove={() => toggleBlock(block)}
+            >
+              {renderBlock(block)}
+            </BlockFrame>
+          ))}
+          <TemplatePicker step={next()} value={draft.template} onChange={(template: GiftTemplateId) => update({ template })} />
           <PinBlock step={next()} draft={draft} onChange={update} />
         </div>
 

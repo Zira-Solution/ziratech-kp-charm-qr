@@ -41,10 +41,11 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Verify: `npm test` (cập nhật `studio-draft.test.ts`), `tsc`.
   - Deps: T1, T2 · Files: `studio/draft.ts`, `studio/implemented.ts` (xoá), `scripts/studio-draft.test.ts`
   - Đã làm: `GiftDraft.blocks`, bỏ `highlights`; `draftFromSaved` gộp ảnh nổi bật cũ vào đầu album; `draftToPayload` luôn gửi `blocks`. `implemented.ts` chưa xoá (trang tạo thiệp còn dùng, xoá ở T5). Trang tạo thiệp có đoạn tạm tự suy ra `blocks` từ nội dung (xoá ở T5). Test: 60/60.
-- [ ] **T5 Bảng tích chọn + khung soạn Lên/Xuống/Bỏ** (M)
+- [x] **T5 Bảng tích chọn + khung soạn Lên/Xuống/Bỏ** (M)
   - Acceptance: trang `/create/[token]` theo thứ tự: Gửi cho ai → Bạn muốn gửi những gì? (lưới 8 thẻ, bàn phím và đọc màn hình dùng được) → khung soạn theo `blocks` có nút Lên / Xuống / Bỏ mục này → Giao diện thiệp (3 mẫu luôn dùng được) → OTP xem thiệp; khối ảnh nổi bật bị bỏ, ảnh đầu album ghi "ảnh bìa".
   - Verify: `tsc`, `eslint`, `next build`; thử tay ở 390 / 768 / 1280px.
   - Deps: T4 · Files: `studio/MessagePicker.tsx` (mới), `studio/ui.tsx` (BlockFrame), `app/create/[token]/page.tsx`, `studio/TemplatePicker.tsx`, `studio/blocks/PhotosBlock.tsx`
+  - Đã làm: `MessagePicker` (lưới 8 thẻ, `role=checkbox`), `BlockFrame` (nút Lên/Xuống/Bỏ qua context, có nhãn đọc màn hình + thông báo vị trí), trang tạo thiệp theo thứ tự Gửi cho ai → Chọn → Soạn → Giao diện → OTP; xoá `implemented.ts`; `PreviewCard` đã đọc `draft.blocks` (làm trước phần của T6). Chưa xem bằng mắt.
 - [ ] **T6 Báo lỗi mục trống + bưu thiếp mini theo `blocks`** (S)
   - Acceptance: hàm thuần `blockProblems(draft)` (không có tên người nhận / chưa tích mục nào / mục đã tích còn trống) có test; lỗi cuộn tới đúng khung; `PreviewCard` hiện tóm tắt theo `blocks`.
   - Verify: `npm test`, `tsc`, thử tay.

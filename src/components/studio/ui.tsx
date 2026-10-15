@@ -21,6 +21,9 @@ export function Icon({ name, className = "" }: { name: string; className?: strin
   );
 }
 
+/** Controls (move up / down / remove) that a surrounding BlockFrame hands to the section it wraps. */
+export const BlockControlsContext = React.createContext<React.ReactNode>(null);
+
 export function StudioSection({
   id,
   step,
@@ -34,6 +37,7 @@ export function StudioSection({
   hint?: string;
   children: React.ReactNode;
 }) {
+  const controls = React.useContext(BlockControlsContext);
   return (
     <section
       aria-labelledby={`${id}-title`}
@@ -44,11 +48,14 @@ export function StudioSection({
         className="absolute -top-2 left-8 h-4 w-20 -rotate-2 rounded-xs bg-gold/45 border border-gold-accent/20"
       />
       <header className="mb-4">
-        <div className="flex items-baseline gap-2.5">
-          <span className="font-handwriting text-2xl leading-none text-secondary">bước {step}</span>
-          <h2 id={`${id}-title`} className="font-serif text-base sm:text-lg font-bold text-primary">
-            {title}
-          </h2>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-baseline gap-2.5">
+            <span className="font-handwriting text-2xl leading-none text-secondary">bước {step}</span>
+            <h2 id={`${id}-title`} className="font-serif text-base sm:text-lg font-bold text-primary">
+              {title}
+            </h2>
+          </div>
+          {controls}
         </div>
         {hint && <p className="mt-1 text-xs font-sans text-warm-neutral leading-relaxed">{hint}</p>}
       </header>

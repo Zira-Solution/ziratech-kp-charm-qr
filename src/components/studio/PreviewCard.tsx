@@ -1,15 +1,15 @@
 "use client";
 
 import React from "react";
-import { BLOCK_LABELS, getTemplate, templateHasBlock } from "../gift-templates/template-config";
+import { getTemplate } from "../gift-templates/template-config";
+import { BLOCK_LABELS, type BlockId } from "../gift-templates/blocks";
 import { daysSince, type GiftDraft } from "./draft";
-import { IMPLEMENTED_BLOCKS } from "./implemented";
 import { Icon } from "./ui";
 
 /** A small postcard that shows how the card is coming along. The real card is the viewer page. */
 export default function PreviewCard({ draft }: { draft: GiftDraft }) {
   const info = getTemplate(draft.template);
-  const has = (b: Parameters<typeof templateHasBlock>[1]) => IMPLEMENTED_BLOCKS.has(b) && templateHasBlock(draft.template, b);
+  const has = (b: BlockId) => draft.blocks.includes(b);
 
   const cover = has("photos") ? draft.photos[0]?.url : undefined;
   const days = has("anniversary") ? daysSince(draft.anniversaryDate) : null;

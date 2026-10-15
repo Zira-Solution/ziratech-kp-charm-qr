@@ -18,7 +18,7 @@ export default function AnniversaryBlock({ step, draft, onChange }: Props) {
       id="anniversary"
       step={step}
       title="Ngày kỷ niệm"
-      hint="Chọn một ngày đáng nhớ. Thiệp sẽ hiện số ngày đã bên nhau. Bỏ trống nếu không cần."
+      hint="Chọn một ngày đáng nhớ. Thiệp sẽ hiện số ngày đã bên nhau."
     >
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Ngày" htmlFor="anniversary-date">

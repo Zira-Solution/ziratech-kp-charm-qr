@@ -20,7 +20,7 @@ export default function VideoBlock({ step, draft, onChange }: Props) {
       id="video"
       step={step}
       title="Video"
-      hint="Dán liên kết video bạn đã đăng (không cần tải tệp lên). Bỏ trống nếu không có."
+      hint="Dán liên kết video bạn đã đăng (không cần tải tệp lên)."
     >
       <Field
         label="Liên kết video"

@@ -14,6 +14,7 @@ import {
   VIDEO_HOSTS,
   MAX_PHOTO_CHARS,
 } from "../src/lib/validation/gift.ts";
+import { DEFAULT_TEMPLATE } from "../src/components/gift-templates/template-config.ts";
 
 const TOKEN = "KP-2010-ABC123";
 const jpeg = (chars: number) => "data:image/jpeg;base64," + "A".repeat(chars);
@@ -194,7 +195,7 @@ test("parseGiftData falls back to the default template and keeps text exactly as
   const r = parseGiftData({ ...base, template: "no-such-template" }, { token: TOKEN });
   assert.equal(r.ok, true);
   if (r.ok) {
-    assert.equal(r.value.template, "vintage-scrapbook");
+    assert.equal(r.value.template, DEFAULT_TEMPLATE);
     assert.equal(r.value.letterContent, "Chúc mừng 20/10 & mãi bên nhau");
   }
 });

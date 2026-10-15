@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { emptyDraft, draftFromSaved, draftToPayload, daysSince } from "../src/components/studio/draft.ts";
 import { parseGiftData } from "../src/lib/validation/gift.ts";
+import { DEFAULT_TEMPLATE } from "../src/components/gift-templates/template-config.ts";
 
 const TOKEN = "KP-2010-ABC123";
 
@@ -56,7 +57,7 @@ test("draftFromSaved copes with missing or odd data", () => {
     memoryPhotos: [null, { url: "" }, { url: "https://e.com/a.jpg" }],
     voiceNote: { duration: "01:15" },
   });
-  assert.equal(d.template, "vintage-scrapbook");
+  assert.equal(d.template, DEFAULT_TEMPLATE);
   assert.equal(d.photos.length, 1);
   assert.equal(d.voice.durationSec, 75);
 });

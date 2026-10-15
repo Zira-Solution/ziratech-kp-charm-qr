@@ -1,19 +1,18 @@
 import React from "react";
 
-const HERO_IMG =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuCc7nnfHXxUOfha53a1o_9bNbtqKnnttmUa4NjPK96JAiZfGiklPSDzAHT7tSA2gUb446MwpiHi55PsMwbOtB0lJzQkkJFl01ATCuh90DTBrYmUwQ0KpRJOlggMtRD_2vyQXac5evM3AjtJRzeQTI3jfkcvvwzAyAkOq3FPMITWqFqmD52FCD670eaDpE_VnVkB3px06kuJnROnD2G823IQKvXR-qBNYCwRZFPSHnHADgCRTl0ezejadg";
+const HERO_IMG = "/images/vong_charm_san.png";
 
 const TRUST = [
-  { icon: "qr_code_2", text: "Mã QR quà số gửi qua email" },
-  { icon: "inventory_2", text: "Đóng hộp thủ công cẩn trọng" },
-  { icon: "storefront", text: "Nhận tại sảnh lầu 2 ngày 20/10" },
+  { icon: "qr_code_2", text: "Trang thiệp số đa phương tiện 1:1" },
+  { icon: "inventory_2", text: "Hộp quà đóng gói tinh tế, chỉn chu" },
+  { icon: "storefront", text: "Nhận quà trực tiếp tại trường ngày 20/10" },
 ];
 
 const IMPACT = [
   { icon: "pets", tone: "text-primary", value: "100%", label: "Lợi nhuận ủng hộ trạm cứu hộ" },
-  { icon: "receipt_long", tone: "text-secondary-dark", value: "Công khai", label: "Sao kê quỹ minh bạch" },
-  { icon: "diversity_3", tone: "text-primary", value: "45", label: "Sinh viên FPT chế tác" },
-  { icon: "qr_code", tone: "text-secondary-dark", value: "1:1", label: "Trang quà tặng số riêng biệt" },
+  { icon: "receipt_long", tone: "text-secondary-dark", value: "Minh bạch", label: "Sao kê quỹ công khai" },
+  { icon: "volunteer_activism", tone: "text-primary", value: "Thủ công", label: "Chế tác tỉ mỉ đong đầy tâm ý" },
+  { icon: "qr_code", tone: "text-secondary-dark", value: "Độc bản", label: "Trang thiệp số riêng biệt" },
 ];
 
 export function Hero() {
@@ -26,14 +25,13 @@ export function Hero() {
             <span>Bộ Sưu Tập Quà Tặng 20/10 • Gây Quỹ Cứu Trợ Động Vật</span>
           </div>
 
-          <h1 className="font-headline text-4xl sm:text-5xl lg:text-[54px] text-primary tracking-tight leading-[1.3]">
-            Một kỷ vật trao tay.
-            <br />
-            <span className="italic font-normal text-secondary-dark">Một mái ấm được chở che.</span>
+          <h1 className="font-headline text-2xl sm:text-3xl md:text-4xl lg:text-[34px] xl:text-[42px] 2xl:text-[48px] text-primary tracking-tight leading-[1.2]">
+            <span className="block">Một món quà trao người thương.</span>
+            <span className="italic font-normal text-secondary-dark block mt-1">Một mái ấm được chở che.</span>
           </h1>
 
           <p className="font-body text-base lg:text-lg text-on-surface-variant max-w-xl leading-relaxed">
-            Mỗi đóa hoa tươi và chiếc vòng charm luồn dây cước thủ công từ sinh viên FPT không chỉ gửi gắm trọn vẹn yêu thương tới người phụ nữ bạn trân quý dịp 20/10, mà còn dành toàn bộ lợi nhuận tiếp sức cho trạm cứu hộ Sân Nhà Nhiều Chó.
+            Mỗi hộp quà 20/10 từ K&amp;P Atelier là sự kết tinh giữa chiếc vòng charm thủ công tinh tế, hoa tươi rạng rỡ và trang thiệp số lưu giữ ký ức. Trao đi món quà gửi người phụ nữ bạn trân quý, bạn đồng thời dành trọn vẹn 100% lợi nhuận cùng chung tay sưởi ấm trạm cứu hộ Sân Nhà Nhiều Chó.
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -73,22 +71,22 @@ export function Hero() {
             <div className="relative w-full aspect-4/5 rounded-[26px] overflow-hidden bg-surface-container-low shadow-inner">
               <img
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                alt="Vòng tay charm thủ công trên bàn gỗ cùng ruy băng hồng và hoa baby trắng"
+                alt="Vòng tay charm pha lê xanh trăng sao đan sẵn K&P Atelier"
                 src={HERO_IMG}
               />
-              <div className="absolute top-4 left-4 bg-white/75 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 flex items-center gap-2 shadow-sm">
+              <div className="absolute top-4 left-4 bg-white/85 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 flex items-center gap-2 shadow-sm">
                 <span className="material-symbols-outlined text-[15px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  favorite
+                  dark_mode
                 </span>
-                <span className="font-sans text-[11px] text-primary font-semibold">Little Heart • Trọn Tình Yêu</span>
+                <span className="font-sans text-[11px] text-primary font-semibold">Starry Moon • Trăng Sao Lấp Lánh</span>
               </div>
-              <div className="absolute top-4 right-4 bg-white/75 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 flex items-center gap-2 shadow-sm">
-                <span className="material-symbols-outlined text-[15px] text-secondary-dark">hotel_class</span>
-                <span className="font-sans text-[11px] text-secondary-dark font-semibold">Dreamy Star • Ánh Sáng</span>
+              <div className="absolute top-4 right-4 bg-white/85 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 flex items-center gap-2 shadow-sm">
+                <span className="material-symbols-outlined text-[15px] text-sky-600">diamond</span>
+                <span className="font-sans text-[11px] text-sky-700 font-semibold">Blue Ice Crystal • Pha Lê Băng</span>
               </div>
-              <div className="absolute bottom-4 left-4 bg-white/75 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 flex items-center gap-2 shadow-sm">
-                <span className="material-symbols-outlined text-[15px] text-primary">wb_sunny</span>
-                <span className="font-sans text-[11px] text-on-surface font-semibold">Sunflower • Tươi Sáng &amp; Rực Rỡ</span>
+              <div className="absolute bottom-4 left-4 bg-white/85 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 flex items-center gap-2 shadow-sm">
+                <span className="material-symbols-outlined text-[15px] text-primary">verified</span>
+                <span className="font-sans text-[11px] text-on-surface font-semibold">Vòng Có Sẵn • Thẻ QR Kèm Hộp</span>
               </div>
               <div className="absolute bottom-4 right-4 bg-linear-to-r from-[#721a28] to-[#8c2233] text-white px-4 py-2 rounded-full flex items-center gap-1.5 shadow-pill border border-white/30 backdrop-blur-md">
                 <span className="material-symbols-outlined text-[15px]">loyalty</span>

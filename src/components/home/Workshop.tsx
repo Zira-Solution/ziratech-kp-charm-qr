@@ -2,15 +2,15 @@ import React from "react";
 
 const STAGES = [
   {
-    title: "Đo dây cước vừa vặn",
-    text: "Chọn dây cước tơ trong suốt dẻo dai, đo theo đúng kích cỡ cổ tay người nhận để chiếc vòng ôm vừa xinh xắn.",
-    alt: "Đôi tay đo dây cước trong suốt bằng thước dây trên bàn gỗ",
+    title: "Đo ni tay vừa vặn",
+    text: "Lựa chọn sợi đan trong suốt dẻo dai cao cấp, ướm theo kích cỡ cổ tay người nhận để chiếc vòng ôm vừa xinh xắn.",
+    alt: "Đôi tay đo kích cỡ vòng tay tỉ mỉ bằng thước dây trên bàn gỗ",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCYurcktput4czjm2IO_1GeON6O7eSAWspjj3nXxWTZM7y7BIQLdMQeopNGFRi8rU6t_J62ulBzSrieKw9-JqqvX-gSn-_nPAagXbpHiv0N9G2gajIPq607TMWB9Bpo5CSvhPqjoNVeCq730LgNQ_xNJdzDXFK43XvW_9n7DL8Cv_mqnF2cqSAJK8g7rnG6QC0xICuMv6HiINOEDnQAlJ-Hxs9T4VQyx8p9qJuK784Gexk8T-eSwVF5Xw",
   },
   {
     title: "Chọn charm & xâu hạt",
     text: "Lựa chọn giữa hàng chục mẫu charm bạc: Trái tim, ánh sao, hoa cúc nhỏ cùng hạt pha lê pastel lấp lánh theo sở thích.",
-    alt: "Charm bạc hình sao và trái tim được xâu vào dây cước bằng nhíp",
+    alt: "Charm bạc hình sao và trái tim được đan kết tỉ mỉ",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCcmqGgTcw-y65xt62hTWR2v-VeBzc-KAV_YezpEeaaps2NOO76gn96DJc5qUrQTq0H0x9yg_gFq5dWiAwYViEkf7YQZbhAGpE_glEzPLdFn5nXdyFiyl82Aw5zg-mdFUh5gEqM8TGrzSoSNy1U8PAmwGvPQxtrOs-3cHGDgeIEi5awMx7FkMfaZtjXS2w3vjhi9xx_STWi9Wu4OcWh390aBjC54WOdir3HHs4l_YtNHkkBjUQxchlQVA",
   },
   {
@@ -20,8 +20,8 @@ const STAGES = [
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuD740MSkdcMAS-1j7Z80Usuk4Yp6XxX306D92jg9HA5k5uij8NJaQRM1PZb9yytUIGV3e6q5DYtXoBJeLEBf20SgZqr6OflAs2HntqPo6Hrl4vANFKCnVCyL5EcsfxPlTWz2Z2QaoAYMuo0ZC6Ilhj5yUv4rjBch-K1vZL4zRL-uKvR3EuIdEssAv1XTJ5v3tvNhUjZPJB_0dQIa510fi1R0UsBOKgQLh2lNn_enO9rqa7VtQTM_5eA9w",
   },
   {
-    title: "Gắn nhánh hoa & gửi mã QR",
-    text: "Cài nhánh hoa baby khô xinh xắn để hoàn thiện kỷ vật trao tặng. Mã QR thiệp số được gửi riêng qua email, không đính kèm trong hộp.",
+    title: "Gắn nhánh hoa & kích hoạt thiệp",
+    text: "Cài nhánh hoa baby khô xinh xắn để hoàn thiện món quà trao tặng. Mã QR thiệp số được gửi riêng qua email bảo mật người nhận.",
     alt: "Hộp quà hoàn thiện với nhánh baby khô",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDWMJbd_8QoJcGOoqSNCntJnFbDJhsVwwhU1a9IHmKEjVLehFq4JyWQD5qrzp3qgM8zD2__tiClYKOt2M_7pDC0Ir2n9iA2kjJn9khNyrwlugf30wMkmwxaVONZJRylB2tcfBH9-KwvJmHM0Pb6lDVNH-5j0ML-bvxk0pbQpb40iQk9i_c4uM3aYKxXR6gPww3wZm1TniticU37w2x4v-MbM2KrG9EUb0CxR4MayfoDQkmee7Rt0vxX4Q",
   },
@@ -35,9 +35,9 @@ export default function Workshop() {
           <span className="material-symbols-outlined text-[15px] text-secondary-dark">handyman</span>
           <span>Khu Vực Workshop Trực Tiếp</span>
         </div>
-        <h2 className="font-headline text-3xl sm:text-4xl text-primary mb-3 tracking-tight">Tự Tay Luồn Vòng Kỷ Vật</h2>
+        <h2 className="font-headline text-3xl sm:text-4xl text-primary mb-3 tracking-tight">Tự Tay Chế Tác Vòng Kỷ Niệm</h2>
         <p className="font-body text-base text-on-surface-variant leading-relaxed">
-          Tận hưởng từng phút giây thư thái tự tay kết từng hạt charm thủy tinh, dây cước trong veo gửi trọn chân tình tại gian hàng sảnh lầu 2.
+          Tận hưởng từng phút giây thư thái tự tay kết từng hạt charm thủy tinh lấp lánh, đong đầy chân tình tại gian hàng Sảnh lầu 2 (11:00 – 15:00 ngày 20/10).
         </p>
       </div>
 

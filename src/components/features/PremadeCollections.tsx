@@ -14,14 +14,14 @@ export default function PremadeCollections({
   const collections = [
     {
       id: "col-sweet",
-      title: "Set Quà 'The Sweet One'",
-      tag: "Best-Seller 20/10",
-      desc: "Vòng Bạc Ý S925 đính charm Trái Tim Ánh Hồng & Ngôi Sao, đính kèm thẻ QR trang quà số lãng mạn.",
+      title: "Set Vòng Charm 'Starry Moon'",
+      tag: "Mẫu Thật Có Sẵn • Best-Seller 20/10",
+      desc: "Hạt pha lê nứt xanh băng thanh khiết, charm Trăng Sao Bạc Ý S925 kèm dây xích thả lấp lánh & thẻ QR trang thiệp số cá nhân.",
       price: 55000,
       cogs: 26000,
       charityAmount: 29000,
       meals: 3,
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDqJ1NwSDE_iT1PjoEQjh8ZxcbJbKj2XNzFuQm5WR3jonIBC2qEFKmEWQh1DNjclyQfYoPglMIYQCGxtGXouVkkq0YxZJFuAp6r1wJyPNhJf8MOc1GwoJQOdzTxXHuPZA1UcC6bkRZuuLfPcBjZP8j-wtBhyOXiKo_aiBxQYChuPK9FfyOuvSWWuAOvea-ebh9vXguVPUn8KBC42elhcwqQFedeVsW_gidpXE8poCqW0swcKbO2Y-CIBg",
+      img: "/images/vong_charm_san.png",
     },
     {
       id: "col-sunshine",

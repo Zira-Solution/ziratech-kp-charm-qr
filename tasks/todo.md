@@ -1,42 +1,125 @@
-# Task list: Studio tạo thiệp theo khối
+# Task list: Thiệp theo thông điệp tự chọn
 
-Chú thích: `[ ]` chưa làm · `[x]` xong. Mỗi nhiệm vụ = 1 commit nhỏ.
+Chú thích: `[ ]` chưa làm · `[x]` xong. Mỗi task = 1 commit nhỏ, không có co-author. Kế hoạch: `tasks/plan.md` · Đặc tả: `docs/specs/card-messages.md`.
+Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` · `npx next build`.
 
-## Phase 1 — Hợp đồng và server
+## Phase 0 — Nền
 
-- [x] **T1 Kiểu dữ liệu, cấu hình mẫu, validation + test** (M)
-  - Acceptance: `RecipientGiftData` có trường mới tuỳ chọn; `template-config.ts` khai báo khối theo mẫu; `parseGiftData` làm sạch toàn bộ thiệp theo whitelist, link allowlist, ngày hợp lệ, ảnh, mốc, giai điệu; `npm test` chạy test cho từng quy tắc.
+- [ ] **T0 Chốt tiêu chuẩn chất lượng** (XS)
+  - Acceptance: có `CONSTRAINTS.md` ghi ngưỡng đã thống nhất với bạn (a11y cho khung soạn và bộ phát, kích thước dữ liệu thiệp, kiểm tra bắt buộc: tsc/eslint/test/build); không tắt lint hay bỏ test để qua.
+  - Verify: bạn đọc và đồng ý.
+  - Deps: không · Files: `CONSTRAINTS.md`
+
+## Phase 1 — Dữ liệu và server
+
+- [ ] **T1 `blocks` + `parseGiftData` mới + test** (M)
+  - Acceptance:
+    - `src/components/gift-templates/blocks.ts`: `BlockId` (8 loại), `BLOCK_LABELS`, `BLOCK_ORDER_DEFAULT`, `isBlockId`.
+    - `parseGiftData` nhận `blocks`: lỗi khi rỗng / id lạ / trùng / quá 8; chỉ giữ nội dung của khối có trong `blocks`; khối đã tích mà trống → lỗi nêu tên mục; chỉ tên người nhận là bắt buộc (thư không còn bắt buộc).
+    - Không còn lưu `momentPhotos`, `coverIllustrationUrl`; `template-config.ts` bỏ `blocks`/`highlightMax`/`templateHasBlock`.
+    - Test cập nhật + test mới cho từng quy tắc trên.
   - Verify: `npm test`, `npx tsc --noEmit`.
-  - Files: `components/gift-templates/types.ts`, `template-config.ts`, `lib/validation/gift.ts`, `scripts/gift-validation.test.ts`, `package.json`.
-- [x] **T2 Save API dùng whitelist** (S)
-  - Acceptance: `/save` dựng `gift_data` chỉ từ `parseGiftData`; trường lạ bị bỏ; lỗi `400` nêu rõ mục sai; `braceletTitle` lấy từ đơn.
-  - Verify: curl lưu/đọc/từ chối trên DB thật.
-  - Files: `app/api/gifts/[token]/save/route.ts`.
+  - Deps: T0 · Files: `blocks.ts` (mới), `template-config.ts`, `types.ts`, `lib/validation/gift.ts`, `scripts/gift-validation.test.ts`
+- [ ] **T2 `deriveBlocks` + `normalizeGift` + test** (S)
+  - Acceptance: `deriveBlocks(saved)` suy ra danh sách cho thiệp chưa có `blocks` theo thứ tự mặc định, chỉ lấy mục có nội dung; `normalizeGift(saved)` trả thiệp để hiển thị (tên, người tặng/xưng hô/ẩn danh, `blocks`, nội dung từng loại) và **không trộn dữ liệu mẫu**; ảnh nổi bật cũ được đưa lên đầu album (tối đa 6).
+  - Verify: `npm test` với thiệp mới, thiệp cũ đủ trường, thiệp cũ thiếu trường, dữ liệu hỏng.
+  - Deps: T1 · Files: `gift-templates/normalize.ts` (mới), `scripts/normalize.test.ts` (mới)
+- [ ] **T3 Kiểm tra API lưu/đọc trên DB thật** (S)
+  - Acceptance: lưu thiệp mới có `blocks` → đọc lại đúng thứ tự; thiệp cũ (không `blocks`) đọc vẫn ra; lưu bị `400` với thông báo rõ cho các lỗi ở T1; ghi âm chỉ được giữ khi `voice` nằm trong `blocks`.
+  - Verify: curl trên dev server (port 5000) với DB thật, dọn dữ liệu thử sau test.
+  - Deps: T1, T2 · Files: chỉ sửa `api/gifts/[token]/save/route.ts` nếu phát hiện lệch
 
-**Checkpoint A:** ✅ `npm test` 22/22, `tsc` sạch, API lưu/đọc/từ chối đúng trên DB thật.
+**Checkpoint A:** `npm test`, `tsc`, `eslint` sạch; API lưu/đọc/từ chối đúng trên DB thật.
 
 ## Phase 2 — Studio
 
-- [x] **T3 Khung studio** (M): chọn mẫu, tên (xưng hô, ẩn danh), thư, lời kết, lưu/khôi phục; bỏ dữ liệu mẫu điền sẵn, AI giả, nhãn sai; câu mẫu có xác nhận trước khi ghi đè.
-- [x] **T4 Ảnh album + ảnh nổi bật** (M).
-- [x] **T5 Ngày kỷ niệm + mốc thời gian + video** (M).
-- [x] **T6 Nhạc**: giai điệu có sẵn (nghe thử) + link (M).
+- [ ] **T4 Bản nháp có `blocks`** (S)
+  - Acceptance: `GiftDraft.blocks`; `draftFromSaved` dùng `blocks` đã lưu hoặc `deriveBlocks`, gộp ảnh nổi bật cũ vào album; `draftToPayload` gửi `blocks`; mở studio mới thì `blocks` rỗng; bỏ tích không xoá nội dung trong bản nháp; bỏ `implemented.ts`.
+  - Verify: `npm test` (cập nhật `studio-draft.test.ts`), `tsc`.
+  - Deps: T1, T2 · Files: `studio/draft.ts`, `studio/implemented.ts` (xoá), `scripts/studio-draft.test.ts`
+- [ ] **T5 Bảng tích chọn + khung soạn Lên/Xuống/Bỏ** (M)
+  - Acceptance: trang `/create/[token]` theo thứ tự: Gửi cho ai → Bạn muốn gửi những gì? (lưới 8 thẻ, bàn phím và đọc màn hình dùng được) → khung soạn theo `blocks` có nút Lên / Xuống / Bỏ mục này → Giao diện thiệp (3 mẫu luôn dùng được) → OTP xem thiệp; khối ảnh nổi bật bị bỏ, ảnh đầu album ghi "ảnh bìa".
+  - Verify: `tsc`, `eslint`, `next build`; thử tay ở 390 / 768 / 1280px.
+  - Deps: T4 · Files: `studio/MessagePicker.tsx` (mới), `studio/ui.tsx` (BlockFrame), `app/create/[token]/page.tsx`, `studio/TemplatePicker.tsx`, `studio/blocks/PhotosBlock.tsx`
+- [ ] **T6 Báo lỗi mục trống + bưu thiếp mini theo `blocks`** (S)
+  - Acceptance: hàm thuần `blockProblems(draft)` (không có tên người nhận / chưa tích mục nào / mục đã tích còn trống) có test; lỗi cuộn tới đúng khung; `PreviewCard` hiện tóm tắt theo `blocks`.
+  - Verify: `npm test`, `tsc`, thử tay.
+  - Deps: T5 · Files: `studio/draft.ts`, `scripts/studio-draft.test.ts`, `studio/PreviewCard.tsx`, `app/create/[token]/page.tsx`
 
-**Checkpoint B:** ✅ bài test đầu-cuối: lưu bằng payload của studio, đọc lại còn nguyên (chữ, ảnh, nổi bật, lời kết, mốc, video, nhạc), PIN không lưu trong thiệp, đổi mẫu thì bỏ khối không hỗ trợ.
+**Checkpoint B:** tích, soạn, đổi thứ tự, lưu, tải lại → còn nguyên; thiệp cũ mở được trong studio; `tsc`, `eslint`, `npm test`, `next build` qua. **Bạn thử tay studio.**
 
-## Phase 3 — Ghi âm thật
+## Phase 3 — Bộ phát và khung xem
 
-- [x] **T7 Thư viện media + API voice + link ký** (M).
-- [x] **T8 Khối ghi âm trong studio** (M). Ghi âm bằng MediaRecorder (tối đa 120 giây, tự dừng), tải lên, nghe lại, bỏ ghi âm (chỉ xoá khỏi bản nháp), thử tải lại khi lỗi mạng; phần thuần có test (`scripts/recorder.test.ts`).
+- [ ] **T7 Đổi link thành địa chỉ nhúng + test** (S)
+  - Acceptance: `toVideoEmbed` (YouTube, Vimeo, Google Drive) và `toMusicEmbed` (YouTube, Spotify, SoundCloud) tách id từ link đã qua `parseHttpsLink`, dựng địa chỉ nhúng chính thức; link lạ → `null`; định dạng đối chiếu tài liệu chính thức của từng dịch vụ.
+  - Verify: `npm test` (nhiều dạng link: watch, youtu.be, shorts, playlist, link lạ).
+  - Deps: T1 · Files: `lib/media/embed.ts` (mới), `scripts/embed.test.ts` (mới)
+- [ ] **T8 VoicePlayer + VideoEmbed** (M)
+  - Acceptance: `VoicePlayer` phát `<audio>` thật (phát/dừng, tua, thời lượng), lỗi hoặc hết hạn → xin link mới một lần rồi thông báo; `VideoEmbed` dựng `<iframe>` (`sandbox`, `referrerpolicy`, `loading="lazy"`, `title`), không nhúng được thì hiện nút mở link gốc; nhận `className`/kiểu dáng từ mẫu.
+  - Verify: `tsc`, `eslint`; thử tay (ghi âm thật, video YouTube công khai và riêng tư).
+  - Deps: T7 · Files: `gift-templates/media/VoicePlayer.tsx`, `media/VideoEmbed.tsx`
+- [ ] **T9 MusicPlayer + AnniversaryCounter + TimelineList** (M)
+  - Acceptance: `MusicPlayer` — giai điệu có sẵn dùng `musicPlayerSynth`, chỉ bắt đầu sau thao tác người dùng, có nút tạm dừng; link dùng khung nhúng, người nhận tự bấm phát; `AnniversaryCounter` đếm ngày (dùng `daysSince`); `TimelineList` hiện tối đa 5 mốc theo ngày.
+  - Verify: `tsc`, `eslint`; thử tay trên điện thoại.
+  - Deps: T7 · Files: `media/MusicPlayer.tsx`, `media/AnniversaryCounter.tsx`, `media/TimelineList.tsx`, `studio/draft.ts` (dùng lại `daysSince`)
+- [ ] **T10 Khung trang xem thiệp** (M)
+  - Acceptance: `/g/[token]` dùng `normalizeGift`, truyền `gift` + `blocks` cho mẫu (và `data` kiểu cũ cho mẫu chưa chuyển); mẫu lấy từ dữ liệu đã lưu, bỏ `?tpl=`; bỏ thanh đổi mẫu và chế độ "Bản thảo" cho người nhận (xem câu hỏi mở trong plan); tên người tặng / xưng hô / ẩn danh dùng thật; giữ chế độ Story + Cuộn dọc.
+  - Verify: `tsc`, `eslint`, `next build`; mở thiệp thật ở cả 3 mẫu, không hỏng.
+  - Deps: T2, T8, T9 · Files: `gift-templates/GiftTemplateViewer.tsx`, `gift-templates/types.ts`, `app/g/[token]/page.tsx`
 
-**Checkpoint C:** ✅ API 22/22 trên Supabase thật; khối ghi âm đã vào studio. `npm test` 38/38, `tsc`, `eslint`, `next build` đều qua. Micro thật + nén ảnh chưa chạy trong trình duyệt thật → bạn tự test.
+**Checkpoint C:** bộ phát chạy với dữ liệu thật; khung xem truyền đúng dữ liệu; 3 mẫu hiện tại vẫn mở được. **Bạn thử tay nghe ghi âm, xem video, phát nhạc.**
 
-## Phase 4 — Rà soát
+## Phase 4 — Ba mẫu (làm song song sau Checkpoint C; mỗi mẫu một nhánh, không đụng file của mẫu khác)
 
-- [x] **T9 Rà soát bảo mật + hiệu năng** (S). Đã sửa: `save` giờ từ chối body >3,5 MB (413) và JSON hỏng/null/mảng (400) thay vì 500; kiểm bằng script thật (6/6). Đã rà và ổn: mọi route gifts đều cần phiên đúng phạm vi, voice kiểm byte đầu file + giới hạn 2 MB + chỉ link ký 1 giờ trên bucket riêng, đường dẫn ghi âm khoá theo thư mục thiệp, link nhạc/video https + danh sách host, không dùng `dangerouslySetInnerHTML`. Ghi nhận chưa sửa: (1) giới hạn tốc độ nằm trong bộ nhớ và dựa vào `x-forwarded-for` → khi chạy nhiều instance cần kho dùng chung; (2) GET thiệp trả cả ảnh inline (tới ~2,5 MB) → chuyển ảnh sang Storage sẽ giải quyết; (3) OTP vẫn là mã cố định.
-- [x] **T10 Build, push, ghi chú việc còn lại** (S). `npm test` 38/38, `tsc`, `eslint`, `next build` qua; đã quét commit chưa push: không có secret/co-author.
+### Storybook 20/10
+- [ ] **T11 Storybook: khung động + mở quà / thư / ảnh / lời kết** (M)
+  - Acceptance: slide "Mở quà" đầu, mỗi mục tích một slide đúng thứ tự, slide "Cảm ơn" cuối (hiện lời kết); số slide theo `blocks`, điều hướng hoạt động với N slide; ảnh album chỉ dùng ảnh khách (1–6 ảnh, bố cục thích ứng, không còn ảnh Unsplash mẫu); mã tách thành `storybook/*Slide.tsx`.
+  - Verify: `tsc`, `eslint`, `next build`; thử tay với thiệp chỉ có thư; thiệp chỉ có ảnh; thiệp đủ mục.
+  - Deps: C · Files: `StorybookSunsetTemplate.tsx`, `storybook/OpenSlide.tsx`, `LetterSlide.tsx`, `PhotosSlide.tsx`, `ClosingSlide.tsx`
+- [ ] **T12 Storybook: video / nhạc / ghi âm** (M)
+  - Acceptance: slide dùng `VideoEmbed`, `MusicPlayer`, `VoicePlayer` thật (bỏ đồng hồ giả và giai điệu cố định); giữ giao diện hiện có.
+  - Verify: `tsc`, `eslint`; thử tay.
+  - Deps: T11 · Files: `storybook/VideoSlide.tsx`, `MusicSlide.tsx`, `VoiceSlide.tsx`, `StorybookSunsetTemplate.tsx`
+- [ ] **T13 Storybook: ngày kỷ niệm / mốc thời gian** (S)
+  - Acceptance: hai slide mới đúng phong cách mẫu, hiện đúng dữ liệu.
+  - Deps: T11 · Files: `storybook/AnniversarySlide.tsx`, `TimelineSlide.tsx`, `StorybookSunsetTemplate.tsx`
 
-## Ngoài phạm vi (giai đoạn sau)
+### Retro 90s
+- [ ] **T14 Retro: khung động + thư / ảnh / lời kết** (M)
+  - Acceptance: các khu vực theo thứ tự `blocks`; ảnh album 1–6 ảnh không phụ thuộc ảnh nổi bật hay ảnh mẫu; bỏ chế độ mini; tách thư mục `retro/`.
+  - Verify: `tsc`, `eslint`, `next build`; thử tay.
+  - Deps: C · Files: `RetroNostalgiaTemplate.tsx`, `retro/*`
+- [ ] **T15 Retro: video / nhạc / ghi âm + ngày KN / mốc** (M)
+  - Acceptance: cassette cho nhạc và ghi âm dùng bộ phát thật; video dùng `VideoEmbed`; ngày kỷ niệm và mốc thời gian theo phong cách mẫu.
+  - Deps: T14 · Files: `retro/*`, `RetroNostalgiaTemplate.tsx`
 
-- Hiển thị các khối mới trong trang xem thiệp và 3 mẫu thiệp (Sổ Hoa Khô hiện còn dùng ảnh Unsplash gán cứng).
-- Chuyển ảnh sang Storage, nút "Tặng" khóa thiệp, AI thật, OTP một lần.
+### Sổ Hoa Khô
+- [ ] **T16 Vintage: khung động + thư / ảnh / lời kết** (M)
+  - Acceptance: trang sổ theo thứ tự `blocks`; album dùng ảnh khách (hết Unsplash gán cứng); đề từ, chữ ký, lời kết hiện đúng; bỏ ảnh vòng tay mặc định (`braceletImg`); tách `vintage/`.
+  - Deps: C · Files: `VintageScrapbookTemplate.tsx`, `vintage/*`
+- [ ] **T17 Vintage: ghi âm / video / nhạc + mốc / ngày KN** (M)
+  - Acceptance: các mục kiểu sổ dán (washi tape, polaroid) dùng bộ phát thật; ngày kỷ niệm hiện đếm ngày.
+  - Deps: T16 · Files: `vintage/*`, `VintageScrapbookTemplate.tsx`
+
+**Checkpoint D:** cả 3 mẫu hiển thị đúng 3 loại thiệp thử: chỉ thư; chỉ ảnh + nhạc; đủ 8 mục theo thứ tự đảo. **Bạn xem trên điện thoại (nhất là iPhone).**
+
+## Phase 5 — Hoàn tất
+
+- [ ] **T18 Nút Xem thử toàn màn hình** (S)
+  - Acceptance: nút "Xem thử" (cột bên phải và thanh dưới trên điện thoại) mở lớp phủ toàn màn hình dùng đúng trang xem thiệp với dữ liệu đang soạn (chưa cần lưu); đóng bằng nút và phím Esc, trả focus; ghi âm trong bản nháp nghe được.
+  - Verify: `tsc`, `eslint`; thử tay.
+  - Deps: D · Files: `studio/PreviewOverlay.tsx` (mới), `app/create/[token]/page.tsx`
+- [ ] **T19 Dọn dẹp** (S)
+  - Acceptance: bỏ `DEFAULT_GIFT_DATA` khỏi đường xem thiệp và `data` kiểu cũ trong 3 mẫu; dữ liệu mẫu chỉ ở `/thamkhao`; bỏ mã thừa còn lại (highlight, `templateHasBlock`...); cập nhật `docs/specs/card-studio.md`, `docs/adr/0001`.
+  - Verify: đồ thị import không còn file chết; `tsc`, `eslint`, `npm test`, `next build`.
+  - Deps: T18 · Files: nhiều file nhỏ (mỗi nhóm một commit)
+- [ ] **T20 Nghiệm thu** (S)
+  - Acceptance: đủ 7 tiêu chí trong `docs/specs/card-messages.md`; bảng "đã tự kiểm" và "bạn cần tự thử" ghi rõ.
+  - Verify: `tsc`, `eslint`, `npm test`, `next build` + curl API + checklist thử tay.
+  - Deps: T19
+
+**Checkpoint E:** bạn xác nhận trên thiết bị thật (micro, nhạc, video, iPhone), sau đó mới push.
+
+## Ngoài phạm vi
+
+Nút "Tặng" khoá thiệp, AI viết lời nhắn, email thông báo, tải bản offline, chuyển ảnh sang Storage, tự lưu nháp, lời cảm ơn của người nhận, quyết định PIN in trên thẻ.

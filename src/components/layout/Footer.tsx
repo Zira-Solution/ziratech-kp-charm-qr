@@ -46,7 +46,7 @@ export default function Footer() {
                 Độc Quyền Tại Đại Học FPT
               </h4>
               <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
-                Nhận hàng duy nhất ngày <strong>20/10/2026</strong> tại bàn nhận trường FPT hoặc giao tận phòng học theo yêu cầu. Không ship ngoài trường.
+                Nhận hàng trong chuỗi ngày hội <strong>16/10 – 20/10/2026</strong> (Cao điểm ngày 20/10 tại Sảnh lầu 2) hoặc giao tận phòng học theo yêu cầu. Không ship ngoài trường.
               </p>
             </div>
           </div>

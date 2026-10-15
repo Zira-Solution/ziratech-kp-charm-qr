@@ -208,7 +208,7 @@ export default function LuckyWheel() {
           </h2>
 
           <p className="font-body text-sm sm:text-base text-rose-100/90 mt-4 leading-relaxed max-w-2xl mx-auto">
-            Diễn ra <span className="text-amber-200 font-semibold">trực tiếp duy nhất vào ngày 20/10</span> tại gian hàng sảnh lầu 2 ĐH FPT.
+            Diễn ra <span className="text-amber-200 font-semibold">trong chuỗi ngày hội 16/10 – 20/10 (Cao điểm ngày 20/10)</span> tại gian hàng K&amp;P Atelier ĐH FPT.
             Mỗi đơn hàng hoặc trải nghiệm tự làm vòng đều nhận được <strong className="text-white">01 lượt quay trúng thưởng 100%</strong> mang về kỷ vật ấm áp!
           </p>
 

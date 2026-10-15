@@ -5,7 +5,7 @@ const HERO_IMG = "/images/vong_charm_san.png";
 const TRUST = [
   { icon: "qr_code_2", text: "Trang thiệp số đa phương tiện 1:1" },
   { icon: "inventory_2", text: "Hộp quà đóng gói tinh tế, chỉn chu" },
-  { icon: "storefront", text: "Nhận quà trực tiếp tại trường ngày 20/10" },
+  { icon: "storefront", text: "Gian hàng phục vụ 16/10 – 20/10 tại trường" },
 ];
 
 const IMPACT = [

@@ -14,12 +14,12 @@ interface GiftTemplateViewerProps {
 }
 
 export default function GiftTemplateViewer({
-  initialTemplate = "vintage-scrapbook",
+  initialTemplate = "storybook-sunset",
   giftData,
   onBackToLock,
 }: GiftTemplateViewerProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<GiftTemplateId>(initialTemplate);
-  const [viewMode, setViewMode] = useState<"story" | "sheet" | "scroll">("sheet");
+  const [viewMode, setViewMode] = useState<"story" | "sheet" | "scroll">("story");
   const [activeSlide, setActiveSlide] = useState<number>(1);
   const [isPhoneFrame, setIsPhoneFrame] = useState<boolean>(true);
   const [showSavedModal, setShowSavedModal] = useState<boolean>(false);

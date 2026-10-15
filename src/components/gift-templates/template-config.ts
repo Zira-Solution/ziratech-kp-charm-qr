@@ -41,6 +41,14 @@ export interface TemplateInfo {
 
 export const TEMPLATES: readonly TemplateInfo[] = [
   {
+    id: "storybook-sunset",
+    name: "Storybook 20/10",
+    icon: "🌅",
+    desc: "Mẫu chuẩn thiết kế 7 slide tương tác",
+    blocks: ["letter", "photos", "highlight", "finalMessage", "music", "voice", "video", "timeline"],
+    highlightMax: 1,
+  },
+  {
     id: "vintage-scrapbook",
     name: "Sổ Hoa Khô",
     icon: "🌸",
@@ -56,17 +64,9 @@ export const TEMPLATES: readonly TemplateInfo[] = [
     blocks: ["letter", "photos", "highlight", "finalMessage", "music", "voice", "video"],
     highlightMax: 2,
   },
-  {
-    id: "storybook-sunset",
-    name: "Sunset Anime",
-    icon: "🌅",
-    desc: "Hoàng hôn lãng mạn, nhẹ nhàng",
-    blocks: ["letter", "photos", "highlight", "finalMessage", "music", "voice", "video", "timeline"],
-    highlightMax: 1,
-  },
 ];
 
-export const DEFAULT_TEMPLATE: GiftTemplateId = "vintage-scrapbook";
+export const DEFAULT_TEMPLATE: GiftTemplateId = "storybook-sunset";
 
 export const getTemplate = (id: unknown): TemplateInfo | undefined => TEMPLATES.find((t) => t.id === id);
 

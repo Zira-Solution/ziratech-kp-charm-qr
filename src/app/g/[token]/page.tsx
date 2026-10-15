@@ -10,7 +10,7 @@ export default function RecipientGiftPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const token = params?.token as string;
-  const initialTemplateParam = (searchParams.get("tpl") as GiftTemplateId) || "vintage-scrapbook";
+  const initialTemplateParam = (searchParams.get("tpl") as GiftTemplateId) || "storybook-sunset";
 
   const [unlocked, setUnlocked] = useState(false);
   const [holding, setHolding] = useState(false);

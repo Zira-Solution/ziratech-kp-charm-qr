@@ -22,6 +22,7 @@ import VideoBlock from "@/components/studio/blocks/VideoBlock";
 import MusicBlock from "@/components/studio/blocks/MusicBlock";
 import VoiceBlock from "@/components/studio/blocks/VoiceBlock";
 import { parseGiftData } from "@/lib/validation/gift";
+import { deriveBlocks } from "@/components/gift-templates/blocks";
 
 interface StudioProduct {
   token: string;
@@ -109,8 +110,13 @@ export default function CardStudioPage() {
       return;
     }
 
+    // Interim until the tick-boxes land: this form has no picker yet, so tick whatever the chosen
+    // template shows and the buyer has filled in.
+    const shown = BLOCK_ORDER.filter((b) => IMPLEMENTED_BLOCKS.has(b) && templateHasBlock(draft.template, b)) as string[];
+    const body = draftToPayload({ ...draft, blocks: deriveBlocks(draftToPayload(draft).giftData).filter((b) => shown.includes(b)) });
+
     // Same checks the server runs, so mistakes in links, dates or milestones are caught before sending.
-    const checked = parseGiftData(draftToPayload(draft).giftData, { token });
+    const checked = parseGiftData(body.giftData, { token });
     if (!checked.ok) {
       setSaveError(checked.error);
       requestAnimationFrame(() => saveErrorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
@@ -122,7 +128,7 @@ export default function CardStudioPage() {
       const res = await fetch(`/api/gifts/${token}/save`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(draftToPayload(draft)),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
@@ -191,19 +197,6 @@ export default function CardStudioPage() {
             max={6}
             showDate
             onChange={(photos) => update({ photos })}
-          />
-        );
-      case "highlight":
-        return (
-          <PhotosBlock
-            key={block}
-            id="highlight"
-            step={next()}
-            title={info && info.highlightMax === 1 ? "Ảnh bìa" : "Ảnh nổi bật"}
-            hint={`Ảnh lớn đặt ở vị trí đẹp nhất của thiệp (tối đa ${info?.highlightMax ?? 1} ảnh).`}
-            items={draft.highlights}
-            max={info?.highlightMax ?? 1}
-            onChange={(highlights) => update({ highlights })}
           />
         );
       case "finalMessage":

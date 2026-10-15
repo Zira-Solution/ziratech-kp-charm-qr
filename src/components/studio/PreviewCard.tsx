@@ -11,12 +11,11 @@ export default function PreviewCard({ draft }: { draft: GiftDraft }) {
   const info = getTemplate(draft.template);
   const has = (b: Parameters<typeof templateHasBlock>[1]) => IMPLEMENTED_BLOCKS.has(b) && templateHasBlock(draft.template, b);
 
-  const cover = (has("highlight") ? draft.highlights[0]?.url : undefined) ?? (has("photos") ? draft.photos[0]?.url : undefined);
+  const cover = has("photos") ? draft.photos[0]?.url : undefined;
   const days = has("anniversary") ? daysSince(draft.anniversaryDate) : null;
 
   const facts: string[] = [];
   if (has("photos") && draft.photos.length) facts.push(`${draft.photos.length} ảnh`);
-  if (has("highlight") && draft.highlights.length) facts.push(`${draft.highlights.length} ảnh nổi bật`);
   if (days !== null && days >= 0) facts.push(`Đã bên nhau ${days} ngày`);
   if (has("timeline") && draft.timeline.length) facts.push(`${draft.timeline.length} mốc kỷ niệm`);
   if (has("music") && draft.song.source !== "none") facts.push(BLOCK_LABELS.music);

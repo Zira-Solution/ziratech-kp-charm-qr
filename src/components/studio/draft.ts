@@ -1,5 +1,7 @@
 import type { GiftTemplateId, SongSource, TimelineItem } from "../gift-templates/types.ts";
 import { DEFAULT_TEMPLATE, getTemplate } from "../gift-templates/template-config.ts";
+import { deriveBlocks, isBlockId, type BlockId } from "../gift-templates/blocks.ts";
+import { MAX_PHOTOS } from "../../lib/validation/gift.ts";
 
 /** What the buyer is editing in the studio. Strings are never null so inputs stay controlled. */
 export interface PhotoDraft {
@@ -25,6 +27,8 @@ export interface VoiceDraft {
 
 export interface GiftDraft {
   template: GiftTemplateId;
+  /** The messages the buyer ticked, in the order they are shown. Unticked ones keep their content here. */
+  blocks: BlockId[];
   senderName: string;
   recipientName: string;
   addressing: string;
@@ -34,7 +38,6 @@ export interface GiftDraft {
   letterContent: string;
   letterSignature: string;
   photos: PhotoDraft[];
-  highlights: PhotoDraft[];
   finalMessage: string;
   anniversaryDate: string;
   anniversaryLabel: string;
@@ -49,6 +52,7 @@ export interface GiftDraft {
 export function emptyDraft(): GiftDraft {
   return {
     template: DEFAULT_TEMPLATE,
+    blocks: [],
     senderName: "",
     recipientName: "",
     addressing: "",
@@ -58,7 +62,6 @@ export function emptyDraft(): GiftDraft {
     letterContent: "",
     letterSignature: "",
     photos: [],
-    highlights: [],
     finalMessage: "",
     anniversaryDate: "",
     anniversaryLabel: "",
@@ -102,8 +105,13 @@ export function draftFromSaved(saved: unknown): GiftDraft {
   d.letterSubtitle = str(g.letterSubtitle);
   d.letterContent = str(g.letterContent);
   d.letterSignature = str(g.letterSignature);
-  d.photos = photoList(g.memoryPhotos);
-  d.highlights = photoList(g.momentPhotos);
+
+  // A card saved before `blocks` existed: work the list out from its content and put its old
+  // highlight photos at the front of the album.
+  const hasList = Array.isArray(g.blocks);
+  d.blocks = [...new Set((hasList ? (g.blocks as unknown[]) : deriveBlocks(g)).filter(isBlockId))];
+  const album = photoList(g.memoryPhotos);
+  d.photos = (hasList ? album : [...photoList(g.momentPhotos), ...album]).slice(0, MAX_PHOTOS);
   d.finalMessage = str(g.finalMessage);
 
   const a = g.anniversary as Record<string, unknown> | undefined;
@@ -148,6 +156,7 @@ export function draftFromSaved(saved: unknown): GiftDraft {
 export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown> } {
   const giftData: Record<string, unknown> = {
     template: d.template,
+    blocks: d.blocks,
     senderName: d.senderName,
     recipientName: d.recipientName,
     addressing: d.addressing,
@@ -157,7 +166,6 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
     letterContent: d.letterContent,
     letterSignature: d.letterSignature,
     memoryPhotos: d.photos,
-    momentPhotos: d.highlights.map((p) => ({ url: p.url, caption: p.caption })),
     finalMessage: d.finalMessage,
     anniversary: { date: d.anniversaryDate, label: d.anniversaryLabel },
     timeline: d.timeline,

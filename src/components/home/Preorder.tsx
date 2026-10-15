@@ -6,10 +6,9 @@ const field =
   "w-full px-5 py-3.5 bg-white/70 backdrop-blur-md border border-white/80 rounded-full focus:border-primary focus:outline-none focus:ring-2 focus:ring-tertiary text-primary text-sm shadow-inner";
 
 const SLOTS = [
-  "08:30 – 10:00 (Buổi sáng)",
-  "10:00 – 12:00 (Giờ giải lao trưa)",
-  "13:30 – 15:30 (Đầu giờ chiều)",
-  "15:30 – 17:30 (Cuối buổi chiều)",
+  "11:00 – 12:15 (Nghỉ trưa ca sáng / Đón tiếp sớm)",
+  "12:15 – 13:30 (Giờ cao điểm nghỉ trưa sinh viên)",
+  "13:30 – 15:00 (Đầu ca chiều / Trả đơn hoàn thiện)",
 ];
 
 export default function Preorder() {

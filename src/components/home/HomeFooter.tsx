@@ -47,8 +47,7 @@ export default function HomeFooter() {
             <span className="font-sans text-xs text-white uppercase tracking-wider font-bold">Hỗ trợ sinh viên</span>
             <Link className={linkClass} href="/gift">Tạo thiệp quà (người mua)</Link>
             <a className={linkClass} href="#preorder">Điều khoản đơn hàng</a>
-            <a className={linkClass} href="#shelter">Liên hệ trạm cứu hộ</a>
-            <span className="text-white/50 text-xs italic">Thông tin cửa hàng sẽ cập nhật</span>
+            <span className="text-white/70 text-xs">Mở cửa 11:00 – 15:00 ngày 20/10</span>
           </div>
 
           <div className="p-5 rounded-[26px] bg-white/5 backdrop-blur-xl border border-white/10 flex flex-col space-y-2 shadow-inner">

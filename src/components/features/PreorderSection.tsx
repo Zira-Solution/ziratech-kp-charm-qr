@@ -28,7 +28,7 @@ export default function PreorderSection({
   const [recipientName, setRecipientName] = useState("");
   const [senderPhone, setSenderPhone] = useState("");
   const [senderEmail, setSenderEmail] = useState("");
-  const [timeSlot, setTimeSlot] = useState("10:00 - 12:00 (Giờ nghỉ trưa)");
+  const [timeSlot, setTimeSlot] = useState("11:00 – 12:15 (Nghỉ trưa ca sáng)");
   const [deliveryType, setDeliveryType] = useState<"booth" | "classroom">("booth");
   const [roomNote, setRoomNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "vietqr">("cod");
@@ -573,10 +573,9 @@ export default function PreorderSection({
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {[
-                          "08:30 - 10:00 (Sáng sớm - Vào ca)",
-                          "10:00 - 12:00 (Giờ nghỉ trưa)",
-                          "14:00 - 16:00 (Buổi chiều)",
-                          "16:30 - 18:00 (Tan trường)",
+                          "11:00 – 12:15 (Nghỉ trưa ca sáng)",
+                          "12:15 – 13:30 (Giờ cao điểm nghỉ trưa)",
+                          "13:30 – 15:00 (Đầu ca chiều / Trả đơn)",
                         ].map((slot) => (
                           <label
                             key={slot}

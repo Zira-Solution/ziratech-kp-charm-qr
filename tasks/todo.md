@@ -57,10 +57,11 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
 
 ## Phase 3 — Bộ phát và khung xem
 
-- [ ] **T7 Đổi link thành địa chỉ nhúng + test** (S)
+- [x] **T7 Đổi link thành địa chỉ nhúng + test** (S)
   - Acceptance: `toVideoEmbed` (YouTube, Vimeo, Google Drive) và `toMusicEmbed` (YouTube, Spotify, SoundCloud) tách id từ link đã qua `parseHttpsLink`, dựng địa chỉ nhúng chính thức; link lạ → `null`; định dạng đối chiếu tài liệu chính thức của từng dịch vụ.
   - Verify: `npm test` (nhiều dạng link: watch, youtu.be, shorts, playlist, link lạ).
   - Deps: T1 · Files: `lib/media/embed.ts` (mới), `scripts/embed.test.ts` (mới)
+  - Đã làm: đối chiếu tài liệu chính thức (nguồn ghi ở đầu `embed.ts`). Đã xác nhận: YouTube (+ miền youtube-nocookie), Vimeo, SoundCloud widget, Spotify `track`. **Chưa xác nhận bằng tài liệu chính thức:** Drive `/preview`, mã băm Vimeo riêng tư (bỏ), Spotify loại khác `track` và chiều cao, SoundCloud nhận link trang công khai; giữ nút "mở link gốc" dự phòng. Test: 71/71.
 - [ ] **T8 VoicePlayer + VideoEmbed** (M)
   - Acceptance: `VoicePlayer` phát `<audio>` thật (phát/dừng, tua, thời lượng), lỗi hoặc hết hạn → xin link mới một lần rồi thông báo; `VideoEmbed` dựng `<iframe>` (`sandbox`, `referrerpolicy`, `loading="lazy"`, `title`), không nhúng được thì hiện nút mở link gốc; nhận `className`/kiểu dáng từ mẫu.
   - Verify: `tsc`, `eslint`; thử tay (ghi âm thật, video YouTube công khai và riêng tư).

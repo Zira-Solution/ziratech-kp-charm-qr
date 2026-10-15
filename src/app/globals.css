@@ -124,15 +124,6 @@ body {
   }
 }
 
-@keyframes liquidShimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
 @keyframes liquidPulse {
   0%, 100% {
     opacity: 0.35;
@@ -154,12 +145,6 @@ body {
 
 .animate-liquid-pulse {
   animation: liquidPulse 8s ease-in-out infinite;
-}
-
-.animate-liquid-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%);
-  background-size: 200% 100%;
-  animation: liquidShimmer 3.5s infinite;
 }
 
 /* ========================================================= */
@@ -265,29 +250,6 @@ body {
     0 14px 34px -4px rgba(114, 26, 40, 0.48),
     inset 0 2px 2px 0 rgba(255, 255, 255, 0.7);
   transform: translateY(-2px) scale(1.015);
-}
-
-/* Liquid Glass Pure Crystal Secondary Button */
-.liquid-glass-btn-secondary {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.50) 100%);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border: 1.2px solid rgba(255, 255, 255, 0.92);
-  color: #540114;
-  box-shadow: 
-    0 6px 20px rgba(114, 26, 40, 0.06),
-    0 2px 6px rgba(114, 26, 40, 0.02),
-    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.98);
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.liquid-glass-btn-secondary:hover {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.70) 100%);
-  border-color: rgba(255, 255, 255, 1);
-  box-shadow: 
-    0 10px 26px rgba(114, 26, 40, 0.10),
-    inset 0 2px 2px 0 rgba(255, 255, 255, 1);
-  transform: translateY(-2px);
 }
 
 /* Liquid Glass Recessed Input */
@@ -400,26 +362,6 @@ body {
   );
 }
 
-.tape-torn {
-  background: rgba(235, 218, 198, 0.88);
-  box-shadow: 0 1px 3px rgba(50, 35, 20, 0.15);
-  clip-path: polygon(
-    0% 8%, 5% 0%, 95% 2%, 100% 7%, 
-    98% 30%, 100% 52%, 97% 75%, 100% 92%, 95% 100%, 
-    5% 97%, 0% 88%, 3% 66%, 0% 46%, 2% 26%
-  );
-}
-
-.tape-pink-torn {
-  background: rgba(235, 180, 175, 0.88);
-  box-shadow: 0 1px 3px rgba(50, 35, 20, 0.15);
-  clip-path: polygon(
-    0% 6%, 4% 0%, 96% 3%, 100% 8%, 
-    98% 28%, 100% 50%, 97% 72%, 100% 90%, 96% 99%, 
-    3% 97%, 0% 88%, 3% 66%, 0% 46%, 2% 26%
-  );
-}
-
 .polaroid-card {
   background: #ffffff;
   padding: 8px 8px 24px 8px;
@@ -454,87 +396,6 @@ body {
     radial-gradient(rgba(180, 145, 105, 0.22) 1px, transparent 1px);
   background-size: 14px 14px;
 }
-
-.anime-card-bg {
-  background-color: #faf5ed;
-  background-image: 
-    linear-gradient(180deg, #fcf8f2 0%, #faf3ea 100%);
-}
-
-/* ========================================================= */
-/* 3D Phygital Showcase & Parallax Animations */
-/* ========================================================= */
-
-@keyframes laserScan {
-  0% {
-    top: 5%;
-    opacity: 0.3;
-  }
-  50% {
-    top: 92%;
-    opacity: 1;
-  }
-  100% {
-    top: 5%;
-    opacity: 0.3;
-  }
-}
-
-.animate-laser-scan {
-  animation: laserScan 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-@keyframes float3d {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-10px) rotate(2.5deg);
-  }
-}
-
-.animate-float-3d {
-  animation: float3d 5.5s ease-in-out infinite;
-}
-
-@keyframes floatReverse3d {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(10px) rotate(-2deg);
-  }
-}
-
-.animate-float-reverse-3d {
-  animation: floatReverse3d 6.5s ease-in-out infinite;
-}
-
-@keyframes spinSlow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spinSlow 14s linear infinite;
-}
-
-.preserve-3d {
-  transform-style: preserve-3d;
-}
-
-.perspective-1200 {
-  perspective: 1200px;
-}
-
-.backface-hidden {
-  backface-visibility: hidden;
-}
-
 
 /* ========================================================= */
 /* Home page ("kp-home"): rose / burgundy liquid-glass look.  */

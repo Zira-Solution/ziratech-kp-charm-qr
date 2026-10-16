@@ -11,6 +11,7 @@
     "check:fast": "tsc --noEmit && eslint && node scripts/floor-guard.mjs && gitleaks detect --redact --no-banner",
     "check:task": "npm run check:fast && npm test",
     "check:web": "node scripts/check-web.mjs",
+    "check:cards": "node scripts/accept-cards.mjs",
     "check:full": "npm run check:task && osv-scanner scan source -r . && npm run check:web"
   },
   "dependencies": {

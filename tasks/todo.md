@@ -141,10 +141,23 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Verify: đồ thị import không còn file chết; `tsc`, `eslint`, `npm test`, `next build`.
   - Deps: T18 · Files: nhiều file nhỏ (mỗi nhóm một commit)
   - Đã làm: `template-config.ts` chỉ còn id, tên, biểu tượng, mô tả (bỏ danh sách khối, `highlightMax`, `templateHasBlock`, `BlockId` trùng); bỏ `?tpl=`; dữ liệu mẫu cũ chỉ còn trong `types.ts` cho `/thamkhao` (có chú thích); đồ thị import không còn file chết; 0 export hoàn toàn không dùng; cập nhật `card-studio.md`, ADR 0001, thêm ADR 0002. Giữ có chủ ý: xử lý `momentPhotos` cho thiệp cũ (có test).
-- [ ] **T20 Nghiệm thu** (S)
+- [x] **T20 Nghiệm thu** (S)
   - Acceptance: đủ 7 tiêu chí trong `docs/specs/card-messages.md`; bảng "đã tự kiểm" và "bạn cần tự thử" ghi rõ.
   - Verify: `tsc`, `eslint`, `npm test`, `next build` + curl API + checklist thử tay.
   - Deps: T19
+  - **Kết quả nghiệm thu (2026-10-16):**
+
+    | Tiêu chí | Cách kiểm | Kết quả |
+    |---|---|---|
+    | 1. Studio: chưa tích gì, tích rồi sang bước soạn, bỏ tích không mất nội dung | `npm run check:cards` (Chrome, qua màn hình) | Đạt |
+    | 2. Lên/Xuống, lưu, mở lại giữ thứ tự | `check:cards` | Đạt |
+    | 3. Từ chối khi thiếu tên / chưa tích / mục trống, nêu tên mục | `check:cards` + `scripts/gift-validation.test.ts` | Đạt |
+    | 4. Thiệp người nhận đúng mục, đúng thứ tự, không nội dung mẫu — 3 mẫu × (điện thoại, iPad dọc, iPad ngang, máy tính) | `check:cards` (mở khoá bằng giữ nút tim thật, đọc từng trang) | Đạt 12/12 tổ hợp; khung dọc/ngang đúng; không cuộn ngang |
+    | 5. Video xem được, nhạc có sẵn bật/tắt được | `check:cards` (khung YouTube riêng tư; trạng thái nút nhạc) | Đạt. **Chưa kiểm:** ghi âm thật (cần Supabase Storage), nghe thật âm thanh, nhạc dạng link Spotify/SoundCloud, iPhone/Safari thật |
+    | 6. Thiệp cũ (chưa có `blocks`) vẫn mở đúng | `scripts/normalize.test.ts`, `studio-draft.test.ts`, `blocks.test.ts` | Đạt bằng test; **chưa thử với một thiệp cũ thật trong DB** (tránh làm bẩn dữ liệu đang dùng) |
+    | 7. `tsc`, `eslint`, `npm test` (80), `next build` | chạy trực tiếp | Đạt |
+
+    Cổng của `CONSTRAINTS.md`: floor guard sạch, gitleaks không rò rỉ, osv-scanner sạch (1 ngoại lệ W1 có hạn), Lighthouse không suy giảm so với số gốc. Bộ nghiệm thu được lưu thành `scripts/accept-cards.mjs` (xem đầu file để biết cách chạy trên server bộ nhớ, không đụng DB thật).
 
 **Checkpoint E:** bạn xác nhận trên thiết bị thật (micro, nhạc, video, iPhone), sau đó mới push.
 

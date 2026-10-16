@@ -71,10 +71,11 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Verify: `tsc`, `eslint`; thử tay (ghi âm thật, video YouTube công khai và riêng tư).
   - Deps: T7 · Files: `gift-templates/media/VoicePlayer.tsx`, `media/VideoEmbed.tsx`
   - Đã làm: `useVoicePlayer` (hook trạng thái, xin link mới một lần khi lỗi, chỉ tải khi bấm phát) + `VoicePlayer` mặc định + `VideoEmbed` (iframe `sandbox`, `referrerpolicy`, luôn có nút mở link gốc). `tsc`, `eslint` sạch. **Chưa nghe/xem thật** (cần ghi âm thật và video thật; kiểm ở T10/T12).
-- [ ] **T9 MusicPlayer + AnniversaryCounter + TimelineList** (M)
+- [x] **T9 MusicPlayer + AnniversaryCounter + TimelineList** (M)
   - Acceptance: `MusicPlayer` — giai điệu có sẵn dùng `musicPlayerSynth`, chỉ bắt đầu sau thao tác người dùng, có nút tạm dừng; link dùng khung nhúng, người nhận tự bấm phát; `AnniversaryCounter` đếm ngày (dùng `daysSince`); `TimelineList` hiện tối đa 5 mốc theo ngày.
   - Verify: `tsc`, `eslint`; thử tay trên điện thoại.
   - Deps: T7 · Files: `media/MusicPlayer.tsx`, `media/AnniversaryCounter.tsx`, `media/TimelineList.tsx`, `studio/draft.ts` (dùng lại `daysSince`)
+  - Đã làm: `useMusicPlayer` + `MusicPlayer` (giai điệu có sẵn: nút bấm; link: khung nhúng sandbox, người nhận tự bấm phát, luôn có link gốc), `AnniversaryCounter`, `TimelineList`, và phần logic thuần `media/format.ts` (có test, 74/74). `tsc`, `eslint` sạch. **Chưa nghe/xem thật** (kiểm ở Checkpoint C).
 - [ ] **T10 Khung trang xem thiệp** (M)
   - Acceptance: `/g/[token]` dùng `normalizeGift`, truyền `gift` + `blocks` cho mẫu (và `data` kiểu cũ cho mẫu chưa chuyển); mẫu lấy từ dữ liệu đã lưu, bỏ `?tpl=`; bỏ thanh đổi mẫu và chế độ "Bản thảo" cho người nhận (xem câu hỏi mở trong plan); tên người tặng / xưng hô / ẩn danh dùng thật; giữ chế độ Story + Cuộn dọc.
   - **Thêm (theo thiết bị):** khung dùng chung đo bề rộng **khung chứa** (container query Tailwind v4, đối chiếu tài liệu chính thức) và chọn ba bố cục: điện thoại (slide tràn), iPad (slide lớn căn giữa + mũi tên), máy tính (cột trái lời chào/nhạc/danh sách mục + slide lớn bên phải, phím mũi tên). Nhận prop bề rộng ép sẵn để xem thử dùng được.

@@ -33,7 +33,7 @@ export default function Stepper({ stage, reached, onGo }: Props) {
                 disabled={s.n > reached}
                 aria-current={current ? "step" : undefined}
                 onClick={() => onGo(s.n)}
-                className={`flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border-2 px-3 text-sm font-bold transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container disabled:cursor-not-allowed ${
+                className={`flex min-h-11 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border-2 px-2 text-sm font-bold sm:gap-2 sm:px-3 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container disabled:cursor-not-allowed ${
                   current
                     ? "border-primary-container bg-primary-container text-white"
                     : done

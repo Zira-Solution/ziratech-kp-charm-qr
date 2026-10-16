@@ -2,21 +2,18 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import GiftTemplateViewer from "@/components/gift-templates/GiftTemplateViewer";
-import { GiftTemplateId } from "@/components/gift-templates/types";
+import { normalizeGift } from "@/components/gift-templates/normalize";
 
 export default function RecipientGiftPage() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const token = params?.token as string;
-  const initialTemplateParam = (searchParams.get("tpl") as GiftTemplateId) || "storybook-sunset";
 
   const [unlocked, setUnlocked] = useState(false);
   const [holding, setHolding] = useState(false);
   const [revealProgress, setRevealProgress] = useState(0);
   const [loadedGiftData, setLoadedGiftData] = useState<any>(null);
-  const [activeTemplate, setActiveTemplate] = useState<GiftTemplateId>(initialTemplateParam);
 
   // PIN Unlock State
   const [showPinModal, setShowPinModal] = useState(false);
@@ -46,9 +43,6 @@ export default function RecipientGiftPage() {
       if (data.success && data.product?.giftData) {
         setLoadedGiftData(data.product.giftData);
         setNotReady(false);
-        if (data.product.giftData.template) {
-          setActiveTemplate(data.product.giftData.template);
-        }
         return true;
       }
       setNotReady(true); // verified, but the sender has not finished the card yet
@@ -57,6 +51,18 @@ export default function RecipientGiftPage() {
       console.warn("Could not load custom gift data:", err);
       setAuthed(false);
       return false;
+    }
+  }, [token]);
+
+  // The recording link is signed and lasts an hour: the player asks for a new one when it stops working.
+  const refreshVoiceUrl = useCallback(async (): Promise<string | null> => {
+    try {
+      const res = await fetch(`/api/gifts/${token}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.product?.giftData?.voiceNote?.audioUrl ?? null;
+    } catch {
+      return null;
     }
   }, [token]);
 
@@ -438,9 +444,9 @@ export default function RecipientGiftPage() {
   if (unlocked) {
     return (
       <GiftTemplateViewer
-        initialTemplate={activeTemplate}
-        giftData={loadedGiftData || undefined}
-        onBackToLock={() => setUnlocked(false)}
+        gift={normalizeGift(loadedGiftData)}
+        refreshVoiceUrl={refreshVoiceUrl}
+        onBack={() => setUnlocked(false)}
       />
     );
   }

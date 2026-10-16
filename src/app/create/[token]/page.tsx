@@ -6,6 +6,7 @@ import Link from "next/link";
 import confetti from "canvas-confetti";
 import { BLOCK_LABELS, type BlockId } from "@/components/gift-templates/blocks";
 import type { GiftTemplateId } from "@/components/gift-templates/types";
+import PreviewOverlay from "@/components/studio/PreviewOverlay";
 import { draftFromSaved, draftToPayload, emptyBlocks, emptyDraft, type GiftDraft } from "@/components/studio/draft";
 import { Icon } from "@/components/studio/ui";
 import MessagePicker from "@/components/studio/MessagePicker";
@@ -24,6 +25,7 @@ import VideoBlock from "@/components/studio/blocks/VideoBlock";
 import MusicBlock from "@/components/studio/blocks/MusicBlock";
 import VoiceBlock from "@/components/studio/blocks/VoiceBlock";
 import { parseGiftData } from "@/lib/validation/gift";
+import { ToastContainer, useToastState } from "@/components/ui/Toast";
 
 interface StudioProduct {
   token: string;
@@ -39,6 +41,7 @@ export default function CardStudioPage() {
   const router = useRouter();
   const token = String(params?.token ?? "").toUpperCase();
 
+  const { toasts, showToast, dismissToast } = useToastState();
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<StudioProduct | null>(null);
   const [loadError, setLoadError] = useState("");
@@ -48,7 +51,14 @@ export default function CardStudioPage() {
   const [dirty, setDirty] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState("");
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewTemplate, setPreviewTemplate] = useState<GiftTemplateId>("storybook-sunset");
+
+  const openPreview = (tpl?: GiftTemplateId) => {
+    setPreviewTemplate(tpl || draft.template);
+    setPreviewOpen(true);
+  };
 
   // Load the order and any card that was already saved.
   useEffect(() => {
@@ -67,6 +77,7 @@ export default function CardStudioPage() {
         const loaded = draftFromSaved(saved);
         if (!saved && !loaded.senderName) loaded.senderName = data.product.customerName || "";
         setDraft(loaded);
+        setPreviewTemplate(loaded.template);
       } catch (err) {
         setLoadError(err instanceof Error ? err.message : "Không tải được thông tin thiệp");
       } finally {
@@ -101,7 +112,9 @@ export default function CardStudioPage() {
   const toggleBlock = (block: BlockId) => {
     const ticked = draft.blocks.includes(block);
     update({ blocks: ticked ? draft.blocks.filter((b) => b !== block) : [...draft.blocks, block] });
-    setAnnouncement(ticked ? `Đã bỏ mục ${BLOCK_LABELS[block]}` : `Đã thêm mục ${BLOCK_LABELS[block]}`);
+    const text = ticked ? `Đã bỏ mục ${BLOCK_LABELS[block]}` : `Đã thêm mục ${BLOCK_LABELS[block]}`;
+    setAnnouncement(text);
+    showToast(text, "info", 2500);
   };
 
   const moveBlock = (block: BlockId, direction: -1 | 1) => {
@@ -111,13 +124,14 @@ export default function CardStudioPage() {
     const blocks = [...draft.blocks];
     [blocks[from], blocks[to]] = [blocks[to], blocks[from]];
     update({ blocks });
-    setAnnouncement(`Mục ${BLOCK_LABELS[block]} đang ở vị trí ${to + 1} trên ${blocks.length}`);
+    const text = `Mục ${BLOCK_LABELS[block]} đang ở vị trí ${to + 1} trên ${blocks.length}`;
+    setAnnouncement(text);
+    showToast(text, "info", 2500);
   };
 
   // The writing desk has three steps: choose what to send, write it, finish. Each step is confirmed with "Tiếp tục".
   const [stage, setStage] = useState<Stage>(1);
   const [reached, setReached] = useState<Stage>(1);
-  const [stageError, setStageError] = useState("");
   const focusTarget = useRef<string | null>(null);
 
   // After a step opens, land on the field that needs attention, or at the top of the new step.
@@ -135,14 +149,12 @@ export default function CardStudioPage() {
 
   const go = (to: Stage) => {
     setStage(to);
-    setStageError("");
-    setSaveError("");
   };
 
   /** The first thing the server would refuse, and which step and field it lives in. */
   const firstProblem = (): { stage: Stage; message: string; target: string } | null => {
-    if (!draft.recipientName.trim()) return { stage: 1, message: "Vui lòng nhập tên người nhận", target: "names-recipient" };
     if (draft.blocks.length === 0) return { stage: 1, message: "Hãy chọn ít nhất một thông điệp", target: "messages-title" };
+    if (!draft.recipientName.trim()) return { stage: 2, message: "Vui lòng nhập tên người nhận", target: "names-recipient" };
     const empty = emptyBlocks(draft)[0];
     if (empty) {
       return {
@@ -156,7 +168,7 @@ export default function CardStudioPage() {
 
   const showProblem = (p: { stage: Stage; message: string; target: string }) => {
     setErrors(p.target === "names-recipient" ? { recipientName: p.message } : p.target === "letter-content" ? { letterContent: p.message } : {});
-    setStageError(p.message);
+    showToast(p.message, "warning");
     if (p.stage === stage) {
       requestAnimationFrame(() => {
         const el = document.getElementById(p.target);
@@ -179,8 +191,6 @@ export default function CardStudioPage() {
 
   const save = async () => {
     if (saving) return;
-    setSaveError("");
-    setStageError("");
 
     const problem = firstProblem();
     if (problem) return showProblem(problem);
@@ -190,7 +200,7 @@ export default function CardStudioPage() {
     // Same checks the server runs, so mistakes in links, dates or milestones are caught before sending.
     const checked = parseGiftData(body.giftData, { token });
     if (!checked.ok) {
-      setSaveError(checked.error);
+      showToast(checked.error, "error");
       return;
     }
 
@@ -204,14 +214,33 @@ export default function CardStudioPage() {
       const data = await res.json();
       if (!res.ok || !data.success) {
         if (res.status === 401) setNeedsAuth(true);
-        throw new Error(data.error || "Không lưu được thiệp");
+        const errMsg = data.error || "Không lưu được thiệp";
+        showToast(
+          <span>
+            {errMsg}
+            {res.status === 401 && (
+              <>
+                {" "}
+                <Link href={`/gift?token=${encodeURIComponent(token)}`} className="underline font-bold">
+                  Nhập lại OTP tạo thiệp
+                </Link>
+              </>
+            )}
+          </span>,
+          "error",
+          6000
+        );
+        throw new Error(errMsg);
       }
 
       setDirty(false);
+      showToast("Đã lưu thiệp thành công!", "success");
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#721a28", "#ffd700", "#fea095", "#ffffff"] });
       setTimeout(() => router.push(`/g/${token}?tpl=${draft.template}`), 900);
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : "Không lưu được thiệp");
+      if (!needsAuth) {
+        showToast(err instanceof Error ? err.message : "Không lưu được thiệp", "error");
+      }
       setSaving(false);
     }
   };
@@ -283,11 +312,11 @@ export default function CardStudioPage() {
     }
   };
 
-  const problemText = stageError || saveError;
   const last = stage === 3;
 
   return (
     <div className="min-h-screen bg-white text-on-surface pb-40 lg:pb-32">
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
       <header className="mx-auto max-w-6xl px-4 pb-4 pt-8 sm:px-6">
         <Link href="/" className="inline-flex items-center gap-1 text-sm font-semibold text-secondary hover:text-primary">
           <Icon name="arrow_back" className="text-[18px]" />
@@ -323,38 +352,39 @@ export default function CardStudioPage() {
           <Stepper stage={stage} reached={reached} onGo={go} />
 
           {stage === 1 && (
-            <>
-              <NamesBlock step={nextStep()} draft={draft} onChange={update} errors={errors} />
-              <MessagePicker step={nextStep()} value={draft.blocks} onToggle={toggleBlock} />
-            </>
+            <MessagePicker step={nextStep()} value={draft.blocks} onToggle={toggleBlock} />
           )}
 
-          {stage === 2 &&
-            (draft.blocks.length === 0 ? (
-              <div role="status" className="rounded-2xl border border-rose-petal bg-white p-6 text-center">
-                <p className="text-base font-semibold text-on-surface">Bạn chưa chọn thông điệp nào.</p>
-                <button
-                  type="button"
-                  onClick={() => go(1)}
-                  className="mt-3 inline-flex min-h-11 items-center rounded-xl border-2 border-primary-container px-4 text-sm font-bold text-primary-container cursor-pointer hover:bg-surface-container-low"
-                >
-                  Quay lại để chọn
-                </button>
-              </div>
-            ) : (
-              draft.blocks.map((block, index) => (
-                <BlockFrame
-                  key={block}
-                  block={block}
-                  index={index}
-                  count={draft.blocks.length}
-                  onMove={(direction) => moveBlock(block, direction)}
-                  onRemove={() => toggleBlock(block)}
-                >
-                  {renderBlock(block)}
-                </BlockFrame>
-              ))
-            ))}
+          {stage === 2 && (
+            <>
+              <NamesBlock step={nextStep()} draft={draft} onChange={update} errors={errors} />
+              {draft.blocks.length === 0 ? (
+                <div role="status" className="rounded-2xl border border-rose-petal bg-white p-6 text-center">
+                  <p className="text-base font-semibold text-on-surface">Bạn chưa chọn thông điệp nào.</p>
+                  <button
+                    type="button"
+                    onClick={() => go(1)}
+                    className="mt-3 inline-flex min-h-11 items-center rounded-xl border-2 border-primary-container px-4 text-sm font-bold text-primary-container cursor-pointer hover:bg-surface-container-low"
+                  >
+                    Quay lại để chọn
+                  </button>
+                </div>
+              ) : (
+                draft.blocks.map((block, index) => (
+                  <BlockFrame
+                    key={block}
+                    block={block}
+                    index={index}
+                    count={draft.blocks.length}
+                    onMove={(direction) => moveBlock(block, direction)}
+                    onRemove={() => toggleBlock(block)}
+                  >
+                    {renderBlock(block)}
+                  </BlockFrame>
+                ))
+              )}
+            </>
+          )}
 
           {stage === 3 && (
             <>
@@ -377,14 +407,19 @@ export default function CardStudioPage() {
                   Sửa nội dung hoặc thứ tự
                 </button>
               </section>
-              <TemplatePicker step={nextStep()} value={draft.template} onChange={(template: GiftTemplateId) => update({ template })} />
+              <TemplatePicker
+                step={nextStep()}
+                value={draft.template}
+                onChange={(template: GiftTemplateId) => update({ template })}
+                onPreview={openPreview}
+              />
               <PinBlock step={nextStep()} draft={draft} onChange={update} />
             </>
           )}
         </div>
 
         <aside className="hidden space-y-4 lg:sticky lg:top-6 lg:col-span-4 lg:block">
-          <PreviewCard draft={draft} />
+          <PreviewCard draft={draft} onOpenFullPreview={() => openPreview()} />
           <p className="px-1 text-sm leading-relaxed text-warm-neutral">
             Người nhận mở thiệp ở trang chủ bằng <strong>mã thiệp</strong> và <strong>OTP xem thiệp</strong>.
           </p>
@@ -394,40 +429,35 @@ export default function CardStudioPage() {
       {/* Always in reach: go back, or confirm this step and move on. */}
       <div className="fixed inset-x-0 bottom-0 z-20 border-t border-rose-petal bg-white px-4 py-3">
         <div className="mx-auto max-w-6xl">
-          {problemText && (
-            <div role="alert" className="mb-3 flex items-start gap-2 rounded-xl border border-rose-300 bg-rose-50 px-3 py-2.5 text-sm font-semibold text-rose-800">
-              <Icon name="error" className="mt-0.5 text-[20px]" />
-              <span>
-                {problemText}
-                {needsAuth && (
-                  <>
-                    {" "}
-                    <Link href={`/gift?token=${encodeURIComponent(token)}`} className="underline">
-                      Nhập lại OTP tạo thiệp
-                    </Link>
-                  </>
-                )}
-              </span>
-            </div>
-          )}
           <div className="flex items-center justify-between gap-3">
-            {stage > 1 ? (
+            <div className="flex items-center gap-2">
+              {stage > 1 ? (
+                <button
+                  type="button"
+                  onClick={() => go((stage - 1) as Stage)}
+                  className="inline-flex min-h-12 items-center gap-1 whitespace-nowrap rounded-xl border-2 border-rose-petal bg-white px-3 text-base font-bold text-on-surface cursor-pointer hover:border-primary-container sm:px-4"
+                >
+                  <Icon name="arrow_back" className="text-[20px]" />
+                  Quay lại
+                </button>
+              ) : (
+                <span />
+              )}
               <button
                 type="button"
-                onClick={() => go((stage - 1) as Stage)}
-                className="inline-flex min-h-12 items-center gap-1 rounded-xl border-2 border-rose-petal bg-white px-4 text-base font-bold text-on-surface cursor-pointer hover:border-primary-container"
+                onClick={() => openPreview()}
+                className="inline-flex min-h-12 min-w-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border-2 border-primary-container/30 bg-surface-container-low px-3 text-sm font-bold text-primary-container cursor-pointer hover:border-primary-container hover:bg-white transition-colors sm:px-4"
+                title="Xem trước thiệp với nội dung bạn đã chọn"
               >
-                <Icon name="arrow_back" className="text-[20px]" />
-                Quay lại
+                <Icon name="visibility" className="text-[20px]" />
+                <span className="sr-only sm:not-sr-only">Xem trước thiệp</span>
               </button>
-            ) : (
-              <span />
-            )}
+            </div>
             <button
               type="button"
               onClick={last ? save : goNext}
               disabled={saving}
-              className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl liquid-glass-btn-primary px-6 text-base font-bold text-white cursor-pointer disabled:opacity-60 sm:flex-none sm:min-w-56"
+              className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl liquid-glass-btn-primary px-4 text-base font-bold text-white cursor-pointer disabled:opacity-60 sm:flex-none sm:min-w-56 sm:px-6"
             >
               {saving ? (
                 <>
@@ -449,6 +479,18 @@ export default function CardStudioPage() {
           </div>
         </div>
       </div>
+
+      {previewOpen && (
+        <PreviewOverlay
+          draft={draft}
+          template={previewTemplate}
+          onTemplateChange={(tpl) => {
+            setPreviewTemplate(tpl);
+            update({ template: tpl });
+          }}
+          onClose={() => setPreviewOpen(false)}
+        />
+      )}
     </div>
   );
 }

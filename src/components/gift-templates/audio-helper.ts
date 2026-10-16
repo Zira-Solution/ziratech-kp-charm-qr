@@ -66,6 +66,19 @@ class MusicSynthesizer {
   private noteIndex = 0;
   private voice: MelodyVoice = DEFAULT_VOICE;
   private currentId: string | null = null;
+  private listeners = new Set<() => void>();
+
+  /** Lets every play button on the page follow the one melody that is playing. */
+  public subscribe = (listener: () => void) => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+
+  private emit() {
+    this.listeners.forEach((listener) => listener());
+  }
 
   /** Id of the preset that is playing right now, or null (also null for the default melody). */
   public get playingId(): string | null {
@@ -94,6 +107,7 @@ class MusicSynthesizer {
       this.noteIndex = 0;
       this.isPlaying = true;
       this.scheduleNextNote();
+      this.emit();
     } catch {
       // AudioContext unavailable or restricted
     }
@@ -106,6 +120,7 @@ class MusicSynthesizer {
       clearTimeout(this.timer);
       this.timer = null;
     }
+    this.emit();
   }
 
   private scheduleNextNote() {

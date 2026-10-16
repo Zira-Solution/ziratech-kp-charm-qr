@@ -7,7 +7,13 @@ import { daysSince, type GiftDraft } from "./draft";
 import { Icon } from "./ui";
 
 /** A small postcard that shows how the card is coming along. The real card is the viewer page. */
-export default function PreviewCard({ draft }: { draft: GiftDraft }) {
+export default function PreviewCard({
+  draft,
+  onOpenFullPreview,
+}: {
+  draft: GiftDraft;
+  onOpenFullPreview?: () => void;
+}) {
   const info = getTemplate(draft.template);
   const has = (b: BlockId) => draft.blocks.includes(b);
 
@@ -76,6 +82,17 @@ export default function PreviewCard({ draft }: { draft: GiftDraft }) {
             </li>
           ))}
         </ul>
+      )}
+
+      {onOpenFullPreview && (
+        <button
+          type="button"
+          onClick={onOpenFullPreview}
+          className="mt-3.5 flex w-full items-center justify-center gap-2 rounded-xl liquid-glass-btn-primary px-4 py-2.5 text-xs font-bold text-white shadow-sm cursor-pointer"
+        >
+          <Icon name="visibility" className="text-[18px]" />
+          Xem thiệp đầy đủ
+        </button>
       )}
     </div>
   );

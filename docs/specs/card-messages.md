@@ -83,7 +83,8 @@ Người tạo và người nhận dùng điện thoại, iPad hoặc máy tính
 | iPad | 640–1023px | slide lớn căn giữa (tối đa khoảng 640px), mũi tên trước/sau, chấm điều hướng |
 | Máy tính | từ 1024px | cột trái: lời chào, bộ phát nhạc, danh sách mục bấm để nhảy; bên phải slide lớn (tối đa khoảng 720px) với nút trước/sau và phím mũi tên |
 
-- Cỡ được quyết định theo **bề rộng khung chứa** (container query của Tailwind v4), không theo bề rộng cửa sổ, để khung "iPad" hay "Điện thoại" trong phần xem thử hiển thị đúng ngay trên màn hình máy tính.
+- Cỡ được quyết định theo **bề rộng khung chứa** (đo bằng `ResizeObserver`, hàm thuần `layoutFor` có test), không theo bề rộng cửa sổ, để khung "iPad" hay "Điện thoại" trong phần xem thử hiển thị đúng ngay trên màn hình máy tính. Mỗi mẫu nhận `layout` và `width` qua `TemplateContext`.
+- Trang xem thiệp bỏ chế độ "Bản thảo" và "Cuộn dọc": mỗi thiết bị dùng một kiểu điều hướng slide (chấm / mũi tên / danh sách), cộng phím mũi tên và vuốt.
 - Mỗi slide của mẫu phải đẹp ở 390 / 640 / 720px (chữ, ảnh, khoảng cách co giãn theo bề rộng).
 - Xem thử trong studio có công tắc **Điện thoại / iPad / Máy tính**.
 - Studio: ba bước dùng được ở cả ba cỡ; thanh nút đáy không che nội dung; trên điện thoại và iPad bản xem trước là nút Xem thử (không có cột bên).

@@ -76,10 +76,11 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Verify: `tsc`, `eslint`; thử tay trên điện thoại.
   - Deps: T7 · Files: `media/MusicPlayer.tsx`, `media/AnniversaryCounter.tsx`, `media/TimelineList.tsx`, `studio/draft.ts` (dùng lại `daysSince`)
   - Đã làm: `useMusicPlayer` + `MusicPlayer` (giai điệu có sẵn: nút bấm; link: khung nhúng sandbox, người nhận tự bấm phát, luôn có link gốc), `AnniversaryCounter`, `TimelineList`, và phần logic thuần `media/format.ts` (có test, 74/74). `tsc`, `eslint` sạch. **Chưa nghe/xem thật** (kiểm ở Checkpoint C).
-- [ ] **T10 Khung trang xem thiệp** (M)
+- [x] **T10 Khung trang xem thiệp** (M)
   - Acceptance: `/g/[token]` dùng `normalizeGift`, truyền `gift` + `blocks` cho mẫu (và `data` kiểu cũ cho mẫu chưa chuyển); mẫu lấy từ dữ liệu đã lưu, bỏ `?tpl=`; bỏ thanh đổi mẫu và chế độ "Bản thảo" cho người nhận (xem câu hỏi mở trong plan); tên người tặng / xưng hô / ẩn danh dùng thật; giữ chế độ Story + Cuộn dọc.
   - **Thêm (theo thiết bị):** khung dùng chung đo bề rộng **khung chứa** (container query Tailwind v4, đối chiếu tài liệu chính thức) và chọn ba bố cục: điện thoại (slide tràn), iPad (slide lớn căn giữa + mũi tên), máy tính (cột trái lời chào/nhạc/danh sách mục + slide lớn bên phải, phím mũi tên). Nhận prop bề rộng ép sẵn để xem thử dùng được.
   - Verify: `tsc`, `eslint`, `next build`; mở thiệp thật ở cả 3 mẫu, không hỏng; xem ở 390 / 768 / 1280px.
+  - Đã làm: khung `GiftTemplateViewer` mới (đo bề rộng khung chứa, ba bố cục, phím/vuốt/chấm/danh sách, thông báo cho trình đọc màn hình, nhạc có sẵn tự bắt đầu khi mở), hợp đồng `GiftTemplate` (`template-contract.ts`), bộ chuyển tiếp `legacy-templates.tsx` bọc ba mẫu cũ (bảy trang cố định, vẫn lấp nội dung mẫu cho tới khi từng mẫu được chuyển ở T11–T17), `/g/[token]` dùng `normalizeGift` và xin lại link ghi âm khi hết hạn; nút "Lưu kỷ vật" giả (hứa lưu offline mà không có) bị bỏ. Đã chụp và xem bằng Chrome giả lập thật ở 390 / 768 / 1400px: đúng bố cục từng cỡ. **Chưa kiểm** trên `/g/[token]` thật (cần cử chỉ giữ tim để mở khoá) và chưa nghe/xem thật âm thanh, video.
   - Deps: T2, T8, T9 · Files: `gift-templates/GiftTemplateViewer.tsx`, `gift-templates/types.ts`, `app/g/[token]/page.tsx`
 
 **Checkpoint C:** bộ phát chạy với dữ liệu thật; khung xem truyền đúng dữ liệu; 3 mẫu hiện tại vẫn mở được. **Bạn thử tay nghe ghi âm, xem video, phát nhạc.**
@@ -120,9 +121,10 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
 
 ## Phase 5 — Hoàn tất
 
-- [ ] **T18 Xem thử toàn màn hình theo thiết bị** (M)
+- [x] **T18 Xem thử toàn màn hình theo thiết bị** (M)
   - Acceptance: hoàn thiện lớp phủ xem thử đang dở trong thư mục làm việc (chưa commit): bỏ hết dữ liệu mẫu (`DEFAULT_GIFT_DATA`, ảnh vòng tay và câu trích cố định, ảnh/video mẫu), dựng từ `normalizeGift(draftToPayload(draft))` nên hiện đúng mục đã tích, đúng thứ tự, đúng mẫu đang chọn; có công tắc **Điện thoại / iPad / Máy tính** (ép bề rộng khung chứa 390 / 768 / 1280); nút "Xem thử" có ở bước Hoàn tất và trên điện thoại; đóng bằng nút và phím Esc, giữ focus trong hộp thoại rồi trả focus; ghi âm trong bản nháp nghe được; trên điện thoại thật thì chiếm toàn màn hình.
   - Verify: `tsc`, `eslint`, `next build`; thử tay ở ba cỡ.
+  - Đã làm: `studio/PreviewOverlay.tsx` (thay lớp phủ dở dang): dựng từ `normalizeGift(draftToPayload(draft))` không còn dữ liệu mẫu ở phần soạn; công tắc mẫu và thiết bị (Điện thoại 390 / iPad 768 / Máy tính 1280, mặc định theo màn hình đang dùng); khoá cuộn nền, giữ focus trong hộp thoại, Esc, trả focus. Lưu ý: ba mẫu cũ vẫn lấp nội dung mẫu cho phần chưa soạn (xong khi chuyển mẫu).
   - Deps: D · Files: `studio/PreviewOverlay.tsx` (mới), `app/create/[token]/page.tsx`
 - [ ] **T19 Dọn dẹp** (S)
   - Acceptance: bỏ `DEFAULT_GIFT_DATA` khỏi đường xem thiệp và `data` kiểu cũ trong 3 mẫu; dữ liệu mẫu chỉ ở `/thamkhao`; bỏ mã thừa còn lại (highlight, `templateHasBlock`...); cập nhật `docs/specs/card-studio.md`, `docs/adr/0001`.

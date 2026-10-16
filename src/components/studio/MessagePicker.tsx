@@ -59,7 +59,7 @@ export default function MessagePicker({ step, value, onToggle }: Props) {
         })}
       </div>
       <p role="status" className="mt-3 text-sm font-semibold text-on-surface-variant">
-        {value.length === 0 ? "Chưa chọn mục nào. Hãy tích ít nhất một mục." : `Đã chọn ${value.length}/${BLOCK_IDS.length} mục. Sắp xếp thứ tự ở phần soạn bên dưới.`}
+        {value.length === 0 ? "Chưa chọn mục nào. Hãy tích ít nhất một mục." : `Đã chọn ${value.length}/${BLOCK_IDS.length} mục. Sắp xếp thứ tự và nội dung ở bước Soạn tiếp theo.`}
       </p>
     </StudioSection>
   );

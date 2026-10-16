@@ -6,9 +6,7 @@ import MusicPlayer from "../media/MusicPlayer";
 import TimelineList from "../media/TimelineList";
 import VideoEmbed from "../media/VideoEmbed";
 import VoicePlayer from "../media/VoicePlayer";
-import { Heading, Page, type SlideProps } from "./basic";
-
-const bodySize = (landscape: boolean) => (landscape ? "text-lg xl:text-xl" : "text-base");
+import { bodyClass, Heading, Page, type SlideProps } from "./basic";
 
 /** The album: one photo large on the picture half, the others as small pictures to choose from. */
 export function PhotosSlide(props: SlideProps) {
@@ -80,7 +78,7 @@ export function MusicSlide(props: SlideProps) {
       <Heading {...props} kind="music" />
       <div className={skin.paper}>
         {song.source === "link" && (song.title || song.artist) && (
-          <p className={`${skin.body} ${bodySize(ctx.layout === "landscape")} mb-3`}>
+          <p className={`${bodyClass(skin, ctx)} mb-3`}>
             <strong>{song.title}</strong>
             {song.artist && <span className="opacity-75"> · {song.artist}</span>}
           </p>
@@ -100,7 +98,7 @@ export function VoiceSlide(props: SlideProps) {
       <Heading {...props} kind="voice" />
       <div className={skin.paper}>
         <VoicePlayer src={voice.audioUrl} duration={voice.duration} onRefresh={ctx.refreshVoiceUrl} />
-        {voice.noteText && <p className={`${skin.body} ${bodySize(ctx.layout === "landscape")} mt-4 whitespace-pre-wrap break-words leading-relaxed`}>{voice.noteText}</p>}
+        {voice.noteText && <p className={`${bodyClass(skin, ctx)} mt-4 whitespace-pre-wrap break-words leading-relaxed`}>{voice.noteText}</p>}
       </div>
     </Page>
   );

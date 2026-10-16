@@ -109,21 +109,23 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Retro (T14–T15) và Sổ Hoa Khô (T16–T17) giờ chỉ còn là viết skin; chưa làm.
 
 ### Retro 90s
-- [ ] **T14 Retro: khung động + thư / ảnh / lời kết** (M) — dùng `SlideLayout`, đẹp ở khung dọc và ngang như T11
+- [x] **T14 Retro: khung động + thư / ảnh / lời kết** (M) — dùng `SlideLayout`, đẹp ở khung dọc và ngang như T11
   - Acceptance: các khu vực theo thứ tự `blocks`; ảnh album 1–6 ảnh không phụ thuộc ảnh nổi bật hay ảnh mẫu; bỏ chế độ mini; tách thư mục `retro/`.
   - Verify: `tsc`, `eslint`, `next build`; thử tay.
   - Deps: C · Files: `RetroNostalgiaTemplate.tsx`, `retro/*`
-- [ ] **T15 Retro: video / nhạc / ghi âm + ngày KN / mốc** (M)
+- [x] **T15 Retro: video / nhạc / ghi âm + ngày KN / mốc** (M)
   - Acceptance: cassette cho nhạc và ghi âm dùng bộ phát thật; video dùng `VideoEmbed`; ngày kỷ niệm và mốc thời gian theo phong cách mẫu.
   - Deps: T14 · Files: `retro/*`, `RetroNostalgiaTemplate.tsx`
 
 ### Sổ Hoa Khô
-- [ ] **T16 Vintage: khung động + thư / ảnh / lời kết** (M) — dùng `SlideLayout`, đẹp ở khung dọc và ngang như T11
+- [x] **T16 Vintage: khung động + thư / ảnh / lời kết** (M) — dùng `SlideLayout`, đẹp ở khung dọc và ngang như T11
   - Acceptance: trang sổ theo thứ tự `blocks`; album dùng ảnh khách (hết Unsplash gán cứng); đề từ, chữ ký, lời kết hiện đúng; bỏ ảnh vòng tay mặc định (`braceletImg`); tách `vintage/`.
   - Deps: C · Files: `VintageScrapbookTemplate.tsx`, `vintage/*`
-- [ ] **T17 Vintage: ghi âm / video / nhạc + mốc / ngày KN** (M)
+- [x] **T17 Vintage: ghi âm / video / nhạc + mốc / ngày KN** (M)
   - Acceptance: các mục kiểu sổ dán (washi tape, polaroid) dùng bộ phát thật; ngày kỷ niệm hiện đếm ngày.
   - Deps: T16 · Files: `vintage/*`, `VintageScrapbookTemplate.tsx`
+
+- Đã làm T14–T17: `skins/retro.tsx` (kem chấm bi, tiêu đề serif đậm bóng 3D đỏ, viền xanh đậm, bóng cứng, sọc ba màu, huy hiệu tròn) và `skins/vintage.tsx` (giấy sổ dán băng keo, chữ viết tay đỏ thẫm, polaroid, nhãn dán phai màu), dùng chung các trang với Storybook; chụp và xem bằng Chrome ở khung ngang toàn cửa sổ và khung điện thoại. Font tiêu đề Retro đổi từ Abril Fatface (không có glyph tiếng Việt, dấu bị tách) sang Merriweather Black. Xoá `legacy-templates.tsx`, `RetroNostalgiaTemplate.tsx`, `VintageScrapbookTemplate.tsx`. Xem thử mặc định "Màn hình này" (toàn cửa sổ, dọc hay ngang tuỳ màn hình), có thêm Điện thoại / iPad / Máy tính. **Chưa kiểm:** nghe nhạc, ghi âm thật, iPad dọc 820×1180, `/g/[token]` thật.
 
 **Checkpoint D:** cả 3 mẫu hiển thị đúng 3 loại thiệp thử: chỉ thư; chỉ ảnh + nhạc; đủ 8 mục theo thứ tự đảo. **Bạn xem trên điện thoại (nhất là iPhone).**
 

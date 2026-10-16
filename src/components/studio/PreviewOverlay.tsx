@@ -8,10 +8,12 @@ import type { GiftTemplateId } from "../gift-templates/types";
 import { draftToPayload, type GiftDraft } from "./draft";
 import { Icon } from "./ui";
 
-type Device = "phone" | "tablet" | "desktop";
+type Device = "fill" | "phone" | "tablet" | "desktop";
 
 // The card fills its frame: a phone is upright, an iPad is held sideways, a computer is wide.
 const DEVICES: { id: Device; label: string; icon: string; width: number; height: number }[] = [
+  // "fill" is the card as the recipient sees it on THIS screen: it takes the whole window, upright or wide.
+  { id: "fill", label: "Màn hình này", icon: "fullscreen", width: 0, height: 0 },
   { id: "phone", label: "Điện thoại", icon: "smartphone", width: 390, height: 844 },
   { id: "tablet", label: "iPad", icon: "tablet_mac", width: 1024, height: 768 },
   { id: "desktop", label: "Máy tính", icon: "desktop_windows", width: 1280, height: 720 },
@@ -32,11 +34,8 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
  * computer, and try the other looks.
  */
 export default function PreviewOverlay({ draft, template, onTemplateChange, onClose }: Props) {
-  // Open as the screen in the buyer's hands: a tablet held sideways shows the iPad frame, anything else
-  // starts as a phone (what most recipients will use after scanning the card).
-  const [device, setDevice] = useState<Device>(() =>
-    typeof window !== "undefined" && window.innerWidth >= 640 && window.innerWidth < 1024 && window.innerWidth > window.innerHeight ? "tablet" : "phone"
-  );
+  // Opens as the card looks on the screen in the buyer's hands (full window); the other frames are one click away.
+  const [device, setDevice] = useState<Device>("fill");
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -120,10 +119,10 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
         </div>
       </div>
 
-      <div className="flex min-h-0 flex-1 items-center justify-center sm:p-4">
+      <div className={`flex min-h-0 flex-1 items-center justify-center ${device === "fill" ? "" : "sm:p-4"}`}>
         <div
-          style={{ width: frame.width, height: frame.height, maxWidth: "100%", maxHeight: "100%" }}
-          className="overflow-hidden bg-white sm:rounded-2xl sm:shadow-2xl"
+          style={frame.id === "fill" ? { width: "100%", height: "100%" } : { width: frame.width, height: frame.height, maxWidth: "100%", maxHeight: "100%" }}
+          className={`overflow-hidden bg-white ${frame.id === "fill" ? "" : "sm:rounded-2xl sm:shadow-2xl"}`}
         >
           <GiftTemplateViewer gift={gift} embedded />
         </div>

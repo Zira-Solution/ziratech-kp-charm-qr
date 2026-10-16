@@ -24,7 +24,10 @@ export default function SlideLayout({ layout, visual, children, className = "", 
   const landscape = layout === "landscape";
   return (
     <div className={`grid h-full w-full ${landscape ? "grid-cols-[minmax(0,5fr)_minmax(0,6fr)]" : "grid-rows-[minmax(0,2fr)_minmax(0,3fr)]"} ${className}`}>
-      <div className={`relative min-h-0 min-w-0 overflow-hidden ${visualClassName}`}>{visual}</div>
+      {/* A size container: illustrations can size themselves in `cqmin` (1% of the smaller side of this box). */}
+      <div style={{ containerType: "size" }} className={`relative min-h-0 min-w-0 overflow-hidden ${visualClassName}`}>
+        {visual}
+      </div>
       <div className={`min-h-0 min-w-0 overflow-y-auto ${contentClassName}`}>
         <div className={`flex min-h-full flex-col justify-center gap-4 ${landscape ? "px-10 py-8" : "px-5 py-5"}`}>{children}</div>
       </div>

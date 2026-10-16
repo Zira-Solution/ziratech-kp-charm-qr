@@ -21,17 +21,22 @@ export function Page({ skin, ctx, visual, children }: { skin: Skin; ctx: Templat
   );
 }
 
+/** Running-text classes for the template and the frame. */
+export function bodyClass(skin: Skin, ctx: TemplateContext): string {
+  const size = skin.bodySize?.[ctx.layout] ?? (ctx.layout === "landscape" ? "text-lg xl:text-xl" : "text-base");
+  return `${skin.body} ${size}`;
+}
+
 export function Heading({ skin, ctx, kind, gift }: SlideProps & { kind: SlideKind }) {
   const { title, sub } = skin.title(kind, gift);
+  const size = skin.headingSize?.[ctx.layout] ?? (ctx.layout === "landscape" ? "text-4xl xl:text-5xl" : "text-3xl");
   return (
     <header>
-      <h2 className={`${skin.heading} ${ctx.layout === "landscape" ? "text-4xl xl:text-5xl" : "text-3xl"}`}>{title}</h2>
+      <h2 className={`${skin.heading} ${size}`}>{title}</h2>
       {sub && <p className={`${skin.sub} mt-1 ${ctx.layout === "landscape" ? "text-2xl" : "text-xl"}`}>{sub}</p>}
     </header>
   );
 }
-
-const bodySize = (ctx: TemplateContext) => (ctx.layout === "landscape" ? "text-lg xl:text-xl" : "text-base");
 
 export function OpenSlide(props: SlideProps) {
   const { skin, gift, ctx } = props;
@@ -39,7 +44,7 @@ export function OpenSlide(props: SlideProps) {
     <Page skin={skin} ctx={ctx} visual={skin.art("open", gift)}>
       <Heading {...props} kind="open" />
       {(gift.sender || gift.addressing) && (
-        <p className={`${skin.body} ${bodySize(ctx)}`}>
+        <p className={`${bodyClass(skin, ctx)}`}>
           {gift.sender && <>Từ {gift.sender}</>}
           {gift.sender && gift.addressing && " · "}
           {gift.addressing}
@@ -65,8 +70,8 @@ export function LetterSlide(props: SlideProps) {
     <Page skin={skin} ctx={ctx} visual={skin.art("letter", gift)}>
       <Heading {...props} kind="letter" />
       <article className={skin.paper}>
-        <p className={`${skin.body} ${bodySize(ctx)}`}>Gửi {gift.recipientName || "bạn"},</p>
-        <p className={`${skin.body} ${bodySize(ctx)} mt-3 whitespace-pre-wrap break-words leading-relaxed`}>{letter.content}</p>
+        <p className={`${bodyClass(skin, ctx)}`}>Gửi {gift.recipientName || "bạn"},</p>
+        <p className={`${bodyClass(skin, ctx)} mt-3 whitespace-pre-wrap break-words leading-relaxed`}>{letter.content}</p>
         {letter.signature && <p className={`${skin.sub} mt-4 text-right text-2xl`}>{letter.signature}</p>}
       </article>
     </Page>
@@ -78,7 +83,7 @@ export function ClosingSlide(props: SlideProps) {
   return (
     <Page skin={skin} ctx={ctx} visual={skin.art("closing", gift)}>
       <Heading {...props} kind="closing" />
-      {gift.finalMessage && <p className={`${skin.paper} ${skin.body} ${bodySize(ctx)} whitespace-pre-wrap break-words leading-relaxed`}>{gift.finalMessage}</p>}
+      {gift.finalMessage && <p className={`${skin.paper} ${bodyClass(skin, ctx)} whitespace-pre-wrap break-words leading-relaxed`}>{gift.finalMessage}</p>}
       {gift.sender && <p className={`${skin.sub} text-2xl`}>— {gift.sender}</p>}
       <div>
         <button type="button" onClick={() => ctx.go(0)} className={`${skin.button} min-h-12 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current`}>

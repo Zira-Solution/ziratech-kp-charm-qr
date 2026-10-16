@@ -24,12 +24,16 @@ export interface Skin {
   visual: string;
   /** Background of the content half. */
   content: string;
-  /** Big title. */
+  /** Big title (colour, font, weight). */
   heading: string;
+  /** Size of the big title in each frame; defaults suit a plain font. A handwriting font needs larger sizes. */
+  headingSize?: { portrait: string; landscape: string };
   /** Line under a title. */
   sub: string;
-  /** Running text. */
+  /** Running text (colour, font). */
   body: string;
+  /** Size of running text in each frame. */
+  bodySize?: { portrait: string; landscape: string };
   /** The sheet a letter or a note is written on. */
   paper: string;
   /** Main button. */

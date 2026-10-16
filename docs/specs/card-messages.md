@@ -73,20 +73,20 @@ Giao diện của studio: nền **trắng, không dark mode** (khai báo `colorS
 - **Sổ Hoa Khô:** thêm ghi âm, video, nhạc, mốc thời gian theo kiểu sổ dán.
 - Mỗi mẫu tách thành nhiều file nhỏ (mỗi loại thông điệp một file) thay vì một file hàng trăm dòng.
 
-### Theo thiết bị (quyết định 2026-10-16)
+### Theo thiết bị (cập nhật 2026-10-16, sau khi xem thử)
 
-Người tạo và người nhận dùng điện thoại, iPad hoặc máy tính, nên cả studio và trang xem thiệp thích ứng theo ba cỡ. Bố cục "slide giữa + thanh điều hướng bên cạnh", áp dụng cho cả 3 mẫu (mỗi mẫu giữ nét riêng):
+Người tạo và người nhận dùng điện thoại, iPad hoặc máy tính. Thiệp luôn là **một khung tràn màn hình**, hình dạng khung theo màn hình:
 
-| Cỡ | Rộng | Trang xem thiệp |
+| Khung | Khi nào | Trang xem thiệp |
 |---|---|---|
-| Điện thoại | dưới 640px | slide tràn màn hình, không viền khung; chấm điều hướng và vuốt |
-| iPad | 640–1023px | slide lớn căn giữa (tối đa khoảng 640px), mũi tên trước/sau, chấm điều hướng |
-| Máy tính | từ 1024px | cột trái: lời chào, bộ phát nhạc, danh sách mục bấm để nhảy; bên phải slide lớn (tối đa khoảng 720px) với nút trước/sau và phím mũi tên |
+| **Dọc** | điện thoại, iPad cầm dọc | một khung dọc tràn màn hình: hình/minh họa ở trên, nội dung ở dưới; chấm điều hướng cố định ở đáy; vuốt |
+| **Ngang** | iPad cầm ngang, máy tính | một khung ngang tràn màn hình, **chia đôi**: bên trái hình/minh họa của mẫu, bên phải nội dung (thư, ảnh, video, nhạc...); mũi tên và chấm ở đáy; phím mũi tên |
 
-- Cỡ được quyết định theo **bề rộng khung chứa** (đo bằng `ResizeObserver`, hàm thuần `layoutFor` có test), không theo bề rộng cửa sổ, để khung "iPad" hay "Điện thoại" trong phần xem thử hiển thị đúng ngay trên màn hình máy tính. Mỗi mẫu nhận `layout` và `width` qua `TemplateContext`.
-- Trang xem thiệp bỏ chế độ "Bản thảo" và "Cuộn dọc": mỗi thiết bị dùng một kiểu điều hướng slide (chấm / mũi tên / danh sách), cộng phím mũi tên và vuốt.
-- Mỗi slide của mẫu phải đẹp ở 390 / 640 / 720px (chữ, ảnh, khoảng cách co giãn theo bề rộng).
-- Xem thử trong studio có công tắc **Điện thoại / iPad / Máy tính**.
+- Khung ngang khi bề rộng khung chứa từ 640px trở lên **và** rộng hơn cao ít nhất 15%; còn lại là khung dọc. Quyết định theo **hình dạng của khung chứa** (đo bằng `ResizeObserver`, hàm thuần `layoutFor` có test), không theo cửa sổ, để khung "iPad" và "Điện thoại" trong phần xem thử hiển thị đúng ngay trên màn hình máy tính.
+- Không còn "khung điện thoại nằm giữa nền to" và không còn cột danh sách bên cạnh; trang xem thiệp bỏ chế độ "Bản thảo" và "Cuộn dọc".
+- Cả 3 mẫu dùng chung bố cục chia đôi (`SlideLayout`: hình/minh họa + nội dung, dọc hay ngang tự đổi), **mỗi mẫu một phong cách riêng**: màu, font, nền, hình trang trí, cách trình bày chữ và ảnh. Mỗi mẫu nhận `layout`, `width`, `height` qua `TemplateContext`.
+- Mỗi slide phải đẹp ở khung dọc (390×844 và 820×1180) và khung ngang (1024×768, 1280×720, 1440×900): chữ, ảnh, khoảng cách co giãn theo khung, không cuộn ngang, nội dung dài thì cuộn bên trong vùng nội dung.
+- Xem thử trong studio có công tắc **Điện thoại (dọc 390×844) / iPad (ngang 1024×768) / Máy tính (ngang 1280×720)**; trên màn hình nhỏ hơn thì khung co lại vừa màn hình.
 - Studio: ba bước dùng được ở cả ba cỡ; thanh nút đáy không che nội dung; trên điện thoại và iPad bản xem trước là nút Xem thử (không có cột bên).
 
 ### Bộ phát dùng chung (mẫu chỉ chỉnh kiểu dáng)

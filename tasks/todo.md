@@ -83,12 +83,17 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Đã làm: khung `GiftTemplateViewer` mới (đo bề rộng khung chứa, ba bố cục, phím/vuốt/chấm/danh sách, thông báo cho trình đọc màn hình, nhạc có sẵn tự bắt đầu khi mở), hợp đồng `GiftTemplate` (`template-contract.ts`), bộ chuyển tiếp `legacy-templates.tsx` bọc ba mẫu cũ (bảy trang cố định, vẫn lấp nội dung mẫu cho tới khi từng mẫu được chuyển ở T11–T17), `/g/[token]` dùng `normalizeGift` và xin lại link ghi âm khi hết hạn; nút "Lưu kỷ vật" giả (hứa lưu offline mà không có) bị bỏ. Đã chụp và xem bằng Chrome giả lập thật ở 390 / 768 / 1400px: đúng bố cục từng cỡ. **Chưa kiểm** trên `/g/[token]` thật (cần cử chỉ giữ tim để mở khoá) và chưa nghe/xem thật âm thanh, video.
   - Deps: T2, T8, T9 · Files: `gift-templates/GiftTemplateViewer.tsx`, `gift-templates/types.ts`, `app/g/[token]/page.tsx`
 
+- [ ] **T10b Khung dọc / ngang tràn màn hình + bố cục chia đôi dùng chung** (M) — sửa theo phản hồi: iPad và máy tính phải là khung ngang tràn màn hình, không phải khung điện thoại nằm giữa nền to
+  - Acceptance: `layoutFor(width, height)` chọn `portrait` / `landscape` (ngang khi rộng ≥ 640 và rộng ≥ 1,15 × cao) có test; `GiftTemplateViewer` bỏ cột danh sách bên cạnh và khung giữa, khung chiếm hết khung chứa (cao 100%), thanh điều hướng (mũi tên, chấm, số trang) nằm đáy; `TemplateContext` thêm `height` và `layout: "portrait" | "landscape"`; `SlideLayout` (hình/minh họa + nội dung, dọc: trên/dưới, ngang: trái/phải, nội dung dài cuộn trong vùng của nó); các mẫu cũ bọc bằng bộ chuyển tiếp vẫn mở được (kéo giãn tạm, chưa đẹp); `PreviewOverlay` dùng Điện thoại 390×844, iPad 1024×768, Máy tính 1280×720; `/g/[token]` cao 100dvh.
+  - Verify: `npm test` (layout), `tsc`, `eslint`, `next build`; chụp bằng Chrome giả lập ở 390×844, 820×1180, 1024×768, 1440×900.
+  - Deps: T10 · Files: `layout.ts`, `scripts/layout.test.ts`, `GiftTemplateViewer.tsx`, `viewer-nav.tsx`, `template-contract.ts`, `SlideLayout.tsx` (mới), `legacy-templates.tsx`, `studio/PreviewOverlay.tsx`, `app/g/[token]/page.tsx`
+
 **Checkpoint C:** bộ phát chạy với dữ liệu thật; khung xem truyền đúng dữ liệu; 3 mẫu hiện tại vẫn mở được. **Bạn thử tay nghe ghi âm, xem video, phát nhạc.**
 
 ## Phase 4 — Ba mẫu (làm song song sau Checkpoint C; mỗi mẫu một nhánh, không đụng file của mẫu khác)
 
 ### Storybook 20/10
-- [ ] **T11 Storybook: khung động + mở quà / thư / ảnh / lời kết** (M) — slide đẹp ở 390 / 640 / 720px
+- [ ] **T11 Storybook: khung động + mở quà / thư / ảnh / lời kết** (M) — dùng `SlideLayout`, đẹp ở khung dọc (390×844, 820×1180) và ngang (1024×768, 1280×720, 1440×900)
   - Acceptance: slide "Mở quà" đầu, mỗi mục tích một slide đúng thứ tự, slide "Cảm ơn" cuối (hiện lời kết); số slide theo `blocks`, điều hướng hoạt động với N slide; ảnh album chỉ dùng ảnh khách (1–6 ảnh, bố cục thích ứng, không còn ảnh Unsplash mẫu); mã tách thành `storybook/*Slide.tsx`.
   - Verify: `tsc`, `eslint`, `next build`; thử tay với thiệp chỉ có thư; thiệp chỉ có ảnh; thiệp đủ mục.
   - Deps: C · Files: `StorybookSunsetTemplate.tsx`, `storybook/OpenSlide.tsx`, `LetterSlide.tsx`, `PhotosSlide.tsx`, `ClosingSlide.tsx`
@@ -101,7 +106,7 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Deps: T11 · Files: `storybook/AnniversarySlide.tsx`, `TimelineSlide.tsx`, `StorybookSunsetTemplate.tsx`
 
 ### Retro 90s
-- [ ] **T14 Retro: khung động + thư / ảnh / lời kết** (M) — đẹp ở 390 / 640 / 720px
+- [ ] **T14 Retro: khung động + thư / ảnh / lời kết** (M) — dùng `SlideLayout`, đẹp ở khung dọc và ngang như T11
   - Acceptance: các khu vực theo thứ tự `blocks`; ảnh album 1–6 ảnh không phụ thuộc ảnh nổi bật hay ảnh mẫu; bỏ chế độ mini; tách thư mục `retro/`.
   - Verify: `tsc`, `eslint`, `next build`; thử tay.
   - Deps: C · Files: `RetroNostalgiaTemplate.tsx`, `retro/*`
@@ -110,7 +115,7 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Deps: T14 · Files: `retro/*`, `RetroNostalgiaTemplate.tsx`
 
 ### Sổ Hoa Khô
-- [ ] **T16 Vintage: khung động + thư / ảnh / lời kết** (M) — đẹp ở 390 / 640 / 720px
+- [ ] **T16 Vintage: khung động + thư / ảnh / lời kết** (M) — dùng `SlideLayout`, đẹp ở khung dọc và ngang như T11
   - Acceptance: trang sổ theo thứ tự `blocks`; album dùng ảnh khách (hết Unsplash gán cứng); đề từ, chữ ký, lời kết hiện đúng; bỏ ảnh vòng tay mặc định (`braceletImg`); tách `vintage/`.
   - Deps: C · Files: `VintageScrapbookTemplate.tsx`, `vintage/*`
 - [ ] **T17 Vintage: ghi âm / video / nhạc + mốc / ngày KN** (M)

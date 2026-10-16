@@ -443,11 +443,9 @@ export default function RecipientGiftPage() {
 
   if (unlocked) {
     return (
-      <GiftTemplateViewer
-        gift={normalizeGift(loadedGiftData)}
-        refreshVoiceUrl={refreshVoiceUrl}
-        onBack={() => setUnlocked(false)}
-      />
+      <div className="h-dvh">
+        <GiftTemplateViewer gift={normalizeGift(loadedGiftData)} refreshVoiceUrl={refreshVoiceUrl} onBack={() => setUnlocked(false)} />
+      </div>
     );
   }
 

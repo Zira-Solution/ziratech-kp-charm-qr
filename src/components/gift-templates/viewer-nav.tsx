@@ -6,16 +6,16 @@ import type { SlideDef } from "./template-contract";
 const iconBase = "material-symbols-outlined leading-none";
 
 /** Previous / next. Disabled at the ends. */
-export function StepButton({ direction, disabled, onClick, className = "" }: { direction: -1 | 1; disabled: boolean; onClick: () => void; className?: string }) {
+export function StepButton({ direction, disabled, onClick }: { direction: -1 | 1; disabled: boolean; onClick: () => void }) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
       aria-label={direction === -1 ? "Trang trước" : "Trang sau"}
-      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-800 shadow-sm cursor-pointer transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container disabled:cursor-not-allowed disabled:opacity-30 ${className}`}
+      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-800 shadow-sm cursor-pointer transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container disabled:cursor-not-allowed disabled:opacity-30"
     >
-      <span aria-hidden="true" className={`${iconBase} text-[26px]`}>
+      <span aria-hidden="true" className={`${iconBase} text-[24px]`}>
         {direction === -1 ? "chevron_left" : "chevron_right"}
       </span>
     </button>
@@ -23,9 +23,9 @@ export function StepButton({ direction, disabled, onClick, className = "" }: { d
 }
 
 /** One dot per page. Each is a button, so the visitor can jump. */
-export function Dots({ slides, index, onGo }: { slides: readonly SlideDef[]; index: number; onGo: (i: number) => void }) {
+function Dots({ slides, index, onGo }: { slides: readonly SlideDef[]; index: number; onGo: (i: number) => void }) {
   return (
-    <nav aria-label="Các trang của thiệp" className="flex items-center justify-center gap-1 py-2">
+    <nav aria-label="Các trang của thiệp" className="flex items-center justify-center gap-0.5">
       {slides.map((slide, i) => (
         <button
           key={slide.id}
@@ -42,34 +42,16 @@ export function Dots({ slides, index, onGo }: { slides: readonly SlideDef[]; ind
   );
 }
 
-/** The list of pages in the desktop side pane. */
-export function SlideList({ slides, index, onGo }: { slides: readonly SlideDef[]; index: number; onGo: (i: number) => void }) {
+/** The bar under the card: back, one dot per page with the name of the current page, forward. */
+export function NavBar({ slides, index, onGo, onPrev, onNext }: { slides: readonly SlideDef[]; index: number; onGo: (i: number) => void; onPrev: () => void; onNext: () => void }) {
   return (
-    <nav aria-label="Các trang của thiệp">
-      <ol className="space-y-1.5">
-        {slides.map((slide, i) => {
-          const current = i === index;
-          return (
-            <li key={slide.id}>
-              <button
-                type="button"
-                onClick={() => onGo(i)}
-                aria-current={current ? "page" : undefined}
-                className={`flex min-h-11 w-full items-center gap-3 rounded-xl border-2 px-3 text-left text-sm font-bold cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container ${
-                  current ? "border-slate-800 bg-slate-800 text-white" : "border-slate-200 bg-white text-slate-800 hover:border-slate-400"
-                }`}
-              >
-                <span aria-hidden="true" className={`${iconBase} text-[20px]`}>
-                  {slide.icon}
-                </span>
-                <span className="min-w-0 flex-1 truncate">
-                  {i + 1}. {slide.label}
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ol>
-    </nav>
+    <div className="flex shrink-0 items-center justify-between gap-2 border-t border-slate-200 bg-white/90 px-3 py-2 backdrop-blur">
+      <StepButton direction={-1} disabled={index === 0} onClick={onPrev} />
+      <div className="min-w-0 text-center">
+        <Dots slides={slides} index={index} onGo={onGo} />
+        <p className="hidden truncate text-xs font-bold text-slate-600 sm:block">{slides[index]?.label}</p>
+      </div>
+      <StepButton direction={1} disabled={index === slides.length - 1} onClick={onNext} />
+    </div>
   );
 }

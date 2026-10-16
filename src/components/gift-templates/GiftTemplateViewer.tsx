@@ -7,9 +7,8 @@ import type { ViewerGift } from "./normalize";
 import type { TemplateContext } from "./template-contract";
 import type { GiftTemplateId } from "./types";
 import { getViewerTemplate } from "./viewer-templates";
-import { useContainerWidth } from "./useContainerWidth";
-import { Dots, SlideList, StepButton } from "./viewer-nav";
-import MusicPlayer from "./media/MusicPlayer";
+import { useContainerSize } from "./useContainerSize";
+import { NavBar } from "./viewer-nav";
 import { useMusicPlayer } from "./media/useMusicPlayer";
 
 interface Props {
@@ -24,22 +23,24 @@ interface Props {
 }
 
 const BACKGROUND: Record<GiftTemplateId, string> = {
-  "vintage-scrapbook": "bg-linear-to-br from-parchment-light via-parchment-light to-surface-container-high",
-  "retro-nostalgia": "bg-linear-to-br from-parchment-light via-parchment-border to-craft-border",
-  "storybook-sunset": "bg-linear-to-br from-slate-50 via-slate-100 to-slate-200",
+  "vintage-scrapbook": "bg-parchment-light",
+  "retro-nostalgia": "bg-parchment-border",
+  "storybook-sunset": "bg-slate-100",
 };
 
 const SWIPE_MIN = 50;
 
 /**
- * The card page. It owns what does not depend on the look: the arrangement for the device (decided by
- * the width of the box it sits in), moving between pages by buttons, keys or swipe, the opening melody
- * and the announcement for screen readers. The template only draws the page it is given.
+ * The card page. It fills the box it is put in and takes the shape of it: a portrait frame (picture on
+ * top, content below) on phones and tablets held upright, a landscape frame (picture left, content
+ * right) on tablets held sideways and computers. It owns what does not depend on the look: moving
+ * between pages by buttons, keys or swipe, the opening melody and the announcement for screen readers.
+ * The template only draws the page it is given.
  */
 export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, backLabel = "Khóa lại", embedded = false }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const width = useContainerWidth(rootRef);
-  const layout = layoutFor(width);
+  const { width, height } = useContainerSize(rootRef);
+  const layout = layoutFor(width, height);
 
   const template = getViewerTemplate(gift.template);
   const slides = useMemo(() => template.slides(gift), [template, gift]);
@@ -83,91 +84,42 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
   };
 
   const slide = slides[index];
-  const ctx: TemplateContext = { layout, width, index, count: slides.length, go, next, prev, refreshVoiceUrl };
-  const page = slide ? template.render(slide, gift, ctx) : null;
+  const ctx: TemplateContext = { layout, width, height, index, count: slides.length, go, next, prev, refreshVoiceUrl };
 
-  const topBar = (
-    <header className="flex items-center justify-between gap-2 px-3 py-2">
-      <div className="flex items-center gap-2">
-        {onBack && (
-          <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex min-h-10 items-center gap-1 rounded-full border border-slate-300 bg-white px-3 text-sm font-bold text-slate-800 shadow-sm cursor-pointer hover:bg-slate-50"
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-[18px] leading-none">
-              {embedded ? "close" : "lock"}
-            </span>
-            {backLabel}
-          </button>
-        )}
-        {!embedded && (
-          <Link
-            href="/"
-            className="inline-flex min-h-10 items-center gap-1 rounded-full border border-slate-300 bg-white px-3 text-sm font-bold text-slate-800 shadow-sm hover:bg-slate-50"
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-[18px] leading-none">
-              home
-            </span>
-            Trang chủ
-          </Link>
-        )}
-      </div>
-      <p className="hidden text-sm font-bold text-slate-700 sm:block">K&amp;P Atelier · Quà 20/10</p>
-    </header>
-  );
-
-  const hasPrev = index > 0;
-  const hasNext = index < slides.length - 1;
+  const floating = "inline-flex min-h-10 items-center gap-1 rounded-full border border-slate-300 bg-white/90 px-3 text-sm font-bold text-slate-800 shadow-sm backdrop-blur cursor-pointer hover:bg-white";
 
   return (
-    <div ref={rootRef} data-layout={layout} className={`flex min-h-screen w-full flex-col text-on-surface ${BACKGROUND[gift.template]}`}>
-      {topBar}
+    <div ref={rootRef} data-layout={layout} className={`relative flex h-full w-full flex-col overflow-hidden text-on-surface ${BACKGROUND[gift.template]}`}>
       <p aria-live="polite" className="sr-only">
         {slideAnnouncement(index, slides)}
       </p>
 
-      {layout === "desktop" ? (
-        <main className="mx-auto grid w-full max-w-275 flex-1 grid-cols-[18rem_minmax(0,1fr)] gap-8 px-8 py-4" aria-roledescription="carousel" aria-label="Thiệp">
-          <aside className="space-y-5">
-            <div>
-              <p className="text-2xl font-bold leading-snug">Gửi {gift.recipientName || "bạn"}</p>
-              {gift.sender && <p className="mt-1 text-base text-slate-700">từ {gift.sender}</p>}
-              {gift.addressing && <p className="mt-0.5 text-sm text-slate-600">{gift.addressing}</p>}
-            </div>
-            {gift.song?.source === "preset" && <MusicPlayer song={gift.song} className="rounded-2xl border border-slate-200 bg-white p-3 text-slate-900" />}
-            <SlideList slides={slides} index={index} onGo={go} />
-          </aside>
-          <section className="flex min-w-0 flex-col items-center" {...swipe}>
-            <div className="w-full max-w-180">{page}</div>
-            <div className="mt-4 flex items-center gap-4">
-              <StepButton direction={-1} disabled={!hasPrev} onClick={prev} />
-              <span className="min-w-16 text-center text-sm font-bold text-slate-700">
-                {index + 1} / {slides.length}
+      {(onBack || !embedded) && (
+        <div className="absolute left-3 top-3 z-20 flex items-center gap-2">
+          {onBack && (
+            <button type="button" onClick={onBack} className={floating}>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px] leading-none">
+                {embedded ? "close" : "lock"}
               </span>
-              <StepButton direction={1} disabled={!hasNext} onClick={next} />
-            </div>
-          </section>
-        </main>
-      ) : layout === "tablet" ? (
-        <main className="flex w-full flex-1 flex-col" aria-roledescription="carousel" aria-label="Thiệp">
-          <div className="mx-auto flex w-full max-w-190 flex-1 items-center gap-3 px-4" {...swipe}>
-            <StepButton direction={-1} disabled={!hasPrev} onClick={prev} />
-            <div className="min-w-0 flex-1">{page}</div>
-            <StepButton direction={1} disabled={!hasNext} onClick={next} />
-          </div>
-          <Dots slides={slides} index={index} onGo={go} />
-        </main>
-      ) : (
-        <main className="flex w-full flex-1 flex-col" aria-roledescription="carousel" aria-label="Thiệp">
-          <div className="flex-1 px-2" {...swipe}>
-            {page}
-          </div>
-          <div className="sticky bottom-0 z-10 bg-white/90 backdrop-blur">
-            <Dots slides={slides} index={index} onGo={go} />
-          </div>
-        </main>
+              {backLabel}
+            </button>
+          )}
+          {!embedded && (
+            <Link href="/" className={floating}>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px] leading-none">
+                home
+              </span>
+              Trang chủ
+            </Link>
+          )}
+        </div>
       )}
+
+      <main className="relative min-h-0 flex-1" aria-roledescription="carousel" aria-label="Thiệp" {...swipe}>
+        {slide ? template.render(slide, gift, ctx) : null}
+      </main>
+
+      <NavBar slides={slides} index={index} onGo={go} onPrev={prev} onNext={next} />
     </div>
   );
 }

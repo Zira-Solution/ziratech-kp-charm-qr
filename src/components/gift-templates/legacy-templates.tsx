@@ -63,6 +63,7 @@ function wrap(id: GiftTemplateId, Component: LegacyComponent): GiftTemplate {
     id,
     slides: () => LEGACY_SLIDES,
     render: (_slide, gift, ctx) => (
+      <div className="h-full overflow-y-auto px-2 py-14">
       <div className="relative mx-auto min-h-190 w-full max-w-97.5 overflow-hidden rounded-4xl border-4 border-white/80 shadow-[0_20px_50px_rgba(70,40,30,0.18)]">
         <Component
           data={toLegacyData(gift)}
@@ -73,6 +74,7 @@ function wrap(id: GiftTemplateId, Component: LegacyComponent): GiftTemplate {
           onPrevSlide={ctx.prev}
           onSaveKeepsake={() => undefined} // the old "save offline" button promised something that does not exist
         />
+      </div>
       </div>
     ),
   };

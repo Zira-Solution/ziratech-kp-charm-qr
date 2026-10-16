@@ -2,19 +2,31 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { layoutFor, moveIndex, slideAnnouncement } from "../src/components/gift-templates/layout.ts";
 
-test("layoutFor picks phone, tablet or desktop from the width of the container", () => {
-  assert.equal(layoutFor(320), "phone");
-  assert.equal(layoutFor(390), "phone");
-  assert.equal(layoutFor(639), "phone");
-  assert.equal(layoutFor(640), "tablet");
-  assert.equal(layoutFor(768), "tablet");
-  assert.equal(layoutFor(1023), "tablet");
-  assert.equal(layoutFor(1024), "desktop");
-  assert.equal(layoutFor(1440), "desktop");
+test("layoutFor gives a portrait frame to phones and to a tablet held upright", () => {
+  assert.equal(layoutFor(390, 844), "portrait"); // phone
+  assert.equal(layoutFor(360, 640), "portrait");
+  assert.equal(layoutFor(820, 1180), "portrait"); // iPad held upright
+  assert.equal(layoutFor(768, 1024), "portrait");
 });
 
-test("layoutFor treats a width that is not known yet as a phone", () => {
-  for (const w of [0, -5, NaN]) assert.equal(layoutFor(w), "phone");
+test("layoutFor gives a landscape frame to a tablet held sideways and to computers", () => {
+  assert.equal(layoutFor(1024, 768), "landscape"); // iPad sideways
+  assert.equal(layoutFor(1180, 820), "landscape");
+  assert.equal(layoutFor(1280, 720), "landscape"); // computer
+  assert.equal(layoutFor(1440, 900), "landscape");
+  assert.equal(layoutFor(1366, 768), "landscape");
+});
+
+test("layoutFor needs the box to be wide enough and clearly wider than tall", () => {
+  assert.equal(layoutFor(639, 300), "portrait"); // too narrow for two halves
+  assert.equal(layoutFor(640, 400), "landscape");
+  assert.equal(layoutFor(1000, 1000), "portrait"); // square
+  assert.equal(layoutFor(1149, 1000), "portrait"); // just under 1.15 x
+  assert.equal(layoutFor(1150, 1000), "landscape");
+});
+
+test("layoutFor treats a box that is not measured yet as portrait", () => {
+  for (const [w, h] of [[0, 0], [-5, 100], [NaN, NaN], [800, 0], [800, NaN]]) assert.equal(layoutFor(w, h), "portrait", `${w}x${h}`);
 });
 
 test("moveIndex steps through the slides and stops at both ends", () => {

@@ -10,10 +10,11 @@ import { Icon } from "./ui";
 
 type Device = "phone" | "tablet" | "desktop";
 
-const DEVICES: { id: Device; label: string; icon: string; width: number }[] = [
-  { id: "phone", label: "Điện thoại", icon: "smartphone", width: 390 },
-  { id: "tablet", label: "iPad", icon: "tablet_mac", width: 768 },
-  { id: "desktop", label: "Máy tính", icon: "desktop_windows", width: 1280 },
+// The card fills its frame: a phone is upright, an iPad is held sideways, a computer is wide.
+const DEVICES: { id: Device; label: string; icon: string; width: number; height: number }[] = [
+  { id: "phone", label: "Điện thoại", icon: "smartphone", width: 390, height: 844 },
+  { id: "tablet", label: "iPad", icon: "tablet_mac", width: 1024, height: 768 },
+  { id: "desktop", label: "Máy tính", icon: "desktop_windows", width: 1280, height: 720 },
 ];
 
 interface Props {
@@ -31,16 +32,16 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
  * computer, and try the other looks.
  */
 export default function PreviewOverlay({ draft, template, onTemplateChange, onClose }: Props) {
-  // Open as the screen in the buyer's hands: a tablet shows the iPad frame, anything else starts as a phone
-  // (what most recipients will use after scanning the card).
+  // Open as the screen in the buyer's hands: a tablet held sideways shows the iPad frame, anything else
+  // starts as a phone (what most recipients will use after scanning the card).
   const [device, setDevice] = useState<Device>(() =>
-    typeof window !== "undefined" && window.innerWidth >= 640 && window.innerWidth < 1024 ? "tablet" : "phone"
+    typeof window !== "undefined" && window.innerWidth >= 640 && window.innerWidth < 1024 && window.innerWidth > window.innerHeight ? "tablet" : "phone"
   );
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
   const gift = useMemo(() => normalizeGift({ ...draftToPayload(draft).giftData, template }), [draft, template]);
-  const frameWidth = DEVICES.find((d) => d.id === device)!.width;
+  const frame = DEVICES.find((d) => d.id === device)!;
 
   // Move focus in when it opens, give it back when it closes, and keep the page behind from scrolling.
   useEffect(() => {
@@ -119,10 +120,10 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-0 py-0 sm:px-4 sm:py-4">
+      <div className="flex min-h-0 flex-1 items-center justify-center sm:p-4">
         <div
-          style={{ width: frameWidth, maxWidth: "100%" }}
-          className={`mx-auto overflow-hidden bg-white ${device === "desktop" ? "rounded-lg" : "sm:rounded-3xl"} sm:shadow-2xl`}
+          style={{ width: frame.width, height: frame.height, maxWidth: "100%", maxHeight: "100%" }}
+          className="overflow-hidden bg-white sm:rounded-2xl sm:shadow-2xl"
         >
           <GiftTemplateViewer gift={gift} embedded />
         </div>

@@ -1,21 +1,22 @@
 /**
- * Which of three arrangements the card page uses. The decision is made from the width of the box the
- * card sits in, not the width of the window, so the "iPad" and "Điện thoại" frames of the preview look
- * right even on a desktop monitor.
+ * The card is one frame that fills the screen. Its shape follows the shape of the box it sits in:
  *
- *   phone    under 640px   the slide fills the screen
- *   tablet   640 - 1023px  one large slide in the middle, arrows at its sides
- *   desktop  1024px and up a left pane (greeting, list of messages) beside a large slide
+ *   portrait   phones, and a tablet held upright   picture on top, content below
+ *   landscape  a tablet held sideways, computers   picture on the left, content on the right
+ *
+ * The decision is made from the box, not the window, so the "iPad" and "Điện thoại" frames of the
+ * preview look right even on a desktop monitor.
  */
-export type Layout = "phone" | "tablet" | "desktop";
+export type Layout = "portrait" | "landscape";
 
-export const TABLET_MIN = 640;
-export const DESKTOP_MIN = 1024;
+/** Narrower than this there is no room for two halves side by side. */
+export const LANDSCAPE_MIN_WIDTH = 640;
+/** The box must be at least this much wider than it is tall. */
+export const LANDSCAPE_RATIO = 1.15;
 
-export function layoutFor(width: number): Layout {
-  if (!(width > 0)) return "phone"; // not measured yet
-  if (width >= DESKTOP_MIN) return "desktop";
-  return width >= TABLET_MIN ? "tablet" : "phone";
+export function layoutFor(width: number, height: number): Layout {
+  if (!(width > 0) || !(height > 0)) return "portrait"; // not measured yet
+  return width >= LANDSCAPE_MIN_WIDTH && width >= height * LANDSCAPE_RATIO ? "landscape" : "portrait";
 }
 
 /** The slide to show after moving by `delta`, kept inside 0..count-1. */

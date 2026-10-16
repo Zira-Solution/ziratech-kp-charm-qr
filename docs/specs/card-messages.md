@@ -65,13 +65,28 @@ Giao diện của studio: nền **trắng, không dark mode** (khai báo `colorS
 ## Trang xem thiệp
 
 - `normalizeGift(saved)` (hàm thuần, có test) tạo "thiệp để hiển thị": suy ra `blocks` cho thiệp cũ, **không trộn `DEFAULT_GIFT_DATA`**. Ô trống không hiển thị gì. Dữ liệu mẫu chỉ còn dùng ở `/thamkhao`.
-- Mỗi mẫu nhận danh sách `blocks` theo thứ tự và vẽ từng mục bằng bố cục riêng của mẫu. Mục không có trong danh sách không xuất hiện.
+- Mỗi mẫu nhận danh sách `blocks` theo thứ tự và vẽ từng mục bằng bố cục riêng của mẫu (khung và điều hướng theo thiết bị do một khung dùng chung lo, xem "Theo thiết bị"). Mục không có trong danh sách không xuất hiện.
 - Tên người tặng, xưng hô, ẩn danh được dùng thật trong lời chào; ẩn danh thì không hiện tên.
 - Bỏ tham số `?tpl=`; mẫu lấy từ dữ liệu đã lưu.
 - **Storybook:** slide "Mở quà" đầu, mỗi mục một slide theo thứ tự, slide "Cảm ơn" cuối (hiện lời kết nếu có). Số slide thay đổi theo số mục. Slide ngày kỷ niệm và mốc thời gian là thiết kế mới.
 - **Retro 90s:** các khu vực xếp dọc theo thứ tự; phần chưa có thì thiết kế thêm theo phong cách mẫu.
 - **Sổ Hoa Khô:** thêm ghi âm, video, nhạc, mốc thời gian theo kiểu sổ dán.
 - Mỗi mẫu tách thành nhiều file nhỏ (mỗi loại thông điệp một file) thay vì một file hàng trăm dòng.
+
+### Theo thiết bị (quyết định 2026-10-16)
+
+Người tạo và người nhận dùng điện thoại, iPad hoặc máy tính, nên cả studio và trang xem thiệp thích ứng theo ba cỡ. Bố cục "slide giữa + thanh điều hướng bên cạnh", áp dụng cho cả 3 mẫu (mỗi mẫu giữ nét riêng):
+
+| Cỡ | Rộng | Trang xem thiệp |
+|---|---|---|
+| Điện thoại | dưới 640px | slide tràn màn hình, không viền khung; chấm điều hướng và vuốt |
+| iPad | 640–1023px | slide lớn căn giữa (tối đa khoảng 640px), mũi tên trước/sau, chấm điều hướng |
+| Máy tính | từ 1024px | cột trái: lời chào, bộ phát nhạc, danh sách mục bấm để nhảy; bên phải slide lớn (tối đa khoảng 720px) với nút trước/sau và phím mũi tên |
+
+- Cỡ được quyết định theo **bề rộng khung chứa** (container query của Tailwind v4), không theo bề rộng cửa sổ, để khung "iPad" hay "Điện thoại" trong phần xem thử hiển thị đúng ngay trên màn hình máy tính.
+- Mỗi slide của mẫu phải đẹp ở 390 / 640 / 720px (chữ, ảnh, khoảng cách co giãn theo bề rộng).
+- Xem thử trong studio có công tắc **Điện thoại / iPad / Máy tính**.
+- Studio: ba bước dùng được ở cả ba cỡ; thanh nút đáy không che nội dung; trên điện thoại và iPad bản xem trước là nút Xem thử (không có cột bên).
 
 ### Bộ phát dùng chung (mẫu chỉ chỉnh kiểu dáng)
 

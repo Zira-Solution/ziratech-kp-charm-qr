@@ -77,7 +77,8 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Deps: T7 · Files: `media/MusicPlayer.tsx`, `media/AnniversaryCounter.tsx`, `media/TimelineList.tsx`, `studio/draft.ts` (dùng lại `daysSince`)
 - [ ] **T10 Khung trang xem thiệp** (M)
   - Acceptance: `/g/[token]` dùng `normalizeGift`, truyền `gift` + `blocks` cho mẫu (và `data` kiểu cũ cho mẫu chưa chuyển); mẫu lấy từ dữ liệu đã lưu, bỏ `?tpl=`; bỏ thanh đổi mẫu và chế độ "Bản thảo" cho người nhận (xem câu hỏi mở trong plan); tên người tặng / xưng hô / ẩn danh dùng thật; giữ chế độ Story + Cuộn dọc.
-  - Verify: `tsc`, `eslint`, `next build`; mở thiệp thật ở cả 3 mẫu, không hỏng.
+  - **Thêm (theo thiết bị):** khung dùng chung đo bề rộng **khung chứa** (container query Tailwind v4, đối chiếu tài liệu chính thức) và chọn ba bố cục: điện thoại (slide tràn), iPad (slide lớn căn giữa + mũi tên), máy tính (cột trái lời chào/nhạc/danh sách mục + slide lớn bên phải, phím mũi tên). Nhận prop bề rộng ép sẵn để xem thử dùng được.
+  - Verify: `tsc`, `eslint`, `next build`; mở thiệp thật ở cả 3 mẫu, không hỏng; xem ở 390 / 768 / 1280px.
   - Deps: T2, T8, T9 · Files: `gift-templates/GiftTemplateViewer.tsx`, `gift-templates/types.ts`, `app/g/[token]/page.tsx`
 
 **Checkpoint C:** bộ phát chạy với dữ liệu thật; khung xem truyền đúng dữ liệu; 3 mẫu hiện tại vẫn mở được. **Bạn thử tay nghe ghi âm, xem video, phát nhạc.**
@@ -85,7 +86,7 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
 ## Phase 4 — Ba mẫu (làm song song sau Checkpoint C; mỗi mẫu một nhánh, không đụng file của mẫu khác)
 
 ### Storybook 20/10
-- [ ] **T11 Storybook: khung động + mở quà / thư / ảnh / lời kết** (M)
+- [ ] **T11 Storybook: khung động + mở quà / thư / ảnh / lời kết** (M) — slide đẹp ở 390 / 640 / 720px
   - Acceptance: slide "Mở quà" đầu, mỗi mục tích một slide đúng thứ tự, slide "Cảm ơn" cuối (hiện lời kết); số slide theo `blocks`, điều hướng hoạt động với N slide; ảnh album chỉ dùng ảnh khách (1–6 ảnh, bố cục thích ứng, không còn ảnh Unsplash mẫu); mã tách thành `storybook/*Slide.tsx`.
   - Verify: `tsc`, `eslint`, `next build`; thử tay với thiệp chỉ có thư; thiệp chỉ có ảnh; thiệp đủ mục.
   - Deps: C · Files: `StorybookSunsetTemplate.tsx`, `storybook/OpenSlide.tsx`, `LetterSlide.tsx`, `PhotosSlide.tsx`, `ClosingSlide.tsx`
@@ -98,7 +99,7 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Deps: T11 · Files: `storybook/AnniversarySlide.tsx`, `TimelineSlide.tsx`, `StorybookSunsetTemplate.tsx`
 
 ### Retro 90s
-- [ ] **T14 Retro: khung động + thư / ảnh / lời kết** (M)
+- [ ] **T14 Retro: khung động + thư / ảnh / lời kết** (M) — đẹp ở 390 / 640 / 720px
   - Acceptance: các khu vực theo thứ tự `blocks`; ảnh album 1–6 ảnh không phụ thuộc ảnh nổi bật hay ảnh mẫu; bỏ chế độ mini; tách thư mục `retro/`.
   - Verify: `tsc`, `eslint`, `next build`; thử tay.
   - Deps: C · Files: `RetroNostalgiaTemplate.tsx`, `retro/*`
@@ -107,7 +108,7 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Deps: T14 · Files: `retro/*`, `RetroNostalgiaTemplate.tsx`
 
 ### Sổ Hoa Khô
-- [ ] **T16 Vintage: khung động + thư / ảnh / lời kết** (M)
+- [ ] **T16 Vintage: khung động + thư / ảnh / lời kết** (M) — đẹp ở 390 / 640 / 720px
   - Acceptance: trang sổ theo thứ tự `blocks`; album dùng ảnh khách (hết Unsplash gán cứng); đề từ, chữ ký, lời kết hiện đúng; bỏ ảnh vòng tay mặc định (`braceletImg`); tách `vintage/`.
   - Deps: C · Files: `VintageScrapbookTemplate.tsx`, `vintage/*`
 - [ ] **T17 Vintage: ghi âm / video / nhạc + mốc / ngày KN** (M)
@@ -118,9 +119,9 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
 
 ## Phase 5 — Hoàn tất
 
-- [ ] **T18 Nút Xem thử toàn màn hình** (S)
-  - Acceptance: nút "Xem thử" (cột bên phải và thanh dưới trên điện thoại) mở lớp phủ toàn màn hình dùng đúng trang xem thiệp với dữ liệu đang soạn (chưa cần lưu); đóng bằng nút và phím Esc, trả focus; ghi âm trong bản nháp nghe được.
-  - Verify: `tsc`, `eslint`; thử tay.
+- [ ] **T18 Xem thử toàn màn hình theo thiết bị** (M)
+  - Acceptance: hoàn thiện lớp phủ xem thử đang dở trong thư mục làm việc (chưa commit): bỏ hết dữ liệu mẫu (`DEFAULT_GIFT_DATA`, ảnh vòng tay và câu trích cố định, ảnh/video mẫu), dựng từ `normalizeGift(draftToPayload(draft))` nên hiện đúng mục đã tích, đúng thứ tự, đúng mẫu đang chọn; có công tắc **Điện thoại / iPad / Máy tính** (ép bề rộng khung chứa 390 / 768 / 1280); nút "Xem thử" có ở bước Hoàn tất và trên điện thoại; đóng bằng nút và phím Esc, giữ focus trong hộp thoại rồi trả focus; ghi âm trong bản nháp nghe được; trên điện thoại thật thì chiếm toàn màn hình.
+  - Verify: `tsc`, `eslint`, `next build`; thử tay ở ba cỡ.
   - Deps: D · Files: `studio/PreviewOverlay.tsx` (mới), `app/create/[token]/page.tsx`
 - [ ] **T19 Dọn dẹp** (S)
   - Acceptance: bỏ `DEFAULT_GIFT_DATA` khỏi đường xem thiệp và `data` kiểu cũ trong 3 mẫu; dữ liệu mẫu chỉ ở `/thamkhao`; bỏ mã thừa còn lại (highlight, `templateHasBlock`...); cập nhật `docs/specs/card-studio.md`, `docs/adr/0001`.
@@ -132,6 +133,11 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Deps: T19
 
 **Checkpoint E:** bạn xác nhận trên thiết bị thật (micro, nhạc, video, iPhone), sau đó mới push.
+
+- [ ] **T21 Studio theo thiết bị** (S)
+  - Acceptance: ba bước của studio xem ổn ở 390 / 768 / 1280px (thanh nút đáy không che ô nhập, lưới 8 thẻ và khung soạn không tràn ngang, chữ không nhỏ hơn 13px); iPad có bố cục hợp lý (không bỏ trống nửa màn hình); bản xem trước ở cột bên chỉ hiện từ 1024px, dưới đó là nút Xem thử.
+  - Verify: xem ở ba cỡ (khung xem thử trình duyệt hoặc thiết bị thật); `tsc`, `eslint`.
+  - Deps: T6b · Files: `app/create/[token]/page.tsx`, `studio/*`, `globals.css`
 
 ## Ngoài phạm vi
 

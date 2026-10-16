@@ -1,8 +1,8 @@
 # Spec: Studio tạo thiệp theo khối (card studio)
 
-> Phần "khối theo mẫu" trong spec này sẽ được thay bởi cách người mua tự tích chọn thông điệp: xem `docs/specs/card-messages.md`.
+> **Đã được thay một phần bởi `docs/specs/card-messages.md`:** người mua tự tích chọn thông điệp (không còn "khối theo mẫu"), studio có 3 bước, trang xem thiệp hiển thị đúng những gì đã chọn trong khung dọc hoặc ngang. Các giới hạn dữ liệu, kiểm tra link, ghi âm và bảo mật dưới đây vẫn đúng.
 
-Trạng thái: đang triển khai. Phạm vi: **phía tạo thiệp** (studio + API lưu). Việc hiển thị các khối mới trong trang xem thiệp (`/g/[token]`) là giai đoạn sau.
+Trạng thái: hoàn tất giai đoạn đầu (studio + API lưu); phần trang xem thiệp đã làm ở `card-messages.md`.
 
 ## Objective
 

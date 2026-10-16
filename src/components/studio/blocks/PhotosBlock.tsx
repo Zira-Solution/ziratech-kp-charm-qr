@@ -19,7 +19,7 @@ interface Props {
 
 const MAX_SOURCE_BYTES = 20 * 1024 * 1024;
 
-/** A set of photos: add (compressed in the browser), replace, remove, caption. Used for the album and the highlights. */
+/** A set of photos: add (compressed in the browser), replace, remove, caption. Used for the album. */
 export default function PhotosBlock({ id, step, title, hint, items, max, showDate, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const targetRef = useRef<number | null>(null); // index being replaced, null = adding

@@ -136,10 +136,11 @@ Lệnh kiểm chứng chung: `npx tsc --noEmit` · `npx eslint` · `npm test` ·
   - Verify: `tsc`, `eslint`, `next build`; thử tay ở ba cỡ.
   - Đã làm: `studio/PreviewOverlay.tsx` (thay lớp phủ dở dang): dựng từ `normalizeGift(draftToPayload(draft))` không còn dữ liệu mẫu ở phần soạn; công tắc mẫu và thiết bị (Điện thoại 390 / iPad 768 / Máy tính 1280, mặc định theo màn hình đang dùng); khoá cuộn nền, giữ focus trong hộp thoại, Esc, trả focus. Lưu ý: ba mẫu cũ vẫn lấp nội dung mẫu cho phần chưa soạn (xong khi chuyển mẫu).
   - Deps: D · Files: `studio/PreviewOverlay.tsx` (mới), `app/create/[token]/page.tsx`
-- [ ] **T19 Dọn dẹp** (S)
+- [x] **T19 Dọn dẹp** (S)
   - Acceptance: bỏ `DEFAULT_GIFT_DATA` khỏi đường xem thiệp và `data` kiểu cũ trong 3 mẫu; dữ liệu mẫu chỉ ở `/thamkhao`; bỏ mã thừa còn lại (highlight, `templateHasBlock`...); cập nhật `docs/specs/card-studio.md`, `docs/adr/0001`.
   - Verify: đồ thị import không còn file chết; `tsc`, `eslint`, `npm test`, `next build`.
   - Deps: T18 · Files: nhiều file nhỏ (mỗi nhóm một commit)
+  - Đã làm: `template-config.ts` chỉ còn id, tên, biểu tượng, mô tả (bỏ danh sách khối, `highlightMax`, `templateHasBlock`, `BlockId` trùng); bỏ `?tpl=`; dữ liệu mẫu cũ chỉ còn trong `types.ts` cho `/thamkhao` (có chú thích); đồ thị import không còn file chết; 0 export hoàn toàn không dùng; cập nhật `card-studio.md`, ADR 0001, thêm ADR 0002. Giữ có chủ ý: xử lý `momentPhotos` cho thiệp cũ (có test).
 - [ ] **T20 Nghiệm thu** (S)
   - Acceptance: đủ 7 tiêu chí trong `docs/specs/card-messages.md`; bảng "đã tự kiểm" và "bạn cần tự thử" ghi rõ.
   - Verify: `tsc`, `eslint`, `npm test`, `next build` + curl API + checklist thử tay.

@@ -1,7 +1,7 @@
 # ADR 0001: Nội dung thiệp theo khối và nơi lưu file media
 
-- Trạng thái: chấp nhận
-- Liên quan: `docs/specs/card-studio.md`
+- Trạng thái: chấp nhận; quyết định 2 và 5 (khối theo mẫu, ảnh nổi bật) đã được thay bởi ADR 0002
+- Liên quan: `docs/specs/card-studio.md`, `docs/adr/0002-card-messages-skins-and-frames.md`
 
 ## Bối cảnh
 

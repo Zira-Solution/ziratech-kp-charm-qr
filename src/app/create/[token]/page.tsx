@@ -236,7 +236,7 @@ export default function CardStudioPage() {
       setDirty(false);
       showToast("Đã lưu thiệp thành công!", "success");
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#721a28", "#ffd700", "#fea095", "#ffffff"] });
-      setTimeout(() => router.push(`/g/${token}?tpl=${draft.template}`), 900);
+      setTimeout(() => router.push(`/g/${token}`), 900);
     } catch (err) {
       if (!needsAuth) {
         showToast(err instanceof Error ? err.message : "Không lưu được thiệp", "error");

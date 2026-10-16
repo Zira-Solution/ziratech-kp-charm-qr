@@ -1,4 +1,6 @@
 import { LEGACY_TEMPLATES } from "./legacy-templates";
+import { STORYBOOK_SKIN } from "./skins/storybook";
+import { makeTemplate } from "./slides/make-template";
 import type { GiftTemplate } from "./template-contract";
 import type { GiftTemplateId } from "./types";
 
@@ -7,7 +9,7 @@ import type { GiftTemplateId } from "./types";
  * the others keep using the wrapped original until their turn.
  */
 const TEMPLATES: Record<GiftTemplateId, GiftTemplate> = {
-  "storybook-sunset": LEGACY_TEMPLATES["storybook-sunset"],
+  "storybook-sunset": makeTemplate(STORYBOOK_SKIN),
   "vintage-scrapbook": LEGACY_TEMPLATES["vintage-scrapbook"],
   "retro-nostalgia": LEGACY_TEMPLATES["retro-nostalgia"],
 };

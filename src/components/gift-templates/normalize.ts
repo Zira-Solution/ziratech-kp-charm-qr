@@ -1,4 +1,5 @@
 import { deriveBlocks, isBlockId, type BlockId } from "./blocks.ts";
+import { getMusicPreset } from "./music-presets.ts";
 import { DEFAULT_TEMPLATE, getTemplate } from "./template-config.ts";
 import type { GiftTemplateId, TimelineItem } from "./types.ts";
 
@@ -100,7 +101,8 @@ export function normalizeGift(saved: unknown): ViewerGift {
       const s = obj(g.song);
       const source = s.source;
       if (source === "preset" && str(s.presetId)) {
-        out.song = { source, presetId: str(s.presetId), title: str(s.title), artist: str(s.artist) };
+        // The melody's own name when the card does not carry one (a draft being previewed does not).
+        out.song = { source, presetId: str(s.presetId), title: str(s.title) || getMusicPreset(s.presetId)?.name || "", artist: str(s.artist) };
       } else if (source === "link" && str(s.link)) {
         out.song = { source, link: str(s.link), title: str(s.title), artist: str(s.artist) };
       }

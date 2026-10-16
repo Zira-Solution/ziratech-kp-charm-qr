@@ -51,11 +51,14 @@ const BLOCK_SLIDE: Record<BlockId, { label: string; icon: string }> = {
   finalMessage: { label: "Lời kết", icon: "favorite" },
 };
 
-/** Opening, one page per ticked message, closing. A template may use this as it is. */
+/**
+ * Opening, one page per ticked message, closing. The closing line ("Lời kết") is shown on the closing
+ * page, so it has no page of its own. A template may use this as it is.
+ */
 export function defaultSlides(gift: ViewerGift): SlideDef[] {
   return [
     { id: "open", label: "Mở quà", icon: "featured_seasonal_and_gifts" },
-    ...gift.blocks.map((block) => ({ id: block, ...BLOCK_SLIDE[block] })),
+    ...gift.blocks.filter((block) => block !== "finalMessage").map((block) => ({ id: block, ...BLOCK_SLIDE[block] })),
     { id: "closing", label: "Lời cảm ơn", icon: "favorite" },
   ];
 }

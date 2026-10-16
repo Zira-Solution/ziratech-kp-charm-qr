@@ -82,7 +82,13 @@ class MusicSynthesizer {
 
   /** Id of the preset that is playing right now, or null (also null for the default melody). */
   public get playingId(): string | null {
-    return this.isPlaying ? this.currentId : null;
+    // A browser can keep the audio context suspended until the visitor taps: not playing yet, then.
+    return this.isPlaying && this.ctx?.state === "running" ? this.currentId : null;
+  }
+
+  /** Lets sound start once the visitor has touched the page (browsers refuse it before that). */
+  public resume() {
+    if (this.ctx && this.ctx.state === "suspended") this.ctx.resume().catch(() => undefined);
   }
 
   /** Starts a melody. With no id it plays the default one. Playing another id switches to it. */
@@ -90,7 +96,10 @@ class MusicSynthesizer {
     const voice = presetId ? PRESET_VOICES[presetId] : DEFAULT_VOICE;
     if (!voice) return;
     if (this.isPlaying) {
-      if (this.currentId === (presetId ?? null)) return;
+      if (this.currentId === (presetId ?? null)) {
+        this.resume();
+        return;
+      }
       this.stop();
     }
 
@@ -98,6 +107,7 @@ class MusicSynthesizer {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!this.ctx) {
         this.ctx = new AudioCtx();
+        this.ctx.onstatechange = () => this.emit();
       }
       if (this.ctx.state === "suspended") {
         this.ctx.resume();

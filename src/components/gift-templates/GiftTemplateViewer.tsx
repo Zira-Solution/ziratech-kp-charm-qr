@@ -2,6 +2,8 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import confetti from "canvas-confetti";
+import { musicPlayerSynth } from "./audio-helper";
 import { layoutFor, moveIndex, slideAnnouncement } from "./layout";
 import type { ViewerGift } from "./normalize";
 import type { TemplateContext } from "./template-contract";
@@ -47,15 +49,44 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
   const [requested, setRequested] = useState(0);
   const index = moveIndex(requested, 0, slides.length);
 
-  const go = useCallback((i: number) => setRequested(moveIndex(0, i, slides.length)), [slides.length]);
-  const next = useCallback(() => setRequested((i) => moveIndex(i, 1, slides.length)), [slides.length]);
-  const prev = useCallback(() => setRequested((i) => moveIndex(i, -1, slides.length)), [slides.length]);
+  // Which way the visitor moved, so the new page slides in from the matching side.
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const go = useCallback(
+    (i: number) => {
+      setDirection(i < index ? "prev" : "next");
+      setRequested(moveIndex(0, i, slides.length));
+    },
+    [index, slides.length]
+  );
+  const next = useCallback(() => {
+    setDirection("next");
+    setRequested((i) => moveIndex(i, 1, slides.length));
+  }, [slides.length]);
+  const prev = useCallback(() => {
+    setDirection("prev");
+    setRequested((i) => moveIndex(i, -1, slides.length));
+  }, [slides.length]);
 
-  // The built-in melody starts when the card opens (the visitor has just tapped to open it).
-  const music = useMusicPlayer(gift.song?.source === "preset" ? gift.song.presetId : undefined);
+  // The built-in melody starts when the card opens. A browser may hold it back until the visitor first touches
+  // the page, so the first touch or key press lets it through, and the button always shows the real state.
+  const hasMelody = gift.song?.source === "preset";
+  const music = useMusicPlayer(hasMelody ? gift.song?.presetId : undefined);
   useEffect(() => {
     music.start();
+    const letSoundIn = () => musicPlayerSynth.resume();
+    window.addEventListener("pointerdown", letSoundIn, { once: true });
+    window.addEventListener("keydown", letSoundIn, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", letSoundIn);
+      window.removeEventListener("keydown", letSoundIn);
+    };
   }, []);
+
+  // A little confetti when a recipient opens the card (not in the studio preview, not for people who ask for less motion).
+  useEffect(() => {
+    if (embedded || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    confetti({ particleCount: 90, spread: 75, startVelocity: 38, origin: { y: 0.35 }, colors: ["#c13d28", "#d99b26", "#fea095", "#ffffff"], disableForReducedMotion: true });
+  }, [embedded]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -115,8 +146,27 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
         </div>
       )}
 
-      <main className="relative min-h-0 flex-1" aria-roledescription="carousel" aria-label="Thiệp" {...swipe}>
-        {slide ? template.render(slide, gift, ctx) : null}
+      {hasMelody && (
+        <button
+          type="button"
+          onClick={music.toggle}
+          aria-pressed={music.playing}
+          aria-label={music.playing ? "Tắt nhạc nền" : "Bật nhạc nền"}
+          className={`${floating} absolute right-3 top-3 z-20`}
+        >
+          <span aria-hidden="true" className="material-symbols-outlined text-[20px] leading-none">
+            {music.playing ? "music_note" : "music_off"}
+          </span>
+          <span className="hidden sm:inline">{music.playing ? "Đang phát nhạc" : "Bật nhạc"}</span>
+        </button>
+      )}
+
+      <main className="relative min-h-0 flex-1 overflow-hidden" aria-roledescription="carousel" aria-label="Thiệp" {...swipe}>
+        {slide ? (
+          <div key={slide.id} className={`h-full ${direction === "prev" ? "kp-page-prev" : "kp-page-next"}`}>
+            {template.render(slide, gift, ctx)}
+          </div>
+        ) : null}
       </main>
 
       <NavBar slides={slides} index={index} onGo={go} onPrev={prev} onNext={next} />

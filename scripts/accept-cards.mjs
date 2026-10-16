@@ -131,19 +131,33 @@ for (const template of TEMPLATES) {
   await setup.close();
   check(`[${template}] the card saves`, saved === 200, `status ${saved}`);
 
+  // A visitor who has not proved the code yet (a scan of the QR) is asked for the 4-digit OTP, then sees the card at once.
+  if (template === TEMPLATES[0]) {
+    const gate = await newPage({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    await gate.goto(BASE + "/g/KP-2010-DEMO", { waitUntil: "domcontentloaded" });
+    const asked = await gate.waitForSelector("#gift-pin", { timeout: 15000 }).then(() => true).catch(() => false);
+    const heldBack = await gate.evaluate(() => !document.querySelector("[data-layout]") && !document.querySelector('button[aria-label="Nhấn giữ để hiện trái tim"]'));
+    check("QR without a session: asks for the OTP, shows no card and no heart to hold", asked && heldBack);
+    await gate.type("#gift-pin", "9999");
+    await gate.click('button[type="submit"]');
+    await wait(1200);
+    check("a wrong OTP is refused with a message", /OTP|mã|đúng|sai/i.test(await alertText(gate)), await alertText(gate));
+    await gate.click("#gift-pin", { clickCount: 3 });
+    await gate.type("#gift-pin", "2010");
+    await gate.click('button[type="submit"]');
+    const shown = await gate.waitForSelector("[data-layout]", { timeout: 15000 }).then(() => true).catch(() => false);
+    check("the right OTP shows the card at once", shown);
+    const toggle = await gate.evaluate(() => !!document.querySelector('button[aria-label="Bật nhạc nền"], button[aria-label="Tắt nhạc nền"]'));
+    check("a card with a built-in melody has a music button", toggle);
+    await gate.close();
+  }
+
   for (const dev of DEVICES) {
     const page = await newPage(dev.viewport);
     await login(page, "open", "2010");
-    await page.goto(BASE + "/g/KP-2010-DEMO", { waitUntil: "networkidle2" });
-    // press and hold in the middle of the lock screen until it opens
-    const heart = await page.waitForSelector('button[aria-label="Nhấn giữ để hiện trái tim"]');
-    const box = await heart.boundingBox();
-    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-    await page.mouse.down();
-    await wait(3600);
-    await page.mouse.up();
+    await page.goto(BASE + "/g/KP-2010-DEMO", { waitUntil: "domcontentloaded" });
     const opened = await page.waitForSelector("[data-layout]", { timeout: 15000 }).then(() => true).catch(() => false);
-    if (!opened) { check(`[${template}/${dev.name}] the lock screen opens`, false, await page.evaluate(() => document.body.innerText.slice(0, 120))); await page.close(); continue; }
+    if (!opened) { check(`[${template}/${dev.name}] the card shows straight away`, false, await page.evaluate(() => document.body.innerText.slice(0, 120))); await page.close(); continue; }
     await wait(500);
 
     const layout = await page.evaluate(() => document.querySelector("[data-layout]").getAttribute("data-layout"));

@@ -152,20 +152,17 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
           type="button"
           onClick={music.toggle}
           aria-pressed={music.playing}
-          aria-label={music.playing ? "Tắt nhạc nền" : "Bật nhạc nền"}
-          title={music.playing ? "Chạm để tắt nhạc" : "Chạm để bật nhạc"}
-          className={`${floating} absolute right-3 top-3 z-20 cursor-pointer active:scale-95 transition-all`}
+          aria-label={music.playing ? "Tắt âm thanh" : "Bật âm thanh"}
+          title={music.playing ? "Tắt loa" : "Bật loa"}
+          className="absolute right-3 top-3 z-20 flex h-8.5 w-8.5 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-stone-200/80 bg-white/90 text-stone-700 shadow-sm backdrop-blur-sm transition-all hover:bg-white hover:scale-105 active:scale-90 cursor-pointer"
         >
           <span
             aria-hidden="true"
-            className={`material-symbols-outlined text-[18px] leading-none transition-colors ${
+            className={`material-symbols-outlined text-[20px] leading-none transition-colors ${
               music.playing ? "text-[#c13d28]" : "text-stone-400"
             }`}
           >
-            {music.playing ? "music_note" : "music_off"}
-          </span>
-          <span className="text-xs font-semibold text-stone-800">
-            {music.playing ? "Tắt nhạc" : "Bật nhạc"}
+            {music.playing ? "volume_up" : "volume_off"}
           </span>
         </button>
       )}

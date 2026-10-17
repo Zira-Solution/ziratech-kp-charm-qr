@@ -47,9 +47,8 @@ export function NavBar({ slides, index, onGo, onPrev, onNext }: { slides: readon
   return (
     <div className="flex shrink-0 items-center justify-between gap-2 border-t border-slate-200 bg-white/90 px-3 py-2 backdrop-blur">
       <StepButton direction={-1} disabled={index === 0} onClick={onPrev} />
-      <div className="min-w-0 text-center">
+      <div className="min-w-0 flex items-center justify-center">
         <Dots slides={slides} index={index} onGo={onGo} />
-        <p className="hidden truncate text-xs font-bold text-slate-600 sm:block">{slides[index]?.label}</p>
       </div>
       <StepButton direction={1} disabled={index === slides.length - 1} onClick={onNext} />
     </div>

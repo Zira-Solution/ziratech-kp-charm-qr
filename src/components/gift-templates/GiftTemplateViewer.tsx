@@ -100,20 +100,135 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
     return () => window.removeEventListener("keydown", onKey);
   }, [next, prev]);
 
-  const touch = useRef<{ x: number; y: number } | null>(null);
-  const swipe = {
-    onTouchStart: (e: React.TouchEvent) => {
-      touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    },
-    onTouchEnd: (e: React.TouchEvent) => {
-      const start = touch.current;
-      touch.current = null;
-      if (!start) return;
-      const dx = e.changedTouches[0].clientX - start.x;
-      const dy = e.changedTouches[0].clientY - start.y;
-      if (Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > Math.abs(dy) * 1.5) (dx < 0 ? next : prev)();
-    },
+  // Ultra-smooth interactive swipe gesture state
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+
+  const gestureRef = useRef<{
+    startX: number;
+    startY: number;
+    startTime: number;
+    isLockedHorizontal: boolean;
+    isLockedVertical: boolean;
+    pointerId?: number;
+  } | null>(null);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLElement>) => {
+    // Only primary button for mouse
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+
+    // Do not start swipe if user is interacting with buttons, links, inputs, or media controls
+    const target = e.target as HTMLElement | null;
+    if (target?.closest("button, a, input, textarea, select, [data-no-swipe], video, audio, iframe")) {
+      return;
+    }
+
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
+
+    gestureRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startTime: performance.now(),
+      isLockedHorizontal: false,
+      isLockedVertical: false,
+      pointerId: e.pointerId,
+    };
   };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    const g = gestureRef.current;
+    if (!g || isExiting) return;
+
+    const dx = e.clientX - g.startX;
+    const dy = e.clientY - g.startY;
+
+    if (g.isLockedVertical) return;
+
+    if (!g.isLockedHorizontal) {
+      if (Math.hypot(dx, dy) < 8) return; // small deadzone
+
+      if (Math.abs(dy) > Math.abs(dx)) {
+        g.isLockedVertical = true;
+        return;
+      }
+      g.isLockedHorizontal = true;
+      setIsDragging(true);
+    }
+
+    // Rubber-band resistance at boundaries (first slide right, last slide left)
+    let effectiveOffset = dx;
+    if ((index === 0 && dx > 0) || (index === slides.length - 1 && dx < 0)) {
+      effectiveOffset = dx * 0.22;
+    }
+
+    setDragOffset(effectiveOffset);
+  };
+
+  const endDrag = useCallback(
+    (e?: React.PointerEvent<HTMLElement>) => {
+      const g = gestureRef.current;
+      if (!g) return;
+
+      if (e && g.pointerId !== undefined) {
+        try {
+          e.currentTarget.releasePointerCapture(g.pointerId);
+        } catch {}
+      }
+
+      if (!g.isLockedHorizontal) {
+        gestureRef.current = null;
+        setIsDragging(false);
+        setDragOffset(0);
+        return;
+      }
+
+      const clientX = e ? e.clientX : g.startX + dragOffset;
+      const dx = clientX - g.startX;
+      const dt = Math.max(1, performance.now() - g.startTime);
+      const velocity = dx / dt; // px per ms
+
+      const containerWidth = rootRef.current?.clientWidth || 380;
+      const threshold = Math.min(55, containerWidth * 0.14);
+      const isFlick = Math.abs(velocity) >= 0.32 && Math.abs(dx) >= 20;
+      const isDistance = Math.abs(dx) >= threshold;
+
+      gestureRef.current = null;
+
+      // Swiped Left -> Go Next slide
+      if (dx < 0 && index < slides.length - 1 && (isDistance || isFlick)) {
+        setIsExiting(true);
+        setDragOffset(-containerWidth);
+        setTimeout(() => {
+          next();
+          setIsExiting(false);
+          setIsDragging(false);
+          setDragOffset(0);
+        }, 220);
+        return;
+      }
+
+      // Swiped Right -> Go Prev slide
+      if (dx > 0 && index > 0 && (isDistance || isFlick)) {
+        setIsExiting(true);
+        setDragOffset(containerWidth);
+        setTimeout(() => {
+          prev();
+          setIsExiting(false);
+          setIsDragging(false);
+          setDragOffset(0);
+        }, 220);
+        return;
+      }
+
+      // Snap back smoothly
+      setIsDragging(false);
+      setDragOffset(0);
+    },
+    [dragOffset, index, next, prev, slides.length]
+  );
 
   const slide = slides[index];
   const ctx: TemplateContext = { layout, width, height, index, count: slides.length, go, next, prev, refreshVoiceUrl };
@@ -126,11 +241,31 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
         {slideAnnouncement(index, slides)}
       </p>
 
+      {hasMelody && (
+        <button
+          type="button"
+          onClick={music.toggle}
+          aria-pressed={music.playing}
+          aria-label={music.playing ? "Tắt âm thanh" : "Bật âm thanh"}
+          title={music.playing ? "Tắt loa" : "Bật loa"}
+          className="absolute left-3.5 top-3.5 z-40 flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-white/40 hover:bg-white/60 text-stone-700 backdrop-blur-xl shadow-[0_4px_16px_0_rgba(0,0,0,0.06),inset_0_1px_1px_0_rgba(255,255,255,0.85)] hover:shadow-[0_6px_20px_0_rgba(0,0,0,0.1),inset_0_1px_2px_0_rgba(255,255,255,0.95)] active:scale-95 transition-all duration-300 cursor-pointer"
+        >
+          <span
+            aria-hidden="true"
+            className={`material-symbols-outlined text-[19px] leading-none transition-colors ${
+              music.playing ? "text-[#c13d28]" : "text-stone-400"
+            }`}
+          >
+            {music.playing ? "volume_up" : "volume_off"}
+          </span>
+        </button>
+      )}
+
       {(onBack || !embedded) && (
-        <div className="absolute left-3 top-3 z-20 flex items-center gap-2">
+        <div className={`absolute ${hasMelody ? "left-14" : "left-3.5"} top-3.5 z-40 flex items-center gap-2`}>
           {onBack && (
             <button type="button" onClick={onBack} className={floating}>
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px] leading-none">
+              <span aria-hidden="true" className="material-symbols-outlined text-[16px] leading-none">
                 {embedded ? "close" : "lock"}
               </span>
               {backLabel}
@@ -138,7 +273,7 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
           )}
           {!embedded && (
             <Link href="/" className={floating}>
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px] leading-none">
+              <span aria-hidden="true" className="material-symbols-outlined text-[16px] leading-none">
                 home
               </span>
               Trang chủ
@@ -147,24 +282,30 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
         </div>
       )}
 
-      {hasMelody && (
-        <button
-          type="button"
-          onClick={music.toggle}
-          aria-pressed={music.playing}
-          aria-label={music.playing ? "Tắt nhạc nền" : "Bật nhạc nền"}
-          className={`${floating} absolute right-3 top-3 z-20`}
-        >
-          <span aria-hidden="true" className="material-symbols-outlined text-[20px] leading-none">
-            {music.playing ? "music_note" : "music_off"}
-          </span>
-          <span className="hidden sm:inline">{music.playing ? "Đang phát nhạc" : "Bật nhạc"}</span>
-        </button>
-      )}
-
-      <main className="relative min-h-0 flex-1 overflow-hidden" aria-roledescription="carousel" aria-label="Thiệp" {...swipe}>
+      <main
+        className="relative min-h-0 flex-1 overflow-hidden select-none touch-pan-y cursor-grab active:cursor-grabbing"
+        aria-roledescription="carousel"
+        aria-label="Thiệp"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+      >
         {slide ? (
-          <div key={slide.id} className={`h-full ${direction === "prev" ? "kp-page-prev" : "kp-page-next"}`}>
+          <div
+            key={slide.id}
+            className={`h-full w-full ${!isDragging && !isExiting ? (direction === "prev" ? "kp-page-prev" : "kp-page-next") : ""}`}
+            style={{
+              transform: dragOffset !== 0 ? `translateX(${dragOffset}px)` : undefined,
+              transition: isDragging
+                ? "none"
+                : isExiting
+                ? "transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.22s ease-out"
+                : "transform 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.2), opacity 0.25s ease-out",
+              opacity: isExiting ? 0.35 : isDragging ? 1 - Math.min(0.25, Math.abs(dragOffset) / 800) : 1,
+              willChange: isDragging || isExiting ? "transform, opacity" : undefined,
+            }}
+          >
             {template.render(slide, gift, ctx)}
           </div>
         ) : null}

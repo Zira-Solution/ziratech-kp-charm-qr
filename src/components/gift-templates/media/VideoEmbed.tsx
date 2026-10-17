@@ -8,7 +8,14 @@ interface Props {
   link: string;
   title?: string;
   className?: string;
+  aspectRatio?: "16:9" | "9:16" | "1:1";
 }
+
+const ASPECT_CLASSES: Record<"16:9" | "9:16" | "1:1", string> = {
+  "16:9": "aspect-video",
+  "9:16": "aspect-[9/16]",
+  "1:1": "aspect-square",
+};
 
 const httpsLink = (link: string) => {
   try {
@@ -22,14 +29,14 @@ const httpsLink = (link: string) => {
  * The buyer's video in a frame. A frame cannot tell us that the site refused to show the video
  * (a private or non-embeddable video), so the link to open it in a new tab is always offered.
  */
-export default function VideoEmbed({ link, title = "Video dành cho bạn", className = "" }: Props) {
+export default function VideoEmbed({ link, title = "Video dành cho bạn", className = "", aspectRatio = "16:9" }: Props) {
   const src = toVideoEmbed(link);
   const href = httpsLink(link);
 
   return (
     <div className={className}>
       {src && (
-        <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
+        <div className={`${ASPECT_CLASSES[aspectRatio]} w-full overflow-hidden rounded-xl bg-black max-h-[42vh]`}>
           <iframe
             src={src}
             title={title}

@@ -117,6 +117,56 @@ export default function StorybookSunsetTemplate({
   const musicTimerRef = useRef<NodeJS.Timeout | null>(null);
   const voiceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Slide 2 Letter Typewriter Effect
+  const letterSalutation = `Gửi ${data.recipientName || "bạn"},`;
+  const letterBody =
+    data.letterContent ||
+    "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này.";
+  const letterSig = data.senderName ? `— ${data.senderName}` : "";
+  const letterTotalLength = letterSalutation.length + letterBody.length + letterSig.length;
+  const [letterTypedCount, setLetterTypedCount] = useState(0);
+  const letterScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (currentSlide === 2) {
+      setLetterTypedCount(0);
+      const intervalMs = Math.max(16, Math.min(36, Math.floor(3500 / Math.max(letterTotalLength, 1))));
+      const timer = setInterval(() => {
+        setLetterTypedCount((prev) => {
+          if (prev >= letterTotalLength) {
+            clearInterval(timer);
+            return letterTotalLength;
+          }
+          return prev + 1;
+        });
+      }, intervalMs);
+      return () => clearInterval(timer);
+    }
+  }, [currentSlide, letterTotalLength]);
+
+  useEffect(() => {
+    if (letterScrollRef.current) {
+      letterScrollRef.current.scrollTop = letterScrollRef.current.scrollHeight;
+    }
+  }, [letterTypedCount]);
+
+  const letterSalutationChars = Math.min(letterTypedCount, letterSalutation.length);
+  const displayLetterSalutation = letterSalutation.slice(0, letterSalutationChars);
+  const letterBodyChars = Math.max(0, Math.min(letterTypedCount - letterSalutation.length, letterBody.length));
+  const displayLetterBody = letterBody.slice(0, letterBodyChars);
+  const letterSigChars = Math.max(0, letterTypedCount - letterSalutation.length - letterBody.length);
+  const displayLetterSig = letterSig.slice(0, letterSigChars);
+  const isLetterFinished = letterTypedCount >= letterTotalLength;
+
+  const letterCursorStage =
+    letterTypedCount < letterSalutation.length
+      ? "salutation"
+      : letterTypedCount < letterSalutation.length + letterBody.length
+      ? "body"
+      : !isLetterFinished
+      ? "signature"
+      : "none";
+
   const goToSlide = (slide: number) => {
     if (slide >= 1 && slide <= 7) {
       if (propOnGoToSlide) propOnGoToSlide(slide);
@@ -305,9 +355,9 @@ export default function StorybookSunsetTemplate({
         <div className="relative inline-block px-8 py-2">
           {/* Decorative arc with birds, stars, dashed loop and heart from trái tim.png */}
           <img
-            src="/thamkhao/heart.png"
+            src="/thamkhao/header_decor_clean.png"
             alt="Hoa văn trang trí"
-            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[125%] h-auto max-w-[320px] pointer-events-none drop-shadow-xs select-none"
+            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[130%] h-auto max-w-[340px] pointer-events-none drop-shadow-xs select-none"
           />
 
           <span className="block font-handwriting text-3xl sm:text-4xl text-[#1c3f50] font-bold drop-shadow-xs relative z-10">
@@ -336,47 +386,63 @@ export default function StorybookSunsetTemplate({
           <button
             type="button"
             onClick={() => goToSlide(3)}
-            className="absolute top-[14.3%] left-[23.2%] w-[58.8%] h-[14.2%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[14.3%] left-[23.2%] w-[58.8%] h-[14.2%] flex items-center justify-center font-sans font-bold text-[10.5px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Những kỷ niệm"
           >
-            Những kỷ niệm
+            <span className="inline-block transform" style={{ transform: "rotate(-3.5deg)" }}>
+              Những kỷ niệm
+            </span>
           </button>
 
           {/* Plank 2: Lời nhắn -> Slide 2 */}
           <button
             type="button"
             onClick={() => goToSlide(2)}
-            className="absolute top-[32.1%] left-[25.0%] w-[53.5%] h-[13.5%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[32.1%] left-[25.0%] w-[53.5%] h-[13.5%] flex items-center justify-center font-sans font-bold text-[10.5px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Lời nhắn"
           >
-            Lời nhắn
+            <span className="inline-block transform" style={{ transform: "rotate(-3.3deg)" }}>
+              Lời nhắn
+            </span>
           </button>
 
           {/* Plank 3: Khoảnh khắc -> Slide 4 */}
           <button
             type="button"
             onClick={() => goToSlide(4)}
-            className="absolute top-[49.9%] left-[25.8%] w-[56.1%] h-[14.3%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[49.9%] left-[25.8%] w-[56.1%] h-[14.3%] flex items-center justify-center font-sans font-bold text-[10.5px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Khoảnh khắc"
           >
-            Khoảnh khắc
+            <span className="inline-block transform" style={{ transform: "rotate(-5.5deg)" }}>
+              Khoảnh khắc
+            </span>
           </button>
 
           {/* Plank 4: Và nhiều hơn... -> Slide 5 */}
           <button
             type="button"
             onClick={() => goToSlide(5)}
-            className="absolute top-[71.3%] left-[25.8%] w-[56.1%] h-[13.6%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[71.3%] left-[25.8%] w-[56.1%] h-[13.6%] flex items-center justify-center font-sans font-bold text-[10.5px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Và nhiều hơn..."
           >
-            Và nhiều hơn...
+            <span className="inline-block transform" style={{ transform: "rotate(-6.0deg)" }}>
+              Và nhiều hơn...
+            </span>
           </button>
         </div>
 
         {/* 3D Gift Box on the Right */}
         <div
-          onClick={nextSlide}
-          className="relative w-32 sm:w-38 mb-1 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 drop-shadow-2xl flex flex-col items-center"
+          onClick={() => {
+            confetti({
+              particleCount: 50,
+              spread: 60,
+              origin: { y: 0.75, x: 0.75 },
+              colors: ["#c13d28", "#e38b29", "#ffd166", "#f4a261"],
+            });
+            nextSlide();
+          }}
+          className="relative w-32 sm:w-38 mb-2 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 drop-shadow-2xl flex flex-col items-center"
           title="Chạm để mở món quà!"
         >
           <img
@@ -384,26 +450,11 @@ export default function StorybookSunsetTemplate({
             alt="Hộp quà tặng"
             className="w-full h-auto object-contain transform group-hover:-translate-y-1 transition-transform"
           />
-          <span className="absolute -top-3 right-1 px-2 py-0.5 bg-[#fffdfa]/95 text-[#c13d28] font-handwriting font-bold text-[11px] rounded-full shadow-md border border-[#ebdccd] group-hover:scale-110 transition-transform">
-            Mở quà ✨
+          <span className="absolute -top-3 right-0 sm:right-1 px-2.5 py-0.5 bg-[#fffdfa]/95 text-[#c13d28] font-handwriting font-bold text-[11px] sm:text-xs rounded-full shadow-md border border-[#ebdccd] group-hover:scale-110 transition-transform flex items-center gap-1">
+            <span>Mở quà</span>
+            <span>✨</span>
           </span>
         </div>
-      </div>
-
-      {/* Bottom CTA Button: Chạm để mở món quà → */}
-      <div className="relative z-20 w-full flex justify-center pb-2">
-        <button
-          type="button"
-          onClick={nextSlide}
-          className="w-full max-w-[280px] sm:max-w-xs py-3 px-6 rounded-full bg-[#fffbf5]/95 hover:bg-white text-[#3d2417] font-serif font-bold text-xs sm:text-sm shadow-xl border border-[#d8c8b4] transition-all hover:shadow-2xl hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 group cursor-pointer"
-        >
-          <span>
-            Chạm để mở món <strong className="text-[#c13d28]">quà</strong>
-          </span>
-          <span className="text-[#c13d28] group-hover:translate-x-1.5 transition-transform text-base">
-            →
-          </span>
-        </button>
       </div>
     </div>
   );
@@ -452,7 +503,11 @@ export default function StorybookSunsetTemplate({
           />
 
           {/* Letter Note Container (Pure CSS lined paper) */}
-          <div className="relative p-5 sm:p-6 pt-8 rounded-xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd]">
+          <div
+            onClick={() => setLetterTypedCount(letterTotalLength)}
+            className="relative w-full p-4 sm:p-5 pt-7 rounded-xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd] z-10 max-h-[52vh] flex flex-col overflow-hidden cursor-pointer"
+            title={!isLetterFinished ? "Chạm để hiện toàn bộ lời nhắn" : undefined}
+          >
             {/* Bulldog Clip at Top Center */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 w-8 h-8">
               <img
@@ -463,30 +518,67 @@ export default function StorybookSunsetTemplate({
             </div>
 
             <div
+              ref={letterScrollRef}
+              className="overflow-y-auto pr-1 min-h-0 flex-1 scroll-smooth"
               style={{
                 backgroundImage:
                   "repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, #ebdccd 31px, #ebdccd 32px)",
+                backgroundAttachment: "local",
                 lineHeight: "32px",
               }}
             >
               {/* Salutation */}
-              <div className="leading-[32px] font-handwriting font-bold text-lg sm:text-xl text-[#1c3f50] mb-0">
-                Gửi {data.recipientName || "bạn"},
+              <div className="leading-[32px] font-handwriting font-bold text-lg sm:text-xl text-[#1c3f50] mb-0 min-h-[32px]">
+                {displayLetterSalutation}
+                {letterCursorStage === "salutation" && (
+                  <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#1c3f50] animate-pulse align-middle" />
+                )}
               </div>
 
               {/* Letter Body on Lined Paper */}
-              <p className="leading-[32px] font-handwriting text-base sm:text-lg text-[#2e1d1b] whitespace-pre-line min-h-[128px] m-0">
-                {data.letterContent ||
-                  "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này."}
-              </p>
+              {displayLetterBody.length > 0 && (
+                <p className="leading-[32px] font-handwriting text-base sm:text-lg text-[#2e1d1b] whitespace-pre-line m-0">
+                  {displayLetterBody}
+                  {letterCursorStage === "body" && (
+                    <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#c13d28] animate-pulse align-middle" />
+                  )}
+                </p>
+              )}
 
-              {/* Heart Signature */}
-              <div className="flex justify-center mt-3">
+              {displayLetterSig.length > 0 && (
+                <div className="leading-[32px] mt-1 text-right">
+                  <p className="font-handwriting font-bold text-base sm:text-lg text-[#c13d28] m-0 inline-block">
+                    {displayLetterSig}
+                    {letterCursorStage === "signature" && (
+                      <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#c13d28] animate-pulse align-middle" />
+                    )}
+                  </p>
+                </div>
+              )}
+
+              {/* Heart Signature & Replay */}
+              <div className="flex flex-col items-center justify-center mt-2 pb-1">
                 <img
                   src="/thamkhao/heart.png"
                   alt="Love"
-                  className="w-6 h-6 object-contain transform hover:scale-125 transition-transform"
+                  className={`w-6 h-6 object-contain transform transition-all duration-500 ${
+                    isLetterFinished ? "opacity-100 scale-100" : "opacity-0 scale-75"
+                  } hover:scale-125`}
                 />
+                {isLetterFinished && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLetterTypedCount(0);
+                    }}
+                    className="inline-flex items-center gap-1 text-[10px] text-[#8c4b3e]/70 hover:text-[#c13d28] font-sans transition-colors mt-1.5 cursor-pointer"
+                    title="Xem lại hiệu ứng viết thư"
+                  >
+                    <span className="material-symbols-outlined text-[13px]">replay</span>
+                    <span>Viết lại</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -611,70 +703,106 @@ export default function StorybookSunsetTemplate({
 
       {renderTopBar("04")}
 
-      {/* Main Header */}
-      <div className="relative z-10 text-center mt-1 flex flex-col items-center">
-        <div className="flex items-center justify-center gap-2">
-          <h2 className="font-handwriting font-bold text-3xl sm:text-4xl text-[#1c3f50]">
-            Video
-          </h2>
-          <span className="material-symbols-outlined text-2xl text-[#c13d28]">videocam</span>
+      {/* Main Header with Large Tilted Typography and Playful Doodles */}
+      <div className="relative z-10 text-center mt-0.5 sm:mt-1 flex flex-col items-center shrink-0">
+        <span className="absolute -top-1 left-8 text-amber-400 text-sm pointer-events-none select-none">✦</span>
+        <span className="absolute top-2 right-10 text-amber-400 text-xs pointer-events-none select-none">✦</span>
+
+        <div className="relative inline-flex items-center justify-center">
+          <div className="absolute -left-10 sm:-left-12 -top-1 transform -rotate-12 pointer-events-none select-none">
+            <svg
+              viewBox="0 0 32 32"
+              className="w-8 h-8 sm:w-9 sm:h-9 text-[#c13d28] fill-none stroke-current"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="8" width="18" height="15" rx="3.5" />
+              <polygon points="21,13 29,8 29,23 21,18" />
+              <circle cx="10" cy="15.5" r="2.5" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-2 transform -rotate-[5deg]">
+            <h2 className="font-handwriting font-bold text-5xl sm:text-6xl text-[#183b4e] tracking-tight drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
+              Video
+            </h2>
+            <span className="text-[#c13d28] text-2xl sm:text-3xl font-sans inline-block transform rotate-12 drop-shadow-xs">
+              ♡
+            </span>
+          </div>
         </div>
-        <div className="flex items-center justify-center gap-1.5 mt-0.5">
-          <span className="font-handwriting text-xl sm:text-2xl text-[#c13d28] font-bold">
+
+        <div className="flex items-center justify-center gap-2 -mt-1 transform -rotate-[3deg]">
+          <span className="font-handwriting text-2xl sm:text-3xl text-[#c13d28] font-bold italic drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
             dành cho bạn
           </span>
-          <img src="/thamkhao/heart.png" alt="Heart" className="w-5 h-5 object-contain" />
+          <span className="text-[#c13d28] text-2xl font-sans inline-block transform -rotate-6">
+            ♡
+          </span>
         </div>
       </div>
 
       {/* Video Player Card */}
       <div className="relative z-10 my-auto w-full max-w-sm mx-auto flex flex-col items-center">
-        {/* Screen / Card */}
-        <div
-          onClick={toggleVideo}
-          className="relative w-full aspect-16/10 rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-black cursor-pointer group"
-        >
-          <img
-            src="/thamkhao/anime_sunset_couple_wide.png"
-            alt="Sunset anime couple"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/20" />
+        {/* White Polaroid frame */}
+        <div className="relative w-full rounded-2xl bg-white p-2 sm:p-2.5 shadow-2xl border border-[#ebdccd] transition-all duration-300 transform rotate-[0.5deg]">
+          <div
+            onClick={toggleVideo}
+            className="relative w-full aspect-video rounded-xl overflow-hidden bg-black cursor-pointer group flex items-center justify-center"
+          >
+            <img
+              src="/thamkhao/anime_sunset_couple_wide.png"
+              alt="Sunset anime couple"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/20" />
 
-          {/* Central Play Button */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full bg-white/95 shadow-xl flex items-center justify-center text-[#c13d28] transform group-hover:scale-115 transition-transform">
-              <span className="material-symbols-outlined text-[32px] ml-1">
-                {isPlayingVideo ? "pause" : "play_arrow"}
-              </span>
+            {/* Central Play Button */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-white/95 shadow-xl flex items-center justify-center text-[#c13d28] transform group-hover:scale-115 active:scale-95 transition-transform">
+                <span className="material-symbols-outlined text-[32px] sm:text-[36px] ml-1">
+                  {isPlayingVideo ? "pause" : "play_arrow"}
+                </span>
+              </div>
             </div>
-          </div>
 
-          {/* Video Control Bar at Bottom */}
-          <div className="absolute bottom-0 inset-x-0 p-2.5 bg-gradient-to-t from-black/80 to-transparent flex items-center gap-2 text-white font-mono text-[11px]">
-            <span>0:00</span>
-            <div className="flex-1 h-1 bg-white/40 rounded-full relative overflow-hidden">
-              <div
-                className="h-full bg-[#c13d28] transition-all duration-300"
-                style={{ width: isPlayingVideo ? "45%" : "0%" }}
-              />
+            {/* Video Control Bar at Bottom */}
+            <div className="absolute bottom-0 inset-x-0 p-2.5 bg-gradient-to-t from-black/80 to-transparent flex items-center gap-2 text-white font-mono text-[11px]">
+              <span>0:00</span>
+              <div className="flex-1 h-1 bg-white/40 rounded-full relative overflow-hidden">
+                <div
+                  className="h-full bg-[#c13d28] transition-all duration-300"
+                  style={{ width: isPlayingVideo ? "45%" : "0%" }}
+                />
+              </div>
+              <span>4:12</span>
+              <span className="material-symbols-outlined text-[16px]">volume_up</span>
+              <span className="material-symbols-outlined text-[16px]">fullscreen</span>
             </div>
-            <span>4:12</span>
-            <span className="material-symbols-outlined text-[16px]">volume_up</span>
-            <span className="material-symbols-outlined text-[16px]">fullscreen</span>
           </div>
         </div>
 
-        {/* Taped Caption Note using original giấy.png */}
-        <div className="relative mt-2 w-full max-w-xs mx-auto flex items-center justify-center">
+        {/* Taped Caption Note */}
+        <div className="relative mt-2.5 w-full max-w-[290px] sm:max-w-xs mx-auto flex items-center justify-center">
+          <span className="absolute -left-6 bottom-1 text-[#c13d28] text-2xl font-sans pointer-events-none select-none transform rotate-12">
+            ♡
+          </span>
+          <span className="absolute -right-5 -bottom-1 text-amber-400 text-xs pointer-events-none select-none">
+            ✦
+          </span>
+
+          <div className="absolute -top-2.5 -left-2 z-20 w-8 h-4 bg-amber-100/75 border border-amber-200/60 shadow-xs transform -rotate-12 pointer-events-none backdrop-blur-xs" />
+
           <img
             src="/thamkhao/paper.png"
             alt="Giấy ghi chú"
             className="w-full h-auto object-contain drop-shadow-md"
           />
-          <div className="absolute inset-0 px-6 py-4 flex items-center justify-center text-center">
+          <div className="absolute inset-0 px-6 py-3 flex items-center justify-center text-center">
             <p className="font-handwriting text-xs sm:text-sm text-[#2e1d1b] font-medium leading-relaxed">
-              Một video đặc biệt gửi riêng cho bạn, với thật nhiều lời muốn nói và những kỷ niệm đẹp... ❤️
+              Một video đặc biệt gửi riêng cho bạn, với thật nhiều lời muốn nói và những kỷ niệm đẹp...{" "}
+              <span className="text-[#c13d28] inline-block font-sans ml-0.5 text-sm">♡</span>
             </p>
           </div>
         </div>
@@ -1014,38 +1142,34 @@ export default function StorybookSunsetTemplate({
       {renderTopBar("07", true)}
 
       {/* Header: Cảm ơn bạn ❤️ đã đi qua những ngày này cùng mình */}
-      <div className="relative z-10 text-center mt-2 flex flex-col items-center">
+      <div className="relative z-10 text-center mt-2 flex flex-col items-center px-2">
         <div className="inline-flex items-center justify-center gap-2">
           <h2 className="font-handwriting font-black text-3xl sm:text-4xl text-[#1c3f50] drop-shadow-md">
             Cảm ơn bạn
           </h2>
           <span className="text-[#c13d28] text-2xl sm:text-3xl animate-pulse">❤️</span>
         </div>
-        <p className="font-handwriting text-lg sm:text-xl text-[#3d2417] font-bold mt-0.5 drop-shadow-sm">
+        <p className="font-handwriting text-base sm:text-lg text-[#3d2417] font-bold mt-0.5 drop-shadow-xs">
           đã đi qua những ngày này cùng mình.
         </p>
-      </div>
 
-      {/* Middle Note: Taped Paper Card using original giấy.png */}
-      <div className="relative z-10 my-auto w-full max-w-xs mx-auto flex items-center justify-center">
-        <img
-          src="/thamkhao/paper.png"
-          alt="Giấy ghi chú"
-          className="w-full h-auto object-contain drop-shadow-2xl"
-        />
-        <div className="absolute inset-0 px-6 pt-5 pb-3 flex items-center justify-center text-center">
-          <p className="font-handwriting text-sm sm:text-base text-[#2e1d1b] font-semibold leading-relaxed">
+        {/* Message card floating softly in the pastel sky */}
+        <div className="mt-2 px-4 py-2 rounded-2xl bg-white/80 backdrop-blur-xs border border-white/85 shadow-sm max-w-[280px] sm:max-w-xs text-center">
+          <p className="font-handwriting text-sm sm:text-base text-[#2e1d1b] font-semibold leading-snug">
             Món quà này sẽ luôn ở đây, mỗi khi bạn muốn nhớ lại.
           </p>
         </div>
       </div>
 
+      {/* Scenic middle spacer: couple and sunset are completely unobstructed */}
+      <div className="flex-1 min-h-0 pointer-events-none" />
+
       {/* Bottom Two Action Buttons: Xem Lại & Lưu Lại */}
-      <div className="relative z-20 w-full max-w-xs mx-auto grid grid-cols-2 gap-3 pb-2">
+      <div className="relative z-20 w-full max-w-xs mx-auto grid grid-cols-2 gap-3 pb-2 px-2">
         <button
           type="button"
           onClick={() => goToSlide(1)}
-          className="py-3 px-4 rounded-full bg-[#1c3f50]/95 hover:bg-[#163341] active:scale-95 text-white font-serif font-bold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-1.5 transition-all hover:scale-105 cursor-pointer border border-white/20"
+          className="py-3 px-4 rounded-full bg-[#1c3f50]/95 hover:bg-[#163341] active:scale-95 text-white font-serif font-bold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-1.5 transition-all hover:scale-105 cursor-pointer border border-white/20 backdrop-blur-xs"
         >
           <span className="material-symbols-outlined text-[18px]">replay</span>
           <span>Xem lại</span>
@@ -1054,7 +1178,7 @@ export default function StorybookSunsetTemplate({
         <button
           type="button"
           onClick={handleSave}
-          className="py-3 px-4 rounded-full bg-[#c13d28]/95 hover:bg-[#a83232] active:scale-95 text-white font-serif font-bold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-1.5 transition-all hover:scale-105 cursor-pointer border border-white/20"
+          className="py-3 px-4 rounded-full bg-[#c13d28]/95 hover:bg-[#a83232] active:scale-95 text-white font-serif font-bold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-1.5 transition-all hover:scale-105 cursor-pointer border border-white/20 backdrop-blur-xs"
         >
           <span className="material-symbols-outlined text-[18px]">download</span>
           <span>Lưu lại</span>

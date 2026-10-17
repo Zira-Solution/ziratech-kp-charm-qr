@@ -65,7 +65,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
           <StorybookHeader ctx={ctx} slides={slides} isArtCanvas />
 
           <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-between py-2">
-            {/* Header: Cảm ơn bạn ❤️ */}
+            {/* Header + Final Message in the Sky */}
             <div className="text-center mt-2 flex flex-col items-center shrink-0">
               <div className="inline-flex items-center justify-center gap-3">
                 <h2 className="font-handwriting font-black text-4xl lg:text-5xl text-[#1c3f50] drop-shadow-md">
@@ -76,26 +76,22 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
               <p className="font-handwriting text-2xl lg:text-3xl text-[#3d2417] font-bold mt-1 drop-shadow-xs">
                 đã đi qua những ngày này cùng mình.
               </p>
-            </div>
 
-            {/* Middle Note: Taped Paper Card */}
-            <div className="relative my-auto w-full max-w-md mx-auto flex items-center justify-center">
-              <img
-                src="/thamkhao/paper.png"
-                alt="Giấy ghi chú"
-                className="w-full h-auto object-contain drop-shadow-2xl"
-              />
-              <div className="absolute inset-0 px-8 pt-7 pb-4 flex flex-col items-center justify-center text-center">
+              {/* Final Message card floating in the sunset sky */}
+              <div className="mt-3 px-6 py-2.5 rounded-2xl bg-white/80 backdrop-blur-xs border border-white/85 shadow-sm max-w-lg text-center">
                 <p className="font-handwriting text-lg lg:text-xl text-[#2e1d1b] font-semibold leading-relaxed whitespace-pre-line">
                   {finalMsg}
                 </p>
                 {gift.sender && (
-                  <p className="font-handwriting text-base lg:text-lg text-[#c13d28] font-bold mt-2">
+                  <p className="font-handwriting text-base lg:text-lg text-[#c13d28] font-bold mt-1">
                     — {gift.sender}
                   </p>
                 )}
               </div>
             </div>
+
+            {/* Spacer so the couple and sea are 100% visible */}
+            <div className="flex-1 min-h-0 pointer-events-none" />
 
             {/* Bottom Actions */}
             <div className="flex items-center justify-center gap-6 pb-2 shrink-0">
@@ -120,50 +116,44 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
           </div>
         </div>
       ) : (
-        /* Mobile / Portrait view (Exact match to khung_07.png) */
+        /* Mobile / Portrait view: Couple and sunset are 100% clear */
         <div className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 select-none overflow-hidden">
           <StorybookHeader ctx={ctx} slides={slides} isArtCanvas />
 
-          {/* Header */}
-          <div className="relative z-10 text-center mt-1 flex flex-col items-center shrink-0">
+          {/* Header & Final Message in the Sunset Sky */}
+          <div className="relative z-10 text-center mt-1 flex flex-col items-center shrink-0 px-2">
             <div className="inline-flex items-center justify-center gap-2">
-              <h2 className="font-handwriting font-black text-3xl sm:text-4xl text-[#1c3f50] drop-shadow-md">
+              <h2 className="font-handwriting font-black text-3xl sm:text-4xl text-[#1c3f50] drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]">
                 Cảm ơn bạn
               </h2>
               <span className="text-[#c13d28] text-2xl sm:text-3xl animate-pulse">❤️</span>
             </div>
-            <p className="font-handwriting text-lg sm:text-xl text-[#3d2417] font-bold mt-0.5 drop-shadow-xs">
+            <p className="font-handwriting text-base sm:text-lg text-[#3d2417] font-bold mt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
               đã đi qua những ngày này cùng mình.
             </p>
-          </div>
 
-          {/* Middle Note: Taped Paper Card */}
-          <div className="relative z-10 my-auto w-full max-w-xs mx-auto flex items-center justify-center flex-1 min-h-0 py-2">
-            <div className="relative w-full flex items-center justify-center">
-              <img
-                src="/thamkhao/paper.png"
-                alt="Giấy ghi chú"
-                className="w-full h-auto object-contain drop-shadow-2xl"
-              />
-              <div className="absolute inset-0 px-6 pt-6 pb-3 flex flex-col items-center justify-center text-center">
-                <p className="font-handwriting text-sm sm:text-base text-[#2e1d1b] font-semibold leading-relaxed whitespace-pre-line">
-                  {finalMsg}
+            {/* Keepsake Message card floating softly in the pastel sky */}
+            <div className="mt-2 px-4 py-2 rounded-2xl bg-white/80 backdrop-blur-xs border border-white/85 shadow-sm max-w-[280px] sm:max-w-xs text-center">
+              <p className="font-handwriting text-sm sm:text-base text-[#2e1d1b] font-semibold leading-snug whitespace-pre-line">
+                {finalMsg}
+              </p>
+              {gift.sender && (
+                <p className="font-handwriting text-xs sm:text-sm text-[#c13d28] font-bold mt-1">
+                  — {gift.sender}
                 </p>
-                {gift.sender && (
-                  <p className="font-handwriting text-sm text-[#c13d28] font-bold mt-1">
-                    — {gift.sender}
-                  </p>
-                )}
-              </div>
+              )}
             </div>
           </div>
 
+          {/* Scenic middle spacer: couple and sunset are completely unobstructed */}
+          <div className="flex-1 min-h-0 pointer-events-none" />
+
           {/* Bottom Navigation Buttons */}
-          <div className="relative z-20 w-full flex items-center justify-center gap-3 px-2 pb-2 shrink-0">
+          <div className="relative z-20 w-full flex items-center justify-center gap-3 px-3 pb-2 shrink-0">
             <button
               type="button"
               onClick={handleReplay}
-              className="flex-1 max-w-[150px] py-2.5 px-4 rounded-full bg-[#1c3f50] hover:bg-[#142d3a] text-white font-serif font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 max-w-[140px] py-2.5 px-4 rounded-full bg-[#1c3f50]/95 hover:bg-[#142d3a] text-white font-serif font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer backdrop-blur-xs"
             >
               <span className="material-symbols-outlined text-[18px]">replay</span>
               <span>Xem lại</span>
@@ -172,7 +162,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
             <button
               type="button"
               onClick={handleSaveKeepsake}
-              className="flex-1 max-w-[150px] py-2.5 px-4 rounded-full bg-[#c13d28] hover:bg-[#a83232] text-white font-serif font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 max-w-[140px] py-2.5 px-4 rounded-full bg-[#c13d28]/95 hover:bg-[#a83232] text-white font-serif font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer backdrop-blur-xs"
             >
               <span className="material-symbols-outlined text-[18px]">download</span>
               <span>Lưu lại</span>

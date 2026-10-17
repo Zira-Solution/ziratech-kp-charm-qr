@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import confetti from "canvas-confetti";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
 import StorybookHeader from "./StorybookHeader";
@@ -56,7 +57,9 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
                   className="absolute top-[14.3%] left-[23.2%] w-[58.8%] h-[14.2%] flex items-center justify-center font-sans font-bold text-xs lg:text-sm text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
                   title="Xem Những kỷ niệm"
                 >
-                  Những kỷ niệm
+                  <span className="inline-block transform" style={{ transform: "rotate(-3.5deg)" }}>
+                    Những kỷ niệm
+                  </span>
                 </button>
 
                 {/* Plank 2: Lời nhắn -> letter */}
@@ -66,7 +69,9 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
                   className="absolute top-[32.1%] left-[25.0%] w-[53.5%] h-[13.5%] flex items-center justify-center font-sans font-bold text-xs lg:text-sm text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
                   title="Xem Lời nhắn"
                 >
-                  Lời nhắn
+                  <span className="inline-block transform" style={{ transform: "rotate(-3.3deg)" }}>
+                    Lời nhắn
+                  </span>
                 </button>
 
                 {/* Plank 3: Khoảnh khắc -> video */}
@@ -76,7 +81,9 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
                   className="absolute top-[49.9%] left-[25.8%] w-[56.1%] h-[14.3%] flex items-center justify-center font-sans font-bold text-xs lg:text-sm text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
                   title="Xem Khoảnh khắc"
                 >
-                  Khoảnh khắc
+                  <span className="inline-block transform" style={{ transform: "rotate(-5.5deg)" }}>
+                    Khoảnh khắc
+                  </span>
                 </button>
 
                 {/* Plank 4: Và nhiều hơn... -> music/voice */}
@@ -86,7 +93,9 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
                   className="absolute top-[71.3%] left-[25.8%] w-[56.1%] h-[13.6%] flex items-center justify-center font-sans font-bold text-xs lg:text-sm text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
                   title="Xem Và nhiều hơn..."
                 >
-                  Và nhiều hơn...
+                  <span className="inline-block transform" style={{ transform: "rotate(-6.0deg)" }}>
+                    Và nhiều hơn...
+                  </span>
                 </button>
               </div>
             </div>
@@ -99,9 +108,9 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
 
                 <div className="relative inline-block px-8 py-2">
                   <img
-                    src="/thamkhao/heart.png"
+                    src="/thamkhao/header_decor_clean.png"
                     alt="Hoa văn trang trí"
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 w-[125%] h-auto max-w-[380px] pointer-events-none drop-shadow-xs select-none"
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 w-[130%] h-auto max-w-[380px] pointer-events-none drop-shadow-xs select-none"
                   />
 
                   <span className="block font-handwriting text-3xl lg:text-4xl text-[#1c3f50] font-bold drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)] relative z-10">
@@ -169,9 +178,9 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
           <div className="absolute -inset-3 rounded-3xl bg-radial from-white/95 via-white/70 to-transparent blur-md pointer-events-none -z-1" />
 
           <img
-            src="/thamkhao/heart.png"
+            src="/thamkhao/header_decor_clean.png"
             alt="Hoa văn trang trí"
-            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[125%] h-auto max-w-[320px] pointer-events-none drop-shadow-xs select-none"
+            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[130%] h-auto max-w-[340px] pointer-events-none drop-shadow-xs select-none"
           />
 
           <span className="block font-handwriting text-3xl sm:text-4xl text-[#1c3f50] font-bold drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] relative z-10">
@@ -196,47 +205,67 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
             className="w-full h-full block select-none pointer-events-none drop-shadow-lg"
           />
 
+          {/* Plank 1: Những kỷ niệm -> photos */}
           <button
             type="button"
             onClick={() => findSlide("photos")}
-            className="absolute top-[14.3%] left-[23.2%] w-[58.8%] h-[14.2%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[14.0%] left-[26%] w-[60%] h-[14.2%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#382315] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none drop-shadow-[0_1px_1px_rgba(255,255,255,0.35)]"
             title="Xem Những kỷ niệm"
           >
-            Những kỷ niệm
+            <span className="inline-block transform" style={{ transform: "rotate(-3.5deg)" }}>
+              Những kỷ niệm
+            </span>
           </button>
 
+          {/* Plank 2: Lời nhắn -> letter */}
           <button
             type="button"
             onClick={() => findSlide("letter")}
-            className="absolute top-[32.1%] left-[25.0%] w-[53.5%] h-[13.5%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[32.0%] left-[27%] w-[56%] h-[13.5%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#382315] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none drop-shadow-[0_1px_1px_rgba(255,255,255,0.35)]"
             title="Xem Lời nhắn"
           >
-            Lời nhắn
+            <span className="inline-block transform" style={{ transform: "rotate(-3.3deg)" }}>
+              Lời nhắn
+            </span>
           </button>
 
+          {/* Plank 3: Khoảnh khắc -> video */}
           <button
             type="button"
             onClick={() => findSlide("video")}
-            className="absolute top-[49.9%] left-[25.8%] w-[56.1%] h-[14.3%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[49.8%] left-[29%] w-[56%] h-[14.3%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#382315] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none drop-shadow-[0_1px_1px_rgba(255,255,255,0.35)]"
             title="Xem Khoảnh khắc"
           >
-            Khoảnh khắc
+            <span className="inline-block transform" style={{ transform: "rotate(-5.5deg)" }}>
+              Khoảnh khắc
+            </span>
           </button>
 
+          {/* Plank 4: Và nhiều hơn... -> music/voice */}
           <button
             type="button"
             onClick={() => findSlide("music")}
-            className="absolute top-[71.3%] left-[25.8%] w-[56.1%] h-[13.6%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[71.0%] left-[29%] w-[56%] h-[13.6%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#382315] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none drop-shadow-[0_1px_1px_rgba(255,255,255,0.35)]"
             title="Xem Và nhiều hơn..."
           >
-            Và nhiều hơn...
+            <span className="inline-block transform" style={{ transform: "rotate(-6.0deg)" }}>
+              Và nhiều hơn...
+            </span>
           </button>
         </div>
 
         {/* 3D Gift Box on the Right */}
         <div
-          onClick={ctx.next}
-          className="relative w-28 sm:w-36 mb-1 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 drop-shadow-2xl flex flex-col items-center"
+          onClick={() => {
+            confetti({
+              particleCount: 50,
+              spread: 60,
+              origin: { y: 0.75, x: 0.75 },
+              colors: ["#c13d28", "#e38b29", "#ffd166", "#f4a261"],
+            });
+            ctx.next();
+          }}
+          className="relative w-32 sm:w-38 mb-2 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 drop-shadow-2xl flex flex-col items-center"
           title="Chạm để mở món quà!"
         >
           <img
@@ -244,26 +273,11 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
             alt="Hộp quà tặng"
             className="w-full h-auto object-contain transform group-hover:-translate-y-1 transition-transform"
           />
-          <span className="absolute -top-3 right-1 px-2 py-0.5 bg-[#fffdfa]/95 text-[#c13d28] font-handwriting font-bold text-[10px] sm:text-[11px] rounded-full shadow-md border border-[#ebdccd] group-hover:scale-110 transition-transform">
-            Mở quà ✨
+          <span className="absolute -top-3 right-0 sm:right-1 px-2.5 py-0.5 bg-[#fffdfa]/95 text-[#c13d28] font-handwriting font-bold text-[11px] sm:text-xs rounded-full shadow-md border border-[#ebdccd] group-hover:scale-110 transition-transform flex items-center gap-1">
+            <span>Mở quà</span>
+            <span>✨</span>
           </span>
         </div>
-      </div>
-
-      {/* Bottom CTA Button: Chạm để mở món quà → */}
-      <div className="relative z-20 w-full flex justify-center pb-1 shrink-0">
-        <button
-          type="button"
-          onClick={ctx.next}
-          className="w-full max-w-[280px] sm:max-w-xs py-2.5 sm:py-3 px-6 rounded-full bg-[#fffbf5]/95 hover:bg-white text-[#3d2417] font-serif font-bold text-xs sm:text-sm shadow-xl border border-[#d8c8b4] transition-all hover:shadow-2xl hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 group cursor-pointer"
-        >
-          <span>
-            Chạm để mở món <strong className="text-[#c13d28]">quà</strong>
-          </span>
-          <span className="text-[#c13d28] group-hover:translate-x-1.5 transition-transform text-base">
-            →
-          </span>
-        </button>
       </div>
     </div>
   );

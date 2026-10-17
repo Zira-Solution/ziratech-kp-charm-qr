@@ -1041,6 +1041,8 @@ function MessengerPageInner() {
                       setEnteredPin(settings.pin);
                       window.setTimeout(() => {
                         setShownMessages(0);
+                        setChatPhase("envelope");
+                        setAfterFilmStep(0);
                         setStage("chat");
                       }, 200);
                     }}
@@ -1635,48 +1637,48 @@ function MessengerPageInner() {
                 onClick={(e) => {
                   if (e.target === e.currentTarget) handleCloseLetter();
                 }}
-                className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-pink-950/40 backdrop-blur-md p-2 sm:p-4 select-none animate-fade-in overflow-hidden"
+                className="absolute inset-0 z-50 flex items-center justify-center bg-pink-950/45 backdrop-blur-md p-3 select-none animate-fade-in overflow-hidden"
               >
                 {/* Ambient Sparkles matching reference screenshot */}
-                <span className="absolute top-10 left-6 text-white/70 text-lg pointer-events-none select-none animate-pulse">✦</span>
-                <span className="absolute top-24 right-8 text-white/60 text-sm pointer-events-none select-none animate-pulse">✧</span>
-                <span className="absolute bottom-24 left-8 text-white/60 text-base pointer-events-none select-none animate-pulse">✧</span>
-                <span className="absolute bottom-12 right-10 text-white/50 text-sm pointer-events-none select-none animate-pulse">✦</span>
+                <span className="absolute top-8 left-6 text-white/70 text-lg pointer-events-none select-none animate-pulse">✦</span>
+                <span className="absolute top-20 right-8 text-white/60 text-sm pointer-events-none select-none animate-pulse">✧</span>
+                <span className="absolute bottom-20 left-8 text-white/60 text-base pointer-events-none select-none animate-pulse">✧</span>
+                <span className="absolute bottom-10 right-10 text-white/50 text-sm pointer-events-none select-none animate-pulse">✦</span>
 
-                {/* Round White Close Button in Top-Right corner matching user screenshot */}
+                {/* Round White Close Button in Top-Right corner placed far out as requested */}
                 <button
                   type="button"
                   onClick={handleCloseLetter}
-                  className="absolute top-3 right-3 sm:top-5 sm:right-5 z-50 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-slate-700 flex items-center justify-center shadow-md active:scale-90 transition-all cursor-pointer ring-1 ring-black/5"
+                  className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white text-stone-700 flex items-center justify-center shadow-md active:scale-90 transition-all cursor-pointer ring-1 ring-black/5"
                   title="Đóng thiệp"
                   aria-label="Đóng thiệp"
                 >
                   <span className="material-symbols-outlined text-[20px]">close</span>
                 </button>
 
-                {/* Letter Container matching the user's reference image */}
-                <div className="relative w-full max-w-[340px] sm:max-w-[365px] h-[86vh] max-h-[640px] sm:max-h-[680px] flex flex-col items-center animate-letter-open rounded-[24px] overflow-hidden shadow-[0_22px_60px_rgba(70,10,25,0.35)] select-none">
+                {/* Letter Container: Strictly locked to 2:3 aspect ratio so it NEVER stretches */}
+                <div className="relative w-full max-w-[340px] sm:max-w-[370px] aspect-[2/3] max-h-[84vh] flex flex-col items-center animate-letter-open select-none drop-shadow-[0_18px_45px_rgba(70,10,25,0.4)]">
                   {/* High Definition Scalloped Stationery & Envelope Background */}
                   <img
                     src="/images/romantic_letter_card.webp"
                     alt="Lá thư và phong bì"
-                    className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none z-0"
+                    className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none z-0"
                   />
 
-                  {/* Letter Scrollable Writing Area - text fits directly onto the ivory paper */}
+                  {/* Letter Scrollable Writing Area - fits gracefully onto the ivory paper */}
                   <div
                     ref={letterScrollRef}
                     onScroll={handleCheckLetterScroll}
-                    className="absolute top-[5.5%] bottom-[33%] left-[9.5%] right-[9.5%] overflow-y-auto px-2 sm:px-3 pt-2.5 pb-2 text-center z-10 flex flex-col justify-between [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-rose-300/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-rose-400"
+                    className="absolute top-[11.5%] bottom-[35%] left-[13%] right-[13%] overflow-y-auto px-2 sm:px-3 pt-2 pb-2 text-center z-10 flex flex-col justify-between [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-rose-300/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-rose-400"
                   >
                     <div>
-                      {/* Title: Cursive / Italic Serif centered between decorations */}
-                      <h3 className="font-serif italic font-normal text-[17px] sm:text-[20px] text-[#5e1d2c] leading-snug tracking-wide text-center max-w-[200px] mx-auto pt-2 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
+                      {/* Title: Romantic Cursive matching user reference */}
+                      <h3 className="font-handwriting italic font-normal text-[19px] sm:text-[22px] text-[#6b2135] leading-snug tracking-wide text-center max-w-[220px] mx-auto pt-1 drop-shadow-[0_1px_1px_rgba(255,255,255,0.85)]">
                         {settings.letterTitle || `Gửi tới ${settings.recipientName} yêu thương,`}
                       </h3>
 
                       {/* Body: Natural letter typography filling the paper */}
-                      <div className="mt-3 font-serif text-[12.5px] sm:text-[13.5px] leading-[1.8] text-[#4d232e] text-center whitespace-pre-line select-text px-1">
+                      <div className="mt-2.5 font-serif text-[12.5px] sm:text-[13.5px] leading-[1.8] text-[#42222b] text-center whitespace-pre-line select-text px-1">
                         {settings.letterContent}
                       </div>
                     </div>
@@ -1684,7 +1686,7 @@ function MessengerPageInner() {
                     {/* Divider + Sign-off + Scroll Pill */}
                     <div className="pt-2">
                       {/* Decorative ✧ ♡ ✧ */}
-                      <div className="flex items-center justify-center gap-2 text-rose-400/90 text-xs my-2.5 select-none">
+                      <div className="flex items-center justify-center gap-2 text-rose-400/90 text-xs my-2 select-none">
                         <span>✧</span>
                         <span>♡</span>
                         <span>✧</span>
@@ -1696,7 +1698,7 @@ function MessengerPageInner() {
                           <button
                             type="button"
                             onClick={handleScrollLetterDown}
-                            className="px-4 py-1 rounded-full bg-[#fffcf7]/95 hover:bg-white text-[#6b2234] text-[11px] font-sans font-medium shadow-xs border border-rose-200/90 backdrop-blur-xs flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer animate-pulse"
+                            className="px-3.5 py-1 rounded-full bg-[#fffcf7]/95 hover:bg-white text-[#6b2234] text-[11px] font-sans font-medium shadow-xs border border-rose-200/90 backdrop-blur-xs flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer animate-pulse"
                           >
                             <span>Cuộn để đọc tiếp</span>
                             <span className="text-xs">↓</span>
@@ -1715,6 +1717,17 @@ function MessengerPageInner() {
                             {settings.letterSignature}
                           </p>
                         )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleCloseLetter();
+                            setStage("film");
+                          }}
+                          className="mt-2.5 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-[11px] font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
+                        >
+                          <span>🎞️ Xem phim kỷ niệm</span>
+                          <span>→</span>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1730,7 +1743,7 @@ function MessengerPageInner() {
                         colors: ["#ff4d6d", "#ffd166", "#c9184a", "#ff9ebb"],
                       });
                     }}
-                    className="absolute bottom-[10%] left-1/2 -translate-x-1/2 w-16 h-16 rounded-full cursor-pointer z-30 opacity-0 active:scale-95"
+                    className="absolute bottom-[11%] left-1/2 -translate-x-1/2 w-16 h-16 rounded-full cursor-pointer z-30 opacity-0 active:scale-95"
                     title="Chạm vào sáp niêm phong"
                     aria-label="Chạm sáp niêm phong"
                   />

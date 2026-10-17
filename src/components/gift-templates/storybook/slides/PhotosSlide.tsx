@@ -81,7 +81,7 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
       )}
 
       {isLandscape ? (
-        <div className="relative z-10 flex h-full w-full flex-col justify-between p-6 lg:p-10">
+        <div className="relative z-10 flex h-full w-full flex-col justify-between p-6 lg:p-10 pb-8 lg:pb-12">
           <StorybookHeader ctx={ctx} slides={slides} />
 
           <div className="grid h-full min-h-0 flex-1 grid-cols-12 items-center gap-6 lg:gap-8 py-1">
@@ -178,7 +178,7 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
         </div>
       ) : (
         /* Mobile / Portrait view (Exact match to khung_03.png) */
-        <div className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 select-none overflow-hidden">
+        <div className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 pb-8 sm:pb-9 select-none overflow-hidden">
           <StorybookHeader ctx={ctx} slides={slides} />
 
           {/* Main Header */}

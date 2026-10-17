@@ -259,7 +259,7 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
           </div>
 
           {/* Taped Caption Note */}
-          <div className="relative w-full max-w-[285px] sm:max-w-xs mx-auto flex items-center justify-center shrink-0 mb-1">
+          <div className="relative w-full max-w-[285px] sm:max-w-xs mx-auto flex items-center justify-center shrink-0 mb-8 sm:mb-9">
             {/* Outlined heart doodle on bottom-left outside */}
             <span className="absolute -left-6 bottom-1 text-[#c13d28] text-2xl font-sans pointer-events-none select-none transform rotate-12">
               ♡

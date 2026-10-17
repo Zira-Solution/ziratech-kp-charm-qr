@@ -78,7 +78,7 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
   if (isLandscape) {
     return (
       <div
-        className="relative flex h-full w-full select-none overflow-hidden bg-cover bg-center p-6 lg:p-10 text-[#2e1d1b]"
+        className="relative flex h-full w-full select-none overflow-hidden bg-cover bg-center p-6 lg:p-10 pb-8 lg:pb-12 text-[#2e1d1b]"
         style={{ backgroundImage: "url('/thamkhao/bg.jpg')" }}
       >
         <div className="absolute inset-0 bg-[#fffbf5]/60 pointer-events-none" />
@@ -230,7 +230,7 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
   // Mobile / Portrait view (Exact match to khung_02.png)
   return (
     <div
-      className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 select-none overflow-hidden bg-cover bg-center text-[#2e1d1b]"
+      className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 pb-8 sm:pb-9 select-none overflow-hidden bg-cover bg-center text-[#2e1d1b]"
       style={{ backgroundImage: "url('/thamkhao/bg.jpg')" }}
     >
       <div className="absolute inset-0 bg-[#fffbf5]/60 pointer-events-none" />

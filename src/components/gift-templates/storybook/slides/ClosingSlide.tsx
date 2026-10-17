@@ -95,7 +95,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
             <div className="flex-1 min-h-6 pointer-events-none" />
 
             {/* Bottom Actions with prominent styling and white border */}
-            <div className="flex items-center justify-center gap-6 lg:gap-10 pb-1 sm:pb-2 shrink-0">
+            <div className="flex items-center justify-center gap-6 lg:gap-10 pb-10 lg:pb-12 shrink-0">
               <button
                 type="button"
                 onClick={handleReplay}
@@ -118,7 +118,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
         </div>
       ) : (
         /* Mobile / Portrait view: Couple and sunset are 100% clear */
-        <div className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 select-none overflow-hidden">
+        <div className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 pb-10 sm:pb-12 select-none overflow-hidden">
           <StorybookHeader ctx={ctx} slides={slides} isArtCanvas />
 
           {/* Header & Final Message in the Sunset Sky */}
@@ -150,7 +150,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
           <div className="flex-1 min-h-0 pointer-events-none" />
 
           {/* Bottom Navigation Buttons */}
-          <div className="relative z-20 w-full flex items-center justify-center gap-3 px-3 pb-2 shrink-0">
+          <div className="relative z-20 w-full flex items-center justify-center gap-3 px-3 pb-1 shrink-0">
             <button
               type="button"
               onClick={handleReplay}

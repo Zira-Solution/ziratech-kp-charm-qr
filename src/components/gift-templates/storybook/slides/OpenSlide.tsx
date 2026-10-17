@@ -55,7 +55,7 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
   if (isLandscape) {
     return (
       <div
-        className="relative flex h-full w-full select-none overflow-hidden bg-cover bg-[center_top_8%] px-6 lg:px-10 py-3 lg:py-4 text-[#2e1d1b]"
+        className="relative flex h-full w-full select-none overflow-hidden bg-cover bg-[center_top_8%] px-6 lg:px-10 pt-3 lg:pt-4 pb-8 lg:pb-10 text-[#2e1d1b]"
         style={{ backgroundImage: "url('/thamkhao/bg_1.jpg')" }}
       >
         <div className="absolute inset-0 bg-linear-to-r from-amber-950/15 via-transparent to-amber-50/20 pointer-events-none" />
@@ -235,7 +235,7 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
       </div>
 
       {/* Middle & Lower Elements: Signpost (Left) & 3D Gift Box (Right) */}
-      <div className="relative z-10 w-full flex-1 flex items-end justify-between px-1 pb-2 min-h-0">
+      <div className="relative z-10 w-full flex-1 flex items-end justify-between px-1 pb-8 sm:pb-9 min-h-0">
         {/* Directional Wooden Signpost on the Left */}
         <div className="relative h-52 sm:h-64 w-auto aspect-[1122/1402] shrink-0 select-none">
           <img

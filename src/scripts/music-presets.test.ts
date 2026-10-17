@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { MUSIC_PRESETS } from "../src/components/gift-templates/music-presets.ts";
-import { PRESET_VOICES } from "../src/components/gift-templates/audio-helper.ts";
-import { parseSong } from "../src/lib/validation/gift.ts";
+import { MUSIC_PRESETS } from "../components/gift-templates/music-presets.ts";
+import { PRESET_VOICES } from "../components/gift-templates/audio-helper.ts";
+import { parseSong } from "../lib/validation/gift.ts";
 
 test("every preset the server accepts can actually be played, and vice versa", () => {
   const presetIds = MUSIC_PRESETS.map((p) => p.id).sort();

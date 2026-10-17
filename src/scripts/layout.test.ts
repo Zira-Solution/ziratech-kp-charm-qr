@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { layoutFor, moveIndex, slideAnnouncement } from "../src/components/gift-templates/layout.ts";
+import { layoutFor, moveIndex, slideAnnouncement } from "../components/gift-templates/layout.ts";
 
 test("layoutFor gives a portrait frame to phones and to a tablet held upright", () => {
   assert.equal(layoutFor(390, 844), "portrait"); // phone

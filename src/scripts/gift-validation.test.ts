@@ -13,8 +13,8 @@ import {
   MUSIC_HOSTS,
   VIDEO_HOSTS,
   MAX_PHOTO_CHARS,
-} from "../src/lib/validation/gift.ts";
-import { DEFAULT_TEMPLATE } from "../src/components/gift-templates/template-config.ts";
+} from "../lib/validation/gift.ts";
+import { DEFAULT_TEMPLATE } from "../components/gift-templates/template-config.ts";
 
 const TOKEN = "KP-2010-ABC123";
 const jpeg = (chars: number) => "data:image/jpeg;base64," + "A".repeat(chars);

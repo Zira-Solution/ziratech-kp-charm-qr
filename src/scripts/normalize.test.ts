@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { normalizeGift } from "../src/components/gift-templates/normalize.ts";
-import { DEFAULT_TEMPLATE } from "../src/components/gift-templates/template-config.ts";
+import { normalizeGift } from "../components/gift-templates/normalize.ts";
+import { DEFAULT_TEMPLATE } from "../components/gift-templates/template-config.ts";
 
 const photo = (n: number) => ({ url: `https://e.com/${n}.jpg`, caption: `ảnh ${n}`, date: "" });
 

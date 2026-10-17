@@ -23,6 +23,7 @@ export const TEMPLATE_ALLOWED_BLOCKS: Record<GiftTemplateId, readonly BlockId[]>
     "video",
     "music",
     "voice",
+    "finalMessage",
   ],
   "vintage-scrapbook": [
     "letter",

@@ -5,14 +5,14 @@ import { BLOCK_IDS, BLOCK_LABELS, type BlockId } from "../gift-templates/blocks"
 import { Icon, StudioSection } from "./ui";
 
 const INFO: Record<BlockId, { icon: string; desc: string; badge?: string }> = {
-  letter: { icon: "mail", desc: "Bức thư tay chan chứa tâm tư", badge: "Khuyên dùng" },
-  photos: { icon: "photo_library", desc: "Tối đa 6 ảnh kỷ niệm kiểu Polaroid", badge: "Yêu thích" },
-  voice: { icon: "mic", desc: "Ghi âm lời nhắn chân thành bằng giọng nói" },
-  video: { icon: "movie", desc: "Dán liên kết video YouTube / Drive" },
-  music: { icon: "music_note", desc: "Nhạc nền du dương phát khi mở thiệp" },
+  letter: { icon: "mail", desc: "Bức thư tay chan chứa tâm tư", badge: "Trang 2" },
+  photos: { icon: "photo_library", desc: "Tối đa 6 ảnh kỷ niệm kiểu Polaroid", badge: "Trang 3" },
+  video: { icon: "movie", desc: "Dán liên kết video YouTube / Drive", badge: "Trang 4" },
+  music: { icon: "music_note", desc: "Nhạc nền du dương phát khi mở thiệp", badge: "Trang 5" },
+  voice: { icon: "mic", desc: "Ghi âm lời nhắn chân thành bằng giọng nói", badge: "Trang 6" },
+  finalMessage: { icon: "favorite", desc: "Câu chúc ngắn đọng lại ở hoàng hôn", badge: "Trang 7" },
   anniversary: { icon: "event", desc: "Đếm số ngày đã bên nhau" },
   timeline: { icon: "timeline", desc: "Tối đa 5 khoảnh khắc đáng nhớ" },
-  finalMessage: { icon: "favorite", desc: "Một câu ngắn đọng lại ở cuối thiệp" },
 };
 
 interface Props {
@@ -33,7 +33,7 @@ export default function MessagePicker({ step, value, onToggle, allowedBlocks, te
       title="Bạn muốn gửi những gì?"
       hint={
         templateName
-          ? `Mẫu thiệp "${templateName}" hỗ trợ ${availableIds.length} loại thông điệp dưới đây. Hãy tích chọn những điều bạn muốn gửi trao.`
+          ? `Mẫu thiệp "${templateName}" gồm Trang bìa 1, các trang nội dung bên dưới và Trang bìa kết 7. Hãy tích chọn các phần bạn muốn chuẩn bị.`
           : "Tích những thứ bạn muốn có trong thiệp. Bỏ tích không làm mất nội dung đã nhập."
       }
     >

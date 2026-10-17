@@ -521,7 +521,6 @@ export default function CardStudioPage() {
                 </div>
               </section>
 
-              <FinalMessageBlock step={nextStep()} draft={draft} onChange={update} />
               <PinBlock step={nextStep()} draft={draft} onChange={update} />
             </div>
           )}

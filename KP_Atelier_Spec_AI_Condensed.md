@@ -8,7 +8,7 @@
 - **Sản phẩm:** Web app di động đi kèm vòng tay charm (và hoa quà tặng). Mỗi sản phẩm kèm 1 thẻ chứa **Mã QR** và **Mã ngắn**.
 - **Ý nghĩa:** Quét QR mở trang quà số do người mua tùy biến: Lời nhắn chữ (hỗ trợ AI), ghi âm giọng nói, album ảnh polaroid, nhạc nền cá nhân hóa, câu chuyện charm.
 - **Mục tiêu gây quỹ:** 100% lợi nhuận ròng (*Doanh thu - Giá vốn*) đóng góp cho trạm cứu hộ động vật **Sân Nhà Nhiều Chó** (Thanh Oai, Hà Nội).
-- **Chiến dịch:** Đặt trước vòng/hoa nhận ngày **20/10/2026** độc quyền trong khuôn viên Đại học FPT.
+- **Chiến dịch:** Đặt trước vòng/hoa nhận ngày **20/10/2026** độc quyền trong khuôn viên Đại học FPT TP. Hồ Chí Minh.
 - **Vòng đời hệ thống:** Hoạt động đến **hết tháng 10/2026**, sau đó ngừng web, quà hết hạn, xóa dữ liệu trong 30 ngày (không gia hạn). Người dùng cần tải **Bản lưu trữ offline** trước thời hạn.
 - **Phạm vi (In-Scope):** Landing page, luồng tạo quà, mã QR/PIN/mã ngắn, đặt trước 20/10, thanh toán (tiền mặt/VietQR/cổng online), module gây quỹ minh bạch, luồng mở quà cho người nhận, thông báo email, admin dashboard, xuất offline HTML/zip.
 - **Ngoài phạm vi (Out-of-Scope):** Không dùng NFC, không in sẵn thẻ hàng loạt (in/tạo theo đơn), không chuyển chủ quyền vòng, không chat 2 chiều (chỉ 1 lời cảm ơn 1 lần từ người nhận), không ship ngoài FPT (không thu địa chỉ nhà), không yêu cầu đăng nhập cho khách, không làm app di động native.

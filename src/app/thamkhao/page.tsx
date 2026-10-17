@@ -14,7 +14,7 @@ export default function ThamKhaoPage() {
       <header className="w-full max-w-xl mx-auto flex items-center justify-between gap-3 p-3 rounded-full bg-white/80 backdrop-blur-xl border border-white/90 shadow-md mb-4 z-30">
         <Link
           href="/"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] font-serif text-xs font-bold transition-all"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] font-sans text-xs font-bold transition-all"
         >
           <span className="material-symbols-outlined text-[16px]">arrow_back</span>
           <span>Trang chủ</span>
@@ -42,7 +42,7 @@ export default function ThamKhaoPage() {
         <button
           type="button"
           onClick={() => setIsPhoneMode(!isPhoneMode)}
-          className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] font-serif text-xs font-bold transition-all"
+          className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] font-sans text-xs font-bold transition-all"
           title="Chuyển chế độ khung điện thoại"
         >
           <span className="material-symbols-outlined text-[16px]">
@@ -78,7 +78,7 @@ export default function ThamKhaoPage() {
       </main>
 
       {/* Footer Info */}
-      <footer className="text-center py-2 text-xs text-[#8c4b3e] font-serif z-10 opacity-80">
+      <footer className="text-center py-2 text-xs text-[#8c4b3e] font-sans z-10 opacity-80">
         Bản dựng 1:1 theo mẫu thiết kế 7 khung hình trong thư mục <strong>thamkhao</strong> • K&amp;P Atelier
       </footer>
     </div>

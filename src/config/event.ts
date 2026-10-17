@@ -46,6 +46,6 @@ export const EVENT = {
   mainWeekday: "Thứ Ba",
   mainHours: "11:00 – 15:00",
   mainVenue: "Sảnh Lầu 2",
-  campus: "Đại học FPT Hà Nội",
+  campus: "Đại học FPT TP. Hồ Chí Minh",
   schedule: EVENT_SCHEDULE,
 };

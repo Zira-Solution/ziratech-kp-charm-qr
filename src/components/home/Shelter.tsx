@@ -68,7 +68,7 @@ export default function Shelter() {
             Đồng Hành Cùng Trạm Cứu Hộ Sân Nhà Nhiều Chó
           </h2>
           <p className="font-body text-sm sm:text-base text-on-surface-variant leading-relaxed">
-            <strong>Sân Nhà Nhiều Chó</strong> là mái ấm phi lợi nhuận tại Thanh Oai, Hà Nội, hiện đang cưu mang hơn 120 chú chó mèo già yếu, khuyết tật hoặc bị bỏ rơi. Dự án 20/10 của sinh viên FPT ra đời không chỉ để tôn vinh phụ nữ Việt Nam, mà còn là cầu nối tiếp tế khẩu phần ăn, thuốc men và cải tạo chuồng trại trước mùa đông giá rét.
+            <strong>Sân Nhà Nhiều Chó</strong> là mái ấm phi lợi nhuận tại Thanh Oai, Hà Nội, hiện đang cưu mang hơn 120 chú chó mèo già yếu, khuyết tật hoặc bị bỏ rơi. Dự án 20/10 của sinh viên Đại học FPT TP. Hồ Chí Minh ra đời không chỉ để tôn vinh phụ nữ Việt Nam, mà còn là cầu nối tiếp tế khẩu phần ăn, thuốc men và cải tạo chuồng trại trước mùa đông giá rét.
           </p>
           <div className="p-5 rounded-[28px] bg-white/60 backdrop-blur-2xl border border-white/80 shadow-xs space-y-2">
             <div className="flex items-center gap-2 font-headline text-base text-primary font-bold">

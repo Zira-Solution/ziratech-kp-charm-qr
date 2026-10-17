@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 const field =
-  "w-full px-5 py-3.5 bg-white/70 backdrop-blur-md border border-white/80 rounded-full focus:border-primary focus:outline-none focus:ring-2 focus:ring-tertiary text-primary text-sm shadow-inner";
+  "w-full px-5 py-3.5 bg-white/70 backdrop-blur-md border border-white/80 rounded-full focus:border-primary focus:outline-none focus:ring-2 focus:ring-tertiary text-primary text-sm shadow-inner placeholder:text-slate-400 placeholder:font-normal";
 
 const SLOTS = [
   "11:00 – 12:15 (Nghỉ trưa ca sáng / Đón tiếp sớm)",
@@ -122,7 +122,7 @@ export default function Preorder() {
             )}
           </form>
 
-          <div className="mt-8 pt-6 border-t border-white/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 opacity-60 bg-white/40 backdrop-blur-md p-4 rounded-3xl sm:rounded-full border border-white/50">
+          <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 opacity-60 bg-white/40 backdrop-blur-md p-4 rounded-3xl sm:rounded-full border border-white/50">
             <div className="flex items-center gap-2 px-2">
               <span className="material-symbols-outlined text-outline">history_toggle_off</span>
               <span className="font-sans text-xs text-on-surface-variant italic">Minh họa trạng thái sau 23:59 ngày 18/10:</span>

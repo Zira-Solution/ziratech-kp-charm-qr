@@ -2,13 +2,13 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: var(--font-be-vietnam), "Be Vietnam Pro", system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-merriweather), "Merriweather", Georgia, serif;
-  --font-sans: var(--font-merriweather), "Merriweather", Georgia, serif;
   --font-merriweather: var(--font-merriweather), "Merriweather", Georgia, serif;
   --font-handwriting: "Caveat", "Dancing Script", cursive;
   --font-retro: "Abril Fatface", Georgia, serif;
   --font-headline: "Lora", Georgia, serif;
-  --font-body: "Be Vietnam Pro", sans-serif;
+  --font-body: var(--font-be-vietnam), "Be Vietnam Pro", system-ui, -apple-system, sans-serif;
 
   --color-secondary-dark: #b84f45;
   --color-tertiary: #f4c2c2;

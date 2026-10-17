@@ -65,7 +65,7 @@ export default function MusicBlock({ step, draft, onChange }: Props) {
                 selected ? "liquid-glass bg-white/95 border-amber-400 ring-2 ring-primary-container/20" : "liquid-glass-card border-white/70 hover:bg-white/80"
               }`}
             >
-              <span className="block font-serif text-xs font-bold text-primary">{s.label}</span>
+              <span className="block font-sans text-xs font-bold text-primary">{s.label}</span>
               <span className="mt-0.5 block text-[11px] font-sans text-warm-neutral">{s.hint}</span>
             </button>
           );
@@ -99,7 +99,7 @@ export default function MusicBlock({ step, draft, onChange }: Props) {
                     className="h-4 w-4 accent-primary-container"
                   />
                   <span className="min-w-0">
-                    <span className="block truncate font-serif text-sm font-bold text-primary">{p.name}</span>
+                    <span className="block truncate font-sans text-sm font-bold text-primary">{p.name}</span>
                     <span className="block truncate text-[11px] font-sans text-warm-neutral">{p.mood}</span>
                   </span>
                 </label>

@@ -2,12 +2,10 @@ import React from "react";
 import { Be_Vietnam_Pro, Lora } from "next/font/google";
 import HomeHeader from "@/components/home/HomeHeader";
 import { Hero, ImpactTicker } from "@/components/home/HeroAndImpact";
-import EventInfo from "@/components/home/EventInfo";
 import Catalog from "@/components/home/Catalog";
 import Keepsake from "@/components/home/Keepsake";
 import Workshop from "@/components/home/Workshop";
 import Preorder from "@/components/home/Preorder";
-import LuckyWheel from "@/components/home/LuckyWheel";
 import Shelter from "@/components/home/Shelter";
 import HomeFooter, { ClosingBanner } from "@/components/home/HomeFooter";
 
@@ -42,14 +40,12 @@ export default function MarketingHomePage() {
         <HomeHeader />
         <main>
           <Hero />
-          <ImpactTicker />
-          <EventInfo />
           <Catalog />
           <Keepsake />
           <Workshop />
           <Preorder />
-          <LuckyWheel />
           <Shelter />
+          <ImpactTicker />
         </main>
         <ClosingBanner />
         <HomeFooter />

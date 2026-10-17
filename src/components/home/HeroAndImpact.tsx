@@ -1,6 +1,8 @@
-import React from "react";
+"use client";
 
-const HERO_IMG = "/images/vong_charm_san.png";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const TRUST = [
   { icon: "qr_code_2", text: "Trang thiệp số đa phương tiện 1:1" },
@@ -16,93 +18,141 @@ const IMPACT = [
 ];
 
 export function Hero() {
+  const router = useRouter();
+  const [giftCode, setGiftCode] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = giftCode.trim().toUpperCase();
+    if (!clean) {
+      setErrorMsg("Vui lòng nhập mã thiệp");
+      return;
+    }
+    setErrorMsg("");
+    setLoading(true);
+    router.push(`/g/${clean}`);
+  };
+
   return (
-    <section className="pt-36 pb-20 px-6 max-w-7xl mx-auto" id="hero">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        <div className="lg:col-span-7 flex flex-col space-y-6">
-          <div className="inline-flex items-center gap-2 self-start px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-xl border border-white/80 text-secondary-dark font-sans text-xs font-semibold shadow-xs">
-            <span className="material-symbols-outlined text-[15px] text-primary">favorite</span>
-            <span>Bộ Sưu Tập Quà Tặng 20/10 • Gây Quỹ Cứu Trợ Động Vật</span>
-          </div>
-
-          <h1 className="font-headline text-2xl sm:text-3xl md:text-4xl lg:text-[34px] xl:text-[42px] 2xl:text-[48px] text-primary tracking-tight leading-[1.2]">
-            <span className="block">Một món quà trao người thương.</span>
-            <span className="italic font-normal text-secondary-dark block mt-1">Một mái ấm được chở che.</span>
-          </h1>
-
-          <p className="font-body text-base lg:text-lg text-on-surface-variant max-w-xl leading-relaxed">
-            Mỗi hộp quà 20/10 từ K&amp;P Atelier là sự kết tinh giữa chiếc vòng charm thủ công tinh tế, hoa tươi rạng rỡ và trang thiệp số lưu giữ ký ức. Trao đi món quà gửi người phụ nữ bạn trân quý, bạn đồng thời dành trọn vẹn 100% lợi nhuận cùng chung tay sưởi ấm trạm cứu hộ Sân Nhà Nhiều Chó.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-4 pt-2">
-            <a
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-linear-to-r from-[#721a28] to-[#8c2233] text-white font-sans text-sm font-bold shadow-pill border border-white/25 hover:from-[#5e131f] hover:to-[#721a28] active:scale-[0.98] transition-all"
-              href="#catalog"
-            >
-              <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
-              <span>Khám phá bộ sưu tập</span>
-            </a>
-            <a
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-white/60 backdrop-blur-xl text-primary border border-white/80 font-sans text-sm font-bold hover:bg-white/90 shadow-xs transition-all"
-              href="#shelter-donate"
-            >
-              <span className="material-symbols-outlined text-[18px] text-secondary-dark">volunteer_activism</span>
-              <span>Ủng hộ trạm cứu trợ</span>
-            </a>
-          </div>
-
-          <div className="pt-8 border-t border-white/60 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {TRUST.map((t) => (
-              <div
-                key={t.icon}
-                className="flex items-center gap-3 p-3 rounded-2xl bg-white/40 backdrop-blur-md border border-white/60 shadow-xs"
-              >
-                <div className="w-10 h-10 shrink-0 rounded-full bg-white/70 backdrop-blur-md border border-white/80 flex items-center justify-center text-primary shadow-xs">
-                  <span className="material-symbols-outlined text-[18px]">{t.icon}</span>
-                </div>
-                <p className="font-sans text-xs font-medium text-neutral">{t.text}</p>
-              </div>
-            ))}
-          </div>
+    <section className="pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="hero">
+      <div className="flex flex-col items-center text-center space-y-5 sm:space-y-6 w-full max-w-6xl mx-auto">
+        {/* Top Charity Badge */}
+        <div className="inline-flex items-center gap-2 px-4.5 py-1.5 rounded-full bg-white/80 backdrop-blur-xl border border-white/95 text-secondary-dark font-sans text-xs sm:text-sm font-semibold shadow-xs hover:shadow-sm transition-all">
+          <span className="material-symbols-outlined text-[15px] sm:text-[16px] text-primary animate-pulse">favorite</span>
+          <span>Bộ Sưu Tập Quà Tặng 20/10 • Gây Quỹ Cứu Trợ Động Vật</span>
         </div>
 
-        <div className="lg:col-span-5 relative">
-          <div className="relative p-3.5 rounded-[36px] bg-linear-to-br from-white/75 via-white/50 to-white/30 backdrop-blur-2xl border border-white/80 shadow-liquid-card">
-            <div className="relative w-full aspect-4/5 rounded-[26px] overflow-hidden bg-surface-container-low shadow-inner">
-              <img
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                alt="Vòng tay charm pha lê xanh trăng sao đan sẵn K&P Atelier"
-                src={HERO_IMG}
-              />
-              <div className="absolute top-4 left-4 bg-white/85 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 flex items-center gap-2 shadow-sm">
-                <span className="material-symbols-outlined text-[15px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  dark_mode
-                </span>
-                <span className="font-sans text-[11px] text-primary font-semibold">Starry Moon • Trăng Sao Lấp Lánh</span>
-              </div>
-              <div className="absolute top-4 right-4 bg-white/85 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 flex items-center gap-2 shadow-sm">
-                <span className="material-symbols-outlined text-[15px] text-sky-600">diamond</span>
-                <span className="font-sans text-[11px] text-sky-700 font-semibold">Blue Ice Crystal • Pha Lê Băng</span>
-              </div>
-              <div className="absolute bottom-4 left-4 bg-white/85 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/90 flex items-center gap-2 shadow-sm">
-                <span className="material-symbols-outlined text-[15px] text-primary">verified</span>
-                <span className="font-sans text-[11px] text-on-surface font-semibold">Vòng Có Sẵn • Thẻ QR Kèm Hộp</span>
-              </div>
-              <div className="absolute bottom-4 right-4 bg-linear-to-r from-[#721a28] to-[#8c2233] text-white px-4 py-2 rounded-full flex items-center gap-1.5 shadow-pill border border-white/30 backdrop-blur-md">
-                <span className="material-symbols-outlined text-[15px]">loyalty</span>
-                <span className="font-sans text-xs font-bold tracking-wide">Best Seller 20/10</span>
-              </div>
-            </div>
-            <div className="mt-3 px-4 py-3 bg-white/50 backdrop-blur-xl rounded-2xl flex items-center justify-between gap-2 border border-white/70">
-              <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-secondary-dark text-[18px]">pets</span>
-                <span className="font-sans text-xs text-on-surface-variant font-medium">
-                  100% lợi nhuận dành cho quỹ cứu trợ
-                </span>
-              </div>
-              <span className="font-sans text-xs text-primary font-bold shrink-0">Sân Nhà Nhiều Chó</span>
-            </div>
+        {/* Main Centered Headline - Broad, Elegant 2 Lines */}
+        <h1 className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-[56px] 2xl:text-6xl text-primary tracking-tight leading-[1.18] max-w-6xl">
+          <span className="block">Một món quà trao người thương.</span>
+          <span className="italic font-normal text-secondary-dark block mt-1.5 sm:mt-2.5">
+            Một mái ấm được chở che.
+          </span>
+        </h1>
+
+        {/* Description - Wider and more legible */}
+        <p className="font-body text-sm sm:text-base md:text-lg text-on-surface-variant max-w-3xl lg:max-w-4xl leading-relaxed">
+          Mỗi hộp quà 20/10 từ K&amp;P Atelier là sự kết tinh giữa chiếc vòng charm thủ công tinh tế, hoa tươi rạng rỡ và trang thiệp số lưu giữ ký ức. Trao đi món quà gửi người phụ nữ bạn trân quý, bạn đồng thời dành trọn vẹn 100% lợi nhuận cùng chung tay sưởi ấm trạm cứu hộ Sân Nhà Nhiều Chó.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-3.5 pt-0.5">
+          <a
+            className="inline-flex items-center gap-2 px-6 sm:px-7 py-3 rounded-full bg-linear-to-r from-[#721a28] to-[#8c2233] text-white font-sans text-xs sm:text-sm font-bold shadow-pill border border-white/25 hover:from-[#5e131f] hover:to-[#721a28] active:scale-[0.98] transition-all"
+            href="#catalog"
+          >
+            <span className="material-symbols-outlined text-[18px]">auto_awesome</span>
+            <span>Khám phá bộ sưu tập</span>
+          </a>
+          <Link
+            className="inline-flex items-center gap-2 px-6 sm:px-7 py-3 rounded-full bg-white/75 backdrop-blur-xl text-primary border border-white/90 font-sans text-xs sm:text-sm font-bold hover:bg-white/95 shadow-xs transition-all"
+            href="/gift"
+          >
+            <span className="material-symbols-outlined text-[18px] text-amber-500">draw</span>
+            <span>Tự tạo thiệp quà</span>
+          </Link>
+          <a
+            className="inline-flex items-center gap-2 px-6 sm:px-7 py-3 rounded-full bg-white/55 backdrop-blur-md text-secondary-dark border border-white/70 font-sans text-xs sm:text-sm font-semibold hover:bg-white/80 shadow-xs transition-all"
+            href="#shelter"
+          >
+            <span className="material-symbols-outlined text-[18px] text-secondary-dark">volunteer_activism</span>
+            <span>Ủng hộ trạm cứu trợ</span>
+          </a>
+        </div>
+
+        {/* Recipient Gift Code Input Box - Sleek, Rounded & Balanced Capsule */}
+        <div className="w-full max-w-2xl sm:max-w-3xl lg:max-w-[920px] mt-2 sm:mt-3 p-4 sm:p-5 px-5 sm:px-6 rounded-[30px] bg-linear-to-b from-white/95 via-white/85 to-white/70 backdrop-blur-2xl border border-white/95 shadow-[0_14px_40px_-6px_rgba(114,26,40,0.12),0_1px_2px_rgba(255,255,255,0.95)_inset]">
+          <div className="flex items-center gap-2.5 mb-2.5 px-1 text-left">
+            <span className="w-7 h-7 rounded-full bg-rose-100 text-[#721a28] flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-[16px]">redeem</span>
+            </span>
+            <h3 className="font-headline text-sm sm:text-base font-bold text-primary">
+              Bạn vừa nhận được món quà 20/10?
+            </h3>
           </div>
+
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center gap-2.5 bg-white/95 p-1.5 sm:p-2 pl-3 sm:pl-4 rounded-2xl sm:rounded-full border border-rose-200/80 shadow-inner">
+            <div className="relative flex-1 w-full">
+              <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none text-rose-900/50">
+                <span className="material-symbols-outlined text-[22px]">qr_code_scanner</span>
+              </div>
+              <input
+                type="text"
+                value={giftCode}
+                onChange={(e) => {
+                  setGiftCode(e.target.value);
+                  if (errorMsg) setErrorMsg("");
+                }}
+                placeholder="Nhập mã thiệp..."
+                className="w-full pl-9 pr-4 py-2.5 sm:py-3.5 bg-transparent focus:outline-none text-sm sm:text-base font-sans font-semibold text-primary placeholder:text-neutral/45 uppercase tracking-wider"
+                autoCapitalize="characters"
+                autoCorrect="off"
+                spellCheck="false"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 sm:px-9 py-2.5 sm:py-3.5 rounded-xl sm:rounded-full bg-linear-to-r from-[#721a28] via-[#8c2233] to-[#5e131f] text-white font-sans text-sm sm:text-base font-bold shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-70 whitespace-nowrap shrink-0"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Đang mở...</span>
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-[18px] text-amber-200">lock_open</span>
+                  <span>Mở thiệp ngay</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {errorMsg && (
+            <p className="mt-2 text-xs sm:text-sm font-sans text-rose-600 font-medium text-left px-2 flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[15px]">error</span>
+              <span>{errorMsg}</span>
+            </p>
+          )}
+        </div>
+
+        {/* Trust Badges - Broad & Spacious 3-Column Grid */}
+        <div className="pt-10 sm:pt-12 border-t border-white/60 w-full max-w-5xl lg:max-w-6xl grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          {TRUST.map((t) => (
+            <div
+              key={t.icon}
+              className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-white/50 backdrop-blur-md border border-white/80 shadow-xs hover:bg-white/70 hover:shadow-sm transition-all text-left"
+            >
+              <div className="w-11 h-11 shrink-0 rounded-full bg-white/90 backdrop-blur-md border border-white/95 flex items-center justify-center text-primary shadow-xs">
+                <span className="material-symbols-outlined text-[20px]">{t.icon}</span>
+              </div>
+              <p className="font-sans text-xs sm:text-sm font-semibold text-neutral leading-snug">{t.text}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

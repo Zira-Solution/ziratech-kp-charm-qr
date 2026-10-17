@@ -247,7 +247,7 @@ export default function CardStudioPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-rose-cream flex items-center justify-center p-4 font-serif">
+      <div className="min-h-screen bg-rose-cream flex items-center justify-center p-4 font-sans">
         <div role="status" className="text-center">
           <span className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin inline-block mb-3" />
           <p className="text-sm text-primary font-bold">Đang mở bàn viết thiệp của bạn...</p>
@@ -258,14 +258,14 @@ export default function CardStudioPage() {
 
   if (loadError || !product) {
     return (
-      <div className="min-h-screen bg-rose-cream flex items-center justify-center p-4 font-serif">
+      <div className="min-h-screen bg-rose-cream flex items-center justify-center p-4 font-sans">
         <div role="alert" className="p-8 rounded-3xl liquid-glass bg-white/90 border border-white/95 max-w-md text-center shadow-xl">
           <Icon name="error" className="text-4xl text-rose-600 mb-2" />
           <h1 className="text-xl font-bold text-primary">{needsAuth ? "Cần Nhập OTP Tạo Thiệp" : "Mã Thiệp Không Hợp Lệ"}</h1>
           <p className="text-xs text-on-surface-variant font-sans mt-2">{loadError || "Không tìm thấy thiệp."}</p>
           <Link
             href={needsAuth ? `/gift?token=${encodeURIComponent(token)}` : "/gift"}
-            className="mt-6 inline-block py-2.5 px-6 rounded-xl liquid-glass-btn-primary text-white text-xs font-bold font-serif"
+            className="mt-6 inline-block py-2.5 px-6 rounded-xl liquid-glass-btn-primary text-white text-xs font-bold font-sans"
           >
             {needsAuth ? "Nhập OTP Tạo Thiệp" : "Nhập Lại Mã Khác"}
           </Link>

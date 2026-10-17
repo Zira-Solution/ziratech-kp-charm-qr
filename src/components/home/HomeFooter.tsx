@@ -1,79 +1,161 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 
 export function ClosingBanner() {
   return (
-    <section className="bg-linear-to-r from-[#721a28] via-[#8c2233] to-[#721a28] text-white py-14 px-6 text-center border-t border-white/10 relative overflow-hidden">
-      <div className="max-w-4xl mx-auto flex flex-col items-center space-y-3 relative z-10">
-        <span className="material-symbols-outlined text-3xl text-tertiary">favorite</span>
-        <h3 className="font-headline text-2xl sm:text-3xl italic text-white">
-          &quot;Cùng K&amp;P Atelier mang lại một ngày 20/10 ngọt ngào và ấm áp.&quot;
+    <section className="bg-[#0b132b] text-white py-16 sm:py-20 px-6 text-center border-t border-slate-800">
+      <div className="max-w-4xl mx-auto flex flex-col items-center space-y-4">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-sky-400/25 text-sky-200 text-xs font-semibold shadow-xs">
+          <span className="material-symbols-outlined text-[16px] text-sky-300">
+            favorite
+          </span>
+          <span>LAN TỎA YÊU THƯƠNG MÙA 20/10</span>
+        </div>
+
+        <h3 className="font-headline text-2xl sm:text-3xl lg:text-4xl italic text-white font-medium tracking-tight leading-snug max-w-3xl">
+          &ldquo;Cùng K&amp;P Atelier mang lại một ngày 20/10 ngọt ngào và ấm áp.&rdquo;
         </h3>
-        <p className="font-sans text-xs text-white/80">
-          Cảm ơn bạn đã lắng nghe câu chuyện của xưởng thủ công sinh viên FPT University và những người bạn bốn chân.
+
+        <p className="font-body text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
+          Cảm ơn bạn đã lắng nghe câu chuyện của xưởng thủ công sinh viên FPT University và những người bạn bốn chân tại trạm cứu hộ.
         </p>
       </div>
     </section>
   );
 }
 
-const linkClass = "text-white/70 hover:text-tertiary transition-colors text-xs";
-
 export default function HomeFooter() {
+  const navLinks = [
+    { label: "Câu chuyện xưởng K&P", href: "#hero" },
+    { label: "Bộ sưu tập quà 20/10", href: "#catalog" },
+    { label: "Bàn workshop thủ công", href: "#workshop" },
+    { label: "Mã QR & thiệp số email", href: "#keepsake" },
+    { label: "Quỹ Sân Nhà Nhiều Chó", href: "#shelter" },
+  ];
+
+  const serviceLinks = [
+    { label: "Studio tạo thiệp quà số", href: "/gift", isRoute: true },
+    { label: "Đặt trước hoa tươi 20/10", href: "#preorder" },
+    { label: "Trải nghiệm workshop tự làm", href: "#workshop" },
+    { label: "Minh bạch quỹ thiện nguyện", href: "#shelter-donate" },
+  ];
+
   return (
-    <footer className="w-full py-16 px-6 sm:px-12 bg-neutral text-white relative overflow-hidden">
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
-          <div className="flex flex-col space-y-4">
-            <span className="font-headline text-2xl text-white font-bold tracking-tight">K&amp;P Atelier</span>
-            <p className="font-sans text-xs text-white/70 leading-relaxed">
-              Dự án gây quỹ thiện nguyện 20/10 bởi sinh viên FPT University đồng hành cùng trạm cứu hộ Sân Nhà Nhiều Chó.
+    <footer className="w-full bg-[#070b14] text-white pt-14 pb-16 px-6 sm:px-12 border-t border-slate-800">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-14 border-b border-white/10">
+          
+          {/* ======================================================== */}
+          {/* COL 1: ATELIER BRAND (6 COLS) */}
+          {/* ======================================================== */}
+          <div className="lg:col-span-6 flex flex-col space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-sky-500 via-blue-600 to-[#0b132b] border border-sky-300/30 flex items-center justify-center text-white font-headline font-bold text-base shadow-sm">
+                K&amp;P
+              </div>
+              <div>
+                <span className="font-headline text-2xl text-white font-bold tracking-tight block">
+                  K&amp;P Atelier
+                </span>
+                <span className="font-sans text-[10px] text-sky-300/80 uppercase tracking-widest block font-semibold">
+                  Handcrafted &amp; Phygital Gifts
+                </span>
+              </div>
+            </div>
+
+            <p className="font-body text-xs sm:text-sm text-slate-300/75 leading-relaxed max-w-md">
+              Dự án quà tặng thủ công kết hợp công nghệ số 20/10 bởi sinh viên FPT University, đồng hành cùng trạm cứu hộ động vật Sân Nhà Nhiều Chó.
             </p>
-            <div className="flex items-center gap-2 text-xs text-white/60">
-              <span className="material-symbols-outlined text-[16px] text-tertiary">pin_drop</span>
-              <span>Sảnh lầu 2, FPT University Hà Nội</span>
+
+            <div className="pt-2 space-y-2 text-xs text-slate-300/80 font-sans">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[16px] text-sky-400 shrink-0">
+                  pin_drop
+                </span>
+                <span>Sảnh lầu 2, FPT University TP. Hồ Chí Minh</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[16px] text-sky-400 shrink-0">
+                  schedule
+                </span>
+                <span>Chuỗi ngày hội: 16/10 – 20/10/2026 (11:00 – 15:00)</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col space-y-3">
-            <span className="font-sans text-xs text-white uppercase tracking-wider font-bold">Khám phá</span>
-            <a className={linkClass} href="#hero">Câu chuyện xưởng K&amp;P</a>
-            <a className={linkClass} href="#preorder">Điểm nhận quà tại FPTU</a>
-            <a className={linkClass} href="#keepsake">Hướng dẫn mã QR kỷ niệm</a>
-            <a className={linkClass} href="#shelter">Báo cáo quỹ minh bạch</a>
-          </div>
-
-          <div className="flex flex-col space-y-3">
-            <span className="font-sans text-xs text-white uppercase tracking-wider font-bold">Hỗ trợ sinh viên</span>
-            <Link className={linkClass} href="/gift">Tạo thiệp quà (người mua)</Link>
-            <a className={linkClass} href="#preorder">Điều khoản đơn hàng</a>
-            <span className="text-white/70 text-xs">Mở cửa 11:00 – 15:00 ngày 20/10</span>
-          </div>
-
-          <div className="p-5 rounded-[26px] bg-white/5 backdrop-blur-xl border border-white/10 flex flex-col space-y-2 shadow-inner">
-            <div className="flex items-center gap-2 text-white font-bold text-sm">
-              <span className="material-symbols-outlined text-tertiary">pets</span>
-              <span>Sân Nhà Nhiều Chó</span>
-            </div>
-            <p className="text-xs text-white/70 leading-relaxed">
-              Thanh Oai, Hà Nội. Mái ấm phi lợi nhuận cho động vật cơ nhỡ cần được che chở.
-            </p>
-            <a className="text-xs text-tertiary hover:underline pt-1 inline-block font-semibold" href="#shelter-donate">
-              Xem sao kê &amp; đóng góp →
-            </a>
-          </div>
-        </div>
-
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-white/60 gap-4">
-          <p>© 2026 K&amp;P Atelier – Dự án gây quỹ 20/10 bởi sinh viên FPT University đồng hành cùng trạm cứu hộ Sân Nhà Nhiều Chó.</p>
-          <div className="flex items-center gap-3">
-            <span className="px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md text-white font-sans text-[11px] border border-white/15">
-              Handcrafted with warmth
+          {/* ======================================================== */}
+          {/* COL 2: KHÁM PHÁ (3 COLS) */}
+          {/* ======================================================== */}
+          <div className="lg:col-span-3 flex flex-col space-y-3.5">
+            <span className="font-sans text-xs text-sky-200/90 uppercase tracking-wider font-bold flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+              Khám phá
             </span>
-            <span>•</span>
-            <span>Sảnh lầu 2 FPTU</span>
+            <ul className="space-y-2.5">
+              {navLinks.map((item, i) => (
+                <li key={i}>
+                  <a
+                    href={item.href}
+                    className="text-xs text-slate-300/75 hover:text-sky-200 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all duration-200 font-sans"
+                  >
+                    <span>{item.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
+
+          {/* ======================================================== */}
+          {/* COL 3: DỊCH VỤ & HỖ TRỢ (3 COLS) */}
+          {/* ======================================================== */}
+          <div className="lg:col-span-3 flex flex-col space-y-3.5">
+            <span className="font-sans text-xs text-sky-200/90 uppercase tracking-wider font-bold flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+              Dịch vụ &amp; Hỗ trợ
+            </span>
+            <ul className="space-y-2.5">
+              {serviceLinks.map((item, i) => (
+                <li key={i}>
+                  {item.isRoute ? (
+                    <Link
+                      href={item.href}
+                      className="text-xs text-slate-300/75 hover:text-sky-200 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all duration-200 font-sans"
+                    >
+                      <span>{item.label}</span>
+                    </Link>
+                  ) : (
+                    <a
+                      href={item.href}
+                      className="text-xs text-slate-300/75 hover:text-sky-200 hover:translate-x-1 inline-flex items-center gap-1.5 transition-all duration-200 font-sans"
+                    >
+                      <span>{item.label}</span>
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+
+            <div className="pt-2 text-[11px] text-slate-400 font-sans leading-relaxed">
+              Mọi thắc mắc về đơn đặt trước hoặc workshop vui lòng ghé quầy trực tiếp tại sảnh lầu 2.
+            </div>
+          </div>
+
         </div>
+
+        {/* ======================================================== */}
+        {/* BOTTOM COPYRIGHT & META BAR */}
+        {/* ======================================================== */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
+          <p className="text-center sm:text-left leading-relaxed">
+            © 2026 K&amp;P Atelier — Dự án gây quỹ 20/10 bởi sinh viên FPT University TP. Hồ Chí Minh đồng hành cùng Sân Nhà Nhiều Chó.
+          </p>
+          <p className="text-xs text-slate-500 font-sans">
+            Sảnh lầu 2, FPT University TP. Hồ Chí Minh
+          </p>
+        </div>
+
       </div>
     </footer>
   );

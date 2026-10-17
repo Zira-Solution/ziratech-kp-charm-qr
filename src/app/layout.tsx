@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
-import { Merriweather } from "next/font/google";
+import { Be_Vietnam_Pro, Merriweather } from "next/font/google";
 import "./globals.css";
+
+const beVietnam = Be_Vietnam_Pro({
+  variable: "--font-be-vietnam",
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+});
 
 const merriweather = Merriweather({
   variable: "--font-merriweather",
@@ -12,14 +19,14 @@ const merriweather = Merriweather({
 export const metadata: Metadata = {
   title: "K&P Atelier — Vòng Tay Charm & Quà Tặng Số 20/10 | Gây Quỹ Sân Nhà Nhiều Chó",
   description:
-    "Trải nghiệm quà tặng Phygital 20/10 độc quyền tại ĐH FPT. Mỗi chiếc vòng tay charm có mã QR gửi qua email để mở trang quà số cá nhân hóa. Lợi nhuận của dự án được dành ủng hộ trạm cứu hộ Sân Nhà Nhiều Chó.",
+    "Trải nghiệm quà tặng Phygital 20/10 độc quyền tại ĐH FPT TP.HCM. Mỗi chiếc vòng tay charm có mã QR gửi qua email để mở trang quà số cá nhân hóa. Lợi nhuận của dự án được dành ủng hộ trạm cứu hộ Sân Nhà Nhiều Chó.",
   keywords: [
     "K&P Atelier",
     "quà tặng 20/10",
     "vòng tay charm",
     "thẻ QR quà số",
     "Sân Nhà Nhiều Chó",
-    "Đại học FPT",
+    "Đại học FPT TP.HCM",
     "quà tặng sinh viên",
   ],
 };
@@ -32,7 +39,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${merriweather.variable} ${merriweather.className} h-full antialiased scroll-smooth`}
+      className={`${beVietnam.variable} ${merriweather.variable} ${beVietnam.className} h-full antialiased scroll-smooth`}
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -46,7 +53,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         />
       </head>
-      <body className="min-h-full flex flex-col font-serif bg-brand-bg text-on-surface relative overflow-x-hidden selection:bg-secondary-container/40 selection:text-primary">
+      <body className="min-h-full flex flex-col font-sans bg-brand-bg text-on-surface relative overflow-x-hidden selection:bg-secondary-container/40 selection:text-primary">
         {/* Ambient Floating Liquid Mesh Lights with Iridescent Shimmer */}
         <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
           <div className="absolute -top-40 -left-40 w-2xl h-168 rounded-full bg-linear-to-tr from-secondary-fixed/80 via-secondary-container/60 to-rose-petal blur-[120px] animate-liquid-float-slow" />

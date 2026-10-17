@@ -23,14 +23,6 @@ const NAV_ITEMS: NavItem[] = [
     desc: "Vòng charm thủ công & combo hoa tươi 20/10",
   },
   {
-    href: "#event",
-    id: "event",
-    label: "Sự kiện 20/10",
-    shortLabel: "Sự kiện",
-    icon: "event",
-    desc: "Thời gian & địa điểm tổ chức tại ĐH FPT",
-  },
-  {
     href: "#workshop",
     id: "workshop",
     label: "Workshop",
@@ -67,7 +59,7 @@ export default function HomeHeader() {
       setIsScrolled(window.scrollY > 25);
 
       // Section spy
-      const sections = ["hero", "catalog", "event", "workshop", "preorder", "shelter", "keepsake"];
+      const sections = ["hero", "catalog", "workshop", "preorder", "shelter", "keepsake"];
       const scrollPos = window.scrollY + 220;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -99,13 +91,13 @@ export default function HomeHeader() {
   return (
     <>
       <header
-        className={`fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)] max-w-7xl rounded-full z-50 transition-all duration-300 ${
+        className={`fixed top-0 inset-x-0 w-full z-50 transition-all duration-300 ${
           isScrolled
-            ? "py-2 sm:py-2.5 px-3 sm:px-5 xl:px-6 bg-white/90 backdrop-blur-2xl border border-white/95 shadow-[0_14px_35px_-4px_rgba(114,26,40,0.12),0_1px_3px_rgba(255,255,255,0.95)_inset]"
-            : "py-2.5 sm:py-3 px-3.5 sm:px-5 xl:px-6 bg-white/75 backdrop-blur-xl border border-white/85 shadow-[0_10px_30px_-5px_rgba(114,26,40,0.06),0_1px_2px_rgba(255,255,255,0.9)_inset]"
+            ? "py-2.5 sm:py-3 px-4 sm:px-8 lg:px-12 bg-white/85 backdrop-blur-2xl border-b border-rose-200/60 shadow-[0_4px_25px_rgba(114,26,40,0.06)]"
+            : "py-3.5 sm:py-4 px-4 sm:px-8 lg:px-12 bg-white/70 backdrop-blur-xl border-b border-rose-200/40 shadow-xs"
         }`}
       >
-        <div className="flex items-center justify-between w-full mx-auto gap-2 sm:gap-3 xl:gap-4">
+        <div className="flex items-center justify-between w-full max-w-7xl mx-auto gap-2 sm:gap-3 xl:gap-4 relative z-10">
           {/* Brand Logo & Title */}
           <a
             href="#hero"
@@ -155,29 +147,17 @@ export default function HomeHeader() {
 
           {/* Right Action Cluster */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            {/* Secondary Action: Redeem Gift / Open Card */}
-            <a
-              href="#keepsake"
-              className="hidden md:inline-flex items-center gap-1.5 px-3 xl:px-3.5 py-1.5 xl:py-2 rounded-full border border-white/90 bg-white/70 hover:bg-white text-primary font-sans text-xs font-semibold shadow-xs hover:shadow-sm hover:scale-[1.02] transition-all whitespace-nowrap"
-              title="Nhập mã thẻ để mở thiệp quà 3D"
-            >
-              <span className="material-symbols-outlined text-[15px] xl:text-[16px] text-secondary-dark">
-                card_giftcard
-              </span>
-              <span className="hidden xl:inline">Nhập mã quà</span>
-              <span className="inline xl:hidden">Nhập mã</span>
-            </a>
 
-            {/* Micro Charity Chip (Shown on 2XL Screens) */}
+            {/* Charity Donation Action Button */}
             <a
               href="#shelter"
-              className="hidden 2xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-50/80 border border-rose-200/50 text-[#721a28] font-sans text-xs font-medium hover:bg-rose-100/90 transition-all whitespace-nowrap"
-              title="100% lợi nhuận ủng hộ Sân Nhà Nhiều Chó"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-linear-to-r from-rose-50 via-white to-amber-50/80 border border-rose-200/90 text-[#721a28] font-sans text-xs font-semibold shadow-xs hover:shadow-md hover:border-rose-300 hover:scale-[1.03] transition-all whitespace-nowrap group"
+              title="100% lợi nhuận ủng hộ trạm cứu hộ Sân Nhà Nhiều Chó"
             >
-              <span className="material-symbols-outlined text-[14px] text-rose-500 animate-pulse">
-                favorite
+              <span className="material-symbols-outlined text-[15px] sm:text-[16px] text-rose-500 group-hover:scale-110 transition-transform">
+                pets
               </span>
-              <span>Gây quỹ 100%</span>
+              <span>Ủng hộ trạm cứu hộ</span>
             </a>
 
             {/* Primary Star CTA: Create Gift Card */}

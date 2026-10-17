@@ -55,7 +55,7 @@ export default function PreviewCard({
 
         {has("letter") && (
           <>
-            <h3 className="mt-3 text-center font-serif text-sm font-bold text-primary">{draft.letterTitle.trim() || "LỜI NHẮN"}</h3>
+            <h3 className="mt-3 text-center font-sans text-sm font-bold text-primary">{draft.letterTitle.trim() || "LỜI NHẮN"}</h3>
             <p className="mt-1 line-clamp-4 whitespace-pre-line text-center text-xs font-sans leading-relaxed text-espresso">
               {draft.letterContent.trim() || "Lời nhắn của bạn sẽ hiện ở đây..."}
             </p>

@@ -117,6 +117,56 @@ export default function StorybookSunsetTemplate({
   const musicTimerRef = useRef<NodeJS.Timeout | null>(null);
   const voiceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Slide 2 Letter Typewriter Effect
+  const letterSalutation = `Gửi ${data.recipientName || "bạn"},`;
+  const letterBody =
+    data.letterContent ||
+    "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này.";
+  const letterSig = data.senderName ? `— ${data.senderName}` : "";
+  const letterTotalLength = letterSalutation.length + letterBody.length + letterSig.length;
+  const [letterTypedCount, setLetterTypedCount] = useState(0);
+  const letterScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (currentSlide === 2) {
+      setLetterTypedCount(0);
+      const intervalMs = Math.max(16, Math.min(36, Math.floor(3500 / Math.max(letterTotalLength, 1))));
+      const timer = setInterval(() => {
+        setLetterTypedCount((prev) => {
+          if (prev >= letterTotalLength) {
+            clearInterval(timer);
+            return letterTotalLength;
+          }
+          return prev + 1;
+        });
+      }, intervalMs);
+      return () => clearInterval(timer);
+    }
+  }, [currentSlide, letterTotalLength]);
+
+  useEffect(() => {
+    if (letterScrollRef.current) {
+      letterScrollRef.current.scrollTop = letterScrollRef.current.scrollHeight;
+    }
+  }, [letterTypedCount]);
+
+  const letterSalutationChars = Math.min(letterTypedCount, letterSalutation.length);
+  const displayLetterSalutation = letterSalutation.slice(0, letterSalutationChars);
+  const letterBodyChars = Math.max(0, Math.min(letterTypedCount - letterSalutation.length, letterBody.length));
+  const displayLetterBody = letterBody.slice(0, letterBodyChars);
+  const letterSigChars = Math.max(0, letterTypedCount - letterSalutation.length - letterBody.length);
+  const displayLetterSig = letterSig.slice(0, letterSigChars);
+  const isLetterFinished = letterTypedCount >= letterTotalLength;
+
+  const letterCursorStage =
+    letterTypedCount < letterSalutation.length
+      ? "salutation"
+      : letterTypedCount < letterSalutation.length + letterBody.length
+      ? "body"
+      : !isLetterFinished
+      ? "signature"
+      : "none";
+
   const goToSlide = (slide: number) => {
     if (slide >= 1 && slide <= 7) {
       if (propOnGoToSlide) propOnGoToSlide(slide);
@@ -453,7 +503,11 @@ export default function StorybookSunsetTemplate({
           />
 
           {/* Letter Note Container (Pure CSS lined paper) */}
-          <div className="relative p-5 sm:p-6 pt-8 rounded-xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd]">
+          <div
+            onClick={() => setLetterTypedCount(letterTotalLength)}
+            className="relative w-full p-4 sm:p-5 pt-7 rounded-xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd] z-10 max-h-[52vh] flex flex-col overflow-hidden cursor-pointer"
+            title={!isLetterFinished ? "Chạm để hiện toàn bộ lời nhắn" : undefined}
+          >
             {/* Bulldog Clip at Top Center */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 w-8 h-8">
               <img
@@ -464,30 +518,67 @@ export default function StorybookSunsetTemplate({
             </div>
 
             <div
+              ref={letterScrollRef}
+              className="overflow-y-auto pr-1 min-h-0 flex-1 scroll-smooth"
               style={{
                 backgroundImage:
                   "repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, #ebdccd 31px, #ebdccd 32px)",
+                backgroundAttachment: "local",
                 lineHeight: "32px",
               }}
             >
               {/* Salutation */}
-              <div className="leading-[32px] font-handwriting font-bold text-lg sm:text-xl text-[#1c3f50] mb-0">
-                Gửi {data.recipientName || "bạn"},
+              <div className="leading-[32px] font-handwriting font-bold text-lg sm:text-xl text-[#1c3f50] mb-0 min-h-[32px]">
+                {displayLetterSalutation}
+                {letterCursorStage === "salutation" && (
+                  <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#1c3f50] animate-pulse align-middle" />
+                )}
               </div>
 
               {/* Letter Body on Lined Paper */}
-              <p className="leading-[32px] font-handwriting text-base sm:text-lg text-[#2e1d1b] whitespace-pre-line min-h-[128px] m-0">
-                {data.letterContent ||
-                  "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này."}
-              </p>
+              {displayLetterBody.length > 0 && (
+                <p className="leading-[32px] font-handwriting text-base sm:text-lg text-[#2e1d1b] whitespace-pre-line m-0">
+                  {displayLetterBody}
+                  {letterCursorStage === "body" && (
+                    <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#c13d28] animate-pulse align-middle" />
+                  )}
+                </p>
+              )}
 
-              {/* Heart Signature */}
-              <div className="flex justify-center mt-3">
+              {displayLetterSig.length > 0 && (
+                <div className="leading-[32px] mt-1 text-right">
+                  <p className="font-handwriting font-bold text-base sm:text-lg text-[#c13d28] m-0 inline-block">
+                    {displayLetterSig}
+                    {letterCursorStage === "signature" && (
+                      <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#c13d28] animate-pulse align-middle" />
+                    )}
+                  </p>
+                </div>
+              )}
+
+              {/* Heart Signature & Replay */}
+              <div className="flex flex-col items-center justify-center mt-2 pb-1">
                 <img
                   src="/thamkhao/heart.png"
                   alt="Love"
-                  className="w-6 h-6 object-contain transform hover:scale-125 transition-transform"
+                  className={`w-6 h-6 object-contain transform transition-all duration-500 ${
+                    isLetterFinished ? "opacity-100 scale-100" : "opacity-0 scale-75"
+                  } hover:scale-125`}
                 />
+                {isLetterFinished && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLetterTypedCount(0);
+                    }}
+                    className="inline-flex items-center gap-1 text-[10px] text-[#8c4b3e]/70 hover:text-[#c13d28] font-sans transition-colors mt-1.5 cursor-pointer"
+                    title="Xem lại hiệu ứng viết thư"
+                  >
+                    <span className="material-symbols-outlined text-[13px]">replay</span>
+                    <span>Viết lại</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>

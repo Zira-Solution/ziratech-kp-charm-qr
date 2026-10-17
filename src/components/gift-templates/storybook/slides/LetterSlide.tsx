@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
 import StorybookHeader from "./StorybookHeader";
@@ -19,6 +19,61 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
     letter?.content ||
     "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này.";
   const signature = letter?.signature || gift.sender;
+
+  const salutationText = `Gửi ${recipient},`;
+  const bodyText = content;
+  const sigText = signature ? `— ${signature}` : "";
+  const totalLength = salutationText.length + bodyText.length + sigText.length;
+
+  const [typedCount, setTypedCount] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const landscapeScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setTypedCount(0);
+    const intervalMs = Math.max(16, Math.min(36, Math.floor(3500 / Math.max(totalLength, 1))));
+    const timer = setInterval(() => {
+      setTypedCount((prev) => {
+        if (prev >= totalLength) {
+          clearInterval(timer);
+          return totalLength;
+        }
+        return prev + 1;
+      });
+    }, intervalMs);
+
+    return () => clearInterval(timer);
+  }, [totalLength]);
+
+  // Auto-scroll down smoothly as text grows
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }
+    if (landscapeScrollRef.current) {
+      landscapeScrollRef.current.scrollTop = landscapeScrollRef.current.scrollHeight;
+    }
+  }, [typedCount]);
+
+  const salutationChars = Math.min(typedCount, salutationText.length);
+  const displaySalutation = salutationText.slice(0, salutationChars);
+
+  const bodyChars = Math.max(0, Math.min(typedCount - salutationText.length, bodyText.length));
+  const displayBody = bodyText.slice(0, bodyChars);
+
+  const sigChars = Math.max(0, typedCount - salutationText.length - bodyText.length);
+  const displaySignature = sigText.slice(0, sigChars);
+
+  const isFinished = typedCount >= totalLength;
+
+  const cursorStage =
+    typedCount < salutationText.length
+      ? "salutation"
+      : typedCount < salutationText.length + bodyText.length
+      ? "body"
+      : !isFinished
+      ? "signature"
+      : "none";
 
   if (isLandscape) {
     return (
@@ -88,7 +143,11 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
               </div>
 
               {/* Lined Note Paper (Rendered via pure CSS for 100% text-to-line alignment) */}
-              <div className="relative w-full max-w-xl max-h-[70vh] flex flex-col p-6 lg:p-8 pt-9 rounded-2xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd] overflow-hidden">
+              <div
+                onClick={() => setTypedCount(totalLength)}
+                className="relative w-full max-w-xl max-h-[70vh] flex flex-col p-6 lg:p-8 pt-9 rounded-2xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd] overflow-hidden cursor-pointer"
+                title={!isFinished ? "Chạm để hiện toàn bộ lời nhắn" : undefined}
+              >
                 {/* Black bulldog clip */}
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 w-9 h-9">
                   <img
@@ -100,7 +159,8 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
 
                 {/* Ruled letter body container */}
                 <div
-                  className="overflow-y-auto pr-2 min-h-0 flex-1"
+                  ref={landscapeScrollRef}
+                  className="overflow-y-auto pr-2 min-h-0 flex-1 scroll-smooth"
                   style={{
                     backgroundImage:
                       "repeating-linear-gradient(to bottom, transparent 0px, transparent 37px, #ebdccd 37px, #ebdccd 38px)",
@@ -108,28 +168,55 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
                     lineHeight: "38px",
                   }}
                 >
-                  <div className="leading-[38px] font-handwriting font-bold text-xl lg:text-2xl text-[#1c3f50]">
-                    Gửi {recipient},
+                  <div className="leading-[38px] font-handwriting font-bold text-xl lg:text-2xl text-[#1c3f50] min-h-[38px]">
+                    {displaySalutation}
+                    {cursorStage === "salutation" && (
+                      <span className="inline-block w-0.5 h-5 ml-0.5 bg-[#1c3f50] animate-pulse align-middle" />
+                    )}
                   </div>
 
-                  <p className="leading-[38px] font-handwriting text-lg lg:text-xl text-[#2e1d1b] whitespace-pre-line m-0">
-                    {content}
-                  </p>
+                  {displayBody.length > 0 && (
+                    <p className="leading-[38px] font-handwriting text-lg lg:text-xl text-[#2e1d1b] whitespace-pre-line m-0">
+                      {displayBody}
+                      {cursorStage === "body" && (
+                        <span className="inline-block w-0.5 h-5 ml-0.5 bg-[#c13d28] animate-pulse align-middle" />
+                      )}
+                    </p>
+                  )}
 
-                  {signature && (
+                  {displaySignature.length > 0 && (
                     <div className="leading-[38px] mt-2 text-right">
                       <p className="font-handwriting font-bold text-xl lg:text-2xl text-[#c13d28] m-0 inline-block">
-                        — {signature}
+                        {displaySignature}
+                        {cursorStage === "signature" && (
+                          <span className="inline-block w-0.5 h-5 ml-0.5 bg-[#c13d28] animate-pulse align-middle" />
+                        )}
                       </p>
                     </div>
                   )}
 
-                  <div className="flex justify-center mt-3 pt-1">
+                  <div className="flex flex-col items-center justify-center mt-3 pt-1">
                     <img
                       src="/thamkhao/heart.png"
                       alt="Yêu thương"
-                      className="w-7 h-7 object-contain opacity-90 hover:scale-125 transition-transform"
+                      className={`w-7 h-7 object-contain opacity-90 hover:scale-125 transition-all duration-500 ${
+                        isFinished ? "opacity-90 scale-100" : "opacity-0 scale-75"
+                      }`}
                     />
+                    {isFinished && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setTypedCount(0);
+                        }}
+                        className="inline-flex items-center gap-1 text-xs text-[#8c4b3e]/70 hover:text-[#c13d28] font-sans transition-colors mt-2 cursor-pointer"
+                        title="Xem lại hiệu ứng viết thư"
+                      >
+                        <span className="material-symbols-outlined text-[15px]">replay</span>
+                        <span>Viết lại</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -182,7 +269,11 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
           />
 
           {/* Letter Note Container (Pure CSS lined paper) */}
-          <div className="relative w-full p-4 sm:p-5 pt-7 rounded-xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd] z-10 max-h-[52vh] flex flex-col overflow-hidden">
+          <div
+            onClick={() => setTypedCount(totalLength)}
+            className="relative w-full p-4 sm:p-5 pt-7 rounded-xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd] z-10 max-h-[52vh] flex flex-col overflow-hidden cursor-pointer"
+            title={!isFinished ? "Chạm để hiện toàn bộ lời nhắn" : undefined}
+          >
             {/* Bulldog clip at top center */}
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 w-8 h-8">
               <img
@@ -193,7 +284,8 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
             </div>
 
             <div
-              className="overflow-y-auto pr-1 min-h-0 flex-1"
+              ref={scrollContainerRef}
+              className="overflow-y-auto pr-1 min-h-0 flex-1 scroll-smooth"
               style={{
                 backgroundImage:
                   "repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, #ebdccd 31px, #ebdccd 32px)",
@@ -202,30 +294,57 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
               }}
             >
               {/* Salutation */}
-              <div className="leading-[32px] font-handwriting font-bold text-lg sm:text-xl text-[#1c3f50] mb-0">
-                Gửi {recipient},
+              <div className="leading-[32px] font-handwriting font-bold text-lg sm:text-xl text-[#1c3f50] mb-0 min-h-[32px]">
+                {displaySalutation}
+                {cursorStage === "salutation" && (
+                  <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#1c3f50] animate-pulse align-middle" />
+                )}
               </div>
 
               {/* Letter Body on Lined Paper */}
-              <p className="leading-[32px] font-handwriting text-base sm:text-lg text-[#2e1d1b] whitespace-pre-line m-0">
-                {content}
-              </p>
+              {displayBody.length > 0 && (
+                <p className="leading-[32px] font-handwriting text-base sm:text-lg text-[#2e1d1b] whitespace-pre-line m-0">
+                  {displayBody}
+                  {cursorStage === "body" && (
+                    <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#c13d28] animate-pulse align-middle" />
+                  )}
+                </p>
+              )}
 
-              {signature && (
+              {displaySignature.length > 0 && (
                 <div className="leading-[32px] mt-1 text-right">
                   <p className="font-handwriting font-bold text-base sm:text-lg text-[#c13d28] m-0 inline-block">
-                    — {signature}
+                    {displaySignature}
+                    {cursorStage === "signature" && (
+                      <span className="inline-block w-0.5 h-4 ml-0.5 bg-[#c13d28] animate-pulse align-middle" />
+                    )}
                   </p>
                 </div>
               )}
 
-              {/* Heart Signature */}
-              <div className="flex justify-center mt-2 pb-1">
+              {/* Heart Signature & Replay */}
+              <div className="flex flex-col items-center justify-center mt-2 pb-1">
                 <img
                   src="/thamkhao/heart.png"
                   alt="Yêu thương"
-                  className="w-6 h-6 object-contain transform hover:scale-125 transition-transform"
+                  className={`w-6 h-6 object-contain transform transition-all duration-500 ${
+                    isFinished ? "opacity-100 scale-100" : "opacity-0 scale-75"
+                  } hover:scale-125`}
                 />
+                {isFinished && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setTypedCount(0);
+                    }}
+                    className="inline-flex items-center gap-1 text-[10px] text-[#8c4b3e]/70 hover:text-[#c13d28] font-sans transition-colors mt-1.5 cursor-pointer"
+                    title="Xem lại hiệu ứng viết thư"
+                  >
+                    <span className="material-symbols-outlined text-[13px]">replay</span>
+                    <span>Viết lại</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>

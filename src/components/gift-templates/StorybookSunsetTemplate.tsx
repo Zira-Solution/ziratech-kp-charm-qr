@@ -336,40 +336,48 @@ export default function StorybookSunsetTemplate({
           <button
             type="button"
             onClick={() => goToSlide(3)}
-            className="absolute top-[14.3%] left-[23.2%] w-[58.8%] h-[14.2%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[14.3%] left-[23.2%] w-[58.8%] h-[14.2%] flex items-center justify-center font-sans font-bold text-[10.5px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Những kỷ niệm"
           >
-            Những kỷ niệm
+            <span className="inline-block transform" style={{ transform: "rotate(-3.5deg)" }}>
+              Những kỷ niệm
+            </span>
           </button>
 
           {/* Plank 2: Lời nhắn -> Slide 2 */}
           <button
             type="button"
             onClick={() => goToSlide(2)}
-            className="absolute top-[32.1%] left-[25.0%] w-[53.5%] h-[13.5%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[32.1%] left-[25.0%] w-[53.5%] h-[13.5%] flex items-center justify-center font-sans font-bold text-[10.5px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Lời nhắn"
           >
-            Lời nhắn
+            <span className="inline-block transform" style={{ transform: "rotate(-3.3deg)" }}>
+              Lời nhắn
+            </span>
           </button>
 
           {/* Plank 3: Khoảnh khắc -> Slide 4 */}
           <button
             type="button"
             onClick={() => goToSlide(4)}
-            className="absolute top-[49.9%] left-[25.8%] w-[56.1%] h-[14.3%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[49.9%] left-[25.8%] w-[56.1%] h-[14.3%] flex items-center justify-center font-sans font-bold text-[10.5px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Khoảnh khắc"
           >
-            Khoảnh khắc
+            <span className="inline-block transform" style={{ transform: "rotate(-5.5deg)" }}>
+              Khoảnh khắc
+            </span>
           </button>
 
           {/* Plank 4: Và nhiều hơn... -> Slide 5 */}
           <button
             type="button"
             onClick={() => goToSlide(5)}
-            className="absolute top-[71.3%] left-[25.8%] w-[56.1%] h-[13.6%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
+            className="absolute top-[71.3%] left-[25.8%] w-[56.1%] h-[13.6%] flex items-center justify-center font-sans font-bold text-[10.5px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Và nhiều hơn..."
           >
-            Và nhiều hơn...
+            <span className="inline-block transform" style={{ transform: "rotate(-6.0deg)" }}>
+              Và nhiều hơn...
+            </span>
           </button>
         </div>
 

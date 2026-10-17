@@ -46,8 +46,8 @@ export default function AnniversaryBlock({ step, draft, onChange }: Props) {
       </div>
 
       {days !== null && (
-        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-white/90 bg-white/70 px-3 py-1.5 text-xs font-sans font-bold text-primary">
-          <Icon name="event" className="text-[16px] text-secondary" />
+        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full liquid-glass-pill border border-rose-200/80 px-3.5 py-1.5 text-xs font-sans font-bold text-[#721a28]">
+          <Icon name="event" className="text-[16px] text-[#721a28]" />
           {days >= 0 ? `Đã bên nhau ${days} ngày` : `Còn ${-days} ngày nữa`}
         </p>
       )}

@@ -454,47 +454,52 @@ body {
 }
 
 /* ========================================================= */
-/* Writing desk ("studio-light"): plain white, high contrast,  */
-/* one readable font, never dark. Scoped like kp-home so the   */
-/* other pages keep their own look.                            */
+/* Writing desk ("studio-light"): warm atelier paper,       */
+/* elegant serif & handwriting accents, high readability    */
 /* ========================================================= */
 body:has(.studio-light) {
-  background: #ffffff;
+  background: #fdfbf9;
+  background-image:
+    radial-gradient(at 0% 0%, rgba(254, 218, 214, 0.4) 0px, transparent 55%),
+    radial-gradient(at 100% 0%, rgba(254, 240, 237, 0.4) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(255, 230, 226, 0.45) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(253, 246, 244, 0.5) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
 .studio-light {
   color-scheme: light;
-  --font-serif: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
+  --font-serif: var(--font-merriweather), "Merriweather", Georgia, serif;
   --font-sans: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
-  --font-handwriting: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
-  --font-merriweather: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
+  --font-handwriting: "Caveat", "Dancing Script", cursive;
+  --font-merriweather: var(--font-merriweather), "Merriweather", Georgia, serif;
 
-  /* Text: near-black and dark slate on white (all above 7:1). */
-  --color-on-surface: #0f172a;
-  --color-on-surface-variant: #334155;
-  --color-espresso: #0f172a;
-  --color-warm-neutral: #475569;
-  --color-warm-muted: #475569;
-  --color-secondary: #475569;
-  --color-primary: #7a1626;
-  --color-primary-container: #8a1c2c;
+  /* Text: refined charcoal and wine */
+  --color-on-surface: #1e1b1b;
+  --color-on-surface-variant: #4a3b3a;
+  --color-espresso: #2e1d1b;
+  --color-warm-neutral: #6b554e;
+  --color-warm-muted: #78625b;
+  --color-secondary: #8c4240;
+  --color-primary: #721a28;
+  --color-primary-container: #851e2f;
 
-  /* Surfaces and borders: white and cool grey instead of rose. */
-  --color-rose-cream: #ffffff;
-  --color-blush-light: #ffffff;
-  --color-cream-paper: #ffffff;
-  --color-parchment-light: #ffffff;
-  --color-surface-container-low: #f8fafc;
-  --color-surface-container: #f1f5f9;
-  --color-surface-container-high: #e2e8f0;
-  --color-rose-petal: #cbd5e1;
-  --color-parchment-border: #cbd5e1;
-  --color-outline-variant: #cbd5e1;
+  /* Surfaces and borders: warm parchment and soft blush */
+  --color-rose-cream: #fff8f6;
+  --color-blush-light: #fff2ef;
+  --color-cream-paper: #fffdfa;
+  --color-parchment-light: #fdf8f4;
+  --color-surface-container-low: #fff4f1;
+  --color-surface-container: #fcece8;
+  --color-surface-container-high: #f7e0da;
+  --color-rose-petal: #f2d5cf;
+  --color-parchment-border: #ead7cb;
+  --color-outline-variant: #e2cec8;
 
   background: #ffffff;
-  color: #0f172a;
+  color: #1e1b1b;
   font-family: var(--font-studio), "Be Vietnam Pro", system-ui, sans-serif;
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
   min-height: 100vh;
 }
 
@@ -505,69 +510,201 @@ body:has(.studio-light) {
   line-height: 1;
 }
 
-/* Cards, pills and fields: flat white with a visible grey edge (the glass look blends into white). */
-.studio-light .liquid-glass,
-.studio-light .liquid-glass-card,
-.studio-light .liquid-glass-pill {
-  background: #ffffff;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: 1px solid #cbd5e1;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+/* ========================================================= */
+/* Studio Liquid Glass System: Crystal-clear depth, specular */
+/* highlights and premium frosted backdrop reflections       */
+/* ========================================================= */
+.studio-light .liquid-glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 252, 253, 0.80) 100%);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1.5px solid rgba(255, 255, 255, 0.98);
+  box-shadow: 
+    0 16px 38px -8px rgba(114, 26, 40, 0.08),
+    0 4px 12px -2px rgba(114, 26, 40, 0.03),
+    inset 0 2px 3px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 2px 0 rgba(114, 26, 40, 0.02);
+}
+
+.studio-light .liquid-glass-section {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 252, 253, 0.85) 100%);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1.5px solid rgba(255, 255, 255, 0.98);
+  box-shadow: 
+    0 20px 48px -10px rgba(114, 26, 40, 0.08),
+    0 4px 16px -2px rgba(114, 26, 40, 0.03),
+    inset 0 2px 3.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 2px 0 rgba(114, 26, 40, 0.02);
+  position: relative;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.studio-light .liquid-glass-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 90px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.studio-light .liquid-glass-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 250, 251, 0.78) 100%);
+  backdrop-filter: blur(24px) saturate(185%);
+  -webkit-backdrop-filter: blur(24px) saturate(185%);
+  border: 1.5px solid rgba(255, 255, 255, 0.96);
+  box-shadow: 
+    0 12px 32px -4px rgba(114, 26, 40, 0.06),
+    0 3px 10px -1px rgba(114, 26, 40, 0.02),
+    inset 0 1.5px 2.5px 0 rgba(255, 255, 255, 1);
+  position: relative;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .studio-light .liquid-glass-card::before {
-  display: none;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: inherit;
+  pointer-events: none;
 }
 
-.studio-light .liquid-glass-card:hover,
+.studio-light .liquid-glass-card:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 252, 253, 0.88) 100%);
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow: 
+    0 20px 42px -6px rgba(114, 26, 40, 0.12),
+    0 6px 16px -2px rgba(114, 26, 40, 0.04),
+    inset 0 2px 3.5px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+}
+
+.studio-light .liquid-glass-pill {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 250, 252, 0.78) 100%);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1.2px solid rgba(255, 255, 255, 0.98);
+  box-shadow: 
+    0 4px 14px -1px rgba(114, 26, 40, 0.05),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 1);
+  transition: all 0.2s ease;
+}
+
 .studio-light .liquid-glass-pill:hover {
-  background: #f8fafc;
-  transform: none;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 252, 253, 0.92) 100%);
+  box-shadow: 
+    0 6px 18px -1px rgba(114, 26, 40, 0.08),
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 1);
+}
+
+.studio-light .liquid-glass-btn-secondary {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 250, 252, 0.82) 100%);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1.5px solid rgba(226, 206, 200, 0.85);
+  box-shadow: 
+    0 4px 16px -2px rgba(114, 26, 40, 0.05),
+    inset 0 1.5px 2.5px 0 rgba(255, 255, 255, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.studio-light .liquid-glass-btn-secondary:hover {
+  background: #ffffff;
+  border-color: #721a28;
+  color: #721a28;
+  box-shadow: 
+    0 8px 24px -3px rgba(114, 26, 40, 0.10),
+    inset 0 1.5px 2.5px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.studio-light .liquid-glass-subtle {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 248, 249, 0.58) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.2px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 
+    0 2px 8px rgba(114, 26, 40, 0.03),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95);
 }
 
 .studio-light .liquid-glass-input {
-  background: #ffffff;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: 1px solid #94a3b8;
-  box-shadow: none;
-  font-size: 1rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.80) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid rgba(226, 206, 200, 0.75);
+  border-radius: 0.875rem;
+  box-shadow: 
+    inset 0 1.5px 3px rgba(0, 0, 0, 0.02),
+    0 1px 2px rgba(255, 255, 255, 0.9);
+  font-size: 0.9375rem;
   line-height: 1.5;
+  color: #1e1b1b;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .studio-light .liquid-glass-input:focus {
   background: #ffffff;
-  border-color: #8a1c2c;
-  box-shadow: 0 0 0 3px rgba(138, 28, 44, 0.2);
+  border-color: #721a28;
+  box-shadow: 
+    0 0 0 3.5px rgba(114, 26, 40, 0.14),
+    0 4px 14px rgba(114, 26, 40, 0.06);
 }
 
 .studio-light .liquid-glass-btn-primary {
-  background: #8a1c2c;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: 1px solid #8a1c2c;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.15);
+  background: linear-gradient(135deg, rgba(114, 26, 40, 0.96) 0%, rgba(142, 36, 54, 0.94) 50%, rgba(175, 46, 68, 0.96) 100%);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  box-shadow: 
+    0 10px 28px -4px rgba(114, 26, 40, 0.35),
+    0 3px 8px -2px rgba(114, 26, 40, 0.20),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.60),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.25);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .studio-light .liquid-glass-btn-primary::after {
-  display: none;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+
+.studio-light .liquid-glass-btn-primary:hover::after {
+  left: 140%;
 }
 
 .studio-light .liquid-glass-btn-primary:hover {
-  background: #6f1523;
-  border-color: #6f1523;
-  transform: none;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.15);
+  background: linear-gradient(135deg, rgba(84, 1, 20, 0.98) 0%, rgba(114, 26, 40, 0.96) 50%, rgba(150, 30, 50, 0.98) 100%);
+  border-color: rgba(255, 255, 255, 0.70);
+  box-shadow: 
+    0 14px 34px -4px rgba(114, 26, 40, 0.45),
+    inset 0 2px 2px 0 rgba(255, 255, 255, 0.75);
+  transform: translateY(-1px);
 }
 
-/* White borders and white tints vanish on a white page: give them a real colour. */
-.studio-light [class*="border-white"] {
+/* White borders and white tints fallback - do not overwrite liquid glass classes */
+.studio-light :not([class*="liquid-glass"])[class*="border-white"] {
   border-color: #cbd5e1;
 }
 
-.studio-light [class*="bg-white/"] {
+.studio-light :not([class*="liquid-glass"])[class*="bg-white/"] {
   background-color: #ffffff;
 }
 

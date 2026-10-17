@@ -61,8 +61,8 @@ export default function MusicBlock({ step, draft, onChange }: Props) {
               role="radio"
               aria-checked={selected}
               onClick={() => chooseSource(s.id)}
-              className={`rounded-2xl border p-3 text-left cursor-pointer transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container ${
-                selected ? "liquid-glass bg-white/95 border-amber-400 ring-2 ring-primary-container/20" : "liquid-glass-card border-white/70 hover:bg-white/80"
+              className={`rounded-2xl p-3 text-left cursor-pointer transition-all overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container ${
+                selected ? "liquid-glass-card border-[#721a28] ring-2 ring-[#721a28]/25 shadow-xs" : "liquid-glass-card border-rose-200/60 hover:border-[#721a28]/40"
               }`}
             >
               <span className="block font-sans text-xs font-bold text-primary">{s.label}</span>
@@ -80,13 +80,15 @@ export default function MusicBlock({ step, draft, onChange }: Props) {
             return (
               <li
                 key={p.id}
-                className={`flex items-center gap-3 rounded-2xl border bg-white px-3 py-2.5 ${selected ? "border-primary-container ring-1 ring-primary-container" : "border-parchment-border"}`}
+                className={`flex items-center gap-3 rounded-2xl liquid-glass-card px-3.5 py-2.5 overflow-hidden transition-all ${
+                  selected ? "border-[#721a28] ring-2 ring-[#721a28]/20 shadow-xs" : "border-rose-200/60 hover:border-[#721a28]/40"
+                }`}
               >
                 <button
                   type="button"
                   onClick={() => togglePreview(p.id)}
                   aria-label={`${playing ? "Dừng" : "Nghe thử"} ${p.name}`}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-amber-300 hover:bg-primary-container cursor-pointer"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full liquid-glass-btn-primary text-white hover:scale-105 transition-transform cursor-pointer shadow-xs"
                 >
                   <Icon name={playing ? "pause" : "play_arrow"} className="text-[20px]" />
                 </button>

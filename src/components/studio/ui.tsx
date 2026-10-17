@@ -27,38 +27,53 @@ export const BlockControlsContext = React.createContext<React.ReactNode>(null);
 export function StudioSection({
   id,
   step,
+  icon,
   title,
   hint,
+  compact = false,
   children,
 }: {
   id: string;
-  step: number;
+  step?: number;
+  icon?: string;
   title: string;
   hint?: string;
+  compact?: boolean;
   children: React.ReactNode;
 }) {
   const controls = React.useContext(BlockControlsContext);
   return (
-    <section aria-labelledby={`${id}-title`} className="relative rounded-2xl border border-rose-petal bg-white p-5 shadow-sm sm:p-6">
-      <header className="mb-4">
+    <section
+      aria-labelledby={`${id}-title`}
+      className={`relative rounded-3xl liquid-glass-section border border-rose-200/70 overflow-hidden transition-all ${
+        compact ? "p-4 sm:p-5" : "p-5 sm:p-7"
+      }`}
+    >
+      <header className="mb-4 relative z-10">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
-              {step}
-            </span>
-            <h2 id={`${id}-title`} className="text-lg font-bold text-on-surface sm:text-xl">
-              <span className="sr-only">Bước {step}: </span>
+          <div className="flex items-center gap-2.5">
+            {(step !== undefined || icon) && (
+              <span
+                aria-hidden="true"
+                className="flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full liquid-glass-btn-primary text-xs font-extrabold text-white shadow-xs"
+              >
+                {step !== undefined ? step : <Icon name={icon!} className="text-[16px]" />}
+              </span>
+            )}
+            <h2 id={`${id}-title`} className="text-base sm:text-lg font-bold text-slate-800 tracking-tight">
+              {step !== undefined && <span className="sr-only">Bước {step}: </span>}
               {title}
             </h2>
           </div>
           {controls}
         </div>
-        {hint && <p className="mt-2 text-sm leading-relaxed text-warm-neutral">{hint}</p>}
+        {hint && <p className="mt-1.5 text-xs leading-relaxed text-slate-500">{hint}</p>}
       </header>
-      {children}
+      <div className="relative z-10">{children}</div>
     </section>
   );
 }
+
 
 export function Field({
   label,

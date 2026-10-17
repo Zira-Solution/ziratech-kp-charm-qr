@@ -194,7 +194,7 @@ export default function VoiceBlock({ step, token, draft, onChange }: Props) {
           )}
 
           {phase === "idle" && hasRecording && (
-            <div className="rounded-2xl border border-parchment-border bg-white px-4 py-3">
+            <div className="rounded-2xl liquid-glass-card border border-rose-200/70 p-4 overflow-hidden">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <span className="text-xs font-sans font-bold text-primary">Bản ghi âm · {formatClock(voice.durationSec)}</span>
               </div>
@@ -212,7 +212,7 @@ export default function VoiceBlock({ step, token, draft, onChange }: Props) {
                 type="button"
                 onClick={start}
                 disabled={busy}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-xs font-sans font-bold text-amber-200 hover:bg-primary-container cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container"
+                className="inline-flex items-center gap-1.5 rounded-xl liquid-glass-btn-primary px-4 py-2.5 text-xs font-sans font-bold text-white cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container shadow-xs"
               >
                 <Icon name="mic" className="text-[18px]" />
                 {hasRecording ? "Ghi âm lại" : "Bắt đầu ghi âm"}

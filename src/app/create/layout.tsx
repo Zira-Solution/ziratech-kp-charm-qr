@@ -14,5 +14,5 @@ const studioFont = Be_Vietnam_Pro({
 });
 
 export default function CreateLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <div className={`${studioFont.variable} studio-light flex-1`}>{children}</div>;
+  return <div className={`${studioFont.variable} studio-light flex-1 min-h-screen bg-white`}>{children}</div>;
 }

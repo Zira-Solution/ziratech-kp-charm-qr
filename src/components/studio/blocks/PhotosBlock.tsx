@@ -65,7 +65,7 @@ export default function PhotosBlock({ id, step, title, hint, items, max, showDat
       <input ref={inputRef} type="file" accept="image/*" onChange={onFile} className="sr-only" tabIndex={-1} aria-hidden="true" />
 
       <div className="mb-3 flex items-center justify-between gap-3">
-        <span className="rounded-full bg-white/70 px-2.5 py-1 text-[11px] font-sans font-bold text-primary border border-white/90">
+        <span className="rounded-full liquid-glass-pill px-3 py-1 text-[11px] font-sans font-bold text-primary border border-rose-200/80">
           {items.length}/{max} ảnh
         </span>
         {items.length < max && (
@@ -92,23 +92,31 @@ export default function PhotosBlock({ id, step, title, hint, items, max, showDat
           type="button"
           onClick={() => choose(null)}
           disabled={busy}
-          className="flex w-full flex-col items-center gap-1 rounded-2xl border-2 border-dashed border-secondary/30 bg-white/40 py-8 text-xs font-sans text-warm-neutral hover:bg-white/70 cursor-pointer disabled:opacity-60"
+          className="flex w-full flex-col items-center gap-1 rounded-2xl border-2 border-dashed border-[#721a28]/25 liquid-glass-subtle py-8 text-xs font-sans text-warm-neutral hover:border-[#721a28]/50 cursor-pointer disabled:opacity-60 transition-all"
         >
-          <Icon name="photo_library" className="text-[28px] text-secondary" />
+          <Icon name="photo_library" className="text-[28px] text-[#721a28]" />
           <span className="font-bold text-primary">Chưa có ảnh nào</span>
           <span>Bấm để chọn ảnh từ điện thoại hoặc máy tính</span>
         </button>
       ) : (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {items.map((photo, i) => (
-            <li key={i} className="rounded-2xl bg-white p-2 pb-3 shadow-sm border border-parchment-border">
-              <div className="relative aspect-square overflow-hidden rounded-lg bg-slate-100">
+            <li
+              key={i}
+              className="relative rounded-2xl liquid-glass-card p-2.5 pb-3.5 shadow-sm border border-rose-200/60 hover:shadow-md transition-shadow overflow-hidden"
+            >
+              {i === 0 && (
+                <span className="absolute top-4 left-4 z-10 px-2.5 py-0.5 rounded-full liquid-glass-btn-primary text-white text-[10px] font-bold shadow-xs">
+                  Ảnh bìa thiệp
+                </span>
+              )}
+              <div className="relative aspect-square overflow-hidden rounded-xl bg-slate-100 border border-black/5">
                 <img src={photo.url} alt={`Ảnh số ${i + 1}`} className="h-full w-full object-cover" />
                 <button
                   type="button"
                   onClick={() => onChange(items.filter((_, idx) => idx !== i))}
                   aria-label={`Xóa ảnh số ${i + 1}`}
-                  className="absolute right-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white hover:bg-rose-600 cursor-pointer"
+                  className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 hover:bg-rose-600 text-white shadow-xs transition-colors cursor-pointer"
                 >
                   <Icon name="close" className="text-[16px]" />
                 </button>
@@ -116,7 +124,7 @@ export default function PhotosBlock({ id, step, title, hint, items, max, showDat
                   type="button"
                   onClick={() => choose(i)}
                   disabled={busy}
-                  className="absolute inset-x-0 bottom-0 bg-black/55 py-1 text-[11px] font-sans font-bold text-white hover:bg-black/70 cursor-pointer disabled:opacity-60"
+                  className="absolute inset-x-0 bottom-0 bg-black/60 backdrop-blur-xs py-1.5 text-[11px] font-bold text-white hover:bg-black/80 transition-colors cursor-pointer disabled:opacity-60"
                 >
                   Đổi ảnh
                 </button>
@@ -130,8 +138,8 @@ export default function PhotosBlock({ id, step, title, hint, items, max, showDat
                 maxLength={200}
                 value={photo.caption}
                 onChange={(e) => patch(i, { caption: e.target.value })}
-                placeholder="Lời tựa..."
-                className={`${fieldClass} mt-2 !py-1.5 !text-xs`}
+                placeholder="Ghi chú kỷ niệm..."
+                className={`${fieldClass} mt-2.5 !py-1.5 !text-xs font-handwriting`}
               />
               {showDate && (
                 <>
@@ -144,7 +152,7 @@ export default function PhotosBlock({ id, step, title, hint, items, max, showDat
                     maxLength={50}
                     value={photo.date}
                     onChange={(e) => patch(i, { date: e.target.value })}
-                    placeholder="Ngày (tùy chọn)"
+                    placeholder="Ngày (ví dụ: Thu 2026)"
                     className={`${fieldClass} mt-1.5 !py-1.5 !text-xs`}
                   />
                 </>
@@ -152,6 +160,7 @@ export default function PhotosBlock({ id, step, title, hint, items, max, showDat
             </li>
           ))}
         </ul>
+
       )}
     </StudioSection>
   );

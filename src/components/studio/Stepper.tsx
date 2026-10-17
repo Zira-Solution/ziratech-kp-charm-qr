@@ -5,10 +5,10 @@ import { Icon } from "./ui";
 
 export type Stage = 1 | 2 | 3;
 
-export const STAGES: readonly { n: Stage; label: string }[] = [
-  { n: 1, label: "Chọn" },
-  { n: 2, label: "Soạn" },
-  { n: 3, label: "Hoàn tất" },
+export const STAGES: readonly { n: Stage; label: string; sub: string }[] = [
+  { n: 1, label: "Mẫu & Mục", sub: "Chọn giao diện & thông điệp" },
+  { n: 2, label: "Soạn thiệp", sub: "Điền lời chúc & kỷ niệm" },
+  { n: 3, label: "Hoàn tất", sub: "Bảo mật & Lưu thiệp" },
 ];
 
 interface Props {
@@ -21,38 +21,51 @@ interface Props {
 /** The three steps of the writing desk. Earlier steps can be reopened; later ones open only after "Tiếp tục". */
 export default function Stepper({ stage, reached, onGo }: Props) {
   return (
-    <nav aria-label="Các bước tạo thiệp" className="mb-6">
-      <ol className="flex items-center gap-2 sm:gap-3">
+    <nav aria-label="Các bước tạo thiệp" className="mb-8">
+      <ol className="flex items-center gap-2 sm:gap-4">
         {STAGES.map((s, i) => {
           const current = s.n === stage;
           const done = s.n < stage;
           return (
-            <li key={s.n} className="flex flex-1 items-center gap-2 sm:gap-3">
+            <li key={s.n} className="flex flex-1 items-center gap-2 sm:gap-4">
               <button
                 type="button"
                 disabled={s.n > reached}
                 aria-current={current ? "step" : undefined}
                 onClick={() => onGo(s.n)}
-                className={`flex min-h-11 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border-2 px-2 text-sm font-bold sm:gap-2 sm:px-3 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container disabled:cursor-not-allowed ${
+                className={`flex min-h-13 flex-1 items-center justify-start gap-2.5 rounded-2xl px-3 py-2 text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container disabled:cursor-not-allowed overflow-hidden ${
                   current
-                    ? "border-primary-container bg-primary-container text-white"
+                    ? "liquid-glass-btn-primary border-white/60 text-white shadow-md shadow-[#721a28]/20"
                     : done
-                      ? "border-primary-container bg-white text-primary-container"
-                      : "border-rose-petal bg-white text-warm-neutral disabled:opacity-70"
+                      ? "liquid-glass-card border-rose-200/90 text-[#721a28] hover:border-[#721a28]/60 shadow-xs"
+                      : "liquid-glass border-slate-200/80 text-slate-400 disabled:opacity-60"
                 }`}
               >
                 <span
                   aria-hidden="true"
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs ${current ? "bg-white text-primary-container" : done ? "bg-primary-container text-white" : "bg-surface-container text-warm-neutral"}`}
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-transform ${
+                    current
+                      ? "bg-white text-[#721a28] shadow-xs scale-105"
+                      : done
+                        ? "liquid-glass-pill text-[#721a28] border-rose-200"
+                        : "liquid-glass-subtle text-slate-400"
+                  }`}
                 >
                   {done ? <Icon name="check" className="text-[16px]" /> : s.n}
                 </span>
-                <span>
-                  <span className="sr-only">Bước {s.n}: </span>
-                  {s.label}
+                <span className="min-w-0">
+                  <span className={`block text-xs sm:text-sm font-bold tracking-tight truncate ${current ? "text-white" : done ? "text-[#721a28]" : "text-slate-600"}`}>
+                    <span className="sr-only">Bước {s.n}: </span>
+                    {s.label}
+                  </span>
+                  <span className={`hidden sm:block text-[10px] truncate leading-tight ${current ? "text-rose-100" : "text-slate-400"}`}>
+                    {s.sub}
+                  </span>
                 </span>
               </button>
-              {i < STAGES.length - 1 && <span aria-hidden="true" className="hidden h-0.5 w-4 bg-rose-petal sm:block" />}
+              {i < STAGES.length - 1 && (
+                <span aria-hidden="true" className="hidden h-0.5 w-3 shrink-0 bg-rose-200 sm:block" />
+              )}
             </li>
           );
         })}
@@ -60,3 +73,4 @@ export default function Stepper({ stage, reached, onGo }: Props) {
     </nav>
   );
 }
+

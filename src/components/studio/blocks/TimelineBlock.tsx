@@ -23,7 +23,7 @@ export default function TimelineBlock({ step, items, onChange }: Props) {
       hint={`Những khoảnh khắc đáng nhớ của hai người, tối đa ${MAX_TIMELINE} mốc. Mỗi mốc cần có ngày và tiêu đề.`}
     >
       <div className="mb-3 flex items-center justify-between gap-3">
-        <span className="rounded-full border border-white/90 bg-white/70 px-2.5 py-1 text-[11px] font-sans font-bold text-primary">
+        <span className="rounded-full liquid-glass-pill px-3 py-1 text-[11px] font-sans font-bold text-primary border border-rose-200/80">
           {items.length}/{MAX_TIMELINE} mốc
         </span>
         {items.length < MAX_TIMELINE && (
@@ -39,13 +39,13 @@ export default function TimelineBlock({ step, items, onChange }: Props) {
       </div>
 
       {items.length === 0 ? (
-        <p className="rounded-2xl border-2 border-dashed border-secondary/30 bg-white/40 px-4 py-6 text-center text-xs font-sans text-warm-neutral">
+        <p className="rounded-2xl border-2 border-dashed border-[#721a28]/25 liquid-glass-subtle px-4 py-6 text-center text-xs font-sans text-warm-neutral">
           Chưa có mốc nào. Bấm <strong className="text-primary">Thêm mốc</strong> để bắt đầu.
         </p>
       ) : (
         <ol className="space-y-3">
           {items.map((item, i) => (
-            <li key={i} className="rounded-2xl border border-parchment-border bg-white p-3.5 shadow-sm">
+            <li key={i} className="rounded-2xl liquid-glass-card border border-rose-200/60 p-3.5 shadow-sm overflow-hidden">
               <div className="mb-2.5 flex items-center justify-between">
                 <span className="font-handwriting text-xl leading-none text-secondary">mốc {i + 1}</span>
                 <button

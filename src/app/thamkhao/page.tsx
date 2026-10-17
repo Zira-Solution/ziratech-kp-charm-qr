@@ -2,85 +2,161 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import StorybookSunsetTemplate from "@/components/gift-templates/StorybookSunsetTemplate";
+import GiftTemplateViewer from "@/components/gift-templates/GiftTemplateViewer";
+import type { ViewerGift } from "@/components/gift-templates/normalize";
+
+type ViewDevice = "desktop" | "ipad" | "phone";
+
+const DEMO_GIFT: ViewerGift = {
+  template: "storybook-sunset",
+  blocks: ["letter", "photos", "video", "music", "voice"],
+  recipientName: "Lan",
+  sender: "Hoàng Nam",
+  anonymous: false,
+  addressing: "Anh - Em",
+  letter: {
+    title: "LỜI NHẮN",
+    subtitle: "Gửi đến bạn...",
+    content:
+      "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này.",
+    signature: "Hoàng Nam",
+  },
+  photos: [
+    { url: "/thamkhao/anime_sunset_couple_wide.png", caption: "Những buổi chiều đi dạo...", date: "2024-02-14" },
+    { url: "/thamkhao/bg_1.jpg", caption: "Những chuyến đi...", date: "2024-03-08" },
+    { url: "/thamkhao/sunset_couple_clean.jpg", caption: "Những ngày bên nhau...", date: "2024-04-30" },
+    { url: "/thamkhao/bg.jpg", caption: "Và thật nhiều điều nhỏ...", date: "2024-05-19" },
+  ],
+  video: "https://youtu.be/dQw4w9WgXcQ",
+  song: {
+    source: "preset",
+    presetId: "lofi",
+    title: "Giai điệu kỷ niệm",
+    artist: "K&P Melody",
+  },
+  voice: {
+    audioPath: "demo",
+    duration: "02:34",
+    noteText:
+      "Có những điều viết ra vẫn chưa đủ. Nên lần này, mình muốn bạn nghe bằng chính giọng nói của mình. ❤️",
+  },
+  finalMessage: "Món quà này sẽ luôn ở đây,\nmỗi khi bạn muốn nhớ lại.",
+  timeline: [],
+};
 
 export default function ThamKhaoPage() {
-  const [activeSlide, setActiveSlide] = useState(1);
-  const [isPhoneMode, setIsPhoneMode] = useState(true);
+  const [device, setDevice] = useState<ViewDevice>("desktop");
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search).get("device");
+      if (p === "ipad" || p === "phone" || p === "desktop") {
+        setDevice(p);
+      }
+    }
+  }, []);
+
+  const switchDevice = (next: ViewDevice) => {
+    setDevice(next);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("device", next);
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-[#f9ece6] via-[#f7e3da] to-[#ecd0c5] flex flex-col items-center justify-between py-4 px-2 sm:px-6 relative text-[#2e1d1b]">
-      {/* Top Floating Bar */}
-      <header className="w-full max-w-xl mx-auto flex items-center justify-between gap-3 p-3 rounded-full bg-white/80 backdrop-blur-xl border border-white/90 shadow-md mb-4 z-30">
+    <div className="relative h-dvh w-full overflow-hidden bg-stone-900 font-sans text-stone-900 select-none">
+      {/* Top Floating Control Bar */}
+      <header className="fixed top-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-white/80">
         <Link
           href="/"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] font-sans text-xs font-bold transition-all"
+          className="flex items-center gap-1 px-3 py-1 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] text-xs font-bold transition-all"
         >
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span className="material-symbols-outlined text-[15px]">arrow_back</span>
           <span>Trang chủ</span>
         </Link>
 
-        {/* Quick Slide Selector */}
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5, 6, 7].map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setActiveSlide(s)}
-              className={`w-7 h-7 rounded-full text-xs font-mono font-bold transition-all cursor-pointer ${
-                activeSlide === s
-                  ? "bg-[#c13d28] text-white shadow-sm scale-105"
-                  : "bg-white/80 hover:bg-white text-[#6b4737] border border-[#ebdccd]"
-              }`}
-            >
-              0{s}
-            </button>
-          ))}
-        </div>
+        <div className="h-4 w-px bg-stone-300 mx-1" />
 
-        {/* Device toggle on desktop */}
-        <button
-          type="button"
-          onClick={() => setIsPhoneMode(!isPhoneMode)}
-          className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] font-sans text-xs font-bold transition-all"
-          title="Chuyển chế độ khung điện thoại"
-        >
-          <span className="material-symbols-outlined text-[16px]">
-            {isPhoneMode ? "smartphone" : "crop_free"}
-          </span>
-          <span>{isPhoneMode ? "Khung ĐT" : "Toàn màn hình"}</span>
-        </button>
+        {/* Device Switcher */}
+        <div className="flex items-center gap-1 bg-stone-100 p-0.5 rounded-full">
+          <button
+            type="button"
+            onClick={() => switchDevice("desktop")}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              device === "desktop"
+                ? "bg-[#c13d28] text-white shadow-xs"
+                : "text-stone-700 hover:bg-white/60"
+            }`}
+            title="Xem toàn màn hình Desktop"
+          >
+            <span className="material-symbols-outlined text-[16px]">desktop_windows</span>
+            <span>Desktop</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => switchDevice("ipad")}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              device === "ipad"
+                ? "bg-[#c13d28] text-white shadow-xs"
+                : "text-stone-700 hover:bg-white/60"
+            }`}
+            title="Xem chế độ iPad ngang"
+          >
+            <span className="material-symbols-outlined text-[16px]">tablet</span>
+            <span>iPad</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => switchDevice("phone")}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              device === "phone"
+                ? "bg-[#c13d28] text-white shadow-xs"
+                : "text-stone-700 hover:bg-white/60"
+            }`}
+            title="Xem chế độ Điện thoại (Mobile 7 khung chuẩn)"
+          >
+            <span className="material-symbols-outlined text-[16px]">smartphone</span>
+            <span>Điện thoại</span>
+          </button>
+        </div>
       </header>
 
-      {/* Main Container */}
-      <main className="w-full flex-1 flex items-center justify-center relative z-20">
-        <div
-          className={`w-full transition-all duration-300 ${
-            isPhoneMode
-              ? "max-w-[380px] p-2 sm:p-2.5 bg-stone-900 rounded-[44px] shadow-[0_25px_70px_rgba(107,71,55,0.35)] border-4 border-stone-800"
-              : "max-w-md"
-          }`}
-        >
-          {/* Phone Dynamic Island / Speaker notch */}
-          {isPhoneMode && (
-            <div className="hidden sm:flex justify-center pb-2 pt-1">
-              <div className="w-24 h-4 bg-black rounded-full" />
+      {/* Main Presentation Stage */}
+      <main className="h-full w-full flex items-center justify-center overflow-hidden">
+        {device === "desktop" && (
+          /* True Full Screen Desktop (Zero borders, zero phone frame in the middle) */
+          <div className="h-full w-full">
+            <GiftTemplateViewer gift={DEMO_GIFT} embedded />
+          </div>
+        )}
+
+        {device === "ipad" && (
+          /* iPad Landscape Stage */
+          <div className="p-4 sm:p-6 flex items-center justify-center h-full w-full">
+            <div className="w-full max-w-[1024px] h-[720px] max-h-[92vh] rounded-[32px] overflow-hidden shadow-2xl border-8 border-stone-800 bg-black">
+              <GiftTemplateViewer gift={DEMO_GIFT} embedded />
             </div>
-          )}
+          </div>
+        )}
 
-          <StorybookSunsetTemplate
-            activeSlide={activeSlide}
-            onGoToSlide={(s) => setActiveSlide(s)}
-            onNextSlide={() => setActiveSlide((prev) => Math.min(7, prev + 1))}
-            onPrevSlide={() => setActiveSlide((prev) => Math.max(1, prev - 1))}
-          />
-        </div>
+        {device === "phone" && (
+          /* Phone Portrait Stage (Matching 7 frames 90-100%) */
+          <div className="p-4 flex items-center justify-center h-full w-full">
+            <div className="w-[390px] max-w-full h-[780px] max-h-[92vh] rounded-[44px] overflow-hidden shadow-2xl border-8 border-stone-800 bg-black flex flex-col">
+              <div className="h-5 bg-black w-full shrink-0 flex items-center justify-center">
+                <div className="w-24 h-3.5 bg-stone-900 rounded-full" />
+              </div>
+              <div className="flex-1 min-h-0 overflow-hidden">
+                <GiftTemplateViewer gift={DEMO_GIFT} embedded />
+              </div>
+            </div>
+          </div>
+        )}
       </main>
-
-      {/* Footer Info */}
-      <footer className="text-center py-2 text-xs text-[#8c4b3e] font-sans z-10 opacity-80">
-        Bản dựng 1:1 theo mẫu thiết kế 7 khung hình trong thư mục <strong>thamkhao</strong> • K&amp;P Atelier
-      </footer>
     </div>
   );
 }

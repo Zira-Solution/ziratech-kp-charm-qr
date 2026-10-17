@@ -25,6 +25,67 @@ const SLIDE_TITLES = [
   { id: 7, title: "Lời cảm ơn", label: "Lưu giữ kỷ niệm", icon: "favorite" },
 ];
 
+function Replay15Icon({ className = "w-7 h-7" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M 4.5 13 A 8 8 0 1 0 7.8 5.6" />
+      <polyline points="10.5 4.2 7.8 5.6 10.2 7.8" />
+      <text
+        x="12"
+        y="14.8"
+        fontSize="7.2"
+        fontWeight="800"
+        fontFamily="sans-serif"
+        textAnchor="middle"
+        fill="currentColor"
+        stroke="none"
+      >
+        15
+      </text>
+    </svg>
+  );
+}
+
+function Forward15Icon({ className = "w-7 h-7" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M 19.5 13 A 8 8 0 1 1 16.2 5.6" />
+      <polyline points="13.5 4.2 16.2 5.6 13.8 7.8" />
+      <text
+        x="12"
+        y="14.8"
+        fontSize="7.2"
+        fontWeight="800"
+        fontFamily="sans-serif"
+        textAnchor="middle"
+        fill="currentColor"
+        stroke="none"
+      >
+        15
+      </text>
+    </svg>
+  );
+}
+
+
 export default function StorybookSunsetTemplate({
   data: propData,
   activeSlide: propActiveSlide,
@@ -264,18 +325,18 @@ export default function StorybookSunsetTemplate({
       {/* Middle & Lower Elements: Signpost (Left) & 3D Gift Box (Right) */}
       <div className="relative z-10 w-full flex-1 flex items-end justify-between px-1 pb-3">
         {/* Directional Wooden Signpost on the Left */}
-        <div className="relative w-34 sm:w-40 h-48 sm:h-56 shrink-0 transform -rotate-1 select-none">
+        <div className="relative h-52 sm:h-64 w-auto aspect-[1122/1402] shrink-0 select-none">
           <img
             src="/thamkhao/signpost.png"
             alt="Biển chỉ dẫn"
-            className="w-full h-full object-contain drop-shadow-lg"
+            className="w-full h-full block select-none pointer-events-none drop-shadow-lg"
           />
 
           {/* Plank 1: Những kỷ niệm -> Slide 3 */}
           <button
             type="button"
             onClick={() => goToSlide(3)}
-            className="absolute top-[9%] left-[10%] w-[82%] h-[18%] flex items-center justify-center font-serif font-bold text-[10px] sm:text-[11px] text-[#3a2012] hover:text-[#c13d28] hover:translate-x-1 active:scale-95 transition-all cursor-pointer drop-shadow-2xs"
+            className="absolute top-[14.3%] left-[23.2%] w-[58.8%] h-[14.2%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Những kỷ niệm"
           >
             Những kỷ niệm
@@ -285,7 +346,7 @@ export default function StorybookSunsetTemplate({
           <button
             type="button"
             onClick={() => goToSlide(2)}
-            className="absolute top-[31%] left-[12%] w-[80%] h-[18%] flex items-center justify-center font-serif font-bold text-[10px] sm:text-[11px] text-[#3a2012] hover:text-[#c13d28] hover:translate-x-1 active:scale-95 transition-all cursor-pointer drop-shadow-2xs"
+            className="absolute top-[32.1%] left-[25.0%] w-[53.5%] h-[13.5%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Lời nhắn"
           >
             Lời nhắn
@@ -295,7 +356,7 @@ export default function StorybookSunsetTemplate({
           <button
             type="button"
             onClick={() => goToSlide(4)}
-            className="absolute top-[53%] left-[14%] w-[78%] h-[18%] flex items-center justify-center font-serif font-bold text-[10px] sm:text-[11px] text-[#3a2012] hover:text-[#c13d28] hover:translate-x-1 active:scale-95 transition-all cursor-pointer drop-shadow-2xs"
+            className="absolute top-[49.9%] left-[25.8%] w-[56.1%] h-[14.3%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Khoảnh khắc"
           >
             Khoảnh khắc
@@ -305,7 +366,7 @@ export default function StorybookSunsetTemplate({
           <button
             type="button"
             onClick={() => goToSlide(5)}
-            className="absolute top-[74%] left-[12%] w-[80%] h-[18%] flex items-center justify-center font-serif font-bold text-[10px] sm:text-[11px] text-[#3a2012] hover:text-[#c13d28] hover:translate-x-1 active:scale-95 transition-all cursor-pointer drop-shadow-2xs"
+            className="absolute top-[71.3%] left-[25.8%] w-[56.1%] h-[13.6%] flex items-center justify-center font-sans font-bold text-[10px] sm:text-xs text-[#2b180d] hover:text-[#c13d28] hover:translate-x-0.5 active:scale-95 transition-all cursor-pointer whitespace-nowrap leading-none select-none"
             title="Xem Và nhiều hơn..."
           >
             Và nhiều hơn...
@@ -390,17 +451,10 @@ export default function StorybookSunsetTemplate({
             className="absolute -top-6 -left-4 w-[108%] h-auto object-contain opacity-85 pointer-events-none transform -rotate-1 z-1"
           />
 
-          {/* Letter Note Container using original trang thư 2.png */}
-          <div
-            className="relative p-5 sm:p-6 pt-9 rounded-xl shadow-xl transform rotate-0.5 bg-cover bg-center border border-[#ebdccd]"
-            style={{
-              backgroundImage: "url('/thamkhao/letter_paper.png')",
-              backgroundColor: "#fffdfa",
-              backgroundSize: "100% 100%",
-            }}
-          >
+          {/* Letter Note Container (Pure CSS lined paper) */}
+          <div className="relative p-5 sm:p-6 pt-8 rounded-xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd]">
             {/* Bulldog Clip at Top Center */}
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 w-8 h-8">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20 w-8 h-8">
               <img
                 src="/thamkhao/binder_clip.png"
                 alt="Binder clip"
@@ -408,26 +462,32 @@ export default function StorybookSunsetTemplate({
               />
             </div>
 
-            {/* Salutation */}
-            <div className="mb-2">
-              <span className="font-handwriting font-bold text-lg sm:text-xl text-[#1c3f50]">
+            <div
+              style={{
+                backgroundImage:
+                  "repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, #ebdccd 31px, #ebdccd 32px)",
+                lineHeight: "32px",
+              }}
+            >
+              {/* Salutation */}
+              <div className="leading-[32px] font-handwriting font-bold text-lg sm:text-xl text-[#1c3f50] mb-0">
                 Gửi {data.recipientName || "bạn"},
-              </span>
-            </div>
+              </div>
 
-            {/* Letter Body on Lined Paper */}
-            <p className="font-handwriting text-base sm:text-lg text-[#2e1d1b] leading-relaxed whitespace-pre-line min-h-[140px]">
-              {data.letterContent ||
-                "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này."}
-            </p>
+              {/* Letter Body on Lined Paper */}
+              <p className="leading-[32px] font-handwriting text-base sm:text-lg text-[#2e1d1b] whitespace-pre-line min-h-[128px] m-0">
+                {data.letterContent ||
+                  "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này."}
+              </p>
 
-            {/* Heart Signature */}
-            <div className="flex justify-center mt-3">
-              <img
-                src="/thamkhao/heart.png"
-                alt="Love"
-                className="w-6 h-6 object-contain transform hover:scale-125 transition-transform"
-              />
+              {/* Heart Signature */}
+              <div className="flex justify-center mt-3">
+                <img
+                  src="/thamkhao/heart.png"
+                  alt="Love"
+                  className="w-6 h-6 object-contain transform hover:scale-125 transition-transform"
+                />
+              </div>
             </div>
           </div>
 
@@ -662,74 +722,121 @@ export default function StorybookSunsetTemplate({
       {/* Cassette Radio Chassis */}
       <div className="relative z-10 my-auto w-full max-w-sm mx-auto flex flex-col items-center">
         {/* Wooden Signboard */}
-        <div className="bg-[#d8c8b4] border border-[#6b4737] px-4 py-1.5 rounded-lg shadow-sm text-[#6b4737] font-serif text-xs font-bold mb-3 transform -rotate-1">
+        <div className="bg-[#d7c4ac] border border-[#9a7d60] px-4 py-1.5 rounded-lg shadow-sm text-[#4a2e1d] font-serif text-xs font-bold mb-2.5 transform -rotate-1">
           Nghe lại một chút nhé...
         </div>
 
         {/* Vintage Radio Player Box */}
-        <div className="w-full bg-[#fcf8f2] p-5 sm:p-6 rounded-3xl shadow-2xl border-4 border-[#ebdccd] flex flex-col items-center">
+        <div className="w-full bg-[#fffefb] p-4 sm:p-5 rounded-3xl shadow-2xl border-4 border-[#ebdccd] flex flex-col items-center">
           {/* LCD Waveform Screen */}
-          <div className="w-full bg-[#1c1a19] rounded-2xl p-4 flex flex-col justify-between shadow-inner h-24 mb-4">
+          <div className="w-full bg-[#1c2229] border border-stone-800 rounded-2xl p-3 sm:p-4 flex flex-col justify-between shadow-inner h-28 mb-3">
             <div className="flex items-center justify-between text-[#d8c8b4] font-mono text-[10px]">
               <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                {isPlayingMusic ? "PLAYING CASSETTE" : "PAUSED"}
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    isPlayingMusic ? "bg-red-500 animate-ping" : "bg-stone-500"
+                  }`}
+                />
+                {isPlayingMusic ? "PLAYING CASSETTE" : "STANDBY"}
               </span>
-              <span>STEREO • HI-FI</span>
+              <span className="text-stone-400">STEREO • HI-FI</span>
             </div>
 
-            {/* Bouncing Equalizer Bars */}
-            <div className="flex items-center justify-center gap-1.5 h-10">
-              {[12, 24, 18, 32, 28, 14, 30, 22, 34, 26, 16, 28, 20, 32, 18].map((h, i) => (
+            {/* Symmetrical Waveform Display with Center Axis */}
+            <div className="relative flex items-center justify-center gap-1 h-12 w-full">
+              <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 h-[1px] bg-white/15 pointer-events-none" />
+
+              {[4, 8, 14, 22, 32, 40, 46, 42, 36, 26, 18, 26, 36, 44, 48, 44, 34, 24, 16, 26, 38, 44, 36, 24, 14, 8, 4].map((h, i) => (
                 <div
                   key={i}
-                  className={`w-1 rounded-full transition-all duration-200 ${
-                    isPlayingMusic ? "bg-white" : "bg-white/40"
+                  className={`w-1 rounded-full transition-all duration-150 z-1 ${
+                    isPlayingMusic ? "bg-amber-100 shadow-xs" : "bg-white/40"
                   }`}
                   style={{
-                    height: isPlayingMusic ? `${Math.max(6, (h * (i % 2 === 0 ? 1.2 : 0.8)) % 36)}px` : "6px",
+                    height: isPlayingMusic
+                      ? `${Math.max(4, Math.min(42, (h * 0.8) + (i % 2 === 0 ? 6 : -4)))}px`
+                      : `${h * 0.8}px`,
                   }}
                 />
               ))}
             </div>
 
             <div className="flex justify-between font-mono text-[10px] text-stone-400">
-              <span>0:00</span>
-              <span>-2:34</span>
+              <span className="truncate max-w-[180px] text-amber-200/90 font-medium">
+                {data.song?.title || "Giai điệu kỷ niệm"}
+              </span>
+              <span>{isPlayingMusic ? "PLAYING" : "PAUSED"}</span>
             </div>
           </div>
 
           {/* Interactive Player Controls */}
-          <div className="flex items-center justify-center gap-6">
-            <button
-              type="button"
-              onClick={() => setMusicProgress(0)}
-              className="w-10 h-10 rounded-full bg-stone-100 hover:bg-stone-200 text-[#1c1a19] flex items-center justify-center transition-all cursor-pointer"
-              aria-label="Bài trước"
+          <div className="w-full flex flex-col items-center">
+            {/* Seek bar */}
+            <div
+              role="slider"
+              tabIndex={0}
+              aria-label="Thanh thời gian bài hát"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={musicProgress}
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const pct = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+                setMusicProgress(pct);
+              }}
+              className="relative w-full py-1 cursor-pointer group"
             >
-              <span className="material-symbols-outlined text-[20px]">skip_previous</span>
-            </button>
+              <div className="w-full h-1.5 bg-[#ded3c5] rounded-full relative overflow-visible">
+                <div
+                  className="h-full bg-[#ba4230] rounded-full transition-all duration-150"
+                  style={{ width: `${musicProgress}%` }}
+                />
+                {/* Scrubber thumb knob */}
+                <div
+                  className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-[#ba4230] rounded-full shadow-xs transition-transform group-hover:scale-125"
+                  style={{ left: `${musicProgress}%` }}
+                />
+              </div>
+            </div>
 
-            {/* Big Red Play Button */}
-            <button
-              type="button"
-              onClick={toggleMusic}
-              className="w-16 h-16 rounded-full bg-[#c13d28] hover:bg-[#a83232] active:scale-95 text-white shadow-xl flex items-center justify-center transition-all cursor-pointer"
-              aria-label={isPlayingMusic ? "Tạm dừng" : "Phát nhạc"}
-            >
-              <span className="material-symbols-outlined text-[36px] ml-0.5">
-                {isPlayingMusic ? "pause" : "play_arrow"}
-              </span>
-            </button>
+            {/* Timestamps */}
+            <div className="w-full flex items-center justify-between text-[#172b3a] font-sans text-[11px] font-semibold mt-0.5 mb-2.5">
+              <span>0:00</span>
+              <span>-2:34</span>
+            </div>
 
-            <button
-              type="button"
-              onClick={() => setMusicProgress(0)}
-              className="w-10 h-10 rounded-full bg-stone-100 hover:bg-stone-200 text-[#1c1a19] flex items-center justify-center transition-all cursor-pointer"
-              aria-label="Bài kế tiếp"
-            >
-              <span className="material-symbols-outlined text-[20px]">skip_next</span>
-            </button>
+            {/* Buttons */}
+            <div className="flex items-center justify-center gap-6">
+              <button
+                type="button"
+                onClick={() => setMusicProgress(0)}
+                className="p-1.5 rounded-full text-[#172b3a] hover:text-[#ba4230] hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                aria-label="Bài trước"
+              >
+                <span className="material-symbols-outlined text-[24px]">skip_previous</span>
+              </button>
+
+              {/* Big Red Play Button */}
+              <button
+                type="button"
+                onClick={toggleMusic}
+                className="w-14 h-14 sm:w-15 sm:h-15 rounded-full bg-[#ba4230] hover:bg-[#a63727] active:scale-95 text-white shadow-lg flex items-center justify-center transition-all cursor-pointer hover:scale-105"
+                aria-label={isPlayingMusic ? "Tạm dừng" : "Phát nhạc"}
+              >
+                <span className="material-symbols-outlined text-[32px] ml-1">
+                  {isPlayingMusic ? "pause" : "play_arrow"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMusicProgress((p) => Math.min(100, p + 15))}
+                className="p-1.5 rounded-full text-[#172b3a] hover:text-[#ba4230] hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                aria-label="Bài kế tiếp"
+              >
+                <span className="material-symbols-outlined text-[24px]">skip_next</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -792,64 +899,99 @@ export default function StorybookSunsetTemplate({
           />
         </div>
 
-        {/* Audio Player Card with Voice Note Controls inside original giấy.png */}
-        <div className="relative w-full max-w-[310px] sm:max-w-xs mx-auto flex items-center justify-center">
-          <img
-            src="/thamkhao/paper.png"
-            alt="Giấy ghi chú"
-            className="w-full h-auto object-contain drop-shadow-xl"
-          />
-          <div className="absolute inset-0 px-5 pt-8 pb-3 flex flex-col justify-between">
-            {/* Progress bar */}
-            <div className="w-full flex items-center justify-between text-stone-600 font-mono text-[9px] sm:text-[10px]">
-              <span>0:00</span>
-              <div className="flex-1 mx-2 h-1 bg-[#d8c8b4] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[#c13d28] transition-all duration-300"
-                  style={{ width: isPlayingVoice ? "60%" : "0%" }}
-                />
-              </div>
-              <span>-2:34</span>
+        {/* Audio Player Card with Voice Note Controls (Pure CSS stationery) */}
+        <div className="relative w-full max-w-[325px] sm:max-w-xs mx-auto rounded-2xl bg-[#fffefc] border border-[#e8ded2] shadow-[0_12px_32px_rgba(46,29,27,0.12)] p-5 sm:p-6 flex flex-col items-center text-center transform -rotate-0.5">
+          {/* Folded dog-ear corner on bottom right */}
+          <div className="absolute bottom-0 right-0 w-5 h-5 pointer-events-none overflow-hidden rounded-br-2xl">
+            <div className="absolute bottom-0 right-0 w-0 h-0 border-solid border-t-[20px] border-r-[20px] border-t-[#ebdccd] border-r-transparent drop-shadow-2xs" />
+          </div>
+
+          {/* Progress / Seek bar with Scrubber Knob */}
+          <div
+            role="slider"
+            tabIndex={0}
+            aria-label="Thanh thời gian ghi âm"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={voiceProgress}
+            onClick={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const pct = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+              setVoiceProgress(pct);
+            }}
+            className="relative w-full py-1.5 cursor-pointer group"
+          >
+            <div className="w-full h-1.5 bg-[#ded3c5] rounded-full relative overflow-visible">
+              <div
+                className="h-full bg-[#ba4230] rounded-full transition-all duration-150"
+                style={{ width: `${voiceProgress}%` }}
+              />
+              {/* Scrubber thumb knob */}
+              <div
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#ba4230] rounded-full shadow-xs transition-transform group-hover:scale-125"
+                style={{ left: `${voiceProgress}%` }}
+              />
             </div>
+          </div>
 
-            {/* Controls: Rewind 15s | Play | Forward 15s */}
-            <div className="flex items-center justify-center gap-4 my-1">
-              <button
-                type="button"
-                onClick={() => setVoiceProgress((p) => Math.max(0, p - 15))}
-                className="w-8 h-8 rounded-full bg-[#e8ded5]/80 hover:bg-[#d8c8b4] text-[#1c1a19] flex items-center justify-center transition-all cursor-pointer"
-                title="Lùi 15 giây"
+          {/* Timestamps */}
+          <div className="w-full flex items-center justify-between text-[#172b3a] font-sans text-[11px] sm:text-xs font-semibold mt-1">
+            <span>0:00</span>
+            <span>-2:34</span>
+          </div>
+
+          {/* Controls: Rewind 15s | Play | Forward 15s */}
+          <div className="flex items-center justify-center gap-6 my-3.5">
+            <button
+              type="button"
+              onClick={() => setVoiceProgress((p) => Math.max(0, p - 15))}
+              className="p-1.5 rounded-full text-[#172b3a] hover:text-[#ba4230] hover:scale-110 active:scale-95 transition-all cursor-pointer"
+              title="Lùi 15 giây"
+              aria-label="Lùi 15 giây"
+            >
+              <Replay15Icon className="w-7 h-7 sm:w-8 sm:h-8" />
+            </button>
+
+            <button
+              type="button"
+              onClick={toggleVoice}
+              className="w-14 h-14 sm:w-15 sm:h-15 rounded-full bg-[#ba4230] hover:bg-[#a63727] active:scale-95 text-white shadow-lg flex items-center justify-center transition-all cursor-pointer hover:scale-105"
+              aria-label={isPlayingVoice ? "Dừng ghi âm" : "Nghe ghi âm"}
+            >
+              <span className="material-symbols-outlined text-[30px] ml-1">
+                {isPlayingVoice ? "pause" : "play_arrow"}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setVoiceProgress((p) => Math.min(100, p + 15))}
+              className="p-1.5 rounded-full text-[#172b3a] hover:text-[#ba4230] hover:scale-110 active:scale-95 transition-all cursor-pointer"
+              title="Tiến 15 giây"
+              aria-label="Tiến 15 giây"
+            >
+              <Forward15Icon className="w-7 h-7 sm:w-8 sm:h-8" />
+            </button>
+          </div>
+
+          {/* Note Quote with outlined heart */}
+          <div className="text-center pt-1 max-w-xs mx-auto">
+            <p className="font-handwriting text-xs sm:text-sm text-[#172b3a] leading-snug font-semibold">
+              {data.voiceNote?.noteText ||
+                "Có những điều viết ra vẫn chưa đủ. Nên lần này, mình muốn bạn nghe bằng chính giọng nói của mình."}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#ba4230"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="inline-block w-3.5 h-3.5 ml-1.5 -mt-0.5 text-[#ba4230]"
+                aria-hidden="true"
               >
-                <span className="material-symbols-outlined text-[16px]">replay_15</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={toggleVoice}
-                className="w-11 h-11 rounded-full bg-[#c13d28] hover:bg-[#a83232] active:scale-95 text-white shadow-lg flex items-center justify-center transition-all cursor-pointer"
-                aria-label={isPlayingVoice ? "Dừng ghi âm" : "Nghe ghi âm"}
-              >
-                <span className="material-symbols-outlined text-[26px] ml-0.5">
-                  {isPlayingVoice ? "pause" : "play_arrow"}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setVoiceProgress((p) => Math.min(100, p + 15))}
-                className="w-8 h-8 rounded-full bg-[#e8ded5]/80 hover:bg-[#d8c8b4] text-[#1c1a19] flex items-center justify-center transition-all cursor-pointer"
-                title="Tiến 15 giây"
-              >
-                <span className="material-symbols-outlined text-[16px]">forward_15</span>
-              </button>
-            </div>
-
-            {/* Note Quote */}
-            <div className="text-center pt-0.5">
-              <p className="font-handwriting text-xs text-[#2e1d1b] leading-tight font-medium">
-                Có những điều viết ra vẫn chưa đủ. Nên lần này, mình muốn bạn nghe bằng chính giọng nói của mình. ❤️
-              </p>
-            </div>
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              </svg>
+            </p>
           </div>
         </div>
       </div>

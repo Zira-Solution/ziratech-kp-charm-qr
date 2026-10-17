@@ -27,7 +27,7 @@ interface Props {
 const BACKGROUND: Record<GiftTemplateId, string> = {
   "vintage-scrapbook": "bg-parchment-light",
   "retro-nostalgia": "bg-parchment-border",
-  "storybook-sunset": "bg-slate-100",
+  "storybook-sunset": "bg-[#fdebd8]",
   "kp-atelier": "bg-surface-container-low",
 };
 

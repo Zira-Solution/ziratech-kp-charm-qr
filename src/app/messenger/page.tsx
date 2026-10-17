@@ -73,7 +73,7 @@ const DEFAULT_SETTINGS: CustomSettings = {
   showFloatingHearts: true,
   filmPhotos: DEFAULT_FILM_PHOTOS,
   filmTitle: "Những ngày mình bên nhau",
-  filmSubtitle: "Dlove",
+  filmSubtitle: "Team K&P",
   giftLeadMessage: GIFT_LEAD_MESSAGE,
   voiceLeadMessage: VOICE_LEAD_MESSAGE,
   voiceAfterMessage: VOICE_AFTER_MESSAGE,
@@ -220,6 +220,7 @@ function MessengerPageInner() {
 
   // Filmstrip stage state
   const [isFilmPaused, setIsFilmPaused] = useState(false);
+  const [filmSpeed, setFilmSpeed] = useState<number>(120); // 120s: very slow, smooth & romantic
   const [selectedFilmPhoto, setSelectedFilmPhoto] = useState<string | null>(null);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -1446,11 +1447,18 @@ function MessengerPageInner() {
                     <span className="text-[17px] sm:text-lg font-bold leading-none select-none text-stone-700">←</span>
                   </button>
 
-                  {/* Centered Romantic Titles matching reference screenshot */}
+                  {/* Centered Romantic Titles matching reference screenshot with Logo K&P (Tách nền) */}
                   <div className="absolute inset-x-0 top-3.5 sm:top-5 flex flex-col items-center justify-center pointer-events-none select-none px-12">
-                    <span className="font-handwriting italic text-[16px] sm:text-[18px] text-[#7d4860] leading-none drop-shadow-2xs">
-                      {settings.filmSubtitle || "Dlove"}
-                    </span>
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <img
+                        src="/images/logo_icon_kp.png"
+                        alt="Logo K&P"
+                        className="h-5 sm:h-5.5 w-auto object-contain drop-shadow-[0_1px_2px_rgba(255,255,255,0.7)]"
+                      />
+                      <span className="font-handwriting italic text-[15px] sm:text-[17px] text-[#7d4860] leading-none drop-shadow-2xs">
+                        {settings.filmSubtitle && settings.filmSubtitle !== "Dlove" ? settings.filmSubtitle : "Team K&P"}
+                      </span>
+                    </div>
                     <h2 className="font-handwriting font-medium text-[20px] sm:text-[25px] text-[#54223a] leading-tight mt-0.5 tracking-wide whitespace-nowrap drop-shadow-[0_1px_2px_rgba(255,255,255,0.7)]">
                       {settings.filmTitle || "Những ngày mình bên nhau"}
                     </h2>
@@ -1465,7 +1473,10 @@ function MessengerPageInner() {
                   {/* Infinite Horizontal Filmstrip Track (No dark black backing, clouds shine through) */}
                   <div
                     className="animate-filmstrip py-1 select-none cursor-grab active:cursor-grabbing"
-                    style={{ animationPlayState: isFilmPaused ? "paused" : "running" }}
+                    style={{
+                      animationPlayState: isFilmPaused ? "paused" : "running",
+                      animationDuration: `${filmSpeed}s`,
+                    }}
                   >
                     {(() => {
                       const list =
@@ -1555,6 +1566,19 @@ function MessengerPageInner() {
                       <span>{isFilmPaused ? "Chạy tiếp" : "Tạm dừng"}</span>
                     </button>
 
+                    {/* Speed Toggle Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFilmSpeed((prev) => (prev === 120 ? 80 : prev === 80 ? 50 : 120));
+                      }}
+                      className="py-1.5 px-2.5 rounded-full bg-white/70 hover:bg-white text-[#5e223c] font-medium text-xs shadow-2xs transition-all active:scale-95 flex items-center gap-1 cursor-pointer border border-pink-200/60"
+                      title="Chạm để đổi tốc độ quay cuộn phim"
+                    >
+                      <span className="material-symbols-outlined text-[15px]">speed</span>
+                      <span>{filmSpeed === 120 ? "Siêu chậm" : filmSpeed === 80 ? "Chậm vừa" : "Vừa"}</span>
+                    </button>
+
                     {/* Back to Lock */}
                     <button
                       type="button"
@@ -1562,7 +1586,7 @@ function MessengerPageInner() {
                         setShownMessages(0);
                         setStage("lock");
                       }}
-                      className="py-1.5 px-3 rounded-full bg-white/70 hover:bg-white text-[#5e223c] font-medium text-xs shadow-2xs transition-all active:scale-95 cursor-pointer border border-pink-200/60"
+                      className="py-1.5 px-2.5 rounded-full bg-white/70 hover:bg-white text-[#5e223c] font-medium text-xs shadow-2xs transition-all active:scale-95 cursor-pointer border border-pink-200/60"
                     >
                       Màn hình khóa
                     </button>
@@ -1656,8 +1680,8 @@ function MessengerPageInner() {
                   <span className="material-symbols-outlined text-[20px]">close</span>
                 </button>
 
-                {/* Letter Container: Strictly locked to 2:3 aspect ratio so it NEVER stretches */}
-                <div className="relative w-full max-w-[340px] sm:max-w-[370px] aspect-[2/3] max-h-[84vh] flex flex-col items-center animate-letter-open select-none drop-shadow-[0_18px_45px_rgba(70,10,25,0.4)]">
+                {/* Letter Container: Strictly locked to 848:1264 aspect ratio matching the stationery image perfectly */}
+                <div className="relative w-full max-w-[348px] sm:max-w-[375px] aspect-[848/1264] max-h-[86vh] flex flex-col items-center animate-letter-open select-none drop-shadow-[0_20px_50px_rgba(70,10,25,0.45)]">
                   {/* High Definition Scalloped Stationery & Envelope Background */}
                   <img
                     src="/images/romantic_letter_card.webp"
@@ -1665,20 +1689,20 @@ function MessengerPageInner() {
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none z-0"
                   />
 
-                  {/* Letter Scrollable Writing Area - fits gracefully onto the ivory paper */}
+                  {/* Letter Scrollable Writing Area - strictly mapped to the ivory paper */}
                   <div
                     ref={letterScrollRef}
                     onScroll={handleCheckLetterScroll}
-                    className="absolute top-[11.5%] bottom-[35%] left-[13%] right-[13%] overflow-y-auto px-2 sm:px-3 pt-2 pb-2 text-center z-10 flex flex-col justify-between [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-rose-300/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-rose-400"
+                    className="absolute top-[14%] bottom-[40%] left-[15%] right-[15%] overflow-y-auto px-1.5 sm:px-2.5 pt-1 pb-2 text-center z-10 flex flex-col justify-between [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-rose-300/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-rose-400"
                   >
                     <div>
                       {/* Title: Romantic Cursive matching user reference */}
-                      <h3 className="font-handwriting italic font-normal text-[19px] sm:text-[22px] text-[#6b2135] leading-snug tracking-wide text-center max-w-[220px] mx-auto pt-1 drop-shadow-[0_1px_1px_rgba(255,255,255,0.85)]">
+                      <h3 className="font-handwriting italic font-normal text-[19px] sm:text-[22px] text-[#6b2135] leading-snug tracking-wide text-center max-w-[210px] mx-auto pt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">
                         {settings.letterTitle || `Gửi tới ${settings.recipientName} yêu thương,`}
                       </h3>
 
-                      {/* Body: Natural letter typography filling the paper */}
-                      <div className="mt-2.5 font-serif text-[12.5px] sm:text-[13.5px] leading-[1.8] text-[#42222b] text-center whitespace-pre-line select-text px-1">
+                      {/* Body: Natural letter typography filling the ivory paper */}
+                      <div className="mt-2 font-serif text-[12px] sm:text-[13px] leading-[1.8] text-[#3e1f27] text-center whitespace-pre-line select-text px-0.5">
                         {settings.letterContent}
                       </div>
                     </div>
@@ -1686,7 +1710,7 @@ function MessengerPageInner() {
                     {/* Divider + Sign-off + Scroll Pill */}
                     <div className="pt-2">
                       {/* Decorative ✧ ♡ ✧ */}
-                      <div className="flex items-center justify-center gap-2 text-rose-400/90 text-xs my-2 select-none">
+                      <div className="flex items-center justify-center gap-2 text-rose-400/90 text-xs my-1.5 select-none">
                         <span>✧</span>
                         <span>♡</span>
                         <span>✧</span>
@@ -1694,26 +1718,26 @@ function MessengerPageInner() {
 
                       {/* Interactive "Cuộn để đọc tiếp ↓" Pill Button */}
                       {canScrollLetter && (
-                        <div className="sticky bottom-0 pt-1 pb-1 flex justify-center z-30">
+                        <div className="sticky bottom-0 pt-0.5 pb-1 flex justify-center z-30">
                           <button
                             type="button"
                             onClick={handleScrollLetterDown}
-                            className="px-3.5 py-1 rounded-full bg-[#fffcf7]/95 hover:bg-white text-[#6b2234] text-[11px] font-sans font-medium shadow-xs border border-rose-200/90 backdrop-blur-xs flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer animate-pulse"
+                            className="px-3 py-0.5 rounded-full bg-[#fffcf7]/95 hover:bg-white text-[#6b2234] text-[10.5px] font-sans font-medium shadow-xs border border-rose-200/90 backdrop-blur-xs flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer animate-pulse"
                           >
                             <span>Cuộn để đọc tiếp</span>
-                            <span className="text-xs">↓</span>
+                            <span className="text-[11px]">↓</span>
                           </button>
                         </div>
                       )}
 
                       {/* Sender Sign-off */}
-                      <div className="text-center font-serif text-[12px] text-rose-900/90 pt-1">
-                        <span className="italic block text-slate-500 text-[9.5px]">Người gửi tặng:</span>
+                      <div className="text-center font-serif text-[11.5px] text-rose-900/90 pt-0.5">
+                        <span className="italic block text-slate-500 text-[9px]">Người gửi tặng:</span>
                         <p className="font-handwriting text-base sm:text-[18px] text-rose-800 font-bold mt-0.5">
                           {settings.senderName} ♡
                         </p>
                         {settings.letterSignature && (
-                          <p className="font-serif italic text-[10px] text-rose-800/80 mt-0.5">
+                          <p className="font-serif italic text-[9.5px] text-rose-800/80 mt-0.5">
                             {settings.letterSignature}
                           </p>
                         )}
@@ -1723,7 +1747,7 @@ function MessengerPageInner() {
                             handleCloseLetter();
                             setStage("film");
                           }}
-                          className="mt-2.5 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-[11px] font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
+                          className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-[10.5px] font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
                         >
                           <span>🎞️ Xem phim kỷ niệm</span>
                           <span>→</span>
@@ -1732,20 +1756,20 @@ function MessengerPageInner() {
                     </div>
                   </div>
 
-                  {/* Interactive Wax Seal Touch Target at the bottom */}
+                  {/* Interactive Wax Seal Touch Target right over the circular K&P wax seal */}
                   <button
                     type="button"
                     onClick={() => {
                       confetti({
-                        particleCount: 60,
-                        spread: 60,
-                        origin: { y: 0.8 },
+                        particleCount: 70,
+                        spread: 65,
+                        origin: { y: 0.78 },
                         colors: ["#ff4d6d", "#ffd166", "#c9184a", "#ff9ebb"],
                       });
                     }}
-                    className="absolute bottom-[11%] left-1/2 -translate-x-1/2 w-16 h-16 rounded-full cursor-pointer z-30 opacity-0 active:scale-95"
-                    title="Chạm vào sáp niêm phong"
-                    aria-label="Chạm sáp niêm phong"
+                    className="absolute bottom-[17%] left-1/2 -translate-x-1/2 w-18 h-18 rounded-full cursor-pointer z-30 opacity-0 active:scale-95"
+                    title="Chạm vào sáp niêm phong K&P"
+                    aria-label="Chạm sáp niêm phong K&P"
                   />
                 </div>
               </div>

@@ -34,11 +34,11 @@ export default function AdminShell({ tab, onTab, user, onLogout, orderCount, toa
       {/* Sidebar (desktop) */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-primary text-white lg:flex">
         <div className="flex items-center gap-3 px-5 py-5">
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10">
-            <Icon name="storefront" className="text-[22px]" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white p-1 shadow-xs">
+            <img src="/images/logo_icon_kp.png" alt="Team K&P Logo" className="w-full h-full object-contain" />
           </span>
           <div className="leading-tight">
-            <p className="text-sm font-semibold">K&amp;P Atelier</p>
+            <p className="text-sm font-semibold">Team K&amp;P</p>
             <p className="text-xs text-white/60">Quản trị quầy 20/10</p>
           </div>
         </div>
@@ -94,8 +94,8 @@ export default function AdminShell({ tab, onTab, user, onLogout, orderCount, toa
       <div className="lg:pl-64">
         <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white lg:hidden">
-              <Icon name="storefront" className="text-[20px]" />
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white p-1 border border-slate-200 shadow-2xs lg:hidden">
+              <img src="/images/logo_icon_kp.png" alt="Team K&P Logo" className="w-full h-full object-contain" />
             </span>
             <h1 className="text-lg font-semibold text-slate-900">{current.title}</h1>
           </div>

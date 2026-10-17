@@ -17,7 +17,7 @@ const PRODUCTS: Product[] = [
   {
     title: "Hoa lẻ tinh khôi",
     price: "40.000 – 70.000đ",
-    desc: "Đặt trước hoa tươi tuyển chọn cẩn trọng, nhận trực tiếp ngày 20/10 tại sảnh lầu 2 ĐH FPT. Mã thiệp số cá nhân hóa được gửi qua email.",
+    desc: "Đặt trước hoa tươi tuyển chọn cẩn trọng, nhận trực tiếp ngày 20/10 tại Sảnh liên tầng lầu 3 ĐH FPT. Mã thiệp số cá nhân hóa được gửi qua email.",
     tags: [{ label: "Đặt trước", solid: true }, { label: "QR gửi qua email", outline: true }],
     footNote: "Góp quỹ trạm cứu hộ",
     action: { href: "#preorder", label: "Đặt trước hoa" },
@@ -36,8 +36,8 @@ const PRODUCTS: Product[] = [
   },
   {
     title: "Vòng Charm hoàn thiện",
-    priceNote: "Chọn tại sảnh lầu 2",
-    desc: "Vòng tay charm pha lê xanh trăng sao được đan sẵn tinh xảo bởi K&P Atelier. Ghé Sảnh lầu 2 (11:00 – 15:00) ngày 20/10 để ướm thử và nhận thiệp số qua email.",
+    priceNote: "Chọn tại Sảnh liên tầng",
+    desc: "Vòng tay charm pha lê xanh trăng sao được đan sẵn tinh xảo bởi K&P Atelier. Ghé Sảnh liên tầng lầu 3 (11:00 – 15:00) ngày 20/10 để ướm thử và nhận thiệp số qua email.",
     tags: [{ label: "Tại gian hàng" }, { label: "QR gửi qua email", outline: true }],
     footNote: "Đóng hộp nhung cao cấp",
     footRight: "Trực tiếp tại quầy",
@@ -60,7 +60,7 @@ const PRODUCTS: Product[] = [
     desc: "Chất giấy mỹ thuật ép xơ thực vật tự nhiên, độ dày 300gsm giữ mực hoàn hảo cùng phong bì ép nhũ đồng tinh xảo.",
     tags: [{ label: "Giấy mỹ thuật" }],
     footNote: "Miễn phí bút nhũ nắn nót",
-    footRight: "Sảnh lầu 2",
+    footRight: "Sảnh liên tầng",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBmORgE6vzg_pg9LspCZ7YSCeG5POoBnpxwviP2dz4DgSjQZV_LYnIzAzdfMEBXa5fB9SU1WO4CKOLAAZkjZekCdgma1yEua6JJ2CXTLByeCqLDUGpksWS_gzywBkdr14ysLrEOAM4NxoBEnkp7IRTW-jMARi5QjpCNgHxJZncld7ve8eOhXZKDsquoSfl3yuJmEGPIx0iGjfJtWptKJBpyIXO6CVDUL-MtnT5UxcMjFFhRqNMFBkf3zA",
     alt: "Thiệp giấy mỹ thuật viền xé cùng bút mực và sáp niêm phong",
   },
@@ -95,7 +95,7 @@ export default function Catalog() {
           <h2 className="font-headline text-3xl sm:text-4xl text-primary tracking-tight">Kỷ Vật Yêu Thương &amp; Trao Gửi</h2>
         </div>
         <p className="font-sans text-xs text-on-surface-variant max-w-md mt-4 md:mt-0 italic border-l-2 border-secondary pl-3 leading-relaxed">
-          * Lưu ý: Chỉ hoa tươi được mở đặt trước trực tuyến. Các sản phẩm thủ công khác phục vụ trực tiếp tại bàn workshop &amp; sảnh lầu 2.
+          * Lưu ý: Chỉ hoa tươi được mở đặt trước trực tuyến. Các sản phẩm thủ công khác phục vụ trực tiếp tại bàn workshop &amp; Sảnh liên tầng.
         </p>
       </div>
 

@@ -37,7 +37,7 @@ export default function Workshop() {
         </div>
         <h2 className="font-headline text-3xl sm:text-4xl text-primary mb-3 tracking-tight">Tự Tay Chế Tác Vòng Kỷ Niệm</h2>
         <p className="font-body text-base text-on-surface-variant leading-relaxed">
-          Tận hưởng từng phút giây thư thái tự tay kết từng hạt charm thủy tinh lấp lánh, đong đầy chân tình tại gian hàng Sảnh lầu 2 (11:00 – 15:00 ngày 20/10).
+          Tận hưởng từng phút giây thư thái tự tay kết từng hạt charm thủy tinh lấp lánh, đong đầy chân tình tại gian hàng Sảnh liên tầng lầu 1 (17 &amp; 19/10) và Sảnh liên tầng lầu 3 (ngày 20/10).
         </p>
       </div>
 

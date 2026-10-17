@@ -101,14 +101,19 @@ export default function HomeHeader() {
           {/* Brand Logo & Title */}
           <a
             href="#hero"
-            className="flex items-center group shrink-0"
-            aria-label="Về đầu trang K&P Atelier"
+            className="flex items-center gap-2.5 sm:gap-3 group shrink-0"
+            aria-label="Về đầu trang Team K&P"
           >
-            <div className="flex flex-col shrink-0">
-              <span className="font-headline text-base sm:text-lg xl:text-xl text-primary tracking-tight font-bold leading-tight group-hover:text-[#721a28] transition-colors">
+            <img
+              src="/images/logo_team_kp.png"
+              alt="Team K&P Logo"
+              className="h-8 sm:h-9 md:h-9.5 w-auto object-contain transition-transform group-hover:scale-105"
+            />
+            <div className="hidden sm:flex flex-col border-l border-rose-200/80 pl-2.5 shrink-0 justify-center">
+              <span className="font-sans text-[11px] text-[#721a28] font-bold tracking-tight leading-tight">
                 K&amp;P Atelier
               </span>
-              <span className="font-sans text-[9px] sm:text-[10px] text-secondary-dark tracking-wider uppercase font-semibold whitespace-nowrap">
+              <span className="font-sans text-[9px] text-secondary-dark tracking-wider uppercase font-semibold whitespace-nowrap">
                 Charm &amp; Quà Kỷ Niệm 20/10
               </span>
             </div>
@@ -194,11 +199,18 @@ export default function HomeHeader() {
           >
             {/* Drawer Header */}
             <div className="flex items-center justify-between pb-3 border-b border-rose-100/60">
-              <div>
-                <h3 className="font-headline font-bold text-sm text-primary">K&amp;P Atelier</h3>
-                <p className="font-sans text-[10px] text-secondary-dark uppercase font-semibold">
-                  Menu điều hướng
-                </p>
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/images/logo_icon_kp.png"
+                  alt="Team K&P Logo"
+                  className="w-8 h-8 object-contain"
+                />
+                <div>
+                  <h3 className="font-headline font-bold text-sm text-primary">Team K&amp;P</h3>
+                  <p className="font-sans text-[10px] text-secondary-dark uppercase font-semibold">
+                    K&amp;P Atelier • Quà 20/10
+                  </p>
+                </div>
               </div>
               <button
                 type="button"

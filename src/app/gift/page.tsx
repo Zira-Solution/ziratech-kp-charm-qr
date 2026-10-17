@@ -85,8 +85,8 @@ function CreatorPortalContent() {
             href="/"
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md text-[#721a28] text-xs font-bold shadow-xs mb-3 border border-rose-200/80 hover:bg-white transition-all"
           >
-            <span className="material-symbols-outlined text-[15px] text-amber-500">auto_awesome</span>
-            <span className="tracking-wide">K&amp;P ATELIER • TẠO THIỆP QUÀ SỐ</span>
+            <img src="/images/logo_icon_kp.png" alt="Team K&P" className="w-4 h-4 object-contain" />
+            <span className="tracking-wide">TEAM K&amp;P • TẠO THIỆP QUÀ SỐ</span>
           </Link>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[#721a28] tracking-tight">

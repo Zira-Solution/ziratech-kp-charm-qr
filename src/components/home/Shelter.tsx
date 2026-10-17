@@ -4,11 +4,10 @@ import React, { useEffect, useState } from "react";
 
 const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(Math.round(n))}đ`;
 
-// Receiving account (the one linked to SePay).
-// If not configured in environment variables, use default demo preview.
+// Receiving account (the one linked to SePay & VietQR).
 const BANK = process.env.NEXT_PUBLIC_DONATION_BANK || "MBBank";
-const ACCOUNT = process.env.NEXT_PUBLIC_DONATION_ACCOUNT || "0868888888";
-const ACCOUNT_NAME = process.env.NEXT_PUBLIC_DONATION_NAME || "QUY CUU HO SAN NHA NHIEU CHO";
+const ACCOUNT = process.env.NEXT_PUBLIC_DONATION_ACCOUNT || "1025032006";
+const ACCOUNT_NAME = process.env.NEXT_PUBLIC_DONATION_NAME || "TRAN HOANG HAO";
 
 const TRANSFER_NOTE = "Ho_va_Ten_MSSV";
 
@@ -119,23 +118,27 @@ export default function Shelter() {
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center p-5 rounded-[28px] bg-white/65 backdrop-blur-xl border border-white/85 shadow-xs mb-5">
             {/* QR Code */}
             <div className="sm:col-span-5 flex flex-col items-center justify-center">
-              <div className="relative group p-2.5 bg-white rounded-3xl border border-rose-100/80 shadow-md transition-all duration-300 hover:shadow-lg">
-                {qrReady ? (
-                  <img
-                    className="w-40 h-40 sm:w-44 sm:h-44 object-contain rounded-2xl"
-                    alt="Mã QR chuyển khoản ủng hộ trạm"
-                    src={qrSrc}
-                  />
-                ) : (
-                  <div className="w-40 h-40 flex flex-col items-center justify-center text-center p-2 font-mono text-xs text-on-surface-variant">
-                    <span className="material-symbols-outlined text-4xl text-primary mb-1">qr_code_2</span>
-                    <span className="text-[10px]">Chưa cấu hình tài khoản nhận</span>
-                  </div>
-                )}
+              <div className="relative group p-2 bg-white rounded-3xl border border-rose-100/80 shadow-md transition-all duration-300 hover:shadow-lg">
+                <img
+                  className="w-44 sm:w-48 h-auto object-contain rounded-2xl shadow-inner"
+                  alt="Mã VietQR MBBank TRAN HOANG HAO 1025032006"
+                  src="/images/qr_vietqr_card.png"
+                />
               </div>
-              <div className="mt-2.5 flex items-center gap-1 text-[11px] font-medium text-on-surface-variant text-center">
-                <span className="material-symbols-outlined text-[14px] text-primary">qr_code_scanner</span>
-                <span>Quét bằng App Ngân hàng / MoMo</span>
+              <div className="mt-3 flex flex-col items-center gap-1.5 text-center">
+                <div className="flex items-center gap-1 text-[11px] font-medium text-on-surface-variant">
+                  <span className="material-symbols-outlined text-[14px] text-primary">qr_code_scanner</span>
+                  <span>Quét bằng App Ngân hàng / MoMo</span>
+                </div>
+                <a
+                  href="/images/qr_vietqr_tranhoanghao.png"
+                  download="VietQR_MBBank_TRAN_HOANG_HAO.png"
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white hover:bg-rose-50 text-[#721a28] text-[11px] font-sans font-semibold border border-rose-200/80 shadow-2xs transition-all cursor-pointer"
+                  title="Tải ảnh gốc mã QR"
+                >
+                  <span className="material-symbols-outlined text-[13px]">download</span>
+                  <span>Tải ảnh mã VietQR</span>
+                </a>
               </div>
             </div>
 
@@ -144,7 +147,10 @@ export default function Shelter() {
               <div className="p-3.5 rounded-2xl bg-white/85 border border-white/90 shadow-xs space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Ngân hàng</span>
-                  <span className="font-bold text-primary font-sans">{BANK}</span>
+                  <div className="text-right">
+                    <span className="font-bold text-primary font-sans block">MB (Quân Đội)</span>
+                    <span className="text-[10px] text-stone-500 font-sans">VietQR • Napas 247</span>
+                  </div>
                 </div>
                 
                 <div className="pt-2 border-t border-rose-100/50 flex items-center justify-between gap-2">
@@ -155,7 +161,7 @@ export default function Shelter() {
                   <button
                     type="button"
                     onClick={handleCopyAccount}
-                    className={`shrink-0 px-3 py-1.5 rounded-full font-sans text-xs font-semibold flex items-center gap-1 transition-all ${
+                    className={`shrink-0 px-3 py-1.5 rounded-full font-sans text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
                       copiedAccount
                         ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                         : "bg-white hover:bg-rose-50 text-primary border border-rose-150 hover:border-primary/40 shadow-xs"
@@ -168,12 +174,10 @@ export default function Shelter() {
                   </button>
                 </div>
 
-                {ACCOUNT_NAME && (
-                  <div className="pt-2 border-t border-rose-100/50 flex items-center justify-between gap-2">
-                    <span className="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold shrink-0">Chủ tài khoản</span>
-                    <span className="font-bold text-primary font-sans uppercase text-right truncate">{ACCOUNT_NAME}</span>
-                  </div>
-                )}
+                <div className="pt-2 border-t border-rose-100/50 flex items-center justify-between gap-2">
+                  <span className="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold shrink-0">Chủ tài khoản</span>
+                  <span className="font-bold text-primary font-sans uppercase text-right truncate">{ACCOUNT_NAME}</span>
+                </div>
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { EVENT, EVENT_SCHEDULE } from "@/config/event";
 
 export default function EventInfo() {
-  const [activeDayIdx, setActiveDayIdx] = useState(3); // Default to 20/10
+  const [activeDayIdx, setActiveDayIdx] = useState(2); // Default to 20/10 (Index 2)
 
   const highlights = [
     {
@@ -38,11 +38,11 @@ export default function EventInfo() {
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-200/25 rounded-full blur-3xl pointer-events-none" />
 
         {/* Section Header */}
-        <div className="relative z-10 text-center max-w-3xl mx-auto mb-12">
+        <div className="relative z-10 text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-100/80 border border-rose-200 text-[#721a28] font-sans text-xs font-bold mb-3 shadow-xs">
             <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
             <span className="material-symbols-outlined text-[16px] text-rose-600">calendar_month</span>
-            <span>CHUỖI NGÀY HỘI 16/10 – 20/10/2026 • ĐẠI HỌC FPT TP.HCM</span>
+            <span>CHUỖI NGÀY HỘI 17/10 – 20/10/2026 • ĐẠI HỌC FPT TP.HCM</span>
           </div>
 
           <h2 className="font-headline text-3xl sm:text-4xl lg:text-5xl text-[#721a28] tracking-tight font-bold">
@@ -50,9 +50,85 @@ export default function EventInfo() {
           </h2>
 
           <p className="font-body text-sm sm:text-base text-stone-600 leading-relaxed mt-4 max-w-2xl mx-auto">
-            Không chỉ gói gọn trong một ngày, gian hàng phục vụ sinh viên FPTU xuyên suốt <strong>4 buổi ngày hội</strong> tại Sảnh Lầu 2 với workshop xỏ charm thủ công, trạm hoa tươi và trao gửi quà tặng số ý nghĩa.
+            Không chỉ gói gọn trong một ngày, gian hàng phục vụ sinh viên FPTU xuyên suốt <strong>3 buổi ngày hội</strong> tại Sảnh liên tầng lầu 1 &amp; lầu 3 với workshop xỏ charm thủ công, trạm hoa tươi và trao gửi quà tặng số ý nghĩa.
           </p>
         </div>
+
+        {/* ======================================================== */}
+        {/* CUTE ILLUSTRATED TIMELINE BANNER (Exact Style from User) */}
+        {/* ======================================================== */}
+        <div className="relative z-10 max-w-3xl mx-auto mb-10 rounded-[32px] p-6 sm:p-7 bg-[#ffd8de] border-2 border-[#fbbacf] shadow-[0_10px_30px_rgba(244,63,94,0.14)] overflow-hidden">
+          {/* Top-Right Decorative Swirl Doodle */}
+          <div className="absolute top-2 right-8 select-none pointer-events-none text-stone-800 opacity-75">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 4C8 4 6 7 6 10c0 4 5 7 10 7s4-3 4-6-3-6-8-6c-3 0-5 2-5 5" />
+            </svg>
+          </div>
+          {/* Bottom-Left Pink Corner with Yellow Dot */}
+          <div className="absolute -bottom-8 -left-8 w-20 h-20 rounded-full bg-[#ff758f] pointer-events-none flex items-center justify-center">
+            <div className="w-5 h-5 rounded-full bg-[#fef08a] translate-x-3 -translate-y-3 shadow-2xs" />
+          </div>
+          {/* Bottom-Right Playful Orange Doodle */}
+          <div className="absolute -bottom-3 -right-2 w-14 h-12 bg-[#fb923c] rounded-t-full pointer-events-none opacity-90" />
+
+          {/* Stepper Content */}
+          <div className="relative z-10 flex items-center justify-between max-w-2xl mx-auto px-2 sm:px-6">
+            {/* Step 1: 17 / 10 */}
+            <button
+              type="button"
+              onClick={() => setActiveDayIdx(0)}
+              className={`flex flex-col items-center text-center transition-all cursor-pointer p-2 rounded-2xl ${
+                activeDayIdx === 0 ? "scale-105 bg-white/50 ring-2 ring-[#0284c7]/40 shadow-xs" : "hover:scale-105"
+              }`}
+            >
+              <span className="font-handwriting font-bold text-2xl sm:text-4xl text-[#0284c7] tracking-wider leading-none">
+                17 / 10
+              </span>
+              <span className="font-sans font-bold text-xs sm:text-[15px] text-[#262626] mt-2 leading-tight">
+                Sảnh liên<br />tầng lầu 1
+              </span>
+            </button>
+
+            {/* Connecting Line 1 */}
+            <div className="flex-1 mx-2 sm:mx-6 h-1 bg-[#0284c7] rounded-full" />
+
+            {/* Step 2: 19 / 10 */}
+            <button
+              type="button"
+              onClick={() => setActiveDayIdx(1)}
+              className={`flex flex-col items-center text-center transition-all cursor-pointer p-2 rounded-2xl ${
+                activeDayIdx === 1 ? "scale-105 bg-white/50 ring-2 ring-[#0284c7]/40 shadow-xs" : "hover:scale-105"
+              }`}
+            >
+              <span className="font-handwriting font-bold text-2xl sm:text-4xl text-[#0284c7] tracking-wider leading-none">
+                19 / 10
+              </span>
+              <span className="font-sans font-bold text-xs sm:text-[15px] text-[#262626] mt-2 leading-tight">
+                Sảnh liên<br />tầng lầu 1
+              </span>
+            </button>
+
+            {/* Connecting Line 2 */}
+            <div className="flex-1 mx-2 sm:mx-6 h-1 bg-[#0284c7] rounded-full" />
+
+            {/* Step 3: 20 / 10 */}
+            <button
+              type="button"
+              onClick={() => setActiveDayIdx(2)}
+              className={`flex flex-col items-center text-center transition-all cursor-pointer p-2 rounded-2xl ${
+                activeDayIdx === 2 ? "scale-105 bg-white/50 ring-2 ring-[#0284c7]/40 shadow-xs" : "hover:scale-105"
+              }`}
+            >
+              <span className="font-handwriting font-bold text-2xl sm:text-4xl text-[#0284c7] tracking-wider leading-none">
+                20 / 10
+              </span>
+              <span className="font-sans font-bold text-xs sm:text-[15px] text-[#262626] mt-2 leading-tight">
+                Sảnh liên<br />tầng lầu 3
+              </span>
+            </button>
+          </div>
+        </div>
+
 
         {/* Asymmetric 2-Column Luxury Showcase */}
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
@@ -82,7 +158,7 @@ export default function EventInfo() {
 
               <div className="flex items-center gap-2 text-xs font-semibold text-stone-600 mb-6 font-sans">
                 <span className="material-symbols-outlined text-[17px] text-[#721a28]">location_on</span>
-                <span>Sảnh Lầu 2, Đại học FPT TP. Hồ Chí Minh</span>
+                <span>Sảnh liên tầng lầu 3, Đại học FPT TP. Hồ Chí Minh</span>
               </div>
 
               {/* 4 Feature Highlights */}
@@ -113,13 +189,13 @@ export default function EventInfo() {
           </div>
 
           {/* ======================================================== */}
-          {/* RIGHT: 4-DAY TIMELINE STEPPER (7 COLS) */}
+          {/* RIGHT: 3-DAY TIMELINE STEPPER (7 COLS) */}
           {/* ======================================================== */}
           <div className="lg:col-span-7 flex flex-col justify-between space-y-3.5">
             <div className="flex items-center justify-between px-1 mb-1">
               <span className="font-sans text-xs uppercase tracking-wider font-bold text-stone-500 flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[17px] text-[#721a28]">timeline</span>
-                <span>LỊCH TRÌNH 4 BUỔI TẠI TRƯỜNG (11:00 – 15:00)</span>
+                <span>LỊCH TRÌNH 3 BUỔI TẠI TRƯỜNG (11:00 – 15:00)</span>
               </span>
               <span className="text-xs text-stone-500 font-sans hidden sm:inline">
                 Nhấp để xem chi tiết từng đợt
@@ -198,7 +274,7 @@ export default function EventInfo() {
             <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/60 flex items-center justify-between text-xs font-sans text-amber-900 mt-2">
               <span className="flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px] text-amber-600">notifications_active</span>
-                <span>Địa điểm mở quầy cố định suốt 4 ngày: <strong>Sảnh Lầu 2, ĐH FPT TP.HCM</strong></span>
+                <span>Địa điểm mở quầy: <strong>Sảnh liên tầng lầu 1 (17/10 &amp; 19/10) • Sảnh liên tầng lầu 3 (20/10), ĐH FPT TP.HCM</strong></span>
               </span>
               <a href="#preorder" className="font-bold text-[#721a28] hover:underline shrink-0 ml-2">
                 Đặt giữ hoa ngay →

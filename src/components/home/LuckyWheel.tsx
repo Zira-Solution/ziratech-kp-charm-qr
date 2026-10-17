@@ -208,7 +208,7 @@ export default function LuckyWheel() {
           </h2>
 
           <p className="font-body text-sm sm:text-base text-rose-100/90 mt-4 leading-relaxed max-w-2xl mx-auto">
-            Diễn ra <span className="text-amber-200 font-semibold">trong chuỗi ngày hội 16/10 – 20/10 (Cao điểm ngày 20/10)</span> tại gian hàng K&amp;P Atelier ĐH FPT.
+            Diễn ra <span className="text-amber-200 font-semibold">trong chuỗi ngày hội 17/10 – 20/10 (Cao điểm ngày 20/10)</span> tại gian hàng K&amp;P Atelier ĐH FPT.
             Mỗi đơn hàng hoặc trải nghiệm tự làm vòng đều nhận được <strong className="text-white">01 lượt quay trúng thưởng 100%</strong> mang về kỷ vật ấm áp!
           </p>
 
@@ -220,7 +220,7 @@ export default function LuckyWheel() {
             </span>
             <span>Thứ Ba, 20/10/2026 (11:00 – 15:00)</span>
             <span className="opacity-40">•</span>
-            <span>Sảnh lầu 2, ĐH FPT</span>
+            <span>Sảnh liên tầng lầu 3, ĐH FPT</span>
           </div>
         </div>
 
@@ -540,7 +540,7 @@ export default function LuckyWheel() {
                   <div className="text-xl mb-1">🧵</div>
                   <div className="font-headline text-sm font-bold text-white">2. Ghé Quầy</div>
                   <p className="font-sans text-[11px] text-rose-200/80 mt-1 leading-snug">
-                    Tham gia workshop làm vòng tại sảnh lầu 2 ĐH FPT ngày 20/10.
+                    Tham gia workshop làm vòng tại Sảnh liên tầng lầu 3 ĐH FPT ngày 20/10.
                   </p>
                 </div>
 
@@ -687,7 +687,7 @@ export default function LuckyWheel() {
                 <span>Hẹn gặp bạn vào ngày 20/10 tại ĐH FPT!</span>
               </div>
               <p className="font-sans text-xs text-rose-100/90 leading-snug">
-                Đây là lượt quay thử nghiệm. Vào đúng ngày 20/10, bạn hãy mang mã đơn đặt trước hoặc ghé sảnh lầu 2 ĐH FPT để quay trực tiếp và rinh quà thật mang về nhé!
+                Đây là lượt quay thử nghiệm. Vào đúng ngày 20/10, bạn hãy mang mã đơn đặt trước hoặc ghé Sảnh liên tầng lầu 3 ĐH FPT để quay trực tiếp và rinh quà thật mang về nhé!
               </p>
             </div>
 

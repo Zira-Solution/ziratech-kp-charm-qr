@@ -712,7 +712,7 @@ body:has(.studio-light) {
 .animate-filmstrip {
   display: flex;
   width: max-content;
-  animation: filmstripScroll 26s linear infinite;
+  animation: filmstripScroll 120s linear infinite;
 }
 
 .animate-filmstrip:hover,

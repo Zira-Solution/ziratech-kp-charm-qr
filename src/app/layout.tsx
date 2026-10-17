@@ -17,10 +17,15 @@ const merriweather = Merriweather({
 });
 
 export const metadata: Metadata = {
-  title: "K&P Atelier — Vòng Tay Charm & Quà Tặng Số 20/10 | Gây Quỹ Sân Nhà Nhiều Chó",
+  title: "Team K&P — Vòng Tay Charm & Quà Tặng Số 20/10 | Gây Quỹ Sân Nhà Nhiều Chó",
   description:
-    "Trải nghiệm quà tặng Phygital 20/10 độc quyền tại ĐH FPT TP.HCM. Mỗi chiếc vòng tay charm có mã QR gửi qua email để mở trang quà số cá nhân hóa. Lợi nhuận của dự án được dành ủng hộ trạm cứu hộ Sân Nhà Nhiều Chó.",
+    "Trải nghiệm quà tặng Phygital 20/10 độc quyền tại ĐH FPT TP.HCM bởi Team K&P. Mỗi chiếc vòng tay charm có mã QR gửi qua email để mở trang quà số cá nhân hóa. Lợi nhuận của dự án được dành ủng hộ trạm cứu hộ Sân Nhà Nhiều Chó.",
+  icons: {
+    icon: "/images/logo_icon_kp.png",
+    apple: "/images/logo_icon_kp.png",
+  },
   keywords: [
+    "Team K&P",
     "K&P Atelier",
     "quà tặng 20/10",
     "vòng tay charm",

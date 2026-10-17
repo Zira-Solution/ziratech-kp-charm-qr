@@ -7,7 +7,7 @@ import Link from "next/link";
 const TRUST = [
   { icon: "qr_code_2", text: "Trang thiệp số đa phương tiện 1:1" },
   { icon: "inventory_2", text: "Hộp quà đóng gói tinh tế, chỉn chu" },
-  { icon: "storefront", text: "Gian hàng phục vụ 16/10 – 20/10 tại trường" },
+  { icon: "storefront", text: "Gian hàng phục vụ 17/10 – 20/10 tại trường" },
 ];
 
 const IMPACT = [
@@ -40,8 +40,8 @@ export function Hero() {
       <div className="flex flex-col items-center text-center space-y-5 sm:space-y-6 w-full max-w-6xl mx-auto">
         {/* Top Charity Badge */}
         <div className="inline-flex items-center gap-2 px-4.5 py-1.5 rounded-full bg-white/80 backdrop-blur-xl border border-white/95 text-secondary-dark font-sans text-xs sm:text-sm font-semibold shadow-xs hover:shadow-sm transition-all">
-          <span className="material-symbols-outlined text-[15px] sm:text-[16px] text-primary animate-pulse">favorite</span>
-          <span>Bộ Sưu Tập Quà Tặng 20/10 • Gây Quỹ Cứu Trợ Động Vật</span>
+          <img src="/images/logo_icon_kp.png" alt="Team K&P" className="w-5 h-5 object-contain" />
+          <span>Team K&amp;P • Bộ Sưu Tập Quà Tặng 20/10 Gây Quỹ Cứu Trợ Động Vật</span>
         </div>
 
         {/* Main Centered Headline - Broad, Elegant 2 Lines */}

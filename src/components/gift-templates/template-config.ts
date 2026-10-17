@@ -64,36 +64,6 @@ export const TEMPLATES: readonly TemplateInfo[] = [
     previewBg: "linear-gradient(135deg, #fdfbf7 0%, #f4ede4 100%)",
     allowedBlocks: TEMPLATE_ALLOWED_BLOCKS["storybook-sunset"],
   },
-  {
-    id: "vintage-scrapbook",
-    name: "Sổ Hoa Khô",
-    icon: "🌸",
-    desc: "Giấy vintage, washi tape mộc mạc",
-    tag: "Thư tay & Kỷ niệm",
-    accentColor: "#b84f45",
-    previewBg: "linear-gradient(135deg, #fbf5ee 0%, #ebdccd 100%)",
-    allowedBlocks: TEMPLATE_ALLOWED_BLOCKS["vintage-scrapbook"],
-  },
-  {
-    id: "retro-nostalgia",
-    name: "Retro 90s",
-    icon: "📼",
-    desc: "Nền chấm bi, tiêu đề 3D, màu hoài niệm",
-    tag: "Mixtape & Video",
-    accentColor: "#d97736",
-    previewBg: "linear-gradient(135deg, #fff9e6 0%, #ffeec2 100%)",
-    allowedBlocks: TEMPLATE_ALLOWED_BLOCKS["retro-nostalgia"],
-  },
-  {
-    id: "kp-atelier",
-    name: "K&P Atelier",
-    icon: "💌",
-    desc: "Giấy kem trang nhã, chữ nghiêng đỏ rượu, ảnh polaroid",
-    tag: "Chữ ký K&P sang trọng",
-    accentColor: "#721a28",
-    previewBg: "linear-gradient(135deg, #fdfbf7 0%, #f2eae0 100%)",
-    allowedBlocks: TEMPLATE_ALLOWED_BLOCKS["kp-atelier"],
-  },
 ];
 
 export const DEFAULT_TEMPLATE: GiftTemplateId = "storybook-sunset";

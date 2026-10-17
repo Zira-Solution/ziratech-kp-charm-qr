@@ -20,7 +20,7 @@ export default function TemplatePicker({ step, value, onChange, onPreview }: Pro
       title="Chọn phong cách thiệp"
       hint="Chọn mẫu thiệp bạn yêu thích để bắt đầu thiết kế."
     >
-      <div role="radiogroup" aria-label="Mẫu thiệp" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div role="radiogroup" aria-label="Mẫu thiệp" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 max-w-2xl">
         {TEMPLATES.map((tpl) => {
           const selected = tpl.id === value;
           return (
@@ -57,52 +57,6 @@ export default function TemplatePicker({ step, value, onChange, onPreview }: Pro
                     <div className="flex gap-1">
                       <span className="w-10 h-1 rounded-full bg-amber-300/60" />
                       <span className="w-5 h-1 rounded-full bg-rose-200/60" />
-                    </div>
-                  </div>
-                )}
-
-                {tpl.id === "vintage-scrapbook" && (
-                  <div className="w-full h-full rounded-md bg-[#fffdf7] border border-[#e6d8c5] shadow-2xs flex flex-col items-center justify-between p-2 rotate-[-0.5deg]">
-                    <div className="w-8 h-1.5 bg-[#d8c8b4]/70 rounded-xs -mt-1 shadow-2xs" />
-                    <div className="w-full h-8 rounded border border-dashed border-[#d8c8b4] bg-[#faf5ec]/50 flex items-center justify-center">
-                      <span className="w-5 h-5 rounded-full bg-[#e8dac7]/60" />
-                    </div>
-                    <div className="w-12 h-1 rounded-full bg-[#d8c8b4]/60" />
-                  </div>
-                )}
-
-                {tpl.id === "retro-nostalgia" && (
-                  <div className="w-full h-full rounded-md bg-amber-50/90 border border-amber-900/20 shadow-2xs flex flex-col justify-between p-2">
-                    <div className="flex items-center justify-between px-1">
-                      <span className="w-3 h-3 rounded-full border border-amber-800/30 bg-amber-900/10 flex items-center justify-center">
-                        <span className="w-1 h-1 rounded-full bg-amber-800/40" />
-                      </span>
-                      <span className="w-10 h-2 rounded-xs bg-amber-900/15" />
-                      <span className="w-3 h-3 rounded-full border border-amber-800/30 bg-amber-900/10 flex items-center justify-center">
-                        <span className="w-1 h-1 rounded-full bg-amber-800/40" />
-                      </span>
-                    </div>
-                    <div className="w-full h-6 rounded bg-[#2a2421]/90 flex items-center justify-center">
-                      <div className="w-14 h-1.5 rounded-xs bg-amber-500/30" />
-                    </div>
-                    <div className="w-8 h-1 rounded-full bg-amber-800/25 self-center" />
-                  </div>
-                )}
-
-                {tpl.id === "kp-atelier" && (
-                  <div className="w-full h-full rounded-lg bg-white/80 border border-rose-300/60 shadow-2xs flex flex-col justify-between p-2">
-                    <div className="flex justify-between items-center">
-                      <span className="w-2 h-2 rounded-full border border-rose-400/50" />
-                      <span className="w-6 h-1 rounded-full bg-rose-200" />
-                      <span className="w-2 h-2 rounded-full border border-rose-400/50" />
-                    </div>
-                    <div className="flex justify-center items-center">
-                      <div className="w-6 h-6 rounded-full bg-rose-100/90 border border-rose-300/70 flex items-center justify-center shadow-2xs">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#721a28]/25" />
-                      </div>
-                    </div>
-                    <div className="flex justify-center">
-                      <span className="w-10 h-1 rounded-full bg-rose-300/40" />
                     </div>
                   </div>
                 )}

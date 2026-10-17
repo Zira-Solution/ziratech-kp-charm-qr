@@ -1106,38 +1106,34 @@ export default function StorybookSunsetTemplate({
       {renderTopBar("07", true)}
 
       {/* Header: Cảm ơn bạn ❤️ đã đi qua những ngày này cùng mình */}
-      <div className="relative z-10 text-center mt-2 flex flex-col items-center">
+      <div className="relative z-10 text-center mt-2 flex flex-col items-center px-2">
         <div className="inline-flex items-center justify-center gap-2">
           <h2 className="font-handwriting font-black text-3xl sm:text-4xl text-[#1c3f50] drop-shadow-md">
             Cảm ơn bạn
           </h2>
           <span className="text-[#c13d28] text-2xl sm:text-3xl animate-pulse">❤️</span>
         </div>
-        <p className="font-handwriting text-lg sm:text-xl text-[#3d2417] font-bold mt-0.5 drop-shadow-sm">
+        <p className="font-handwriting text-base sm:text-lg text-[#3d2417] font-bold mt-0.5 drop-shadow-xs">
           đã đi qua những ngày này cùng mình.
         </p>
-      </div>
 
-      {/* Middle Note: Taped Paper Card using original giấy.png */}
-      <div className="relative z-10 my-auto w-full max-w-xs mx-auto flex items-center justify-center">
-        <img
-          src="/thamkhao/paper.png"
-          alt="Giấy ghi chú"
-          className="w-full h-auto object-contain drop-shadow-2xl"
-        />
-        <div className="absolute inset-0 px-6 pt-5 pb-3 flex items-center justify-center text-center">
-          <p className="font-handwriting text-sm sm:text-base text-[#2e1d1b] font-semibold leading-relaxed">
+        {/* Message card floating softly in the pastel sky */}
+        <div className="mt-2 px-4 py-2 rounded-2xl bg-white/80 backdrop-blur-xs border border-white/85 shadow-sm max-w-[280px] sm:max-w-xs text-center">
+          <p className="font-handwriting text-sm sm:text-base text-[#2e1d1b] font-semibold leading-snug">
             Món quà này sẽ luôn ở đây, mỗi khi bạn muốn nhớ lại.
           </p>
         </div>
       </div>
 
+      {/* Scenic middle spacer: couple and sunset are completely unobstructed */}
+      <div className="flex-1 min-h-0 pointer-events-none" />
+
       {/* Bottom Two Action Buttons: Xem Lại & Lưu Lại */}
-      <div className="relative z-20 w-full max-w-xs mx-auto grid grid-cols-2 gap-3 pb-2">
+      <div className="relative z-20 w-full max-w-xs mx-auto grid grid-cols-2 gap-3 pb-2 px-2">
         <button
           type="button"
           onClick={() => goToSlide(1)}
-          className="py-3 px-4 rounded-full bg-[#1c3f50]/95 hover:bg-[#163341] active:scale-95 text-white font-serif font-bold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-1.5 transition-all hover:scale-105 cursor-pointer border border-white/20"
+          className="py-3 px-4 rounded-full bg-[#1c3f50]/95 hover:bg-[#163341] active:scale-95 text-white font-serif font-bold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-1.5 transition-all hover:scale-105 cursor-pointer border border-white/20 backdrop-blur-xs"
         >
           <span className="material-symbols-outlined text-[18px]">replay</span>
           <span>Xem lại</span>
@@ -1146,7 +1142,7 @@ export default function StorybookSunsetTemplate({
         <button
           type="button"
           onClick={handleSave}
-          className="py-3 px-4 rounded-full bg-[#c13d28]/95 hover:bg-[#a83232] active:scale-95 text-white font-serif font-bold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-1.5 transition-all hover:scale-105 cursor-pointer border border-white/20"
+          className="py-3 px-4 rounded-full bg-[#c13d28]/95 hover:bg-[#a83232] active:scale-95 text-white font-serif font-bold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-1.5 transition-all hover:scale-105 cursor-pointer border border-white/20 backdrop-blur-xs"
         >
           <span className="material-symbols-outlined text-[18px]">download</span>
           <span>Lưu lại</span>

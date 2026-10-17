@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import confetti from "canvas-confetti";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
 import StorybookHeader from "./StorybookHeader";
@@ -255,8 +256,16 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
 
         {/* 3D Gift Box on the Right */}
         <div
-          onClick={ctx.next}
-          className="relative w-28 sm:w-36 mb-1 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 drop-shadow-2xl flex flex-col items-center"
+          onClick={() => {
+            confetti({
+              particleCount: 50,
+              spread: 60,
+              origin: { y: 0.75, x: 0.75 },
+              colors: ["#c13d28", "#e38b29", "#ffd166", "#f4a261"],
+            });
+            ctx.next();
+          }}
+          className="relative w-32 sm:w-38 mb-2 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 drop-shadow-2xl flex flex-col items-center"
           title="Chạm để mở món quà!"
         >
           <img
@@ -264,26 +273,11 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
             alt="Hộp quà tặng"
             className="w-full h-auto object-contain transform group-hover:-translate-y-1 transition-transform"
           />
-          <span className="absolute -top-3 right-1 px-2 py-0.5 bg-[#fffdfa]/95 text-[#c13d28] font-handwriting font-bold text-[10px] sm:text-[11px] rounded-full shadow-md border border-[#ebdccd] group-hover:scale-110 transition-transform">
-            Mở quà ✨
+          <span className="absolute -top-3 right-0 sm:right-1 px-2.5 py-0.5 bg-[#fffdfa]/95 text-[#c13d28] font-handwriting font-bold text-[11px] sm:text-xs rounded-full shadow-md border border-[#ebdccd] group-hover:scale-110 transition-transform flex items-center gap-1">
+            <span>Mở quà</span>
+            <span>✨</span>
           </span>
         </div>
-      </div>
-
-      {/* Bottom CTA Button: Chạm để mở món quà → */}
-      <div className="relative z-20 w-full flex justify-center pb-1 shrink-0">
-        <button
-          type="button"
-          onClick={ctx.next}
-          className="w-full max-w-[280px] sm:max-w-xs py-2.5 sm:py-3 px-6 rounded-full bg-[#fffbf5]/95 hover:bg-white text-[#3d2417] font-serif font-bold text-xs sm:text-sm shadow-xl border border-[#d8c8b4] transition-all hover:shadow-2xl hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 group cursor-pointer"
-        >
-          <span>
-            Chạm để mở món <strong className="text-[#c13d28]">quà</strong>
-          </span>
-          <span className="text-[#c13d28] group-hover:translate-x-1.5 transition-transform text-base">
-            →
-          </span>
-        </button>
       </div>
     </div>
   );

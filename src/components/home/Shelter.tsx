@@ -4,35 +4,16 @@ import React, { useEffect, useState } from "react";
 
 const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(Math.round(n))}đ`;
 
-const QUICK = [
-  { amount: 20000, label: "20.000đ" },
-  { amount: 50000, label: "50.000đ" },
-  { amount: 100000, label: "100.000đ" },
-];
+// Receiving account (the one linked to SePay).
+// If not configured in environment variables, use default demo preview.
+const BANK = process.env.NEXT_PUBLIC_DONATION_BANK || "MBBank";
+const ACCOUNT = process.env.NEXT_PUBLIC_DONATION_ACCOUNT || "0868888888";
+const ACCOUNT_NAME = process.env.NEXT_PUBLIC_DONATION_NAME || "QUY CUU HO SAN NHA NHIEU CHO";
 
-// Receiving account (the one linked to SePay). Public by nature: it is what the QR code encodes.
-const BANK = process.env.NEXT_PUBLIC_DONATION_BANK ?? "";
-const ACCOUNT = process.env.NEXT_PUBLIC_DONATION_ACCOUNT ?? "";
-const ACCOUNT_NAME = process.env.NEXT_PUBLIC_DONATION_NAME ?? "";
-
-/** Transfer notes must be plain ASCII for banks: strip accents, keep letters/digits/spaces. */
-function toTransferNote(name: string): string {
-  const clean = name
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/đ/gi, "d")
-    .toUpperCase()
-    .replace(/[^A-Z0-9 ]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 30);
-  return `KP2010 ${clean || "UNG HO"}`;
-}
+const TRANSFER_NOTE = "Ho_va_Ten_MSSV";
 
 export default function Shelter() {
-  const [amount, setAmount] = useState(20000);
-  const [name, setName] = useState("");
-  const [anonymous, setAnonymous] = useState(false);
+  const [copiedAccount, setCopiedAccount] = useState(false);
   const [raised, setRaised] = useState<{ total: number; count: number } | null>(null);
 
   useEffect(() => {
@@ -48,12 +29,24 @@ export default function Shelter() {
     };
   }, []);
 
-  const note = toTransferNote(anonymous ? "" : name);
-  const safeAmount = Number.isFinite(amount) && amount > 0 ? Math.round(amount) : 0;
   const qrReady = Boolean(BANK && ACCOUNT);
+  // Omit amount param so banking apps let the donor freely choose their donation amount
   const qrSrc = qrReady
-    ? `https://qr.sepay.vn/img?acc=${encodeURIComponent(ACCOUNT)}&bank=${encodeURIComponent(BANK)}&amount=${safeAmount}&des=${encodeURIComponent(note)}`
+    ? `https://qr.sepay.vn/img?acc=${encodeURIComponent(ACCOUNT)}&bank=${encodeURIComponent(BANK)}&des=${encodeURIComponent(TRANSFER_NOTE)}`
     : "";
+
+  const handleCopyAccount = async () => {
+    if (!ACCOUNT) return;
+    try {
+      await navigator.clipboard.writeText(ACCOUNT);
+      setCopiedAccount(true);
+      setTimeout(() => setCopiedAccount(false), 2000);
+    } catch {
+      // Fallback
+      setCopiedAccount(true);
+      setTimeout(() => setCopiedAccount(false), 2000);
+    }
+  };
 
   return (
     <section className="max-w-7xl mx-auto px-6 py-20" id="shelter">
@@ -105,108 +98,106 @@ export default function Shelter() {
 
         {/* Donation box */}
         <div
-          className="lg:col-span-6 bg-linear-to-br from-white/80 via-white/60 to-white/40 backdrop-blur-2xl rounded-[38px] p-6 sm:p-8 border border-white/90 shadow-liquid-card"
+          className="lg:col-span-6 bg-linear-to-br from-white/85 via-white/65 to-white/45 backdrop-blur-2xl rounded-[38px] p-6 sm:p-8 border border-white/90 shadow-liquid-card flex flex-col justify-between"
           id="shelter-donate"
         >
-          <div className="flex items-center justify-between gap-3 mb-4">
-            <h3 className="font-headline text-2xl text-primary font-bold">Ủng Hộ Trực Tiếp Cho Trạm</h3>
-            <span className="px-3.5 py-1 rounded-full bg-white/80 backdrop-blur-md text-primary font-sans text-xs font-bold border border-white/80 shadow-xs">
-              Tùy tâm
-            </span>
-          </div>
-          <p className="font-sans text-xs text-on-surface-variant mb-6 leading-relaxed">
-            Nếu bạn không có nhu cầu nhận hoa hoặc quà, bạn vẫn có thể gửi gắm tấm lòng tới trạm cứu hộ thông qua cổng tiếp nhận của sinh viên K&amp;P:
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4" role="group" aria-label="Chọn nhanh số tiền">
-            {QUICK.map((q) => {
-              const on = safeAmount === q.amount;
-              return (
-                <button
-                  key={q.amount}
-                  type="button"
-                  aria-pressed={on}
-                  onClick={() => setAmount(q.amount)}
-                  className={`py-2.5 rounded-full border font-sans text-xs transition-all ${
-                    on
-                      ? "border-white/30 bg-linear-to-r from-[#721a28] to-[#8c2233] text-white font-bold shadow-pill"
-                      : "border-white/80 bg-white/65 backdrop-blur-md hover:border-primary text-primary font-semibold shadow-xs"
-                  }`}
-                >
-                  {q.label}
-                </button>
-              );
-            })}
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <h3 className="font-headline text-2xl text-primary font-bold">Ủng Hộ Trực Tiếp Cho Trạm</h3>
+              <span className="px-3.5 py-1 rounded-full bg-white/80 backdrop-blur-md text-primary font-sans text-xs font-bold border border-white/80 shadow-xs flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px] text-secondary-dark">favorite</span>
+                Tùy tâm đóng góp
+              </span>
+            </div>
+            <p className="font-sans text-xs text-on-surface-variant leading-relaxed">
+              Mỗi sự đóng góp dù nhỏ nhất từ bạn đều là những bữa ăn no, liều thuốc ấm và tình yêu thương tiếp sức cho hơn 120 bé cún mèo già yếu, cơ nhỡ tại trạm cứu hộ Sân Nhà Nhiều Chó.
+            </p>
           </div>
 
-          <div className="space-y-4 mb-6">
-            <div>
-              <label className="block font-sans text-xs text-neutral font-semibold mb-1" htmlFor="custom-amount">
-                Số tiền tùy chỉnh (VNĐ)
-              </label>
-              <input
-                className="w-full px-5 py-2.5 bg-white/70 backdrop-blur-md border border-white/80 rounded-full focus:border-primary focus:outline-none text-primary font-semibold text-sm shadow-inner"
-                id="custom-amount"
-                type="number"
-                min={1000}
-                step={1000}
-                value={amount || ""}
-                onChange={(e) => setAmount(Number(e.target.value))}
-              />
-            </div>
-            <div>
-              <label className="block font-sans text-xs text-neutral font-semibold mb-1" htmlFor="donor-name">
-                Tên người gửi / Lời chúc ấm áp
-              </label>
-              <input
-                className="w-full px-5 py-2.5 bg-white/70 backdrop-blur-md border border-white/80 rounded-full focus:border-primary focus:outline-none text-primary text-sm shadow-inner disabled:opacity-50"
-                id="donor-name"
-                maxLength={30}
-                placeholder="Nguyễn Văn A - Sinh viên K18"
-                type="text"
-                disabled={anonymous}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                className="accent-primary w-4 h-4"
-                id="anon-check"
-                type="checkbox"
-                checked={anonymous}
-                onChange={(e) => setAnonymous(e.target.checked)}
-              />
-              <label className="font-sans text-xs text-on-surface-variant font-medium" htmlFor="anon-check">
-                Ủng hộ ẩn danh trên bảng sao kê
-              </label>
-            </div>
-          </div>
-
-          <div className="p-5 rounded-[26px] bg-white/60 backdrop-blur-xl border border-white/80 shadow-xs flex flex-col sm:flex-row items-center gap-4">
-            <div className="w-36 h-36 shrink-0 bg-white/90 backdrop-blur-md p-2 rounded-[22px] border border-white/90 shadow-sm flex items-center justify-center">
-              {qrReady ? (
-                <img className="w-full h-full object-contain" alt={`Mã QR chuyển khoản ${vnd(safeAmount)}`} src={qrSrc} />
-              ) : (
-                <div className="text-center font-mono text-xs text-on-surface-variant flex flex-col items-center">
-                  <span className="material-symbols-outlined text-4xl text-primary mb-1">qr_code_2</span>
-                  <span className="text-[10px]">Mã QR sẽ hiện khi cấu hình tài khoản nhận</span>
-                </div>
-              )}
-            </div>
-            <div className="flex-1 min-w-0 space-y-1 text-xs text-on-surface-variant">
-              <div className="font-bold text-primary text-sm">Nội dung chuyển khoản tự động:</div>
-              <div className="p-2.5 rounded-full bg-white/80 backdrop-blur-md font-mono text-primary font-bold text-xs select-all border border-white/90 text-center shadow-xs break-all">
-                {note}
+          {/* Main QR Section & Bank details */}
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center p-5 rounded-[28px] bg-white/65 backdrop-blur-xl border border-white/85 shadow-xs mb-5">
+            {/* QR Code */}
+            <div className="sm:col-span-5 flex flex-col items-center justify-center">
+              <div className="relative group p-2.5 bg-white rounded-3xl border border-rose-100/80 shadow-md transition-all duration-300 hover:shadow-lg">
+                {qrReady ? (
+                  <img
+                    className="w-40 h-40 sm:w-44 sm:h-44 object-contain rounded-2xl"
+                    alt="Mã QR chuyển khoản ủng hộ trạm"
+                    src={qrSrc}
+                  />
+                ) : (
+                  <div className="w-40 h-40 flex flex-col items-center justify-center text-center p-2 font-mono text-xs text-on-surface-variant">
+                    <span className="material-symbols-outlined text-4xl text-primary mb-1">qr_code_2</span>
+                    <span className="text-[10px]">Chưa cấu hình tài khoản nhận</span>
+                  </div>
+                )}
               </div>
-              {qrReady && (
-                <div className="pt-1">
-                  {BANK} · <span className="font-mono select-all">{ACCOUNT}</span>
-                  {ACCOUNT_NAME ? ` · ${ACCOUNT_NAME}` : ""}
-                </div>
-              )}
-              <div className="text-secondary-dark font-semibold">100% tiền gửi được chuyển trực tiếp vào tài khoản trạm cứu hộ.</div>
+              <div className="mt-2.5 flex items-center gap-1 text-[11px] font-medium text-on-surface-variant text-center">
+                <span className="material-symbols-outlined text-[14px] text-primary">qr_code_scanner</span>
+                <span>Quét bằng App Ngân hàng / MoMo</span>
+              </div>
             </div>
+
+            {/* Bank details info */}
+            <div className="sm:col-span-7 flex flex-col space-y-3 text-xs">
+              <div className="p-3.5 rounded-2xl bg-white/85 border border-white/90 shadow-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Ngân hàng</span>
+                  <span className="font-bold text-primary font-sans">{BANK}</span>
+                </div>
+                
+                <div className="pt-2 border-t border-rose-100/50 flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="text-[11px] text-on-surface-variant uppercase tracking-wider block font-semibold mb-0.5">Số tài khoản</span>
+                    <span className="font-mono text-base font-bold text-primary tracking-wider select-all">{ACCOUNT}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCopyAccount}
+                    className={`shrink-0 px-3 py-1.5 rounded-full font-sans text-xs font-semibold flex items-center gap-1 transition-all ${
+                      copiedAccount
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                        : "bg-white hover:bg-rose-50 text-primary border border-rose-150 hover:border-primary/40 shadow-xs"
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-[14px]">
+                      {copiedAccount ? "check" : "content_copy"}
+                    </span>
+                    <span>{copiedAccount ? "Đã chép" : "Sao chép"}</span>
+                  </button>
+                </div>
+
+                {ACCOUNT_NAME && (
+                  <div className="pt-2 border-t border-rose-100/50 flex items-center justify-between gap-2">
+                    <span className="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold shrink-0">Chủ tài khoản</span>
+                    <span className="font-bold text-primary font-sans uppercase text-right truncate">{ACCOUNT_NAME}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Transfer syntax */}
+          <div className="p-4 rounded-[26px] bg-white/70 backdrop-blur-xl border border-white/90 shadow-xs mb-5">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-primary mb-2">
+              <span className="material-symbols-outlined text-[16px] text-secondary-dark">badge</span>
+              <span>Cú pháp nội dung chuyển khoản gợi ý:</span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-linear-to-r from-rose-50/90 via-white to-rose-50/90 border border-rose-100 text-center font-mono text-primary font-bold text-base sm:text-lg tracking-wide select-all shadow-inner">
+              {TRANSFER_NOTE}
+            </div>
+
+            <p className="mt-2 text-center text-xs text-on-surface-variant font-medium">
+              Khi chuyển khoản, bạn vui lòng thay bằng <strong className="text-primary font-semibold">Họ và Tên kèm MSSV của bạn</strong> (Ví dụ: <code className="font-mono text-primary font-bold">Nguyen_Van_A_SE180000</code>).
+            </p>
+          </div>
+
+          {/* Footer note */}
+          <div className="p-3 rounded-2xl bg-rose-50/70 border border-rose-100/80 flex items-center gap-2 text-xs text-secondary-dark font-medium">
+            <span className="material-symbols-outlined text-[18px] text-secondary-dark shrink-0">verified</span>
+            <span>100% tiền gửi được chuyển trực tiếp vào tài khoản trạm cứu hộ &amp; cập nhật minh bạch trên sao kê.</span>
           </div>
         </div>
       </div>

@@ -101,17 +101,11 @@ export default function HomeHeader() {
           {/* Brand Logo & Title */}
           <a
             href="#hero"
-            className="flex items-center gap-2 sm:gap-2.5 xl:gap-3 group shrink-0"
+            className="flex items-center group shrink-0"
             aria-label="Về đầu trang K&P Atelier"
           >
-            {/* Jewelry Medallion Seal Monogram */}
-            <div className="relative w-8.5 h-8.5 sm:w-10 sm:h-10 shrink-0 rounded-full bg-linear-to-br from-[#721a28] via-[#8c2233] to-[#5a121e] text-white flex items-center justify-center font-headline font-bold text-xs sm:text-base tracking-tight shadow-[0_3px_12px_rgba(114,26,40,0.28)] border border-rose-300/35 group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300 overflow-hidden">
-              <span className="relative z-10 font-bold">K&amp;P</span>
-              <div className="absolute inset-0 bg-linear-to-tr from-transparent via-white/20 to-transparent pointer-events-none" />
-            </div>
-
             <div className="flex flex-col shrink-0">
-              <span className="font-headline text-sm sm:text-base xl:text-lg text-primary tracking-tight font-bold leading-tight group-hover:text-[#721a28] transition-colors">
+              <span className="font-headline text-base sm:text-lg xl:text-xl text-primary tracking-tight font-bold leading-tight group-hover:text-[#721a28] transition-colors">
                 K&amp;P Atelier
               </span>
               <span className="font-sans text-[9px] sm:text-[10px] text-secondary-dark tracking-wider uppercase font-semibold whitespace-nowrap">
@@ -200,16 +194,11 @@ export default function HomeHeader() {
           >
             {/* Drawer Header */}
             <div className="flex items-center justify-between pb-3 border-b border-rose-100/60">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-linear-to-br from-[#721a28] to-[#8c2233] text-white flex items-center justify-center font-headline font-bold text-xs shadow-xs">
-                  K&amp;P
-                </div>
-                <div>
-                  <h3 className="font-headline font-bold text-sm text-primary">K&amp;P Atelier</h3>
-                  <p className="font-sans text-[10px] text-secondary-dark uppercase font-semibold">
-                    Menu điều hướng
-                  </p>
-                </div>
+              <div>
+                <h3 className="font-headline font-bold text-sm text-primary">K&amp;P Atelier</h3>
+                <p className="font-sans text-[10px] text-secondary-dark uppercase font-semibold">
+                  Menu điều hướng
+                </p>
               </div>
               <button
                 type="button"

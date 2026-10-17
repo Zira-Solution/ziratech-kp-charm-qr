@@ -55,9 +55,11 @@ export default function CardStudioPage() {
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<GiftTemplateId>("storybook-sunset");
+  const [previewInitialMode, setPreviewInitialMode] = useState<"demo" | "draft">("demo");
 
-  const openPreview = (tpl?: GiftTemplateId) => {
+  const openPreview = (tpl?: GiftTemplateId, mode: "demo" | "draft" = "demo") => {
     setPreviewTemplate(tpl || draft.template);
+    setPreviewInitialMode(mode);
     setPreviewOpen(true);
   };
 
@@ -409,7 +411,7 @@ export default function CardStudioPage() {
                 step={nextStep()}
                 value={draft.template}
                 onChange={handleTemplateChange}
-                onPreview={openPreview}
+                onPreview={(tplId) => openPreview(tplId, "demo")}
               />
               {/* On mobile screens (< lg), show NamesBlock in the step flow */}
               <div className="lg:hidden">
@@ -510,7 +512,7 @@ export default function CardStudioPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => openPreview()}
+                    onClick={() => openPreview(undefined, draft.blocks.length > 0 ? "draft" : "demo")}
                     className="inline-flex min-h-11 items-center gap-2 rounded-xl liquid-glass-btn-primary text-white px-5 text-xs font-bold cursor-pointer shadow-xs transition-colors"
                   >
                     <Icon name="visibility" className="text-[18px]" />
@@ -519,6 +521,7 @@ export default function CardStudioPage() {
                 </div>
               </section>
 
+              <FinalMessageBlock step={nextStep()} draft={draft} onChange={update} />
               <PinBlock step={nextStep()} draft={draft} onChange={update} />
             </div>
           )}
@@ -565,7 +568,7 @@ export default function CardStudioPage() {
         </div>
 
         <aside className="hidden space-y-4 lg:sticky lg:top-6 lg:col-span-4 lg:block">
-          <PreviewCard draft={draft} onOpenFullPreview={() => openPreview()} />
+          <PreviewCard draft={draft} onOpenFullPreview={() => openPreview(undefined, draft.blocks.length > 0 ? "draft" : "demo")} />
           <NamesBlock
             draft={draft}
             onChange={update}
@@ -583,6 +586,7 @@ export default function CardStudioPage() {
         <PreviewOverlay
           draft={draft}
           template={previewTemplate}
+          initialMode={previewInitialMode}
           onTemplateChange={(tpl) => {
             setPreviewTemplate(tpl);
             update({ template: tpl });

@@ -72,6 +72,7 @@ export function normalizeGift(saved: unknown): ViewerGift {
     sender: anonymous ? "" : str(g.senderName).trim(),
     anonymous,
     addressing: str(g.addressing).trim(),
+    finalMessage: str(g.finalMessage).trim() || undefined,
     photos: [],
     timeline: [],
   };

@@ -41,11 +41,11 @@ export interface GiftTemplate {
 }
 
 const BLOCK_SLIDE: Record<BlockId, { label: string; icon: string }> = {
-  letter: { label: "Thư tay", icon: "mail" },
-  photos: { label: "Ảnh", icon: "photo_library" },
-  voice: { label: "Ghi âm", icon: "mic" },
-  video: { label: "Video", icon: "movie" },
-  music: { label: "Nhạc", icon: "music_note" },
+  letter: { label: "Bức thư tay", icon: "mail" },
+  photos: { label: "Album kỷ niệm", icon: "photo_library" },
+  voice: { label: "Lời nhắn giọng nói", icon: "mic" },
+  video: { label: "Thước phim kỷ niệm", icon: "movie" },
+  music: { label: "Giai điệu âm nhạc", icon: "music_note" },
   anniversary: { label: "Ngày kỷ niệm", icon: "event" },
   timeline: { label: "Mốc thời gian", icon: "timeline" },
   finalMessage: { label: "Lời kết", icon: "favorite" },
@@ -57,8 +57,8 @@ const BLOCK_SLIDE: Record<BlockId, { label: string; icon: string }> = {
  */
 export function defaultSlides(gift: ViewerGift): SlideDef[] {
   return [
-    { id: "open", label: "Mở quà", icon: "featured_seasonal_and_gifts" },
+    { id: "open", label: "Có một món quà", icon: "featured_seasonal_and_gifts" },
     ...gift.blocks.filter((block) => block !== "finalMessage").map((block) => ({ id: block, ...BLOCK_SLIDE[block] })),
-    { id: "closing", label: "Lời cảm ơn", icon: "favorite" },
+    { id: "closing", label: "Lưu giữ kỷ niệm", icon: "favorite" },
   ];
 }

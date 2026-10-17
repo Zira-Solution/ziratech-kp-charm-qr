@@ -20,19 +20,14 @@ export const TEMPLATE_ALLOWED_BLOCKS: Record<GiftTemplateId, readonly BlockId[]>
   "storybook-sunset": [
     "letter",
     "photos",
-    "voice",
     "video",
     "music",
-    "anniversary",
-    "timeline",
-    "finalMessage",
+    "voice",
   ],
   "vintage-scrapbook": [
     "letter",
     "photos",
     "music",
-    "anniversary",
-    "finalMessage",
   ],
   "retro-nostalgia": [
     "letter",
@@ -40,16 +35,12 @@ export const TEMPLATE_ALLOWED_BLOCKS: Record<GiftTemplateId, readonly BlockId[]>
     "voice",
     "video",
     "music",
-    "finalMessage",
   ],
   "kp-atelier": [
     "letter",
     "photos",
     "voice",
     "music",
-    "anniversary",
-    "timeline",
-    "finalMessage",
   ],
 };
 
@@ -59,7 +50,7 @@ export const TEMPLATES: readonly TemplateInfo[] = [
     name: "Storybook 20/10",
     icon: "🌅",
     desc: "Giấy kem ấm, chữ viết tay, tranh hoàng hôn",
-    tag: "Trọn vẹn 8 trang",
+    tag: "Trọn vẹn 7 trang",
     accentColor: "#721a28",
     previewBg: "linear-gradient(135deg, #fdfbf7 0%, #f4ede4 100%)",
     allowedBlocks: TEMPLATE_ALLOWED_BLOCKS["storybook-sunset"],

@@ -45,9 +45,10 @@ export default function VideoBlock({ step, draft, onChange }: Props) {
           url.includes("/reel/") ||
           url.includes("/reels/"))
     );
-    // If user hasn't set an aspect ratio or if it's currently default 16:9 and they paste a shorts link
-    if (isVertical && currentAspect === "16:9") {
+    if (isVertical) {
       onChange({ videoUrl: url, videoAspectRatio: "9:16" });
+    } else if (url.includes("youtube.com") || url.includes("youtu.be") || url.includes("vimeo.com")) {
+      onChange({ videoUrl: url, videoAspectRatio: "16:9" });
     } else {
       onChange({ videoUrl: url });
     }

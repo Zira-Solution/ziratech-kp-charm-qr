@@ -40,7 +40,7 @@ export const STORYBOOK_DEMO_GIFT: ViewerGift = {
     { url: "/thamkhao/bg.jpg", caption: "Và thật nhiều điều nhỏ bé...", date: "2024-05-19" },
   ],
   video: "https://youtu.be/dQw4w9WgXcQ",
-  videoAspectRatio: "9:16",
+  videoAspectRatio: "16:9",
   song: {
     source: "preset",
     presetId: "lofi",

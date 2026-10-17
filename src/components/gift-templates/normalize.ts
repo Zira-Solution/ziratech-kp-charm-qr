@@ -21,6 +21,7 @@ export interface ViewerGift {
   photos: { url: string; caption: string; date: string }[];
   finalMessage?: string;
   video?: string;
+  videoAspectRatio?: "16:9" | "1:1" | "9:16";
   song?: { source: "preset" | "link"; presetId?: string; link?: string; title: string; artist: string };
   voice?: { audioPath: string; audioUrl?: string; duration: string; noteText: string };
   anniversary?: { date: string; label: string };
@@ -95,7 +96,13 @@ export function normalizeGift(saved: unknown): ViewerGift {
     },
     video: () => {
       const link = str(g.videoUrl).trim();
-      if (link) out.video = link;
+      if (link) {
+        out.video = link;
+        const aspect = str(g.videoAspectRatio);
+        if (["16:9", "1:1", "9:16"].includes(aspect)) {
+          out.videoAspectRatio = aspect as "16:9" | "1:1" | "9:16";
+        }
+      }
       return !!link;
     },
     music: () => {

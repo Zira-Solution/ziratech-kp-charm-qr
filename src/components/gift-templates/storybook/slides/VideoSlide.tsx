@@ -21,7 +21,7 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const videoUrl = gift.video;
 
-  // Auto-detect default aspect ratio if URL is a Short/TikTok/Reels
+  // Aspect ratio is fixed by the creator's choice (or auto-detected fallback)
   const isVertical = Boolean(
     videoUrl &&
       (videoUrl.includes("/shorts") ||
@@ -29,7 +29,7 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
         videoUrl.includes("/reel/") ||
         videoUrl.includes("/reels/"))
   );
-  const [aspect, setAspect] = useState<AspectRatio>(isVertical ? "9:16" : "16:9");
+  const aspect: AspectRatio = gift.videoAspectRatio || (isVertical ? "9:16" : "16:9");
 
   const handleOpenModal = () => {
     try {
@@ -293,32 +293,13 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
               <span className="material-symbols-outlined text-[20px] font-bold">close</span>
             </button>
 
-            {/* Modal Header: Title + Flexible Aspect Ratio Switchers */}
+            {/* Modal Header: Title only, no aspect ratio switcher for viewer */}
             <div className="w-full flex items-center justify-between pb-2 mb-1 border-b border-stone-100 px-1">
               <div className="flex items-center gap-1.5">
                 <span className="font-handwriting font-bold text-lg text-[#16384c]">
                   Video kỷ niệm
                 </span>
                 <span className="text-[#c13d28] text-sm">♡</span>
-              </div>
-
-              {/* Aspect Ratio Switcher Pills */}
-              <div className="flex items-center gap-1 bg-stone-100 p-0.5 rounded-full">
-                {(["16:9", "1:1", "9:16"] as const).map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setAspect(r)}
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-sans font-bold transition-all cursor-pointer ${
-                      aspect === r
-                        ? "bg-[#16384c] text-white shadow-xs"
-                        : "text-stone-600 hover:bg-white/80"
-                    }`}
-                    title={`Khung hình ${r}`}
-                  >
-                    {r}
-                  </button>
-                ))}
               </div>
             </div>
 

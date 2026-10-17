@@ -43,6 +43,7 @@ export interface GiftDraft {
   anniversaryLabel: string;
   timeline: TimelineItem[];
   videoUrl: string;
+  videoAspectRatio: "16:9" | "1:1" | "9:16";
   song: SongDraft;
   voice: VoiceDraft;
   /** New 4-digit "OTP xem thiệp". Empty keeps the current one. */
@@ -67,6 +68,7 @@ export function emptyDraft(): GiftDraft {
     anniversaryLabel: "",
     timeline: [],
     videoUrl: "",
+    videoAspectRatio: "16:9",
     song: { source: "none", presetId: "", link: "", title: "", artist: "" },
     voice: { audioPath: "", audioUrl: "", durationSec: 0, noteText: "" },
     unlockPin: "",
@@ -128,6 +130,8 @@ export function draftFromSaved(saved: unknown): GiftDraft {
   }
 
   d.videoUrl = str(g.videoUrl);
+  const aspect = str(g.videoAspectRatio);
+  d.videoAspectRatio = (["16:9", "1:1", "9:16"].includes(aspect) ? aspect : "16:9") as "16:9" | "1:1" | "9:16";
 
   const s = g.song as Record<string, unknown> | undefined;
   if (s && typeof s === "object" && (s.source === "preset" || s.source === "link")) {
@@ -170,6 +174,7 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
     anniversary: { date: d.anniversaryDate, label: d.anniversaryLabel },
     timeline: d.timeline,
     videoUrl: d.videoUrl,
+    videoAspectRatio: d.videoAspectRatio || "16:9",
     song: {
       source: d.song.source,
       presetId: d.song.presetId,

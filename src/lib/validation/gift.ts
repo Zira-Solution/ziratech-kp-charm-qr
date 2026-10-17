@@ -232,6 +232,7 @@ export interface StoredGiftData {
   memoryPhotos: CleanPhoto[];
   finalMessage?: string;
   videoUrl?: string;
+  videoAspectRatio?: "16:9" | "1:1" | "9:16";
   song?: CleanSong;
   voiceNote?: CleanVoice;
   anniversary?: { date: string; label: string };
@@ -323,6 +324,10 @@ export function parseGiftData(input: unknown, ctx: { token: string }): Parsed<St
     const v = parseHttpsLink(raw, VIDEO_HOSTS, "Liên kết video");
     if (!v.ok) return v;
     out.videoUrl = v.value;
+    const aspect = typeof g.videoAspectRatio === "string" ? g.videoAspectRatio.trim() : "";
+    if (["16:9", "1:1", "9:16"].includes(aspect)) {
+      out.videoAspectRatio = aspect as "16:9" | "1:1" | "9:16";
+    }
   }
 
   if (has("music")) {

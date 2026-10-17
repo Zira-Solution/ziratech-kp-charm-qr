@@ -1,143 +1,85 @@
-# SSG
+# K&P Atelier — Vòng charm & thiệp số 20/10
 
-Ứng dụng web viết bằng **Next.js 16 (App Router) + TypeScript + Tailwind CSS 4**.
+Web app cho quầy bán vòng charm của K&P Atelier tại ĐH FPT TP.HCM (sự kiện 16–20/10/2026). Mỗi đơn có một **mã thiệp**, một **OTP tạo thiệp** cho người mua và một **PIN 4 số** cho người nhận: người mua tự soạn thiệp số (thư, ảnh, ghi âm, video, nhạc...), người nhận mở thiệp bằng PIN. Lợi nhuận được góp cho trạm cứu hộ Sân Nhà Nhiều Chó.
 
-Hạ tầng bên ngoài: Supabase (Postgres + đăng nhập seller), Cloudflare R2 (lưu file), SMTP (gửi email), Gemini (AI), Vercel (hosting).
+**Công nghệ:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Supabase (Postgres, Auth, Storage), nodemailer (SMTP), SePay webhook. Deploy trên Vercel.
 
-> **Trạng thái:** mới có bộ khung thư mục, chưa có code tính năng. Các thư mục còn trống được giữ bằng `.gitkeep`. Khi thêm file thật vào thư mục nào thì xóa `.gitkeep` của thư mục đó.
+> Next.js 16 khác nhiều so với các bản cũ. Trước khi viết code framework, đọc `src/node_modules/next/dist/docs/` (xem `src/AGENTS.md`) và `CONSTRAINTS.md`.
 
-> **Lưu ý cho cả người và AI agent:** Next.js 16 có nhiều thay đổi so với các bản cũ (ví dụ `middleware.ts` đã đổi tên thành `proxy.ts`). Trước khi viết code framework, hãy đọc `node_modules/next/dist/docs/` (xem `AGENTS.md`).
+## Cấu trúc repo
 
-## Chạy dự án
+```
+├── README.md
+├── CLAUDE.md              hướng dẫn cho AI agent
+├── CONSTRAINTS.md         tiêu chuẩn chất lượng bắt buộc (kiểm tra nào chặn, ngưỡng bao nhiêu)
+├── supabase/              schema.sql, seed.sql (chạy tay trong Supabase SQL Editor)
+├── docs/
+│   ├── 01-kien-truc-he-thong-va-luong-du-lieu.md
+│   ├── 02-cai-dat-va-moi-truong.md
+│   ├── 06-trien-khai-vercel.md
+│   ├── adr/               các quyết định kiến trúc
+│   ├── specs/             đặc tả tính năng
+│   ├── plans/             kế hoạch triển khai
+│   └── archive/           file thiết kế, ảnh tham khảo, script nháp, task list cũ
+└── src/                   app Next.js (Vercel Root Directory)
+    ├── app/               route: trang và API
+    ├── components/        gift-templates (xem thiệp), studio (soạn thiệp), admin, home, ui
+    ├── lib/               auth, supabase, validation, mail, media
+    ├── config/  types/
+    ├── public/            ảnh, âm thanh
+    └── scripts/           test (*.test.ts) và công cụ kiểm tra
+```
+
+## Route
+
+| Route | Mục đích | Quyền |
+|---|---|---|
+| `/` | Trang chủ, form nhập mã thiệp cho người nhận, quyên góp | Public |
+| `/gift` | Người mua nhập mã thiệp + OTP tạo thiệp | Public |
+| `/create/[token]` | Studio soạn thiệp (3 bước) | Cookie phiên `create` |
+| `/g/[token]` | Người nhận xem thiệp (hỏi PIN nếu chưa có phiên) | Cookie phiên `open` |
+| `/admin` | Tạo đơn tại quầy, đơn hàng, dây vòng, báo cáo, sao kê quỹ | Supabase Auth, role `admin` |
+| `/messenger` | Bản demo "thiệp kiểu Messenger", chạy hoàn toàn ở trình duyệt | Public |
+| `/thamkhao` | Mẫu thiệp Storybook cũ (tham khảo thiết kế) | Public |
+| `/api/gifts/*` | Xác thực mã, đọc / lưu thiệp, tải ghi âm | Phiên thiệp |
+| `/api/admin/*` | API của trang quản trị | Admin |
+| `/api/sepay/webhook` | Nhận giao dịch quyên góp | `Authorization: Apikey ...` |
+| `/api/donations/summary` | Tổng tiền quỹ công khai | Public |
+
+## Khởi động nhanh
 
 ```bash
-npm install
-cp .env.example .env.local   # điền giá trị khi nào cần dùng dịch vụ nào
+cd src
+cp .env.example .env.local   # để trống Supabase = chạy bằng bộ nhớ, có thiệp demo
+npm ci
 npm run dev                  # http://localhost:3000
 ```
 
-| Lệnh | Tác dụng |
+Khi chưa cấu hình Supabase, app dùng dữ liệu trong bộ nhớ và có sẵn thiệp demo: mã `KP-2010-DEMO`, OTP tạo thiệp `TAO-2010`, PIN `2010`. Chi tiết biến môi trường: [docs/02](docs/02-cai-dat-va-moi-truong.md).
+
+## Kiểm tra
+
+Chạy trong `src/`. Ngưỡng và lý do nằm ở [CONSTRAINTS.md](CONSTRAINTS.md).
+
+| Lệnh | Làm gì |
 |---|---|
-| `npm run dev` | Chạy dev server |
-| `npm run build` | Build production |
-| `npm run start` | Chạy bản build |
-| `npm run lint` | ESLint |
+| `npm run check:fast` | `tsc`, `eslint`, floor guard, gitleaks |
+| `npm test` | test các hàm thuần (`scripts/*.test.ts`) |
+| `npm run check:task` | `check:fast` + `npm test` |
+| `npm run check:web` | Lighthouse so với `scripts/web-baseline.json` (cần `npm run build && npx next start -p 5001`) |
+| `npm run check:cards` | nghiệm thu studio và trang xem thiệp qua Chrome (xem đầu `scripts/accept-cards.mjs`) |
 
-Không bao giờ commit `.env.local`. Trên Vercel, đặt cùng tên biến ở Project Settings → Environment Variables.
+## Tài liệu
 
-## Kiến trúc tổng quan
-
-```
-Trình duyệt
-   │
-   ▼
-src/proxy.ts  ── chặn /seller, /admin, làm mới session Supabase   (chưa có, cần thêm)
-   │
-   ├── Trang (src/app/**/page.tsx)       giao diện, gọi component
-   └── API   (src/app/api/**/route.ts)   nhận request, validate, gọi service
-                    │
-                    ▼
-            src/server/services/         logic nghiệp vụ (chỉ chạy ở server)
-                    │
-                    ▼
-            src/lib/<dịch vụ>/           client của dịch vụ ngoài
-               supabase · r2 · mail · gemini · payments
-                    │
-                    ▼
-            Supabase · Cloudflare R2 · SMTP · Gemini · cổng thanh toán
-```
-
-Phụ thuộc chỉ đi **một chiều từ trên xuống**. Tầng dưới không được import tầng trên.
-
-### Cấu trúc thư mục
-
-```
-src/
-  app/                          routing (mỗi thư mục là một URL)
-    (marketing)/                trang công khai, landing page
-    (app)/compose/              soạn quà
-    (app)/preorder/             luồng đặt trước
-    g/[token]/                  trang của người nhận, mở bằng token không đoán được
-    seller/login/               đăng nhập seller
-    seller/dashboard/           khu vực seller
-    admin/                      khu vực admin
-    api/
-      gifts/ orders/ uploads/ payments/ ai/    route handler, mỗi resource một thư mục
-      payments/webhook/                        callback từ cổng thanh toán
-      health/                                  endpoint cho uptime monitor (HEALTH_TOKEN)
-  components/
-    ui/                         thành phần nhỏ dùng chung (button, input, modal)
-    layout/                     header, footer, khung trang
-    features/                   thành phần gắn với một tính năng cụ thể
-  lib/                          mỗi dịch vụ ngoài một thư mục client
-    supabase/ r2/ mail/ gemini/ payments/
-    validation/                 schema zod dùng chung cho API và form
-  server/
-    services/                   logic nghiệp vụ, được route handler gọi
-    auth/                       guard seller/admin, kiểm tra token của người nhận
-  types/                        kiểu TypeScript dùng chung
-  config/                       hằng số, cấu hình tính năng
-supabase/
-  migrations/                   file SQL đánh số (0001_*.sql ...), chạy theo thứ tự
-  seed.sql                      dữ liệu mẫu nhỏ cho dev, chạy sau migration khi db reset
-docs/                           tài liệu đặc tả và các quyết định
-.github/workflows/              CI, keep-alive, backup
-public/                         file tĩnh
-```
-
-### Mỗi tầng làm gì
-
-| Tầng | Được làm | Không được làm |
-|---|---|---|
-| `app/**/page.tsx` | Dựng giao diện, gọi component | Gọi thẳng Supabase, R2, Gemini |
-| `app/api/**/route.ts` | Đọc request, validate bằng zod, gọi service, trả response | Chứa logic nghiệp vụ |
-| `server/services` | Logic nghiệp vụ, kết hợp nhiều client trong `lib/` | Import từ `app/` hay `components/` |
-| `lib/<dịch vụ>` | Bọc SDK của một dịch vụ ngoài | Chứa logic nghiệp vụ |
-| `lib/validation` | Schema zod, dùng được ở cả server lẫn client | Import code chỉ chạy ở server |
-
-### Quy tắc bắt buộc
-
-1. **Route handler luôn mỏng:** validate input, gọi `server/services`, trả kết quả.
-2. **Client dịch vụ chỉ import từ code server.** Với client dùng khóa bí mật, thêm `import "server-only"` ở đầu file để lỗi ngay khi build nếu lỡ import vào code chạy trên trình duyệt.
-3. **`SUPABASE_SERVICE_ROLE_KEY` bỏ qua Row Level Security.** Chỉ dùng ở server và không bao giờ đặt tên có tiền tố `NEXT_PUBLIC_`.
-4. **Mỗi bảng mới phải bật RLS ngay trong cùng migration** tạo ra nó.
-5. **Phân quyền kiểm tra ở hai chỗ:** ở `proxy.ts` (chặn sớm) và ngay trong code server (`server/auth`). Không chỉ dựa vào proxy.
-6. **Trang người nhận `g/[token]`** chỉ truy cập được bằng token không đoán được. Cần đặt `noindex` để công cụ tìm kiếm không lập chỉ mục.
-7. **Validate ở biên hệ thống:** input từ API và form đều qua zod. Không validate lại giữa các hàm nội bộ.
-
-### Biến môi trường
-
-Danh sách đầy đủ và cách lấy từng giá trị nằm trong `.env.example`. Các nhóm chính:
-
-| Nhóm | Biến |
+| Tài liệu | Nội dung |
 |---|---|
-| Supabase | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` |
-| Cloudflare R2 | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` |
-| SMTP | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` |
-| Gemini | `GEMINI_API_KEY`, `GEMINI_MODEL` |
-| Giám sát | `HEALTH_TOKEN` |
+| [01. Kiến trúc & luồng dữ liệu](docs/01-kien-truc-he-thong-va-luong-du-lieu.md) | Các tầng, database, luồng bán hàng / soạn thiệp / xem thiệp, quyên góp |
+| [02. Cài đặt & môi trường](docs/02-cai-dat-va-moi-truong.md) | Biến môi trường, database, tài khoản admin, chế độ bộ nhớ |
+| [06. Triển khai Vercel](docs/06-trien-khai-vercel.md) | Tạo project, biến môi trường, checklist sau deploy, sự cố thường gặp |
+| [docs/adr/](docs/adr/) | Quyết định về khối nội dung thiệp, nơi lưu media, skin và khung dọc/ngang |
+| [docs/specs/](docs/specs/) | Đặc tả studio, thiệp theo thông điệp, đặc tả sản phẩm gốc |
 
-Chỉ biến có tiền tố `NEXT_PUBLIC_` mới lộ ra trình duyệt. Mọi biến còn lại là bí mật của server.
+## Việc còn mở
 
-## Thêm một tính năng mới
-
-Ví dụ thêm tính năng "gifts", đi từ dưới lên:
-
-1. **DB:** thêm `supabase/migrations/000X_gifts.sql`, bật RLS trong cùng file.
-2. **Schema:** `src/lib/validation/gifts.ts` (zod) và kiểu liên quan trong `src/types/`.
-3. **Service:** `src/server/services/gifts.service.ts`, gọi client trong `lib/`.
-4. **API:** `src/app/api/gifts/route.ts`, chỉ validate rồi gọi service.
-5. **Giao diện:** trang trong `src/app/...`, component riêng của tính năng trong `src/components/features/`.
-
-Đặt tên file theo dạng `<domain>.service.ts`, `<domain>.ts` (schema) để sau này nếu tách theo domain thì chỉ cần di chuyển file.
-
-## Việc cần làm tiếp
-
-Các mục dưới đây chưa có trong repo:
-
-- Thay `(marketing)/page.tsx` (hiện vẫn là trang mặc định của create-next-app) bằng landing page thật, và sửa title/description trong `src/app/layout.tsx`.
-- Thêm `src/proxy.ts` cho guard `/seller`, `/admin`.
-- Thêm `layout.tsx` cho từng khu vực (`(marketing)`, `(app)`, `seller`, `admin`).
-- Validate biến môi trường bằng zod trong `src/config/`.
-- Thêm script `typecheck`, test runner và CI trong `.github/workflows/`.
-- Ghi các quyết định kiến trúc (nhà cung cấp thanh toán, cơ chế token của người nhận, cách đăng nhập admin) vào `docs/`, vì hiện chưa có tài liệu nào về chúng trong repo.
+- **T21 – Studio theo thiết bị:** kiểm studio ở 390 / 768 / 1280px (xem [docs/archive/tasks/todo.md](docs/archive/tasks/todo.md)).
+- Chưa kiểm trên môi trường thật: ghi âm qua Supabase Storage, phát âm thanh trên iPhone/Safari, mở một thiệp cũ có thật trong DB.

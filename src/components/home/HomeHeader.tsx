@@ -98,25 +98,17 @@ export default function HomeHeader() {
         }`}
       >
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto gap-2 sm:gap-3 xl:gap-4 relative z-10">
-          {/* Brand Logo & Title */}
+          {/* Brand Logo */}
           <a
             href="#hero"
-            className="flex items-center gap-2.5 sm:gap-3 group shrink-0"
-            aria-label="Về đầu trang Team K&P"
+            className="flex items-center group shrink-0"
+            aria-label="Về đầu trang K&P"
           >
             <img
-              src="/images/logo_team_kp.png"
-              alt="Team K&P Logo"
-              className="h-8 sm:h-9 md:h-9.5 w-auto object-contain transition-transform group-hover:scale-105"
+              src="/images/logo_kp.png"
+              alt="K&P Logo"
+              className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform group-hover:scale-105"
             />
-            <div className="hidden sm:flex flex-col border-l border-rose-200/80 pl-2.5 shrink-0 justify-center">
-              <span className="font-sans text-[11px] text-[#721a28] font-bold tracking-tight leading-tight">
-                K&amp;P Atelier
-              </span>
-              <span className="font-sans text-[9px] text-secondary-dark tracking-wider uppercase font-semibold whitespace-nowrap">
-                Charm &amp; Quà Kỷ Niệm 20/10
-              </span>
-            </div>
           </a>
 
           {/* Desktop Navigation Links */}
@@ -206,9 +198,9 @@ export default function HomeHeader() {
                   className="w-8 h-8 object-contain"
                 />
                 <div>
-                  <h3 className="font-headline font-bold text-sm text-primary">Team K&amp;P</h3>
+                  <h3 className="font-headline font-bold text-sm text-primary">K&amp;P Atelier</h3>
                   <p className="font-sans text-[10px] text-secondary-dark uppercase font-semibold">
-                    K&amp;P Atelier • Quà 20/10
+                    Quà Kỷ Niệm 20/10
                   </p>
                 </div>
               </div>

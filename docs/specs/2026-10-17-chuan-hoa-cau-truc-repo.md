@@ -14,7 +14,7 @@ Thành công = trong `src/`: `npx tsc --noEmit`, `npx eslint`, `npm test` (80 te
 1. Nền tảng: **Vercel** (không dùng Amplify như Zoney). Repo chưa có project Vercel nào.
 2. Bám sát Zoney: `package.json` và mọi cấu hình app chuyển vào `src/`; không có `package.json` ở gốc.
 3. Mọi thứ không phải code chạy vào `docs/`; thứ không còn cần thiết vào `docs/archive/`.
-4. Tài liệu đợt này: `.github/README.md`, `docs/01`, `docs/02`, `docs/06`. Các số 03–05 để đợt sau.
+4. Tài liệu đợt này: `README.md` (viết lại, giữ ở gốc), `docs/01`, `docs/02`, `docs/06`. Các số 03–05 để đợt sau.
 5. Không đổi tên file hay quy tắc code (kebab-case, Prettier của Zoney): ngoài phạm vi.
 6. Commit bằng tiếng Anh, ngắn, không có co-author.
 
@@ -22,7 +22,7 @@ Thành công = trong `src/`: `npx tsc --noEmit`, `npx eslint`, `npm test` (80 te
 
 ```
 ziratech-kp-charm-qr/
-├── .github/README.md          README chính (thay README.md ở gốc)
+├── README.md                 README chính (viết lại, không dùng .github/)
 ├── .vscode/
 ├── .gitignore
 ├── CLAUDE.md                  trỏ tới src/AGENTS.md và CONSTRAINTS.md
@@ -77,7 +77,7 @@ Cần xác minh khi làm: `gitleaks detect` chạy từ `src/` có quét cả re
 
 ## Tài liệu
 
-- `.github/README.md`: sản phẩm, bảng route, khởi động nhanh (`cd src && npm ci && npm run dev`), lệnh kiểm tra, mục lục `docs/`, việc còn mở (T21 studio theo thiết bị).
+- `README.md` (gốc): sản phẩm, bảng route, khởi động nhanh (`cd src && npm ci && npm run dev`), lệnh kiểm tra, mục lục `docs/`, việc còn mở (T21 studio theo thiết bị).
 - `docs/01`: các tầng, 4 bảng DB, luồng bán hàng / soạn thiệp / xem thiệp, webhook SePay, phiên và mã.
 - `docs/02`: Node, `src/.env.local`, bảng biến môi trường (bắt buộc hay không, thiếu thì sao), chế độ bộ nhớ khi chưa có Supabase, tạo tài khoản admin.
 - `docs/06`: tạo project Vercel, biến cho Production/Preview, checklist sau deploy, xử lý sự cố. Cảnh báo rõ: thiếu `AUTH_SECRET` thì production ném lỗi; thiếu `NEXT_PUBLIC_DONATION_*` thì QR quyên góp trỏ tới tài khoản giả `0868888888`.

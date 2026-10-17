@@ -241,27 +241,6 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
         {slideAnnouncement(index, slides)}
       </p>
 
-      {(onBack || !embedded) && (
-        <div className="absolute left-3 top-3 z-20 flex items-center gap-2">
-          {onBack && (
-            <button type="button" onClick={onBack} className={floating}>
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px] leading-none">
-                {embedded ? "close" : "lock"}
-              </span>
-              {backLabel}
-            </button>
-          )}
-          {!embedded && (
-            <Link href="/" className={floating}>
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px] leading-none">
-                home
-              </span>
-              Trang chủ
-            </Link>
-          )}
-        </div>
-      )}
-
       {hasMelody && (
         <button
           type="button"
@@ -269,7 +248,7 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
           aria-pressed={music.playing}
           aria-label={music.playing ? "Tắt âm thanh" : "Bật âm thanh"}
           title={music.playing ? "Tắt loa" : "Bật loa"}
-          className="absolute right-13 top-3.5 z-40 flex h-8 w-8 items-center justify-center rounded-full border border-stone-200/80 bg-white/90 text-stone-700 shadow-sm backdrop-blur-sm transition-all hover:bg-white hover:scale-105 active:scale-90 cursor-pointer"
+          className="absolute left-3.5 top-3.5 z-40 flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-white/40 hover:bg-white/60 text-stone-700 backdrop-blur-xl shadow-[0_4px_16px_0_rgba(0,0,0,0.06),inset_0_1px_1px_0_rgba(255,255,255,0.85)] hover:shadow-[0_6px_20px_0_rgba(0,0,0,0.1),inset_0_1px_2px_0_rgba(255,255,255,0.95)] active:scale-95 transition-all duration-300 cursor-pointer"
         >
           <span
             aria-hidden="true"
@@ -280,6 +259,27 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
             {music.playing ? "volume_up" : "volume_off"}
           </span>
         </button>
+      )}
+
+      {(onBack || !embedded) && (
+        <div className={`absolute ${hasMelody ? "left-14" : "left-3.5"} top-3.5 z-40 flex items-center gap-2`}>
+          {onBack && (
+            <button type="button" onClick={onBack} className={floating}>
+              <span aria-hidden="true" className="material-symbols-outlined text-[16px] leading-none">
+                {embedded ? "close" : "lock"}
+              </span>
+              {backLabel}
+            </button>
+          )}
+          {!embedded && (
+            <Link href="/" className={floating}>
+              <span aria-hidden="true" className="material-symbols-outlined text-[16px] leading-none">
+                home
+              </span>
+              Trang chủ
+            </Link>
+          )}
+        </div>
       )}
 
       <main

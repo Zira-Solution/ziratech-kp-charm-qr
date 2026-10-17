@@ -305,9 +305,9 @@ export default function StorybookSunsetTemplate({
         <div className="relative inline-block px-8 py-2">
           {/* Decorative arc with birds, stars, dashed loop and heart from trái tim.png */}
           <img
-            src="/thamkhao/heart.png"
+            src="/thamkhao/header_decor_clean.png"
             alt="Hoa văn trang trí"
-            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[125%] h-auto max-w-[320px] pointer-events-none drop-shadow-xs select-none"
+            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[130%] h-auto max-w-[340px] pointer-events-none drop-shadow-xs select-none"
           />
 
           <span className="block font-handwriting text-3xl sm:text-4xl text-[#1c3f50] font-bold drop-shadow-xs relative z-10">

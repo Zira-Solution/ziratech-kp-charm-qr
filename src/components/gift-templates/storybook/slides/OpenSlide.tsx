@@ -107,9 +107,9 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
 
                 <div className="relative inline-block px-8 py-2">
                   <img
-                    src="/thamkhao/heart.png"
+                    src="/thamkhao/header_decor_clean.png"
                     alt="Hoa văn trang trí"
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 w-[125%] h-auto max-w-[380px] pointer-events-none drop-shadow-xs select-none"
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 w-[130%] h-auto max-w-[380px] pointer-events-none drop-shadow-xs select-none"
                   />
 
                   <span className="block font-handwriting text-3xl lg:text-4xl text-[#1c3f50] font-bold drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)] relative z-10">
@@ -177,9 +177,9 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
           <div className="absolute -inset-3 rounded-3xl bg-radial from-white/95 via-white/70 to-transparent blur-md pointer-events-none -z-1" />
 
           <img
-            src="/thamkhao/heart.png"
+            src="/thamkhao/header_decor_clean.png"
             alt="Hoa văn trang trí"
-            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[125%] h-auto max-w-[320px] pointer-events-none drop-shadow-xs select-none"
+            className="absolute -top-2 left-1/2 -translate-x-1/2 w-[130%] h-auto max-w-[340px] pointer-events-none drop-shadow-xs select-none"
           />
 
           <span className="block font-handwriting text-3xl sm:text-4xl text-[#1c3f50] font-bold drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] relative z-10">

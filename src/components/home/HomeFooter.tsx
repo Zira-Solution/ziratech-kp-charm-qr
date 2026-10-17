@@ -36,7 +36,7 @@ export default function HomeFooter() {
   ];
 
   const serviceLinks = [
-    { label: "Studio tạo thiệp quà số", href: "/gift", isRoute: true },
+    { label: "Studio tạo thiệp quà số", href: "/messenger", isRoute: true },
     { label: "Đặt trước hoa tươi 20/10", href: "#preorder" },
     { label: "Trải nghiệm workshop tự làm", href: "#workshop" },
     { label: "Minh bạch quỹ thiện nguyện", href: "#shelter-donate" },
@@ -52,15 +52,19 @@ export default function HomeFooter() {
           {/* ======================================================== */}
           <div className="lg:col-span-6 flex flex-col space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-sky-500 via-blue-600 to-[#0b132b] border border-sky-300/30 flex items-center justify-center text-white font-headline font-bold text-base shadow-sm">
-                K&amp;P
+              <div className="w-12 h-12 rounded-2xl bg-white/95 border border-white/30 flex items-center justify-center p-1.5 shadow-sm">
+                <img
+                  src="/images/logo_icon_kp.png"
+                  alt="Team K&P Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <span className="font-headline text-2xl text-white font-bold tracking-tight block">
-                  K&amp;P Atelier
+                  Team K&amp;P
                 </span>
                 <span className="font-sans text-[10px] text-sky-300/80 uppercase tracking-widest block font-semibold">
-                  Handcrafted &amp; Phygital Gifts
+                  K&amp;P Atelier • Handcrafted &amp; Phygital Gifts
                 </span>
               </div>
             </div>
@@ -74,13 +78,13 @@ export default function HomeFooter() {
                 <span className="material-symbols-outlined text-[16px] text-sky-400 shrink-0">
                   pin_drop
                 </span>
-                <span>Sảnh lầu 2, FPT University TP. Hồ Chí Minh</span>
+                <span>Sảnh liên tầng lầu 1 &amp; lầu 3, FPT University TP. Hồ Chí Minh</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-[16px] text-sky-400 shrink-0">
                   schedule
                 </span>
-                <span>Chuỗi ngày hội: 16/10 – 20/10/2026 (11:00 – 15:00)</span>
+                <span>Chuỗi ngày hội: 17/10 – 20/10/2026 (11:00 – 15:00)</span>
               </div>
             </div>
           </div>
@@ -138,7 +142,7 @@ export default function HomeFooter() {
             </ul>
 
             <div className="pt-2 text-[11px] text-slate-400 font-sans leading-relaxed">
-              Mọi thắc mắc về đơn đặt trước hoặc workshop vui lòng ghé quầy trực tiếp tại sảnh lầu 2.
+              Mọi thắc mắc về đơn đặt trước hoặc workshop vui lòng ghé quầy trực tiếp tại Sảnh liên tầng lầu 1 hoặc lầu 3.
             </div>
           </div>
 
@@ -152,7 +156,7 @@ export default function HomeFooter() {
             © 2026 K&amp;P Atelier — Dự án gây quỹ 20/10 bởi sinh viên FPT University TP. Hồ Chí Minh đồng hành cùng Sân Nhà Nhiều Chó.
           </p>
           <p className="text-xs text-slate-500 font-sans">
-            Sảnh lầu 2, FPT University TP. Hồ Chí Minh
+            Sảnh liên tầng lầu 1 &amp; lầu 3, FPT University TP. Hồ Chí Minh
           </p>
         </div>
 

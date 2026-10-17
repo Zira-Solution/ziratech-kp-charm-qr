@@ -134,36 +134,61 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
     }`;
 
   return (
-    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Xem thử thiệp" onKeyDown={onKeyDown} className="fixed inset-0 z-50 flex flex-col bg-slate-900">
-      <div className="flex flex-wrap items-center justify-between gap-2 bg-primary-container px-3 py-2 text-white">
-        <div className="flex items-center gap-3">
-          <p className="flex items-center gap-2 text-sm font-bold">
-            <Icon name="visibility" className="text-[20px]" />
-            <span className="hidden sm:inline">Xem thử thiệp</span>
-          </p>
+    <div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Xem thử thiệp"
+      onKeyDown={onKeyDown}
+      className="fixed inset-0 z-50 flex flex-col bg-[#faf5f0] overflow-hidden select-none"
+    >
+      {/* Luxurious Ambient Background Orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute -top-32 -left-32 w-[34rem] h-[34rem] rounded-full bg-gradient-to-br from-[#ffd5cc]/45 via-[#fce4de]/30 to-transparent blur-3xl animate-liquid-float-slow" />
+        <div className="absolute -bottom-36 -right-36 w-[38rem] h-[38rem] rounded-full bg-gradient-to-tl from-[#fae2c8]/40 via-[#fceae0]/30 to-transparent blur-3xl animate-liquid-float-fast" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55rem] h-[40rem] rounded-full bg-white/40 blur-3xl" />
+      </div>
+
+      {/* Liquid Glass Navigation Bar */}
+      <header className="relative z-30 flex flex-wrap items-center justify-between gap-3 px-3.5 sm:px-6 py-2.5 bg-white/70 backdrop-blur-2xl border-b border-white/80 shadow-[0_4px_24px_rgba(114,26,40,0.05),inset_0_1px_1px_rgba(255,255,255,0.95)]">
+        {/* Left: Branding & Mode Switcher */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-[#c13d28] to-[#e38b29] text-white shadow-[0_4px_14px_rgba(193,61,40,0.3)]">
+              <Icon name="visibility" className="text-[19px]" />
+            </div>
+            <div>
+              <h2 className="font-serif font-black text-sm sm:text-base text-[#2e1d1b] tracking-tight leading-none">
+                Xem thử thiệp
+              </h2>
+              <p className="text-[10px] text-[#8c6d5e] font-sans font-medium mt-0.5 hidden xs:block">
+                Trải nghiệm thực tế người nhận
+              </p>
+            </div>
+          </div>
 
           {/* Mode Switcher: Full 7-page Demo vs User's Draft */}
-          <div className="flex items-center gap-1 rounded-xl bg-black/25 p-1 border border-white/10">
+          <div className="flex items-center gap-1 rounded-2xl bg-[#f2e7dc]/70 p-1 border border-white/80 shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
             <button
               type="button"
               onClick={() => setMode("demo")}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 mode === "demo"
-                  ? "bg-white text-[#721a28] shadow-xs"
-                  : "text-white/80 hover:text-white hover:bg-white/10"
+                  ? "bg-white text-[#c13d28] shadow-[0_2px_8px_rgba(114,26,40,0.08),inset_0_1px_1px_rgba(255,255,255,0.95)]"
+                  : "text-[#6c5143] hover:text-[#2e1d1b] hover:bg-white/40"
               }`}
               title="Xem toàn bộ 7 trang mẫu chuẩn chỉnh của Storybook 20/10"
             >
-              <Icon name="auto_stories" className="text-[16px]" />
+              <Icon name="auto_stories" className="text-[15px]" />
               <span>Mẫu chuẩn (7 trang)</span>
             </button>
             <button
               type="button"
               onClick={() => setMode("draft")}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                 mode === "draft"
-                  ? "bg-white text-[#721a28] shadow-xs"
-                  : "text-white/80 hover:text-white hover:bg-white/10"
+                  ? "bg-white text-[#c13d28] shadow-[0_2px_8px_rgba(114,26,40,0.08),inset_0_1px_1px_rgba(255,255,255,0.95)]"
+                  : "text-[#6c5143] hover:text-[#2e1d1b] hover:bg-white/40"
               }`}
               title="Xem nội dung thực tế bạn đang soạn thảo"
             >
@@ -173,41 +198,66 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <div role="radiogroup" aria-label="Mẫu thiệp" className="flex items-center gap-1 rounded-xl bg-black/20 p-1">
-            {TEMPLATES.map((t) => (
-              <button key={t.id} type="button" role="radio" aria-checked={t.id === template} onClick={() => onTemplateChange(t.id)} className={segment(t.id === template)}>
-                <span aria-hidden="true">{t.icon}</span>
-                <span className="hidden sm:inline">{t.name}</span>
-              </button>
-            ))}
+        {/* Right: Template Badge, Device Switcher & Exit Button */}
+        <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+          {/* Template Badge / Selector */}
+          <div className="hidden lg:flex items-center gap-1.5 rounded-2xl bg-white/80 border border-white/95 px-3 py-1.5 shadow-[0_2px_8px_rgba(114,26,40,0.04)] text-xs font-bold text-[#721a28]">
+            <span className="text-sm">🌅</span>
+            <span>{TEMPLATES.find((t) => t.id === template)?.name || "Storybook 20/10"}</span>
           </div>
 
-          <div role="radiogroup" aria-label="Xem như trên thiết bị" className="hidden items-center gap-1 rounded-xl bg-black/20 p-1 sm:flex">
-            {DEVICES.map((d) => (
-              <button key={d.id} type="button" role="radio" aria-checked={d.id === device} onClick={() => setDevice(d.id)} className={segment(d.id === device)}>
-                <Icon name={d.icon} className="text-[18px]" />
-                {d.label}
-              </button>
-            ))}
+          {/* Device Frame Switcher */}
+          <div role="radiogroup" aria-label="Xem như trên thiết bị" className="hidden sm:flex items-center gap-1 rounded-2xl bg-[#f2e7dc]/70 p-1 border border-white/80 shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
+            {DEVICES.map((d) => {
+              const active = d.id === device;
+              return (
+                <button
+                  key={d.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setDevice(d.id)}
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 sm:px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                    active
+                      ? "bg-white text-[#c13d28] shadow-[0_2px_8px_rgba(114,26,40,0.08),inset_0_1px_1px_rgba(255,255,255,0.95)]"
+                      : "text-[#6c5143] hover:text-[#2e1d1b] hover:bg-white/40"
+                  }`}
+                >
+                  <Icon name={d.icon} className="text-[16px]" />
+                  <span>{d.label}</span>
+                </button>
+              );
+            })}
           </div>
 
+          {/* Close button: Quay lại bàn viết */}
           <button
             ref={closeRef}
             type="button"
             onClick={onClose}
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-white px-3 text-sm font-bold text-primary-container cursor-pointer hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="inline-flex items-center gap-1.5 sm:gap-2 rounded-2xl bg-gradient-to-r from-[#721a28] to-[#9e273a] hover:from-[#5a1420] hover:to-[#821e2e] text-white px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold shadow-[0_4px_16px_rgba(114,26,40,0.25)] hover:shadow-[0_6px_22px_rgba(114,26,40,0.38)] active:scale-95 transition-all cursor-pointer border border-white/30 backdrop-blur-md"
           >
-            <Icon name="close" className="text-[18px]" />
-            Quay lại bàn viết
+            <Icon name="close" className="text-[17px]" />
+            <span>Quay lại bàn viết</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      <div className={`flex min-h-0 flex-1 items-center justify-center ${device === "fill" ? "" : "sm:p-4"}`}>
+      {/* Main Stage with Device Frame */}
+      <div className={`relative flex min-h-0 flex-1 items-center justify-center ${device === "fill" ? "" : "p-3 sm:p-5 lg:p-6"}`}>
         <div
-          style={frame.id === "fill" ? { width: "100%", height: "100%" } : { width: frame.width, height: frame.height, maxWidth: "100%", maxHeight: "100%" }}
-          className={`overflow-hidden bg-white ${frame.id === "fill" ? "" : "sm:rounded-2xl sm:shadow-2xl"}`}
+          style={
+            frame.id === "fill"
+              ? { width: "100%", height: "100%" }
+              : { width: frame.width, height: frame.height, maxWidth: "100%", maxHeight: "100%" }
+          }
+          className={`overflow-hidden bg-white transition-all duration-300 ${
+            frame.id === "fill"
+              ? ""
+              : frame.id === "phone"
+              ? "rounded-[38px] sm:rounded-[44px] border-[6px] sm:border-[8px] border-[#2e2624] shadow-[0_30px_80px_rgba(70,30,20,0.22),0_12px_28px_rgba(0,0,0,0.08)] ring-1 ring-black/10"
+              : "rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white/95 shadow-[0_28px_80px_rgba(70,30,20,0.16),0_10px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/5"
+          }`}
         >
           <GiftTemplateViewer gift={gift} embedded />
         </div>

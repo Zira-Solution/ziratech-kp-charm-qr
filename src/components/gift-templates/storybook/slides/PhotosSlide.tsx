@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
 import StorybookHeader from "./StorybookHeader";
@@ -19,6 +20,11 @@ interface PhotoItem {
 export default function PhotosSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
   const [activeModalPhoto, setActiveModalPhoto] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const userPhotos: readonly PhotoItem[] =
     gift.photos && gift.photos.length > 0
@@ -31,6 +37,7 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
         ];
 
   const rotations = ["-rotate-2", "rotate-2", "-rotate-1", "rotate-1", "-rotate-2", "rotate-2"];
+  const isMultiRowSix = userPhotos.length > 4;
 
   return (
     <div
@@ -39,37 +46,45 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
     >
       <div className="absolute inset-0 bg-[#fffbf5]/60 pointer-events-none" />
 
-      {/* Lightbox Modal */}
-      {activeModalPhoto && (
+      {/* Lightbox Modal (Portal to body so parent transforms never clip it) */}
+      {activeModalPhoto && mounted && createPortal(
         <div
           role="dialog"
           aria-modal="true"
+          data-no-swipe
           onClick={() => setActiveModalPhoto(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm animate-in fade-in duration-200 cursor-pointer"
         >
-          <div className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-2xl bg-white p-3 shadow-2xl">
+          <div
+            data-no-swipe
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-2xl bg-white p-3 shadow-2xl"
+          >
             <img
               src={activeModalPhoto}
               alt="Ảnh phóng to"
-              className="max-h-[80vh] w-auto max-w-full rounded-lg object-contain"
+              draggable={false}
+              className="max-h-[80vh] w-auto max-w-full rounded-lg object-contain select-none"
             />
             <button
               type="button"
+              data-no-swipe
               onClick={() => setActiveModalPhoto(null)}
-              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black transition-colors"
+              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black transition-colors cursor-pointer"
               aria-label="Đóng ảnh"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {isLandscape ? (
         <div className="relative z-10 flex h-full w-full flex-col justify-between p-6 lg:p-10">
           <StorybookHeader ctx={ctx} slides={slides} />
 
-          <div className="grid h-full min-h-0 flex-1 grid-cols-12 items-center gap-8 py-2">
+          <div className="grid h-full min-h-0 flex-1 grid-cols-12 items-center gap-6 lg:gap-8 py-1">
             {/* Left: Title & Vintage Camera Motif */}
             <div className="col-span-4 flex flex-col items-center justify-center text-center px-4 relative">
               <span className="font-handwriting text-2xl lg:text-3xl text-[#1c3f50] font-bold block mb-1">
@@ -101,30 +116,63 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
               </p>
             </div>
 
-            {/* Right: Spacious Multi-Polaroid Grid */}
+            {/* Right: Adaptive Multi-Polaroid Grid */}
             <div className="col-span-8 flex items-center justify-center h-full min-h-0">
-              <div className="grid grid-cols-3 gap-4 lg:gap-6 w-full max-w-2xl max-h-[75vh] overflow-y-auto p-2">
-                {userPhotos.slice(0, 6).map((item: PhotoItem, idx: number) => (
-                  <div
-                    key={idx}
-                    onClick={() => setActiveModalPhoto(item.url)}
-                    className={`bg-white p-2.5 pb-4 rounded-xl shadow-xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % rotations.length]} hover:rotate-0 hover:scale-105 transition-all duration-300 cursor-pointer group`}
-                  >
-                    <div className="aspect-square w-full rounded-sm overflow-hidden bg-stone-100 mb-2 relative">
-                      <img
-                        src={item.url}
-                        alt={item.caption || "Kỷ niệm"}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                    </div>
-                    {item.caption && (
-                      <span className="font-handwriting text-sm lg:text-base text-[#1c3f50] font-bold text-center line-clamp-1 px-1">
-                        {item.caption}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
+              {isMultiRowSix ? (
+                /* 6-Photo Layout: 3 columns x 2 rows (Flexible for 5-6 photos) */
+                <div className="grid grid-cols-3 gap-2.5 sm:gap-3 lg:gap-4 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl max-h-[76vh] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-1 items-center justify-center">
+                  {userPhotos.slice(0, 6).map((item: PhotoItem, idx: number) => (
+                    <button
+                      type="button"
+                      data-no-swipe
+                      key={idx}
+                      onClick={() => setActiveModalPhoto(item.url)}
+                      className={`bg-white p-2 pb-3 sm:p-2.5 sm:pb-3.5 rounded-xl shadow-lg hover:shadow-2xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % rotations.length]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group text-left focus:outline-none`}
+                    >
+                      <div className="aspect-square w-full rounded-sm overflow-hidden bg-stone-100 mb-1.5 relative pointer-events-none">
+                        <img
+                          src={item.url}
+                          alt={item.caption || "Kỷ niệm"}
+                          draggable={false}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
+                        />
+                      </div>
+                      {item.caption && (
+                        <span className="font-handwriting text-xs sm:text-sm lg:text-base text-[#1c3f50] font-bold text-center line-clamp-1 px-1 pointer-events-none select-none">
+                          {item.caption}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                /* 4-Photo Layout: 2 columns x 2 rows (Enlarged and perfectly balanced like mobile) */
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl max-h-[76vh] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-1 items-center justify-center">
+                  {userPhotos.slice(0, 4).map((item: PhotoItem, idx: number) => (
+                    <button
+                      type="button"
+                      data-no-swipe
+                      key={idx}
+                      onClick={() => setActiveModalPhoto(item.url)}
+                      className={`bg-white p-2 pb-3 sm:p-2.5 sm:pb-3.5 lg:p-3 lg:pb-4.5 rounded-xl lg:rounded-2xl shadow-lg hover:shadow-2xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % 4]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group text-left focus:outline-none`}
+                    >
+                      <div className="aspect-square w-full rounded-md overflow-hidden bg-stone-100 mb-1.5 lg:mb-2 relative pointer-events-none">
+                        <img
+                          src={item.url}
+                          alt={item.caption || "Kỷ niệm"}
+                          draggable={false}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
+                        />
+                      </div>
+                      {item.caption && (
+                        <span className="font-handwriting text-xs sm:text-sm lg:text-base xl:text-lg text-[#1c3f50] font-bold text-center line-clamp-1 px-1 pointer-events-none select-none">
+                          {item.caption}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -149,41 +197,86 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
             </span>
           </div>
 
-          {/* 4-Polaroid Collage Grid */}
-          <div className="relative z-10 my-auto grid grid-cols-2 gap-3 sm:gap-4 w-full max-w-xs sm:max-w-sm mx-auto flex-1 items-center min-h-0">
-            {/* Floating Stars */}
-            <img
-              src="/thamkhao/star.png"
-              alt="Ngôi sao"
-              className="absolute -top-4 -right-2 w-6 h-6 object-contain pointer-events-none opacity-80 animate-pulse z-20"
-            />
-            <img
-              src="/thamkhao/star.png"
-              alt="Ngôi sao"
-              className="absolute -bottom-3 -left-2 w-5 h-5 object-contain pointer-events-none opacity-75 animate-pulse z-20"
-            />
+          {/* Polaroid Collage Grid (Adaptive: 2x2 for <=4 photos, 3x2 for 6 photos) */}
+          {isMultiRowSix ? (
+            /* 6-Photo Layout on Mobile: 3 columns x 2 rows */
+            <div className="relative z-10 my-auto grid grid-cols-3 gap-2 sm:gap-2.5 w-full max-w-sm sm:max-w-md mx-auto flex-1 items-center min-h-0">
+              {/* Floating Stars */}
+              <img
+                src="/thamkhao/star.png"
+                alt="Ngôi sao"
+                className="absolute -top-4 -right-2 w-6 h-6 object-contain pointer-events-none opacity-80 animate-pulse z-20"
+              />
+              <img
+                src="/thamkhao/star.png"
+                alt="Ngôi sao"
+                className="absolute -bottom-3 -left-2 w-5 h-5 object-contain pointer-events-none opacity-75 animate-pulse z-20"
+              />
 
-            {userPhotos.slice(0, 4).map((item: PhotoItem, idx: number) => (
-              <div
-                key={idx}
-                onClick={() => setActiveModalPhoto(item.url)}
-                className={`bg-white p-2 pb-3 rounded-lg shadow-lg border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % 4]} hover:rotate-0 hover:scale-105 transition-all duration-300 cursor-pointer group relative`}
-              >
-                <div className="aspect-square w-full rounded-xs overflow-hidden bg-stone-100 mb-1.5 relative">
-                  <img
-                    src={item.url}
-                    alt={item.caption || "Ảnh kỷ niệm"}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                </div>
-                {item.caption && (
-                  <span className="font-handwriting text-sm text-[#1c3f50] font-bold text-center line-clamp-1 px-1">
-                    {item.caption}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+              {userPhotos.slice(0, 6).map((item: PhotoItem, idx: number) => (
+                <button
+                  type="button"
+                  data-no-swipe
+                  key={idx}
+                  onClick={() => setActiveModalPhoto(item.url)}
+                  className={`bg-white p-1.5 pb-2.5 sm:p-2 sm:pb-3 rounded-lg shadow-md hover:shadow-xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % rotations.length]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group relative text-left focus:outline-none`}
+                >
+                  <div className="aspect-square w-full rounded-xs overflow-hidden bg-stone-100 mb-1 relative pointer-events-none">
+                    <img
+                      src={item.url}
+                      alt={item.caption || "Ảnh kỷ niệm"}
+                      draggable={false}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
+                    />
+                  </div>
+                  {item.caption && (
+                    <span className="font-handwriting text-[10px] sm:text-xs text-[#1c3f50] font-bold text-center line-clamp-1 px-0.5 pointer-events-none select-none">
+                      {item.caption}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          ) : (
+            /* 4-Photo Layout on Mobile: 2 columns x 2 rows (Original 2x2 framing) */
+            <div className="relative z-10 my-auto grid grid-cols-2 gap-3 sm:gap-4 w-full max-w-xs sm:max-w-sm mx-auto flex-1 items-center min-h-0">
+              {/* Floating Stars */}
+              <img
+                src="/thamkhao/star.png"
+                alt="Ngôi sao"
+                className="absolute -top-4 -right-2 w-6 h-6 object-contain pointer-events-none opacity-80 animate-pulse z-20"
+              />
+              <img
+                src="/thamkhao/star.png"
+                alt="Ngôi sao"
+                className="absolute -bottom-3 -left-2 w-5 h-5 object-contain pointer-events-none opacity-75 animate-pulse z-20"
+              />
+
+              {userPhotos.slice(0, 4).map((item: PhotoItem, idx: number) => (
+                <button
+                  type="button"
+                  data-no-swipe
+                  key={idx}
+                  onClick={() => setActiveModalPhoto(item.url)}
+                  className={`bg-white p-2.5 pb-3.5 sm:p-3 sm:pb-4 rounded-xl shadow-lg hover:shadow-xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % 4]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group relative text-left focus:outline-none`}
+                >
+                  <div className="aspect-square w-full rounded-sm overflow-hidden bg-stone-100 mb-1.5 relative pointer-events-none">
+                    <img
+                      src={item.url}
+                      alt={item.caption || "Ảnh kỷ niệm"}
+                      draggable={false}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
+                    />
+                  </div>
+                  {item.caption && (
+                    <span className="font-handwriting text-xs sm:text-sm text-[#1c3f50] font-bold text-center line-clamp-1 px-1 pointer-events-none select-none">
+                      {item.caption}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

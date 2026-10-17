@@ -43,7 +43,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
 
   return (
     <div
-      className="relative flex h-full w-full select-none overflow-hidden bg-cover bg-center text-[#2e1d1b]"
+      className="relative flex h-full w-full select-none overflow-hidden bg-cover bg-[center_42%] text-[#2e1d1b]"
       style={{ backgroundImage: "url('/thamkhao/sunset_couple_clean.jpg')" }}
     >
       {/* Sunset top lighting overlay */}
@@ -61,29 +61,30 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
       )}
 
       {isLandscape ? (
-        <div className="relative z-10 flex h-full w-full flex-col justify-between p-6 lg:p-10">
+        <div className="relative z-10 flex h-full w-full flex-col justify-between px-6 lg:px-12 pt-2 lg:pt-3 pb-3 lg:pb-4">
           <StorybookHeader ctx={ctx} slides={slides} isArtCanvas />
 
-          <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-between py-2">
+          <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-between">
             {/* Header + Final Message in the Sky */}
-            <div className="text-center mt-2 flex flex-col items-center shrink-0">
+            <div className="text-center flex flex-col items-center shrink-0 max-w-4xl px-2">
               <div className="inline-flex items-center justify-center gap-3">
-                <h2 className="font-handwriting font-black text-4xl lg:text-5xl text-[#1c3f50] drop-shadow-md">
+                <h2 className="font-handwriting font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-[#1c3f50] drop-shadow-[0_2px_4px_rgba(255,255,255,0.9)]">
                   Cảm ơn bạn
                 </h2>
-                <span className="text-[#c13d28] text-3xl lg:text-4xl animate-pulse">❤️</span>
+                <span className="text-[#c13d28] text-4xl sm:text-5xl lg:text-6xl animate-pulse">❤️</span>
               </div>
-              <p className="font-handwriting text-2xl lg:text-3xl text-[#3d2417] font-bold mt-1 drop-shadow-xs">
+              <p className="font-handwriting text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-[#3d2417] font-bold -mt-0.5 lg:-mt-1 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
                 đã đi qua những ngày này cùng mình.
               </p>
 
               {/* Final Message card floating in the sunset sky */}
-              <div className="mt-3 px-6 py-2.5 rounded-2xl bg-white/80 backdrop-blur-xs border border-white/85 shadow-sm max-w-lg text-center">
-                <p className="font-handwriting text-lg lg:text-xl text-[#2e1d1b] font-semibold leading-relaxed whitespace-pre-line">
+              <div className="relative mt-2 lg:mt-3 px-8 py-3 sm:px-10 sm:py-3.5 lg:px-12 lg:py-4 rounded-2xl sm:rounded-3xl bg-[#fffef8]/90 backdrop-blur-md border border-[#ecdac8] shadow-[0_12px_36px_rgba(40,20,10,0.14)] max-w-xl lg:max-w-2xl xl:max-w-3xl text-center">
+                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-14 lg:w-18 h-4 bg-amber-100/80 border border-amber-200/70 shadow-xs transform rotate-1 pointer-events-none backdrop-blur-xs" />
+                <p className="font-handwriting text-lg sm:text-xl lg:text-2xl xl:text-3xl text-[#2e1d1b] font-semibold leading-relaxed whitespace-pre-line">
                   {finalMsg}
                 </p>
                 {gift.sender && (
-                  <p className="font-handwriting text-base lg:text-lg text-[#c13d28] font-bold mt-1">
+                  <p className="font-handwriting text-base sm:text-lg lg:text-xl xl:text-2xl text-[#c13d28] font-bold mt-1">
                     — {gift.sender}
                   </p>
                 )}
@@ -91,25 +92,25 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
             </div>
 
             {/* Spacer so the couple and sea are 100% visible */}
-            <div className="flex-1 min-h-0 pointer-events-none" />
+            <div className="flex-1 min-h-6 pointer-events-none" />
 
-            {/* Bottom Actions */}
-            <div className="flex items-center justify-center gap-6 pb-2 shrink-0">
+            {/* Bottom Actions with prominent styling and white border */}
+            <div className="flex items-center justify-center gap-6 lg:gap-10 pb-1 sm:pb-2 shrink-0">
               <button
                 type="button"
                 onClick={handleReplay}
-                className="py-3 px-8 rounded-full bg-[#1c3f50] hover:bg-[#142d3a] text-white font-serif font-bold text-sm lg:text-base shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                className="py-2.5 px-8 sm:py-3 sm:px-10 lg:py-3.5 lg:px-12 rounded-full bg-[#1c3f50] hover:bg-[#142d3a] text-white font-serif font-bold text-base sm:text-lg lg:text-xl shadow-2xl border-2 border-white/80 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[20px]">replay</span>
+                <span className="material-symbols-outlined text-[22px] lg:text-[26px]">replay</span>
                 <span>Xem lại</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleSaveKeepsake}
-                className="py-3 px-8 rounded-full bg-[#c13d28] hover:bg-[#a83232] text-white font-serif font-bold text-sm lg:text-base shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                className="py-2.5 px-8 sm:py-3 sm:px-10 lg:py-3.5 lg:px-12 rounded-full bg-[#c13d28] hover:bg-[#a83232] text-white font-serif font-bold text-base sm:text-lg lg:text-xl shadow-2xl border-2 border-white/80 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[20px]">download</span>
+                <span className="material-symbols-outlined text-[22px] lg:text-[26px]">download</span>
                 <span>Lưu lại</span>
               </button>
             </div>

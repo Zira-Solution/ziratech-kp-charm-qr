@@ -4,7 +4,7 @@ Instructions for every AI coding agent working in this repository (Claude, Codex
 
 ## Project
 
-K&P Atelier: a web app for a charm-bracelet stall at FPT University HCMC (event 16–20/10/2026). Each order gets a card code, a creator OTP for the buyer and a 4-digit PIN for the recipient. The buyer composes a digital card (letter, photos, voice, video, music...) in a studio; the recipient opens it with the PIN. Profits go to the Sân Nhà Nhiều Chó animal shelter. Deployed on Vercel.
+K&P Atelier: a web app for a charm-bracelet stall at FPT University HCMC (event 16–20/10/2026). Each order gets a card code, a creator OTP for the buyer and a 4-digit PIN for the recipient. The buyer composes a digital card (letter, photos, voice, video, music...) in a studio; the recipient opens it with the PIN. Profits go to the Sân Nhà Nhiều Chó animal shelter. Deployed on AWS Amplify (`amplify.yml`, `appRoot: src`).
 
 Stack: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Supabase (Postgres, Auth, Storage), nodemailer, SePay webhook.
 
@@ -17,9 +17,10 @@ Stack: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Supabase (
 
 ```
 AGENTS.md  CLAUDE.md  CONSTRAINTS.md  README.md
+amplify.yml    Amplify buildspec (gates, env file, build); customHttp.yml: cache headers
 supabase/      schema.sql, seed.sql (run by hand in the Supabase SQL Editor)
-docs/          01 architecture, 02 setup & env, 06 Vercel deploy, adr/, specs/, plans/, archive/
-src/           the Next.js app root (Vercel Root Directory)
+docs/          01 architecture, 02 setup & env, 06 Amplify deploy, adr/, specs/, plans/, archive/
+src/           the Next.js app root (Amplify appRoot)
   app/         routes: pages and API route handlers
   components/  gift-templates (card viewer), studio (card editor), admin, home, ui
   lib/         auth, supabase, validation, mail, media
@@ -53,6 +54,7 @@ npx next build
 
 - **Every route handler checks its own access.** There is no middleware: gift routes use `hasGiftSession` (`src/lib/auth/gift-session.ts`), admin routes use `getAdminUser` (`src/lib/supabase/auth.ts`).
 - **Server-only modules start with `import "server-only"`.** `SUPABASE_SERVICE_ROLE_KEY` and other secrets never get a `NEXT_PUBLIC_` prefix.
+- **A new server-only env var must be added to `SERVER_VARS` in `src/scripts/amplify-env.mjs`**, or it exists at build time but is `undefined` on Amplify at runtime. Also add it to `src/.env.example` and the table in `docs/02-cai-dat-va-moi-truong.md`.
 - **Validate at the boundary.** Card data is rebuilt from allowlisted fields by `parseGiftData` (`src/lib/validation/gift.ts`); parsers return `Parsed<T>` (`{ ok, value } | { ok, error }`) with a Vietnamese message instead of throwing.
 - **Pure modules stay framework-free** (validation, `blocks.ts`, `normalize.ts`, `layout.ts`, `studio/draft.ts`, `lib/media/embed.ts`...). They import each other by relative path **with the `.ts` extension** so `node --test` can run them directly; add or update a test in `src/scripts/` when you change one.
 - **Codes are never stored in plaintext.** Creator keys and PINs are scrypt hashes; plaintext codes are returned once, when issued.

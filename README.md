@@ -2,7 +2,7 @@
 
 Web app cho quầy bán vòng charm của K&P Atelier tại ĐH FPT TP.HCM (sự kiện 16–20/10/2026). Mỗi đơn có một **mã thiệp**, một **OTP tạo thiệp** cho người mua và một **PIN 4 số** cho người nhận: người mua tự soạn thiệp số (thư, ảnh, ghi âm, video, nhạc...), người nhận mở thiệp bằng PIN. Lợi nhuận được góp cho trạm cứu hộ Sân Nhà Nhiều Chó.
 
-**Công nghệ:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Supabase (Postgres, Auth, Storage), nodemailer (SMTP), SePay webhook. Deploy trên Vercel.
+**Công nghệ:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Supabase (Postgres, Auth, Storage), nodemailer (SMTP), SePay webhook. Deploy trên AWS Amplify.
 
 > Hướng dẫn cho mọi AI agent (Claude, Codex, Cursor...) nằm ở [AGENTS.md](AGENTS.md); `CLAUDE.md` chỉ trỏ về đó. Next.js 16 khác nhiều so với các bản cũ: trước khi viết code framework, đọc `src/node_modules/next/dist/docs/` và `CONSTRAINTS.md`.
 
@@ -12,17 +12,19 @@ Web app cho quầy bán vòng charm của K&P Atelier tại ĐH FPT TP.HCM (sự
 ├── README.md
 ├── AGENTS.md              hướng dẫn cho mọi AI agent (nguồn duy nhất)
 ├── CLAUDE.md              chỉ chứa `@AGENTS.md`
+├── amplify.yml            buildspec cho AWS Amplify (appRoot: src)
+├── customHttp.yml         header cache cho ảnh, âm thanh trên Amplify
 ├── CONSTRAINTS.md         tiêu chuẩn chất lượng bắt buộc (kiểm tra nào chặn, ngưỡng bao nhiêu)
 ├── supabase/              schema.sql, seed.sql (chạy tay trong Supabase SQL Editor)
 ├── docs/
 │   ├── 01-kien-truc-he-thong-va-luong-du-lieu.md
 │   ├── 02-cai-dat-va-moi-truong.md
-│   ├── 06-trien-khai-vercel.md
+│   ├── 06-trien-khai-amplify.md
 │   ├── adr/               các quyết định kiến trúc
 │   ├── specs/             đặc tả tính năng
 │   ├── plans/             kế hoạch triển khai
 │   └── archive/           file thiết kế, ảnh tham khảo, script nháp, task list cũ
-└── src/                   app Next.js (Vercel Root Directory)
+└── src/                   app Next.js (Amplify appRoot)
     ├── app/               route: trang và API
     ├── components/        gift-templates (xem thiệp), studio (soạn thiệp), admin, home, ui
     ├── lib/               auth, supabase, validation, mail, media
@@ -76,7 +78,7 @@ Chạy trong `src/`. Ngưỡng và lý do nằm ở [CONSTRAINTS.md](CONSTRAINTS
 |---|---|
 | [01. Kiến trúc & luồng dữ liệu](docs/01-kien-truc-he-thong-va-luong-du-lieu.md) | Các tầng, database, luồng bán hàng / soạn thiệp / xem thiệp, quyên góp |
 | [02. Cài đặt & môi trường](docs/02-cai-dat-va-moi-truong.md) | Biến môi trường, database, tài khoản admin, chế độ bộ nhớ |
-| [06. Triển khai Vercel](docs/06-trien-khai-vercel.md) | Tạo project, biến môi trường, checklist sau deploy, sự cố thường gặp |
+| [06. Triển khai Amplify](docs/06-trien-khai-amplify.md) | Tạo app, Node, biến môi trường, checklist sau deploy, sự cố thường gặp |
 | [docs/adr/](docs/adr/) | Quyết định về khối nội dung thiệp, nơi lưu media, skin và khung dọc/ngang |
 | [docs/specs/](docs/specs/) | Đặc tả studio, thiệp theo thông điệp, đặc tả sản phẩm gốc |
 

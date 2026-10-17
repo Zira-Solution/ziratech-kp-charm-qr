@@ -1,6 +1,8 @@
 # Spec: Chuẩn hóa cấu trúc repo để deploy Vercel
 
-Trạng thái: đã duyệt thiết kế (2026-10-17), chưa triển khai. Nhánh: `chore/restructure-repo`.
+Trạng thái: đã triển khai và merge (2026-10-17). Nhánh: `chore/restructure-repo`.
+
+> **Cập nhật 2026-10-17:** nền tảng deploy đã đổi từ Vercel sang **AWS Amplify** (`amplify.yml`, `appRoot: src`), xem `docs/06-trien-khai-amplify.md`. Cấu trúc thư mục trong spec này vẫn đúng; các mục nói về Vercel chỉ còn là lịch sử.
 Mẫu tham khảo: `Zoney.vn/Zoney.vn-Web` (gốc repo là "vỏ", app Next.js nằm trọn trong `src/`).
 
 ## Mục tiêu

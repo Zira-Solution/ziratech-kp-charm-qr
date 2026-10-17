@@ -17,7 +17,7 @@ Next.js đọc biến môi trường từ thư mục app, nên file là **`src/.
 
 ## 2. Biến môi trường
 
-Chỉ biến có tiền tố `NEXT_PUBLIC_` bị đưa vào bundle trình duyệt; mọi biến khác chỉ server đọc. Khi deploy, đặt các biến này trên Vercel (xem [06](06-trien-khai-vercel.md)).
+Chỉ biến có tiền tố `NEXT_PUBLIC_` bị đưa vào bundle trình duyệt; mọi biến khác chỉ server đọc. Khi deploy, đặt các biến này trên Amplify Console; `amplify.yml` ghi chúng vào `src/.env.production` cho server đọc (xem [06](06-trien-khai-amplify.md)).
 
 | Biến | Dùng ở | Bắt buộc ở production? | Thiếu thì sao |
 |---|---|---|---|

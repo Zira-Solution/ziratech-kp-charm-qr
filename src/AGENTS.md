@@ -1,3 +1,5 @@
+Project rules for all agents live in `../AGENTS.md` (repository root). The block below is managed by `next dev`: keep it here, next to `package.json`, or `next dev` re-creates `AGENTS.md` and `CLAUDE.md` in this folder.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

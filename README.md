@@ -4,13 +4,14 @@ Web app cho quầy bán vòng charm của K&P Atelier tại ĐH FPT TP.HCM (sự
 
 **Công nghệ:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Supabase (Postgres, Auth, Storage), nodemailer (SMTP), SePay webhook. Deploy trên Vercel.
 
-> Next.js 16 khác nhiều so với các bản cũ. Trước khi viết code framework, đọc `src/node_modules/next/dist/docs/` (xem `src/AGENTS.md`) và `CONSTRAINTS.md`.
+> Hướng dẫn cho mọi AI agent (Claude, Codex, Cursor...) nằm ở [AGENTS.md](AGENTS.md); `CLAUDE.md` chỉ trỏ về đó. Next.js 16 khác nhiều so với các bản cũ: trước khi viết code framework, đọc `src/node_modules/next/dist/docs/` và `CONSTRAINTS.md`.
 
 ## Cấu trúc repo
 
 ```
 ├── README.md
-├── CLAUDE.md              hướng dẫn cho AI agent
+├── AGENTS.md              hướng dẫn cho mọi AI agent (nguồn duy nhất)
+├── CLAUDE.md              chỉ chứa `@AGENTS.md`
 ├── CONSTRAINTS.md         tiêu chuẩn chất lượng bắt buộc (kiểm tra nào chặn, ngưỡng bao nhiêu)
 ├── supabase/              schema.sql, seed.sql (chạy tay trong Supabase SQL Editor)
 ├── docs/

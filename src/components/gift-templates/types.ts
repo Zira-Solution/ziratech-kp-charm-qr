@@ -1,7 +1,7 @@
 // The shape below (RecipientGiftData and its sample, DEFAULT_GIFT_DATA) belongs to the original fixed
 // seven-page Storybook that /thamkhao keeps as a design reference. Real cards use blocks.ts and normalize.ts.
 
-export type GiftTemplateId = "vintage-scrapbook" | "retro-nostalgia" | "storybook-sunset";
+export type GiftTemplateId = "vintage-scrapbook" | "retro-nostalgia" | "storybook-sunset" | "kp-atelier";
 
 export interface TimelineItem {
   date: string; // YYYY-MM-DD

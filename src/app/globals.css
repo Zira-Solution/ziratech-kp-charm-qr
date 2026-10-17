@@ -137,14 +137,23 @@ body {
 
 .animate-liquid-float-slow {
   animation: liquidFloatSlow 18s ease-in-out infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .animate-liquid-float-fast {
   animation: liquidFloatFast 12s ease-in-out infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .animate-liquid-pulse {
   animation: liquidPulse 8s ease-in-out infinite;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 /* ========================================================= */
@@ -603,3 +612,113 @@ body:has(.studio-light) {
 @media (prefers-reduced-motion: reduce) {
   .kp-card-in, .kp-page-next, .kp-page-prev { animation: none; }
 }
+
+/* ========================================================= */
+/* Authentic iOS & iPhone Mockup Utilities                  */
+/* ========================================================= */
+.font-ios {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+}
+
+.font-ios-clock {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Rounded", "Helvetica Neue", sans-serif;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes iosHeartFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.75);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(0, -180px, 0) scale(1.05);
+    opacity: 0;
+  }
+}
+
+.animate-ios-heart {
+  animation: iosHeartFloat 6s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  transform: translate3d(0, 0, 0);
+  pointer-events: none;
+}
+
+@keyframes iosShake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20%, 60% { transform: translate3d(-10px, 0, 0); }
+  40%, 80% { transform: translate3d(10px, 0, 0); }
+}
+
+.animate-ios-shake {
+  animation: iosShake 0.35s ease-in-out;
+}
+
+/* Crystal Transparent Liquid Glass Button (iOS Passcode Lens) */
+.ios-glass-key {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1.25px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -1px 2px 0 rgba(255, 255, 255, 0.25),
+    0 4px 14px 0 rgba(0, 0, 0, 0.2);
+  transform: translateZ(0);
+  transition: transform 0.08s ease-out, background-color 0.08s ease-out;
+}
+
+.ios-glass-key:active {
+  background: rgba(255, 255, 255, 0.45);
+  transform: scale(0.92);
+  box-shadow: 
+    inset 0 2px 4px 0 rgba(255, 255, 255, 0.95),
+    0 2px 8px 0 rgba(0, 0, 0, 0.3);
+}
+
+@keyframes letterOpenIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 35px, 0) scale(0.88);
+  }
+  60% {
+    opacity: 1;
+    transform: translate3d(0, -6px, 0) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.animate-letter-open {
+  animation: letterOpenIn 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes filmstripScroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-filmstrip {
+  display: flex;
+  width: max-content;
+  animation: filmstripScroll 26s linear infinite;
+}
+
+.animate-filmstrip:hover,
+.animate-filmstrip:active {
+  animation-play-state: paused;
+}
+
+
+

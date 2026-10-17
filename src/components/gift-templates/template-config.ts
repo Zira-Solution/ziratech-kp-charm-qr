@@ -30,6 +30,12 @@ export const TEMPLATES: readonly TemplateInfo[] = [
     icon: "📼",
     desc: "Nền chấm bi, tiêu đề 3D, màu hoài niệm",
   },
+  {
+    id: "kp-atelier",
+    name: "K&P Atelier",
+    icon: "💌",
+    desc: "Giấy hồng phấn, chữ nghiêng đỏ rượu, ảnh polaroid",
+  },
 ];
 
 export const DEFAULT_TEMPLATE: GiftTemplateId = "storybook-sunset";

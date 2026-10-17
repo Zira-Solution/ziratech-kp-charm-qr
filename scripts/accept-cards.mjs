@@ -103,7 +103,7 @@ async function login(page, mode = "create", code = "TAO-2010") {
 
 // ---------------------------------------------------------------- criteria 4 and 5 (the card as the recipient sees it)
 const SAMPLE_WORDS = ["Bảo Ngọc", "Phan Mạnh Quỳnh", "Có Chàng Trai", "unsplash", "mixkit", "Ocean Star", "Người bạn đặc biệt"];
-const TEMPLATES = ["storybook-sunset", "vintage-scrapbook", "retro-nostalgia"];
+const TEMPLATES = ["storybook-sunset", "vintage-scrapbook", "retro-nostalgia", "kp-atelier"];
 const DEVICES = [
   { name: "phone", viewport: { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true }, layout: "portrait" },
   { name: "ipad-upright", viewport: { width: 820, height: 1180, deviceScaleFactor: 1, isMobile: true, hasTouch: true }, layout: "portrait" },

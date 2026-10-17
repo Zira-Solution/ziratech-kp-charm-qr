@@ -20,7 +20,7 @@ export default function TemplatePicker({ step, value, onChange, onPreview }: Pro
       title="Giao diện thiệp"
       hint="Chỉ là cách trình bày: mẫu nào cũng hiện đầy đủ những gì bạn đã chọn, đổi mẫu không làm mất nội dung."
     >
-      <div role="radiogroup" aria-label="Mẫu thiệp" className="grid gap-3 sm:grid-cols-3">
+      <div role="radiogroup" aria-label="Mẫu thiệp" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {TEMPLATES.map((tpl) => {
           const selected = tpl.id === value;
           return (

@@ -703,70 +703,106 @@ export default function StorybookSunsetTemplate({
 
       {renderTopBar("04")}
 
-      {/* Main Header */}
-      <div className="relative z-10 text-center mt-1 flex flex-col items-center">
-        <div className="flex items-center justify-center gap-2">
-          <h2 className="font-handwriting font-bold text-3xl sm:text-4xl text-[#1c3f50]">
-            Video
-          </h2>
-          <span className="material-symbols-outlined text-2xl text-[#c13d28]">videocam</span>
+      {/* Main Header with Large Tilted Typography and Playful Doodles */}
+      <div className="relative z-10 text-center mt-0.5 sm:mt-1 flex flex-col items-center shrink-0">
+        <span className="absolute -top-1 left-8 text-amber-400 text-sm pointer-events-none select-none">✦</span>
+        <span className="absolute top-2 right-10 text-amber-400 text-xs pointer-events-none select-none">✦</span>
+
+        <div className="relative inline-flex items-center justify-center">
+          <div className="absolute -left-10 sm:-left-12 -top-1 transform -rotate-12 pointer-events-none select-none">
+            <svg
+              viewBox="0 0 32 32"
+              className="w-8 h-8 sm:w-9 sm:h-9 text-[#c13d28] fill-none stroke-current"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="8" width="18" height="15" rx="3.5" />
+              <polygon points="21,13 29,8 29,23 21,18" />
+              <circle cx="10" cy="15.5" r="2.5" />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-2 transform -rotate-[5deg]">
+            <h2 className="font-handwriting font-bold text-5xl sm:text-6xl text-[#183b4e] tracking-tight drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
+              Video
+            </h2>
+            <span className="text-[#c13d28] text-2xl sm:text-3xl font-sans inline-block transform rotate-12 drop-shadow-xs">
+              ♡
+            </span>
+          </div>
         </div>
-        <div className="flex items-center justify-center gap-1.5 mt-0.5">
-          <span className="font-handwriting text-xl sm:text-2xl text-[#c13d28] font-bold">
+
+        <div className="flex items-center justify-center gap-2 -mt-1 transform -rotate-[3deg]">
+          <span className="font-handwriting text-2xl sm:text-3xl text-[#c13d28] font-bold italic drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
             dành cho bạn
           </span>
-          <img src="/thamkhao/heart.png" alt="Heart" className="w-5 h-5 object-contain" />
+          <span className="text-[#c13d28] text-2xl font-sans inline-block transform -rotate-6">
+            ♡
+          </span>
         </div>
       </div>
 
       {/* Video Player Card */}
       <div className="relative z-10 my-auto w-full max-w-sm mx-auto flex flex-col items-center">
-        {/* Screen / Card */}
-        <div
-          onClick={toggleVideo}
-          className="relative w-full aspect-16/10 rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-black cursor-pointer group"
-        >
-          <img
-            src="/thamkhao/anime_sunset_couple_wide.png"
-            alt="Sunset anime couple"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/20" />
+        {/* White Polaroid frame */}
+        <div className="relative w-full rounded-2xl bg-white p-2 sm:p-2.5 shadow-2xl border border-[#ebdccd] transition-all duration-300 transform rotate-[0.5deg]">
+          <div
+            onClick={toggleVideo}
+            className="relative w-full aspect-video rounded-xl overflow-hidden bg-black cursor-pointer group flex items-center justify-center"
+          >
+            <img
+              src="/thamkhao/anime_sunset_couple_wide.png"
+              alt="Sunset anime couple"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/20" />
 
-          {/* Central Play Button */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-14 h-14 rounded-full bg-white/95 shadow-xl flex items-center justify-center text-[#c13d28] transform group-hover:scale-115 transition-transform">
-              <span className="material-symbols-outlined text-[32px] ml-1">
-                {isPlayingVideo ? "pause" : "play_arrow"}
-              </span>
+            {/* Central Play Button */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-white/95 shadow-xl flex items-center justify-center text-[#c13d28] transform group-hover:scale-115 active:scale-95 transition-transform">
+                <span className="material-symbols-outlined text-[32px] sm:text-[36px] ml-1">
+                  {isPlayingVideo ? "pause" : "play_arrow"}
+                </span>
+              </div>
             </div>
-          </div>
 
-          {/* Video Control Bar at Bottom */}
-          <div className="absolute bottom-0 inset-x-0 p-2.5 bg-gradient-to-t from-black/80 to-transparent flex items-center gap-2 text-white font-mono text-[11px]">
-            <span>0:00</span>
-            <div className="flex-1 h-1 bg-white/40 rounded-full relative overflow-hidden">
-              <div
-                className="h-full bg-[#c13d28] transition-all duration-300"
-                style={{ width: isPlayingVideo ? "45%" : "0%" }}
-              />
+            {/* Video Control Bar at Bottom */}
+            <div className="absolute bottom-0 inset-x-0 p-2.5 bg-gradient-to-t from-black/80 to-transparent flex items-center gap-2 text-white font-mono text-[11px]">
+              <span>0:00</span>
+              <div className="flex-1 h-1 bg-white/40 rounded-full relative overflow-hidden">
+                <div
+                  className="h-full bg-[#c13d28] transition-all duration-300"
+                  style={{ width: isPlayingVideo ? "45%" : "0%" }}
+                />
+              </div>
+              <span>4:12</span>
+              <span className="material-symbols-outlined text-[16px]">volume_up</span>
+              <span className="material-symbols-outlined text-[16px]">fullscreen</span>
             </div>
-            <span>4:12</span>
-            <span className="material-symbols-outlined text-[16px]">volume_up</span>
-            <span className="material-symbols-outlined text-[16px]">fullscreen</span>
           </div>
         </div>
 
-        {/* Taped Caption Note using original giấy.png */}
-        <div className="relative mt-2 w-full max-w-xs mx-auto flex items-center justify-center">
+        {/* Taped Caption Note */}
+        <div className="relative mt-2.5 w-full max-w-[290px] sm:max-w-xs mx-auto flex items-center justify-center">
+          <span className="absolute -left-6 bottom-1 text-[#c13d28] text-2xl font-sans pointer-events-none select-none transform rotate-12">
+            ♡
+          </span>
+          <span className="absolute -right-5 -bottom-1 text-amber-400 text-xs pointer-events-none select-none">
+            ✦
+          </span>
+
+          <div className="absolute -top-2.5 -left-2 z-20 w-8 h-4 bg-amber-100/75 border border-amber-200/60 shadow-xs transform -rotate-12 pointer-events-none backdrop-blur-xs" />
+
           <img
             src="/thamkhao/paper.png"
             alt="Giấy ghi chú"
             className="w-full h-auto object-contain drop-shadow-md"
           />
-          <div className="absolute inset-0 px-6 py-4 flex items-center justify-center text-center">
+          <div className="absolute inset-0 px-6 py-3 flex items-center justify-center text-center">
             <p className="font-handwriting text-xs sm:text-sm text-[#2e1d1b] font-medium leading-relaxed">
-              Một video đặc biệt gửi riêng cho bạn, với thật nhiều lời muốn nói và những kỷ niệm đẹp... ❤️
+              Một video đặc biệt gửi riêng cho bạn, với thật nhiều lời muốn nói và những kỷ niệm đẹp...{" "}
+              <span className="text-[#c13d28] inline-block font-sans ml-0.5 text-sm">♡</span>
             </p>
           </div>
         </div>

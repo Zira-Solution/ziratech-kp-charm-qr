@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { toMusicEmbed, toVideoEmbed } from "../src/lib/media/embed.ts";
+import { toMusicEmbed, toVideoEmbed } from "../lib/media/embed.ts";
 
 const YT = "dQw4w9WgXcQ";
 

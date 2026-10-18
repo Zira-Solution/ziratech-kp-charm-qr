@@ -1,0 +1,44 @@
+# Custom HTTP headers for Amplify Hosting. Amplify reads this file from the repository root only.
+# Images and audio in src/public/ are large (0.5 to 2 MB each) and change rarely: let browsers keep them
+# for a day and reuse a stale copy for a week while refreshing. `**/*.ext` matches every folder
+# (/images, /thamkhao, /audio). Check after a deploy: curl -I https://<domain>/thamkhao/gift_box.png
+
+applications:
+  - appRoot: src
+    customHeaders:
+      - pattern: '**/*.png'
+        headers:
+          - key: 'Cache-Control'
+            value: 'public, max-age=86400, stale-while-revalidate=604800'
+      - pattern: '**/*.jpg'
+        headers:
+          - key: 'Cache-Control'
+            value: 'public, max-age=86400, stale-while-revalidate=604800'
+      - pattern: '**/*.jpeg'
+        headers:
+          - key: 'Cache-Control'
+            value: 'public, max-age=86400, stale-while-revalidate=604800'
+      - pattern: '**/*.webp'
+        headers:
+          - key: 'Cache-Control'
+            value: 'public, max-age=86400, stale-while-revalidate=604800'
+      - pattern: '**/*.svg'
+        headers:
+          - key: 'Cache-Control'
+            value: 'public, max-age=86400, stale-while-revalidate=604800'
+      - pattern: '**/*.gif'
+        headers:
+          - key: 'Cache-Control'
+            value: 'public, max-age=86400, stale-while-revalidate=604800'
+      - pattern: '**/*.ico'
+        headers:
+          - key: 'Cache-Control'
+            value: 'public, max-age=86400, stale-while-revalidate=604800'
+      - pattern: '**/*.wav'
+        headers:
+          - key: 'Cache-Control'
+            value: 'public, max-age=86400, stale-while-revalidate=604800'
+      - pattern: '**/*.mp3'
+        headers:
+          - key: 'Cache-Control'
+            value: 'public, max-age=86400, stale-while-revalidate=604800'

@@ -121,6 +121,13 @@ export async function POST(req: NextRequest, context: { params: Promise<{ token:
     return fail("Loại tệp không hợp lệ (chỉ nhận song hoặc video)", 400);
   } catch (err) {
     console.error("[API Upload Media Error]:", err);
-    return fail("Không tải được tệp lúc này. Vui lòng thử lại.", 500);
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes("exceeded the maximum allowed size") || msg.includes("Payload too large")) {
+      return fail("Tệp quá lớn so với giới hạn của kho lưu trữ. Vui lòng thử lại với file nhỏ hơn.", 413);
+    }
+    if (msg.includes("Bucket not found") || msg.includes("bucket failed")) {
+      return fail("Chưa tạo bucket 'gift-media' trên Supabase Storage. Vui lòng kiểm tra cấu hình Storage.", 500);
+    }
+    return fail("Không tải được tệp lúc này: " + (msg.replace(/^Error:\s*|^\[Storage\]\s*/i, "") || "Vui lòng thử lại."), 500);
   }
 }

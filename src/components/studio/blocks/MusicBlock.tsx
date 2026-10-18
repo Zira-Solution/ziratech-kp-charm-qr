@@ -6,6 +6,7 @@ import { MUSIC_PRESETS } from "@/components/gift-templates/music-presets";
 import { MAX_SONG_BYTES } from "@/lib/validation/audio";
 import type { GiftDraft, SongDraft } from "../draft";
 import { Field, Icon, StudioSection, fieldClass } from "../ui";
+import AudioTrimmerModal from "./AudioTrimmerModal";
 
 interface Props {
   step: number;
@@ -26,6 +27,7 @@ export default function MusicBlock({ step, token, draft, onChange }: Props) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isPlayingUpload, setIsPlayingUpload] = useState(false);
+  const [fileToTrim, setFileToTrim] = useState<File | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -88,7 +90,7 @@ export default function MusicBlock({ step, token, draft, onChange }: Props) {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -99,40 +101,25 @@ export default function MusicBlock({ step, token, draft, onChange }: Props) {
     }
 
     setUploadError(null);
-    setUploading(true);
     stopAllAudio();
+    setFileToTrim(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
-    try {
-      const activeToken = token || "KP-2010-DEMO";
-      const formData = new FormData();
-      formData.set("type", "song");
-      formData.set("file", file);
-
-      const res = await fetch(`/api/gifts/${activeToken}/media`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Không tải được bài hát lên.");
-      }
-
-      const defaultTitle = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
-
-      setSong({
-        source: "upload",
-        audioPath: data.path,
-        audioUrl: data.url,
-        fileName: file.name,
-        title: song.title.trim() || defaultTitle,
-      });
-    } catch (err: unknown) {
-      setUploadError(err instanceof Error ? err.message : "Tải tệp âm thanh thất bại. Vui lòng thử lại.");
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
+  const handleTrimmerUploaded = (info: {
+    path: string;
+    url: string;
+    fileName: string;
+    title: string;
+  }) => {
+    setFileToTrim(null);
+    setSong({
+      source: "upload",
+      audioPath: info.path,
+      audioUrl: info.url,
+      fileName: info.fileName,
+      title: song.title.trim() || info.title,
+    });
   };
 
   const removeUploadedSong = () => {
@@ -254,8 +241,8 @@ export default function MusicBlock({ step, token, draft, onChange }: Props) {
                     disabled={uploading}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl liquid-glass-pill border border-rose-200 text-xs font-bold text-primary hover:bg-rose-50 cursor-pointer transition-colors"
                   >
-                    <Icon name="swap_horiz" className="text-[16px]" />
-                    Đổi file khác
+                    <Icon name="content_cut" className="text-[16px]" />
+                    Đổi / Cắt bài khác
                   </button>
                   <button
                     type="button"
@@ -295,13 +282,13 @@ export default function MusicBlock({ step, token, draft, onChange }: Props) {
               ) : (
                 <div className="flex flex-col items-center justify-center py-2">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm border border-rose-200 text-primary mb-2">
-                    <Icon name="upload_file" className="text-[26px]" />
+                    <Icon name="content_cut" className="text-[26px]" />
                   </div>
                   <p className="text-xs sm:text-sm font-bold text-slate-800">
                     Bấm để chọn file bài hát MP3 / M4A từ máy
                   </p>
                   <p className="text-[11px] text-slate-500 mt-1">
-                    Hỗ trợ định dạng MP3, M4A, WAV (tối đa 10MB)
+                    Cắt trực tiếp đoạn nhạc yêu thích trước khi tải lên (tối đa 10MB)
                   </p>
                 </div>
               )}
@@ -333,6 +320,15 @@ export default function MusicBlock({ step, token, draft, onChange }: Props) {
             </Field>
           </div>
         </div>
+      )}
+
+      {fileToTrim && (
+        <AudioTrimmerModal
+          file={fileToTrim}
+          token={token}
+          onClose={() => setFileToTrim(null)}
+          onUploaded={handleTrimmerUploaded}
+        />
       )}
     </StudioSection>
   );

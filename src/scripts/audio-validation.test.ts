@@ -19,6 +19,8 @@ test("recognises the audio formats browsers record in, from their first bytes", 
   assert.equal(sniffAudio(bytes(...ascii("RIFF"), 0, 0, 0, 0, ...ascii("WAVE"))), "wav");
   assert.equal(sniffAudio(bytes(...ascii("ID3"), 3, 0)), "mp3");
   assert.equal(sniffAudio(bytes(0xff, 0xfb, 0x90, 0x00)), "mp3");
+  assert.equal(sniffAudio(bytes(0, 0, 0, 0, ...ascii("ID3"), 3, 0)), "mp3"); // offset ID3
+  assert.equal(sniffAudio(bytes(0, 0, 0xff, 0xfb, 0x90, 0x00)), "mp3"); // offset frame sync
 });
 
 test("rejects anything that only pretends to be audio", () => {

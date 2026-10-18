@@ -316,6 +316,7 @@ test("parseGiftData preserves and cleans messenger settings when template is mes
     letterContent: "Anh thương em nhiều",
     messenger: {
       wallpaperUrl: "https://example.com/custom.jpg",
+      chatWallpaperUrl: "https://example.com/chat-bg.jpg",
       avatarUrl: "https://example.com/avatar.jpg",
       notificationText: "hello bé iu nè ❤️",
       messages: ["Tin 1", "Tin 2"],
@@ -332,6 +333,7 @@ test("parseGiftData preserves and cleans messenger settings when template is mes
     assert.equal(res.value.messenger?.notificationText, "hello bé iu nè ❤️");
     assert.deepEqual(res.value.messenger?.messages, ["Tin 1", "Tin 2"]);
     assert.equal(res.value.messenger?.wallpaperUrl, "https://example.com/custom.jpg");
+    assert.equal(res.value.messenger?.chatWallpaperUrl, "https://example.com/chat-bg.jpg");
     assert.equal(res.value.messenger?.giftLeadMessage, "Mở quà nha");
     assert.equal(res.value.messenger?.videoUrl, "https://youtu.be/dQw4w9WgXcQ");
     assert.equal(res.value.messenger?.videoLeadMessage, "Anh có video gửi em nè 🎬");

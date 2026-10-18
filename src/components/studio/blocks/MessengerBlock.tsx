@@ -18,6 +18,14 @@ export const WALLPAPER_PRESETS = [
   { name: "Cặp đôi hoàng hôn", url: "/thamkhao/sunset_couple_clean.jpg" },
 ];
 
+export const CHAT_WALLPAPER_PRESETS = [
+  { name: "Trái tim hồng", url: "/images/messenger_pink_theme_bg.png" },
+  { name: "Mây hồng hoàng hôn", url: "/images/pink_clouds_sunset_sky.webp" },
+  { name: "Hoàng hôn Anime", url: "/images/anime_sunset_couple.jpg" },
+  { name: "Cặp đôi hoàng hôn", url: "/thamkhao/sunset_couple_clean.jpg" },
+  { name: "Nắng nhẹ cô gái", url: "/images/default_lockscreen_girl.jpg" },
+];
+
 const MESSAGE_PRESETS = [
   {
     label: "🌸 20/10 Yêu Thương",
@@ -55,9 +63,11 @@ const MESSAGE_PRESETS = [
 
 export default function MessengerBlock({ step, draft, onChange }: Props) {
   const wallpaperInputRef = useRef<HTMLInputElement>(null);
+  const chatWallpaperInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const [uploadingWallpaper, setUploadingWallpaper] = useState(false);
+  const [uploadingChatWallpaper, setUploadingChatWallpaper] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -95,6 +105,28 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
     }
   };
 
+  const handleChatWallpaperUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setErrorMsg("");
+
+    if (!file.type.startsWith("image/")) {
+      setErrorMsg("Vui lòng chọn tệp hình ảnh (JPG, PNG hoặc WebP).");
+      return;
+    }
+
+    try {
+      setUploadingChatWallpaper(true);
+      const dataUrl = await compressImageToDataUrl(file, 300_000);
+      updateMessenger({ chatWallpaperUrl: dataUrl });
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Không tải được hình nền cuộc trò chuyện.");
+    } finally {
+      setUploadingChatWallpaper(false);
+    }
+  };
+
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
@@ -118,6 +150,8 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
   };
 
   const isCustomWallpaper = !WALLPAPER_PRESETS.some((p) => p.url === messenger.wallpaperUrl);
+  const currentChatWallpaper = messenger.chatWallpaperUrl || CHAT_WALLPAPER_PRESETS[0].url;
+  const isCustomChatWallpaper = !CHAT_WALLPAPER_PRESETS.some((p) => p.url === currentChatWallpaper);
 
   return (
     <StudioSection
@@ -216,7 +250,89 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
           </div>
         </div>
 
-        {/* 2. ẢNH ĐẠI DIỆN TIN NHẮN (AVATAR) */}
+        {/* 2. HÌNH NỀN CUỘC TRÒ CHUYỆN (CHAT THEME WALLPAPER) */}
+        <div className="pt-4 border-t border-rose-100/80">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[16px] text-rose-600">imagesmode</span>
+              Hình nền cuộc trò chuyện Messenger
+            </label>
+            {isCustomChatWallpaper && (
+              <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                Ảnh tự tải
+              </span>
+            )}
+          </div>
+
+          <p className="text-[11.5px] text-slate-500 mb-3 leading-relaxed">
+            Chọn chủ đề nền phía sau các dòng tin nhắn Messenger hoặc tải hình ảnh riêng của hai bạn:
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-3">
+            {CHAT_WALLPAPER_PRESETS.map((p) => {
+              const active = currentChatWallpaper === p.url;
+              return (
+                <button
+                  key={p.url}
+                  type="button"
+                  onClick={() => updateMessenger({ chatWallpaperUrl: p.url })}
+                  className={`group relative rounded-2xl overflow-hidden border-2 aspect-[9/16] h-32 mx-auto w-full transition-all cursor-pointer shadow-xs ${
+                    active
+                      ? "border-rose-600 ring-3 ring-rose-300/80 scale-102 shadow-md"
+                      : "border-slate-200/90 hover:border-rose-300 opacity-80 hover:opacity-100"
+                  }`}
+                >
+                  <img src={p.url} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-1.5 pt-4 text-center">
+                    <span className="text-[10px] font-bold text-white block truncate">
+                      {p.name}
+                    </span>
+                  </div>
+                  {active && (
+                    <span className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-xs">
+                      <span className="material-symbols-outlined text-[13px]">check</span>
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              type="button"
+              onClick={() => chatWallpaperInputRef.current?.click()}
+              disabled={uploadingChatWallpaper}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl liquid-glass-btn-secondary text-xs font-bold text-slate-800 cursor-pointer transition-all shadow-2xs hover:border-rose-300"
+            >
+              <span className="material-symbols-outlined text-[17px] text-rose-600">
+                {uploadingChatWallpaper ? "hourglass_top" : "upload_file"}
+              </span>
+              <span>{uploadingChatWallpaper ? "Đang xử lý ảnh..." : "Tải ảnh nền chat từ máy bạn"}</span>
+            </button>
+            <input
+              ref={chatWallpaperInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleChatWallpaperUpload}
+              className="hidden"
+            />
+            {isCustomChatWallpaper && (
+              <button
+                type="button"
+                onClick={() => updateMessenger({ chatWallpaperUrl: CHAT_WALLPAPER_PRESETS[0].url })}
+                className="text-[11.5px] text-slate-500 hover:text-rose-700 underline cursor-pointer"
+              >
+                Đặt lại nền trái tim hồng mặc định
+              </button>
+            )}
+            <span className="text-[11px] text-slate-400">
+              Hỗ trợ JPG, PNG (tự nén sắc nét)
+            </span>
+          </div>
+        </div>
+
+        {/* 3. ẢNH ĐẠI DIỆN TIN NHẮN (AVATAR) */}
         <div className="pt-4 border-t border-rose-100/80">
           <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5 mb-2">
             <span className="material-symbols-outlined text-[16px] text-rose-600">account_circle</span>
@@ -271,7 +387,7 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
           </div>
         </div>
 
-        {/* 3. THÔNG BÁO MÀN HÌNH KHÓA & TRÁI TIM BAY */}
+        {/* 4. THÔNG BÁO MÀN HÌNH KHÓA & TRÁI TIM BAY */}
         <div className="pt-4 border-t border-rose-100/80 space-y-3.5">
           <Field
             label="Nội dung tin nhắn trên màn hình khóa iPhone"
@@ -309,7 +425,7 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
           </label>
         </div>
 
-        {/* 4. ĐOẠN HỘI THOẠI MESSENGER (CHAT BUBBLES) */}
+        {/* 5. ĐOẠN HỘI THOẠI MESSENGER (CHAT BUBBLES) */}
         <div className="pt-4 border-t border-rose-100/80">
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <label htmlFor="messenger-messages" className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
@@ -354,7 +470,7 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
           />
         </div>
 
-        {/* 5. GỬI KÈM VIDEO KỶ NIỆM (YOUTUBE / DRIVE / VIMEO) */}
+        {/* 6. GỬI KÈM VIDEO KỶ NIỆM (YOUTUBE / DRIVE / VIMEO) */}
         <div className="pt-4 border-t border-rose-100/80">
           <div className="flex items-center justify-between mb-1.5">
             <label htmlFor="messenger-video-url" className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">

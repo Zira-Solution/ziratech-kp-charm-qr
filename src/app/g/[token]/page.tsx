@@ -114,6 +114,7 @@ export default function RecipientGiftPage() {
       const m = gift.messenger;
       if (m) {
         if (m.wallpaperUrl) q.set("wallpaper", m.wallpaperUrl);
+        if (m.chatWallpaperUrl) q.set("chatWallpaper", m.chatWallpaperUrl);
         if (m.avatarUrl) q.set("avatar", m.avatarUrl);
         if (m.notificationText) q.set("text", m.notificationText);
         if (m.messages && m.messages.length > 0) q.set("msg", m.messages.join("||"));

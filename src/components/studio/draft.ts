@@ -27,6 +27,7 @@ export interface VoiceDraft {
 
 export interface MessengerDraft {
   wallpaperUrl: string;
+  chatWallpaperUrl?: string;
   avatarUrl: string;
   notificationText: string;
   messages: string[];
@@ -41,6 +42,7 @@ export interface MessengerDraft {
 
 export const DEFAULT_MESSENGER_DRAFT: MessengerDraft = {
   wallpaperUrl: "/images/default_lockscreen_girl.jpg",
+  chatWallpaperUrl: "/images/messenger_pink_theme_bg.png",
   avatarUrl: "/images/default_avatar.png",
   notificationText: "hello bé iu",
   messages: [
@@ -200,6 +202,7 @@ export function draftFromSaved(saved: unknown): GiftDraft {
   if (m && typeof m === "object") {
     d.messenger = {
       wallpaperUrl: str(m.wallpaperUrl) || DEFAULT_MESSENGER_DRAFT.wallpaperUrl,
+      chatWallpaperUrl: str(m.chatWallpaperUrl) || DEFAULT_MESSENGER_DRAFT.chatWallpaperUrl,
       avatarUrl: str(m.avatarUrl) || DEFAULT_MESSENGER_DRAFT.avatarUrl,
       notificationText: str(m.notificationText) || DEFAULT_MESSENGER_DRAFT.notificationText,
       messages: Array.isArray(m.messages)
@@ -256,6 +259,7 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
     },
     messenger: {
       ...d.messenger,
+      chatWallpaperUrl: d.messenger.chatWallpaperUrl || DEFAULT_MESSENGER_DRAFT.chatWallpaperUrl,
       videoUrl: videoUrl || undefined,
     },
   };

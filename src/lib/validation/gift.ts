@@ -217,6 +217,7 @@ export function parseVoice(input: unknown, token: string): Parsed<CleanVoice> {
 
 export interface CleanMessenger {
   wallpaperUrl: string;
+  chatWallpaperUrl?: string;
   avatarUrl: string;
   notificationText: string;
   messages: string[];
@@ -239,6 +240,7 @@ export function parseMessenger(input: unknown): CleanMessenger {
 
   return {
     wallpaperUrl: cleanText(m.wallpaperUrl, 500_000) || "/images/default_lockscreen_girl.jpg",
+    chatWallpaperUrl: cleanText(m.chatWallpaperUrl, 500_000) || "/images/messenger_pink_theme_bg.png",
     avatarUrl: cleanText(m.avatarUrl, 500_000) || "/images/default_avatar.png",
     notificationText: cleanText(m.notificationText, 200) || "hello bé iu",
     messages:

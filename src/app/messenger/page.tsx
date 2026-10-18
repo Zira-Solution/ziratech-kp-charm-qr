@@ -67,6 +67,7 @@ interface CustomSettings {
   senderName: string;
   notificationText: string;
   wallpaperUrl: string;
+  chatWallpaperUrl: string;
   avatarUrl?: string;
   pin: string;
   enablePin: boolean;
@@ -94,6 +95,7 @@ const DEFAULT_SETTINGS: CustomSettings = {
   senderName: "Anh iu ❤️",
   notificationText: "hello bé iu",
   wallpaperUrl: "/images/default_lockscreen_girl.jpg",
+  chatWallpaperUrl: "/images/messenger_pink_theme_bg.png",
   avatarUrl: "/images/default_avatar.png",
   pin: "2010",
   enablePin: true,
@@ -130,6 +132,14 @@ const WALLPAPER_PRESETS = [
   { name: "Ảnh gốc tham khảo", url: "/images/messenger_reference.png" },
   { name: "Hoàng hôn Anime", url: "/images/anime_sunset_couple.jpg" },
   { name: "Cặp đôi hoàng hôn", url: "/thamkhao/sunset_couple_clean.jpg" },
+];
+
+const CHAT_WALLPAPER_PRESETS = [
+  { name: "Trái tim hồng", url: "/images/messenger_pink_theme_bg.png" },
+  { name: "Mây hồng hoàng hôn", url: "/images/pink_clouds_sunset_sky.webp" },
+  { name: "Hoàng hôn Anime", url: "/images/anime_sunset_couple.jpg" },
+  { name: "Cặp đôi hoàng hôn", url: "/thamkhao/sunset_couple_clean.jpg" },
+  { name: "Nắng nhẹ cô gái", url: "/images/default_lockscreen_girl.jpg" },
 ];
 
 // Isolated Live Lockscreen Clock: Only this subcomponent re-renders every second, NOT the whole page
@@ -283,6 +293,7 @@ function MessengerPageInner() {
   const letterScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLetter, setCanScrollLetter] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const chatWallpaperFileInputRef = useRef<HTMLInputElement>(null);
   const avatarFileInputRef = useRef<HTMLInputElement>(null);
   const filmFileInputRef = useRef<HTMLInputElement>(null);
   const customizerFilmInputRef = useRef<HTMLInputElement>(null);
@@ -340,6 +351,7 @@ function MessengerPageInner() {
     const pVideo = searchParams?.get("video") ?? searchParams?.get("vurl");
     const pVideoLead = searchParams?.get("videolead") ?? searchParams?.get("vlead_msg");
     const pVideoTitle = searchParams?.get("vtitle");
+    const pChatWallpaper = searchParams?.get("chatWallpaper") ?? searchParams?.get("chatbg");
 
     let initial = { ...DEFAULT_SETTINGS };
 
@@ -389,6 +401,7 @@ function MessengerPageInner() {
     }
     if (pVideoLead) initial.videoLeadMessage = pVideoLead;
     if (pVideoTitle) initial.videoTitle = pVideoTitle;
+    if (pChatWallpaper) initial.chatWallpaperUrl = pChatWallpaper;
 
     const pHearts = searchParams?.get("hearts");
     if (pHearts !== null && pHearts !== undefined) {
@@ -628,6 +641,20 @@ function MessengerPageInner() {
     reader.readAsDataURL(file);
   };
 
+  // Customizer image upload (Chat Wallpaper)
+  const handleChatWallpaperUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        updateSetting("chatWallpaperUrl", reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
   // Customizer image upload (Chat Avatar)
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -726,6 +753,9 @@ function MessengerPageInner() {
     if (settings.videoUrl) url.searchParams.set("video", settings.videoUrl);
     if (settings.videoLeadMessage) url.searchParams.set("videolead", settings.videoLeadMessage);
     if (settings.videoTitle) url.searchParams.set("vtitle", settings.videoTitle);
+    if (settings.chatWallpaperUrl && !settings.chatWallpaperUrl.startsWith("data:") && settings.chatWallpaperUrl !== "/images/messenger_pink_theme_bg.png") {
+      url.searchParams.set("chatWallpaper", settings.chatWallpaperUrl);
+    }
     if (settings.musicUrl && !settings.musicUrl.startsWith("data:") && settings.musicUrl !== DEFAULT_MUSIC_URL) {
       url.searchParams.set("music", settings.musicUrl);
     }
@@ -1291,7 +1321,7 @@ function MessengerPageInner() {
             {stage === "chat" && (
               <div
                 className="relative h-full w-full flex flex-col font-sans z-20 bg-cover bg-center select-none"
-                style={{ backgroundImage: `url('/images/messenger_pink_theme_bg.png')` }}
+                style={{ backgroundImage: `url('${settings.chatWallpaperUrl || "/images/messenger_pink_theme_bg.png"}')` }}
               >
                 {/* Soft overlay so text and bubbles pop */}
                 <div className="absolute inset-0 bg-pink-100/10 pointer-events-none" />
@@ -2141,6 +2171,69 @@ function MessengerPageInner() {
                   />
                   <span className="text-[11px] text-slate-400">
                     Hỗ trợ JPG, PNG từ điện thoại hoặc máy tính
+                  </span>
+                </div>
+              </div>
+
+              {/* Chọn hình nền cuộc trò chuyện Messenger */}
+              <div className="pt-2 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-semibold text-slate-700">
+                    Hình nền cuộc trò chuyện Messenger
+                  </label>
+                  {!CHAT_WALLPAPER_PRESETS.some((p) => p.url === settings.chatWallpaperUrl) && (
+                    <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                      Ảnh tự tải
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11.5px] text-slate-500 mb-2">
+                  Chủ đề nền hiển thị phía sau các bong bóng chat Messenger.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-2">
+                  {CHAT_WALLPAPER_PRESETS.map((p) => (
+                    <button
+                      key={p.url}
+                      type="button"
+                      onClick={() => updateSetting("chatWallpaperUrl", p.url)}
+                      className={`relative rounded-xl overflow-hidden border-2 aspect-[9/16] h-28 mx-auto w-full transition-all cursor-pointer ${
+                        settings.chatWallpaperUrl === p.url
+                          ? "border-rose-600 ring-2 ring-rose-300 scale-102"
+                          : "border-slate-200 hover:border-slate-400 opacity-80 hover:opacity-100"
+                      }`}
+                    >
+                      <img
+                        src={p.url}
+                        alt={p.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-0 inset-x-0 bg-black/60 text-[10px] text-white py-0.5 px-1 truncate text-center">
+                        {p.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => chatWallpaperFileInputRef.current?.click()}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 font-semibold text-slate-700 transition-all cursor-pointer text-xs"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">
+                      upload_file
+                    </span>
+                    <span>Tải ảnh nền chat từ máy bạn</span>
+                  </button>
+                  <input
+                    ref={chatWallpaperFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleChatWallpaperUpload}
+                    className="hidden"
+                  />
+                  <span className="text-[11px] text-slate-400">
+                    Tùy biến hình nền khung chat
                   </span>
                 </div>
               </div>

@@ -14,6 +14,9 @@ export interface SongDraft {
   source: SongSource;
   presetId: string;
   link: string;
+  audioPath?: string;
+  audioUrl?: string;
+  fileName?: string;
   title: string;
   artist: string;
 }
@@ -77,6 +80,8 @@ export interface GiftDraft {
   letterSignature: string;
   photos: PhotoDraft[];
   finalMessage: string;
+  finalTitle: string;
+  finalSubtitle: string;
   anniversaryDate: string;
   anniversaryLabel: string;
   timeline: TimelineItem[];
@@ -105,6 +110,8 @@ export function emptyDraft(): GiftDraft {
     letterSignature: "",
     photos: [],
     finalMessage: "",
+    finalTitle: "",
+    finalSubtitle: "",
     anniversaryDate: "",
     anniversaryLabel: "",
     timeline: [],
@@ -159,6 +166,8 @@ export function draftFromSaved(saved: unknown): GiftDraft {
   const album = photoList(g.memoryPhotos);
   d.photos = (hasList ? album : [...photoList(g.momentPhotos), ...album]).slice(0, MAX_PHOTOS);
   d.finalMessage = str(g.finalMessage);
+  d.finalTitle = str(g.finalTitle);
+  d.finalSubtitle = str(g.finalSubtitle);
 
   const a = g.anniversary as Record<string, unknown> | undefined;
   if (a && typeof a === "object") {
@@ -178,13 +187,17 @@ export function draftFromSaved(saved: unknown): GiftDraft {
   d.videoAspectRatio = (["16:9", "1:1", "9:16"].includes(aspect) ? aspect : "16:9") as "16:9" | "1:1" | "9:16";
 
   const s = g.song as Record<string, unknown> | undefined;
-  if (s && typeof s === "object" && (s.source === "preset" || s.source === "link")) {
+  if (s && typeof s === "object" && (s.source === "preset" || s.source === "link" || s.source === "upload")) {
+    const audioPath = str(s.audioPath);
     d.song = {
       source: s.source,
       presetId: str(s.presetId),
       link: str(s.link),
-      title: s.source === "link" ? str(s.title) : "",
-      artist: s.source === "link" ? str(s.artist) : "",
+      audioPath: audioPath || undefined,
+      audioUrl: str(s.audioUrl) || undefined,
+      fileName: audioPath ? audioPath.split("/").pop() : undefined,
+      title: str(s.title),
+      artist: str(s.artist),
     };
   }
 
@@ -241,6 +254,8 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
     letterSignature: d.letterSignature,
     memoryPhotos: d.photos,
     finalMessage: d.finalMessage,
+    finalTitle: d.finalTitle.trim() || undefined,
+    finalSubtitle: d.finalSubtitle.trim() || undefined,
     anniversary: { date: d.anniversaryDate, label: d.anniversaryLabel },
     timeline: d.timeline,
     videoUrl,
@@ -249,6 +264,8 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
       source: d.song.source,
       presetId: d.song.presetId,
       link: d.song.link,
+      audioPath: d.song.audioPath || undefined,
+      audioUrl: d.song.audioUrl || undefined,
       title: d.song.title,
       artist: d.song.artist,
     },
@@ -277,7 +294,14 @@ export function emptyBlocks(d: GiftDraft): BlockId[] {
     photos: d.photos.length > 0,
     voice: d.voice.audioPath !== "",
     video: d.videoUrl.trim() !== "" || (d.messenger?.videoUrl?.trim() ?? "") !== "",
-    music: d.song.source !== "none",
+    music:
+      d.song.source === "preset"
+        ? Boolean(d.song.presetId)
+        : d.song.source === "upload"
+        ? Boolean(d.song.audioPath || d.song.audioUrl)
+        : d.song.source === "link"
+        ? Boolean(d.song.link.trim())
+        : false,
     anniversary: d.anniversaryDate.trim() !== "",
     timeline: d.timeline.length > 0,
     finalMessage: d.finalMessage.trim() !== "",

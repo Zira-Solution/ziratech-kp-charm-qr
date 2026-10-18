@@ -79,7 +79,6 @@ export async function POST(req: NextRequest) {
       customerEmail: order.customerEmail,
       token: order.token,
       creatorKey: issued.creatorKey,
-      unlockPin: issued.unlockPin,
       chainName: order.chainName,
       siteUrl,
     });

@@ -61,10 +61,19 @@ export function PhotosSlide(props: SlideProps) {
 export function VideoSlide(props: SlideProps) {
   const { skin, gift, ctx } = props;
   if (!gift.video) return null;
+  const isDirect =
+    !gift.video.includes("youtube.com") &&
+    !gift.video.includes("youtu.be") &&
+    !gift.video.includes("vimeo.com") &&
+    !gift.video.includes("drive.google.com");
   return (
     <Page skin={skin} ctx={ctx} visual={skin.art("video", gift)}>
       <Heading {...props} kind="video" />
-      <VideoEmbed link={gift.video} />
+      {isDirect ? (
+        <video src={gift.video} controls playsInline className="aspect-video w-full rounded-2xl bg-black object-contain shadow-md" />
+      ) : (
+        <VideoEmbed link={gift.video} />
+      )}
     </Page>
   );
 }

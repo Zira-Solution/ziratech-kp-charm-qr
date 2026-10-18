@@ -45,7 +45,10 @@ export const STORYBOOK_SKIN: Skin = {
       case "timeline":
         return { title: "Mốc thời gian", sub: "Những khoảnh khắc đáng nhớ" };
       case "closing":
-        return { title: `Cảm ơn ${pronouns.Recipient}`, sub: `đã đi qua những ngày này cùng ${pronouns.sender}` };
+        return {
+          title: gift.finalTitle || `Cảm ơn ${pronouns.Recipient}`,
+          sub: gift.finalSubtitle || `đã đi qua những ngày này cùng ${pronouns.sender}`,
+        };
     }
   },
 

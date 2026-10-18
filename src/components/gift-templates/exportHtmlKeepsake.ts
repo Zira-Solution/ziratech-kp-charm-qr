@@ -736,12 +736,12 @@ export async function exportHtmlKeepsake(gift: ViewerGift): Promise<string> {
         <div style="position: relative; z-index: 10; text-align: center; margin-top: 48px;">
           <div style="display: inline-flex; align-items: center; gap: 6px;">
             <h2 class="font-handwriting" style="font-size: 38px; font-weight: 700; color: #1c3f50; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">
-              Cảm ơn ${pronouns.Recipient}
+              ${gift.finalTitle || `Cảm ơn ${pronouns.Recipient}`}
             </h2>
             <span style="font-size: 28px;">❤️</span>
           </div>
           <p class="font-handwriting" style="font-size: 18px; font-weight: 700; color: #3d2417; text-shadow: 0 1px 1px rgba(255,255,255,0.8);">
-            đã đi qua những ngày này cùng ${pronouns.sender}.
+            ${gift.finalSubtitle || `đã đi qua những ngày này cùng ${pronouns.sender}.`}
           </p>
 
           <!-- Keepsake message note -->

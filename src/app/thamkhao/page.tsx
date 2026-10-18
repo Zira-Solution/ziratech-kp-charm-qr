@@ -46,12 +46,18 @@ const DEMO_GIFT: ViewerGift = {
 
 export default function ThamKhaoPage() {
   const [device, setDevice] = useState<ViewDevice>("desktop");
+  const [template, setTemplate] = useState<"storybook-sunset" | "messenger">("storybook-sunset");
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      const p = new URLSearchParams(window.location.search).get("device");
-      if (p === "ipad" || p === "phone" || p === "desktop") {
-        setDevice(p);
+      const p = new URLSearchParams(window.location.search);
+      const dev = p.get("device");
+      if (dev === "ipad" || dev === "phone" || dev === "desktop") {
+        setDevice(dev);
+      }
+      const tpl = p.get("template");
+      if (tpl === "messenger" || tpl === "storybook-sunset") {
+        setTemplate(tpl);
       }
     }
   }, []);
@@ -61,6 +67,15 @@ export default function ThamKhaoPage() {
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
       url.searchParams.set("device", next);
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
+
+  const switchTemplate = (next: "storybook-sunset" | "messenger") => {
+    setTemplate(next);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("template", next);
       window.history.replaceState({}, "", url.toString());
     }
   };
@@ -83,21 +98,31 @@ export default function ThamKhaoPage() {
         <div className="flex items-center gap-1 bg-stone-100/90 p-0.5 rounded-full border border-stone-200/60">
           <button
             type="button"
-            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-[#c13d28] text-white shadow-xs"
+            onClick={() => switchTemplate("storybook-sunset")}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              template === "storybook-sunset"
+                ? "bg-[#c13d28] text-white shadow-xs"
+                : "text-stone-700 hover:bg-white/80"
+            }`}
             title="Đang xem Mẫu 1: Storybook Hoàng Hôn 20/10"
           >
             <span>🌅</span>
             <span>Mẫu 1: Storybook</span>
           </button>
 
-          <Link
-            href="/messenger"
-            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold text-stone-700 hover:bg-white/80 transition-all"
-            title="Chuyển sang xem Mẫu 2: Hộp Quà Messenger"
+          <button
+            type="button"
+            onClick={() => switchTemplate("messenger")}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+              template === "messenger"
+                ? "bg-[#0084ff] text-white shadow-xs"
+                : "text-stone-700 hover:bg-white/80"
+            }`}
+            title="Xem Mẫu 2: Hộp Quà Messenger"
           >
             <span>💬</span>
             <span>Mẫu 2: Messenger</span>
-          </Link>
+          </button>
         </div>
 
         <div className="h-4 w-px bg-stone-300 mx-0.5 hidden md:block" />
@@ -147,8 +172,6 @@ export default function ThamKhaoPage() {
           </button>
         </div>
 
-
-
         <div className="h-4 w-px bg-stone-300 mx-0.5 hidden sm:block" />
 
         {/* CTA: Create gift with this template */}
@@ -166,7 +189,15 @@ export default function ThamKhaoPage() {
         {device === "desktop" && (
           /* True Full Screen Desktop (Zero borders, zero phone frame in the middle) */
           <div className="h-full w-full">
-            <GiftTemplateViewer gift={DEMO_GIFT} embedded />
+            {template === "messenger" ? (
+              <iframe
+                src="/messenger?embed=true&hideConfig=true"
+                className="w-full h-full border-0"
+                title="Mẫu 2: Messenger"
+              />
+            ) : (
+              <GiftTemplateViewer gift={DEMO_GIFT} embedded />
+            )}
           </div>
         )}
 
@@ -174,7 +205,15 @@ export default function ThamKhaoPage() {
           /* iPad Landscape Stage */
           <div className="p-4 sm:p-6 flex items-center justify-center h-full w-full">
             <div className="w-full max-w-[1024px] h-[720px] max-h-[92vh] rounded-[32px] overflow-hidden shadow-2xl border-8 border-stone-800 bg-black">
-              <GiftTemplateViewer gift={DEMO_GIFT} embedded />
+              {template === "messenger" ? (
+                <iframe
+                  src="/messenger?embed=true&hideConfig=true"
+                  className="w-full h-full border-0"
+                  title="Mẫu 2: Messenger"
+                />
+              ) : (
+                <GiftTemplateViewer gift={DEMO_GIFT} embedded />
+              )}
             </div>
           </div>
         )}
@@ -187,7 +226,15 @@ export default function ThamKhaoPage() {
                 <div className="w-24 h-3.5 bg-stone-900 rounded-full" />
               </div>
               <div className="flex-1 min-h-0 overflow-hidden">
-                <GiftTemplateViewer gift={DEMO_GIFT} embedded />
+                {template === "messenger" ? (
+                  <iframe
+                    src="/messenger?embed=true&hideConfig=true"
+                    className="w-full h-full border-0"
+                    title="Mẫu 2: Messenger"
+                  />
+                ) : (
+                  <GiftTemplateViewer gift={DEMO_GIFT} embedded />
+                )}
               </div>
             </div>
           </div>

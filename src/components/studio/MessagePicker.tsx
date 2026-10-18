@@ -7,10 +7,10 @@ import { Icon, StudioSection } from "./ui";
 const INFO: Record<BlockId, { icon: string; desc: string; badge?: string }> = {
   letter: { icon: "mail", desc: "Bức thư tay chan chứa tâm tư", badge: "Trang 2" },
   photos: { icon: "photo_library", desc: "Tối đa 6 ảnh kỷ niệm kiểu Polaroid", badge: "Trang 3" },
-  video: { icon: "movie", desc: "Dán liên kết video YouTube / Drive", badge: "Trang 4" },
-  music: { icon: "music_note", desc: "Nhạc nền du dương phát khi mở thiệp", badge: "Trang 5" },
-  voice: { icon: "mic", desc: "Ghi âm lời nhắn chân thành bằng giọng nói", badge: "Trang 6" },
-  finalMessage: { icon: "favorite", desc: "Câu chúc ngắn đọng lại ở hoàng hôn", badge: "Trang 7" },
+  video: { icon: "movie", desc: "Thước phim kỷ niệm gửi riêng người thương", badge: "Trang 4" },
+  voice: { icon: "mic", desc: "Ghi âm lời nhắn chân thành bằng giọng nói", badge: "Trang 5" },
+  finalMessage: { icon: "favorite", desc: "Câu chúc ngắn đọng lại ở hoàng hôn", badge: "Trang 6" },
+  music: { icon: "music_note", desc: "Nhạc nền du dương phát khi mở thiệp", badge: "Nhạc nền" },
   anniversary: { icon: "event", desc: "Đếm số ngày đã bên nhau" },
   timeline: { icon: "timeline", desc: "Tối đa 5 khoảnh khắc đáng nhớ" },
 };

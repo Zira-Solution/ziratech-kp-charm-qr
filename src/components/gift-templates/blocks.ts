@@ -31,6 +31,33 @@ export const DEFAULT_BLOCK_ORDER: readonly BlockId[] = [
   "finalMessage",
 ];
 
+/** Sorts blocks according to DEFAULT_BLOCK_ORDER. */
+export function sortBlocksByDefault(blocks: BlockId[]): BlockId[] {
+  return [...blocks].sort((a, b) => {
+    const ia = DEFAULT_BLOCK_ORDER.indexOf(a);
+    const ib = DEFAULT_BLOCK_ORDER.indexOf(b);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
+}
+
+/**
+ * Inserts a newly ticked block into the existing block list preserving canonical default order,
+ * without disrupting the relative order of blocks the user may have already customized.
+ */
+export function insertBlockInOrder(existing: readonly BlockId[], block: BlockId): BlockId[] {
+  if (existing.includes(block)) return [...existing];
+  const targetIndex = DEFAULT_BLOCK_ORDER.indexOf(block);
+  const insertBeforeIndex = existing.findIndex(
+    (b) => DEFAULT_BLOCK_ORDER.indexOf(b) > targetIndex
+  );
+  if (insertBeforeIndex === -1) {
+    return [...existing, block];
+  }
+  const next = [...existing];
+  next.splice(insertBeforeIndex, 0, block);
+  return next;
+}
+
 export const isBlockId = (value: unknown): value is BlockId => (BLOCK_IDS as readonly unknown[]).includes(value);
 
 const text = (v: unknown) => typeof v === "string" && v.trim() !== "";

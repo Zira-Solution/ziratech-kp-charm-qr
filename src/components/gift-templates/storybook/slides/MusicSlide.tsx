@@ -26,10 +26,12 @@ export default function MusicSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
   const pronouns = parseAddressing(gift.addressing);
   const song = gift.song;
+  const isUploaded = song?.source === "upload" && Boolean(song.audioUrl);
   const isPreset = !song || song.source === "preset";
-  const presetId = song?.source === "preset" ? song.presetId : "lofi";
+  const presetId = isPreset ? (song?.source === "preset" ? song.presetId : "lofi") : undefined;
+  const audioUrl = isUploaded ? song?.audioUrl : undefined;
 
-  const { playing, toggle } = useMusicPlayer(isPreset ? presetId : undefined);
+  const { playing, toggle } = useMusicPlayer(presetId, audioUrl);
   const [eqTick, setEqTick] = useState(0);
   const [progress, setProgress] = useState(25);
 
@@ -54,7 +56,7 @@ export default function MusicSlide({ gift, ctx, slides }: Props) {
   const currentSec = Math.floor((progress / 100) * TOTAL_SECONDS);
   const remainingSec = Math.max(0, TOTAL_SECONDS - currentSec);
 
-  const embed = song && song.source !== "preset" ? toMusicEmbed(song.link) : null;
+  const embed = song && song.source === "link" ? toMusicEmbed(song.link) : null;
   const songTitle = song?.title || "Giai điệu kỷ niệm";
 
   return (

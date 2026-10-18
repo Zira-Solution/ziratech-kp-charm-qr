@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getGiftProductByToken, updateGiftProductCustomData } from "@/lib/supabase/products";
 import { checkRateLimit } from "@/lib/validation/security";
 import { parseGiftData } from "@/lib/validation/gift";
-import { mediaConfigured, pruneVoices, voiceExists } from "@/lib/supabase/media";
+import { mediaConfigured, pruneMedia, pruneVoices, voiceExists } from "@/lib/supabase/media";
 import { hasGiftSession, normalizeToken } from "@/lib/auth/gift-session";
 
 const MAX_SAVE_BODY_BYTES = 3_500_000; // 2.5M chars of photos + text, with headroom for JSON escaping
@@ -86,6 +86,14 @@ export async function POST(
 
     // Remove recordings the saved card no longer uses (best effort, never blocks the save).
     await pruneVoices(token, voicePath ? [voicePath] : []);
+    const songPath = parsed.value.song?.audioPath;
+    if (songPath) {
+      await pruneMedia(token, "song", [songPath]);
+    }
+    const videoUrl = parsed.value.videoUrl;
+    if (videoUrl && videoUrl.startsWith(`${token}/video-`)) {
+      await pruneMedia(token, "video", [videoUrl]);
+    }
 
     return NextResponse.json({
       success: true,

@@ -10,7 +10,7 @@ export interface GiftProductOrder {
   id: string;
   token: string;              // Mã thiệp (e.g. KP-2010-XXXXXX)
   creatorKeyHash: string;     // OTP tạo thiệp, cho người mua (băm scrypt)
-  unlockPinHash: string;      // OTP xem thiệp, cho người nhận (băm scrypt)
+  unlockPinHash: string;      // Mã mở thiệp 4 số (băm scrypt, do người mua cài đặt)
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
@@ -37,7 +37,7 @@ export type PublicGiftProduct = Omit<GiftProductView, "customerEmail" | "custome
 /** Plaintext codes. Returned exactly once, when an order is created. */
 export interface IssuedCodes {
   creatorKey: string;
-  unlockPin: string;
+  unlockPin?: string;
 }
 
 export interface CreateProductPayload {

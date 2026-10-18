@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import confetti from "canvas-confetti";
-import { BLOCK_LABELS, type BlockId } from "@/components/gift-templates/blocks";
+import { BLOCK_LABELS, insertBlockInOrder, sortBlocksByDefault, type BlockId } from "@/components/gift-templates/blocks";
 import type { GiftTemplateId } from "@/components/gift-templates/types";
 import PreviewOverlay from "@/components/studio/PreviewOverlay";
 import { draftFromSaved, draftToPayload, emptyBlocks, emptyDraft, type GiftDraft } from "@/components/studio/draft";
@@ -28,6 +28,7 @@ import MessengerBlock from "@/components/studio/blocks/MessengerBlock";
 import { getTemplate, getTemplateAllowedBlocks } from "@/components/gift-templates/template-config";
 import { parseGiftData } from "@/lib/validation/gift";
 import { ToastContainer, useToastState } from "@/components/ui/Toast";
+import SendRecipientModal from "@/components/studio/SendRecipientModal";
 
 interface StudioProduct {
   token: string;
@@ -63,6 +64,7 @@ export default function CardStudioPage() {
   const [previewTemplate, setPreviewTemplate] = useState<GiftTemplateId>("storybook-sunset");
   const [previewInitialMode, setPreviewInitialMode] = useState<"demo" | "draft">("demo");
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
+  const [sendRecipientOpen, setSendRecipientOpen] = useState(false);
 
   const openPreview = (tpl?: GiftTemplateId, mode: "demo" | "draft" = "demo") => {
     setPreviewTemplate(tpl || draft.template);
@@ -115,6 +117,16 @@ export default function CardStudioPage() {
           }
         } catch {
           // ignore localStorage error
+        }
+
+        if (!saved && Array.isArray(initialDraft.blocks)) {
+          const fmIndex = initialDraft.blocks.indexOf("finalMessage");
+          if (fmIndex !== -1 && fmIndex < initialDraft.blocks.length - 1) {
+            initialDraft = {
+              ...initialDraft,
+              blocks: sortBlocksByDefault(initialDraft.blocks),
+            };
+          }
         }
 
         setDraft(initialDraft);
@@ -202,7 +214,10 @@ export default function CardStudioPage() {
 
   const toggleBlock = (block: BlockId) => {
     const ticked = draft.blocks.includes(block);
-    update({ blocks: ticked ? draft.blocks.filter((b) => b !== block) : [...draft.blocks, block] });
+    const nextBlocks = ticked
+      ? draft.blocks.filter((b) => b !== block)
+      : insertBlockInOrder(draft.blocks, block);
+    update({ blocks: nextBlocks });
     const text = ticked ? `Đã bỏ mục ${BLOCK_LABELS[block]}` : `Đã thêm mục ${BLOCK_LABELS[block]}`;
     setAnnouncement(text);
     showToast(text, "info", 2500);
@@ -288,6 +303,13 @@ export default function CardStudioPage() {
         target: empty === "letter" ? "letter-content" : `block-${empty}`,
       };
     }
+    if (draft.requirePin !== false && (!draft.unlockPin || !/^\d{4}$/.test(draft.unlockPin))) {
+      return {
+        stage: 3,
+        message: "Vui lòng nhập đủ 4 số cho mã OTP xem thiệp (hoặc chọn Mở trực tiếp)",
+        target: "pin-new",
+      };
+    }
     return null;
   };
 
@@ -370,7 +392,7 @@ export default function CardStudioPage() {
       }
       showToast("Đã lưu thiệp thành công!", "success");
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#721a28", "#ffd700", "#fea095", "#ffffff"] });
-      setTimeout(() => router.push(`/g/${token}`), 900);
+      setSendRecipientOpen(true);
     } catch (err) {
       if (!needsAuth) {
         showToast(err instanceof Error ? err.message : "Không lưu được thiệp", "error");
@@ -436,11 +458,11 @@ export default function CardStudioPage() {
       case "timeline":
         return <TimelineBlock key={block} step={nextStep()} items={draft.timeline} onChange={(timeline) => update({ timeline })} />;
       case "music":
-        return <MusicBlock key={block} step={nextStep()} draft={draft} onChange={update} />;
+        return <MusicBlock key={block} step={nextStep()} token={token} draft={draft} onChange={update} />;
       case "voice":
         return <VoiceBlock key={block} step={nextStep()} token={token} draft={draft} onChange={update} />;
       case "video":
-        return <VideoBlock key={block} step={nextStep()} draft={draft} onChange={update} />;
+        return <VideoBlock key={block} step={nextStep()} token={token} draft={draft} onChange={update} />;
       default:
         return null;
     }
@@ -510,10 +532,6 @@ export default function CardStudioPage() {
           <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-200/80 liquid-glass-pill px-3 py-1 font-mono text-[#721a28] shadow-2xs">
             <span className="material-symbols-outlined text-[14px]">confirmation_number</span>
             {product.token}
-          </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-200/80 liquid-glass-pill px-3 py-1 text-slate-700 shadow-2xs">
-            <Icon name="diamond" className="text-[16px] text-[#721a28]" />
-            {product.chainName}
           </span>
           <span
             className={`rounded-full border px-3 py-1 liquid-glass-pill ${
@@ -657,6 +675,14 @@ export default function CardStudioPage() {
                     <Icon name="visibility" className="text-[18px]" />
                     Mở xem trước thiệp thực tế
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setSendRecipientOpen(true)}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-rose-300 bg-rose-50/70 hover:bg-rose-100 text-[#721a28] px-4 text-xs font-bold cursor-pointer shadow-2xs transition-colors"
+                  >
+                    <Icon name="mark_email_read" className="text-[18px]" />
+                    Gửi mail bất ngờ cho người nhận
+                  </button>
                 </div>
               </section>
 
@@ -778,6 +804,17 @@ export default function CardStudioPage() {
           </div>
         </div>
       )}
+
+      <SendRecipientModal
+        isOpen={sendRecipientOpen}
+        token={token}
+        defaultRecipientName={draft.recipientName}
+        defaultSenderName={draft.senderName || product.customerName}
+        defaultUnlockPin={draft.unlockPin}
+        requirePin={draft.requirePin !== false}
+        onClose={() => setSendRecipientOpen(false)}
+        onViewGift={() => router.push(`/g/${token}`)}
+      />
     </div>
   );
 }

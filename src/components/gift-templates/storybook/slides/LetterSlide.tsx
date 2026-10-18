@@ -221,7 +221,7 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
   // Mobile / Portrait view (Exact match to khung_02.png)
   return (
     <div
-      className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 pb-8 sm:pb-9 select-none overflow-hidden bg-cover bg-center text-[#2e1d1b]"
+      className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 pb-6 select-none overflow-hidden bg-cover bg-center text-[#2e1d1b]"
       style={{ backgroundImage: "url('/thamkhao/bg.jpg')" }}
     >
       <div className="absolute inset-0 bg-[#fffbf5]/60 pointer-events-none" />
@@ -229,57 +229,58 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
       <StorybookHeader ctx={ctx} slides={slides} />
 
       {/* Main Header */}
-      <div className="relative z-10 text-center mt-1 flex flex-col items-center shrink-0">
-        <h2 className="font-serif font-black text-3xl sm:text-4xl text-[#1c3f50] tracking-wider uppercase drop-shadow-2xs">
+      <div className="relative z-10 text-center mt-0.5 sm:mt-1 flex flex-col items-center shrink-0">
+        <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#1c3f50] tracking-wider uppercase drop-shadow-2xs">
           {letter?.title || "LỜI NHẮN"}
         </h2>
         <div className="flex items-center justify-center gap-2 mt-0.5">
-          <span className="font-handwriting text-xl sm:text-2xl text-[#8c4b3e] font-bold italic">
+          <span className="font-handwriting text-lg sm:text-xl text-[#8c4b3e] font-bold italic">
             {subtitle}
           </span>
-          <img src="/thamkhao/heart_2.png" alt="Trái tim" className="w-5 h-5 object-contain inline-block" />
+          <img src="/thamkhao/heart_2.png" alt="Trái tim" className="w-4.5 h-4.5 object-contain inline-block" />
           <img src="/thamkhao/music_notes.png" alt="Nốt nhạc" className="w-4 h-4 object-contain inline-block" />
         </div>
       </div>
 
-      {/* Lined Letter Paper pinned to Envelope */}
-      <div className="relative z-10 my-auto w-full max-w-sm mx-auto flex flex-col items-center justify-center py-2 min-h-0 flex-1">
+      {/* Desk Scene: Envelope + Lined Letter Paper + Vintage decor (matching khung_02.png) */}
+      <div className="relative z-10 my-auto w-full max-w-[330px] sm:max-w-[360px] mx-auto flex flex-col items-center justify-center py-1 min-h-0 flex-1">
         <div className="relative w-full flex items-center justify-center">
-          {/* Vintage stamp ticket */}
+          {/* Vintage stamp postcard decor (top-right behind envelope) */}
           <img
             src="/thamkhao/element_page_2.png"
             alt="Tem cổ điển"
-            className="absolute -top-8 -right-2 w-14 h-auto object-contain pointer-events-none opacity-85 z-0 transform rotate-6"
+            className="absolute -top-6 sm:-top-8 -right-1 sm:-right-2 w-14 sm:w-16 h-auto object-contain pointer-events-none opacity-90 z-0 transform rotate-8 drop-shadow-md"
           />
 
-          {/* Envelope background */}
+          {/* Kraft Envelope positioned to frame the paper comfortably from behind (tilted like khung_02) */}
           <img
             src="/thamkhao/envelope.png"
             alt="Bao thư"
-            className="absolute -top-4 -left-3 w-[106%] h-auto object-contain opacity-85 pointer-events-none transform -rotate-1 z-1"
+            className="absolute -top-8 sm:-top-11 left-1/2 -translate-x-1/2 w-[112%] sm:w-[116%] h-auto max-h-[120%] object-contain opacity-95 pointer-events-none transform -rotate-5 drop-shadow-xl z-0"
           />
 
-          {/* Letter Note Container (Pure CSS lined paper) */}
+          {/* Letter Paper Container: substantial stationery note with min height for realistic stationery */}
           <div
             onClick={() => setTypedCount(totalLength)}
-            className="relative w-full p-4 sm:p-5 pt-7 rounded-xl shadow-xl transform rotate-[0.5deg] bg-[#fffefb] border border-[#ebdccd] z-10 max-h-[52vh] flex flex-col overflow-hidden cursor-pointer"
+            className="relative w-[88%] sm:w-[90%] min-h-[290px] sm:min-h-[330px] max-h-[50vh] flex flex-col p-4 sm:p-5 pt-7 rounded-2xl shadow-[0_12px_28px_rgba(45,26,16,0.16)] transform rotate-[0.5deg] bg-[#fffdf9] border border-[#ead8c6] z-10 overflow-hidden cursor-pointer"
             title={!isFinished ? "Chạm để hiện toàn bộ lời nhắn" : undefined}
           >
-            {/* Bulldog clip at top center */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 w-8 h-8">
+            {/* Binder clip at top-right (matching khung_02.png) */}
+            <div className="absolute -top-3.5 right-6 sm:right-8 z-20 w-8 h-8">
               <img
                 src="/thamkhao/binder_clip.png"
                 alt="Kẹp giấy"
-                className="w-full h-full object-contain drop-shadow-md"
+                className="w-full h-full object-contain drop-shadow-md transform rotate-3"
               />
             </div>
 
+            {/* Ruled lines scroll container */}
             <div
               ref={scrollContainerRef}
               className="overflow-y-auto pr-1 min-h-0 flex-1 scroll-smooth"
               style={{
                 backgroundImage:
-                  "repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, #ebdccd 31px, #ebdccd 32px)",
+                  "repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, #ead8c6 31px, #ead8c6 32px)",
                 backgroundAttachment: "local",
                 lineHeight: "32px",
               }}
@@ -314,7 +315,7 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
               )}
 
               {/* Heart Signature */}
-              <div className="flex flex-col items-center justify-center mt-2 pb-1">
+              <div className="flex flex-col items-center justify-center mt-3 pb-1">
                 <img
                   src="/thamkhao/heart.png"
                   alt="Yêu thương"
@@ -326,12 +327,12 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
             </div>
           </div>
 
-          {/* Fountain pen on bottom right */}
-          <div className="absolute -bottom-6 -right-3 w-12 sm:w-14 h-28 sm:h-32 pointer-events-none z-20 transform rotate-12">
+          {/* Fountain pen along the right side (matching khung_02.png) */}
+          <div className="absolute -bottom-4 sm:-bottom-6 -right-4 sm:-right-5 w-14 sm:w-16 h-36 sm:h-42 pointer-events-none z-20 transform rotate-[18deg]">
             <img
               src="/thamkhao/pen.png"
               alt="Bút máy"
-              className="w-full h-full object-contain drop-shadow-lg"
+              className="w-full h-full object-contain drop-shadow-xl"
             />
           </div>
         </div>

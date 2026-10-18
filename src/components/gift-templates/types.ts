@@ -10,7 +10,7 @@ export interface TimelineItem {
 }
 
 /** Where the background music comes from. "none" = the buyer chose no music. */
-export type SongSource = "none" | "preset" | "link";
+export type SongSource = "none" | "preset" | "link" | "upload";
 
 export interface RecipientGiftData {
   recipientName: string;

@@ -109,9 +109,11 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
             noteText: getDefaultVoiceNote(pronouns),
           }
         : undefined,
-      finalMessage: getDefaultFinalMessage(pronouns),
+      finalTitle: draft.finalTitle?.trim() || undefined,
+      finalSubtitle: draft.finalSubtitle?.trim() || undefined,
+      finalMessage: draft.finalMessage?.trim() || getDefaultFinalMessage(pronouns),
     };
-  }, [template, draft.addressing, draft.recipientName, draft.senderName, draft.anonymous]);
+  }, [template, draft.addressing, draft.recipientName, draft.senderName, draft.anonymous, draft.finalTitle, draft.finalSubtitle, draft.finalMessage]);
 
   const draftGift = useMemo(() => {
     const payload = draftToPayload(draft).giftData;
@@ -136,6 +138,7 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
     const q = new URLSearchParams();
     q.set("embed", "true");
     q.set("hideConfig", "true");
+    q.set("preview", "true");
     if (mode === "demo") {
       return `/messenger?${q.toString()}`;
     }

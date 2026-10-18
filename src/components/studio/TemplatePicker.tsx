@@ -106,12 +106,10 @@ export default function TemplatePicker({ step, value, onChange, onPreview }: Pro
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (tpl.id === "messenger") {
-                    window.open("/messenger", "_blank");
-                  } else if (onPreview) {
+                  if (onPreview) {
                     onPreview(tpl.id);
                   } else {
-                    window.open("/thamkhao?device=phone", "_blank");
+                    window.open(`/thamkhao?template=${tpl.id}&device=phone`, "_blank");
                   }
                 }}
                 className="flex w-full items-center justify-center gap-1.5 rounded-xl liquid-glass-pill py-2 px-3 text-xs font-bold text-[#721a28] border border-rose-200/80 hover:bg-[#721a28] hover:text-white hover:border-[#721a28] transition-all cursor-pointer mt-auto"

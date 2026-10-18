@@ -533,10 +533,6 @@ export default function CardStudioPage() {
             <span className="material-symbols-outlined text-[14px]">confirmation_number</span>
             {product.token}
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-200/80 liquid-glass-pill px-3 py-1 text-slate-700 shadow-2xs">
-            <Icon name="diamond" className="text-[16px] text-[#721a28]" />
-            {product.chainName}
-          </span>
           <span
             className={`rounded-full border px-3 py-1 liquid-glass-pill ${
               product.status === "completed"

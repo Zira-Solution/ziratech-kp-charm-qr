@@ -122,16 +122,25 @@ export default function PinBlock({ step, draft, onChange }: Props) {
               </div>
 
               {draft.unlockPin && draft.unlockPin.length === 4 ? (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold self-start sm:self-auto">
-                  <span className="material-symbols-outlined text-[14px]">check</span>
-                  <span>OTP mới: {draft.unlockPin}</span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold self-start sm:self-auto shadow-2xs">
+                  <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                  <span>Mã bảo vệ: {draft.unlockPin}</span>
                 </span>
               ) : (
-                <span className="text-[11px] text-slate-400 italic self-start sm:self-auto">
-                  (Đang dùng mã mặc định ban đầu)
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 text-[11px] font-bold self-start sm:self-auto">
+                  <span className="material-symbols-outlined text-[14px]">edit</span>
+                  <span>Chưa đặt mã 4 số</span>
                 </span>
               )}
             </div>
+
+            {/* Prompt if PIN is not yet 4 digits */}
+            {(!draft.unlockPin || draft.unlockPin.length !== 4) && (
+              <div className="rounded-xl bg-rose-50/90 border border-rose-200 p-2.5 text-xs text-rose-800 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px] text-[#721a28] shrink-0">info</span>
+                <span>Hãy nhập 4 chữ số bí mật (hoặc bấm chọn gợi ý bên dưới) để người nhận mở khóa thiệp.</span>
+              </div>
+            )}
 
             {/* OTP Input Field */}
             <div className="max-w-xs mx-auto text-center space-y-2">
@@ -147,14 +156,14 @@ export default function PinBlock({ step, draft, onChange }: Props) {
                   maxLength={4}
                   value={draft.unlockPin}
                   onChange={(e) => onChange({ unlockPin: e.target.value.replace(/\D/g, "") })}
-                  placeholder="••••"
+                  placeholder="2010"
                   className="w-full rounded-2xl border-2 border-rose-200/80 bg-white px-4 py-3 text-center font-mono text-2xl font-bold tracking-[0.6em] text-[#721a28] shadow-inner focus:border-[#721a28] focus:outline-none focus:ring-4 focus:ring-rose-200/50 transition-all placeholder:text-slate-300"
                 />
                 {draft.unlockPin && (
                   <button
                     type="button"
                     onClick={() => onChange({ unlockPin: "" })}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs transition-colors cursor-pointer"
                     title="Xóa mã OTP"
                   >
                     ✕
@@ -209,18 +218,43 @@ export default function PinBlock({ step, draft, onChange }: Props) {
             </p>
           </div>
         ) : (
-          /* Detailed Configuration for Option 2: Direct Open (No OTP) */
-          <div className="rounded-2xl bg-emerald-50/80 border border-emerald-200/80 p-4.5 flex items-start gap-3.5 animate-fade-in">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
-              <span className="material-symbols-outlined text-[20px]">check_circle</span>
-            </span>
-            <div className="text-xs text-emerald-950 space-y-1">
-              <p className="font-bold text-emerald-900 text-[13px]">
-                Người nhận sẽ mở xem thiệp tức thì
+          /* Detailed Configuration for Option 2: Direct Open (No OTP) with PROMINENT SECURITY WARNING */
+          <div className="space-y-3 animate-fade-in">
+            {/* Warning Alert Banner */}
+            <div className="rounded-2xl bg-amber-50/95 border-2 border-amber-300/90 p-4.5 space-y-2.5 shadow-sm">
+              <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
+                <span className="material-symbols-outlined text-[22px] text-amber-600">warning</span>
+                <span>Cảnh báo bảo mật &amp; Quyền riêng tư</span>
+              </div>
+              <p className="text-xs text-amber-900/90 leading-relaxed">
+                Khi chọn <strong>Mở trực tiếp</strong>, bất kỳ ai quét mã QR trên quà tặng hoặc có đường liên kết đều có thể <strong>đọc toàn bộ tâm thư, xem album ảnh và nghe bản ghi âm giọng nói</strong> của bạn mà không cần bất kỳ mật khẩu nào!
               </p>
-              <p className="leading-relaxed text-emerald-800">
-                Khi quét mã QR trên mặt charm hoặc mở đường liên kết thiệp, toàn bộ câu chuyện và thông điệp của bạn sẽ tự động hiển thị mượt mà mà không có màn hình khóa hay yêu cầu nhập mã OTP.
-              </p>
+              <div className="pt-1 border-t border-amber-200/80 flex items-center justify-between flex-wrap gap-2">
+                <span className="text-xs font-semibold text-[#721a28] flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[16px]">verified_user</span>
+                  Khuyên dùng: Bạn nên bật "Bảo vệ bằng mã OTP" để giữ trọn vẹn sự riêng tư.
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onChange({ requirePin: true })}
+                  className="text-xs font-bold text-[#721a28] underline hover:text-[#540114] cursor-pointer"
+                >
+                  Bật mã OTP ngay →
+                </button>
+              </div>
+            </div>
+
+            {/* Quick explanation of Direct Open */}
+            <div className="rounded-2xl bg-slate-50 border border-slate-200/80 p-4 flex items-start gap-3 text-xs text-slate-600">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-2xs">
+                <span className="material-symbols-outlined text-[18px]">check</span>
+              </span>
+              <div className="space-y-0.5">
+                <p className="font-bold text-slate-800 text-[12.5px]">Mở nhanh không cần màn hình khóa</p>
+                <p className="text-[11.5px] text-slate-600 leading-relaxed">
+                  Người nhận quét mã là thiệp hiện ra tức thì. Phù hợp nếu bạn muốn tặng người lớn tuổi hoặc nội dung không cần bí mật.
+                </p>
+              </div>
             </div>
           </div>
         )}

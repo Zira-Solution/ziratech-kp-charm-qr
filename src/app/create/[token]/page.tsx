@@ -28,6 +28,7 @@ import MessengerBlock from "@/components/studio/blocks/MessengerBlock";
 import { getTemplate, getTemplateAllowedBlocks } from "@/components/gift-templates/template-config";
 import { parseGiftData } from "@/lib/validation/gift";
 import { ToastContainer, useToastState } from "@/components/ui/Toast";
+import SendRecipientModal from "@/components/studio/SendRecipientModal";
 
 interface StudioProduct {
   token: string;
@@ -63,6 +64,7 @@ export default function CardStudioPage() {
   const [previewTemplate, setPreviewTemplate] = useState<GiftTemplateId>("storybook-sunset");
   const [previewInitialMode, setPreviewInitialMode] = useState<"demo" | "draft">("demo");
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
+  const [sendRecipientOpen, setSendRecipientOpen] = useState(false);
 
   const openPreview = (tpl?: GiftTemplateId, mode: "demo" | "draft" = "demo") => {
     setPreviewTemplate(tpl || draft.template);
@@ -288,6 +290,13 @@ export default function CardStudioPage() {
         target: empty === "letter" ? "letter-content" : `block-${empty}`,
       };
     }
+    if (draft.requirePin !== false && (!draft.unlockPin || !/^\d{4}$/.test(draft.unlockPin))) {
+      return {
+        stage: 3,
+        message: "Vui lòng nhập đủ 4 số cho mã OTP xem thiệp (hoặc chọn Mở trực tiếp)",
+        target: "pin-new",
+      };
+    }
     return null;
   };
 
@@ -370,7 +379,7 @@ export default function CardStudioPage() {
       }
       showToast("Đã lưu thiệp thành công!", "success");
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#721a28", "#ffd700", "#fea095", "#ffffff"] });
-      setTimeout(() => router.push(`/g/${token}`), 900);
+      setSendRecipientOpen(true);
     } catch (err) {
       if (!needsAuth) {
         showToast(err instanceof Error ? err.message : "Không lưu được thiệp", "error");
@@ -657,6 +666,14 @@ export default function CardStudioPage() {
                     <Icon name="visibility" className="text-[18px]" />
                     Mở xem trước thiệp thực tế
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setSendRecipientOpen(true)}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-rose-300 bg-rose-50/70 hover:bg-rose-100 text-[#721a28] px-4 text-xs font-bold cursor-pointer shadow-2xs transition-colors"
+                  >
+                    <Icon name="mark_email_read" className="text-[18px]" />
+                    Gửi mail bất ngờ cho người nhận
+                  </button>
                 </div>
               </section>
 
@@ -778,6 +795,17 @@ export default function CardStudioPage() {
           </div>
         </div>
       )}
+
+      <SendRecipientModal
+        isOpen={sendRecipientOpen}
+        token={token}
+        defaultRecipientName={draft.recipientName}
+        defaultSenderName={draft.senderName || product.customerName}
+        defaultUnlockPin={draft.unlockPin}
+        requirePin={draft.requirePin !== false}
+        onClose={() => setSendRecipientOpen(false)}
+        onViewGift={() => router.push(`/g/${token}`)}
+      />
     </div>
   );
 }

@@ -10,7 +10,6 @@ import {
 import {
   generateCreatorKey,
   generateProductToken,
-  generateUnlockPin,
   hashSecret,
   hashSecretSync,
   normalizeCreatorKey,
@@ -125,14 +124,13 @@ export async function createGiftProductInDb(
 ): Promise<{ order: GiftProductOrder; issued: IssuedCodes }> {
   const issued: IssuedCodes = {
     creatorKey: generateCreatorKey(),
-    unlockPin: generateUnlockPin(),
   };
 
   const order: GiftProductOrder = {
     id: crypto.randomUUID(),
     token: generateProductToken(),
     creatorKeyHash: await hashSecret(normalizeCreatorKey(issued.creatorKey)),
-    unlockPinHash: await hashSecret(normalizeUnlockPin(issued.unlockPin)),
+    unlockPinHash: "",
     customerName: payload.customerName.trim(),
     customerEmail: payload.customerEmail.trim(),
     customerPhone: payload.customerPhone?.trim(),
@@ -223,27 +221,38 @@ export async function updateGiftProductCustomData(
   const cleanToken = token.trim().toUpperCase();
   const completedAt = new Date().toISOString();
   const cleanGiftData = stripGiftSecrets(giftData)!;
-  const unlockPinHash = newUnlockPin ? await hashSecret(normalizeUnlockPin(newUnlockPin)) : undefined;
+  const requirePin = cleanGiftData.requirePin !== false;
+  const unlockPinHash = requirePin && newUnlockPin ? await hashSecret(normalizeUnlockPin(newUnlockPin)) : "";
 
   const supabase = getClient();
   if (!supabase) {
     const item = memoryStore().find((p) => p.token.toUpperCase() === cleanToken);
     if (!item) return false;
     item.giftData = cleanGiftData;
-    if (unlockPinHash) item.unlockPinHash = unlockPinHash;
+    if (!requirePin) {
+      item.unlockPinHash = "";
+    } else if (unlockPinHash) {
+      item.unlockPinHash = unlockPinHash;
+    }
     item.status = "completed";
     item.completedAt = completedAt;
     return true;
   }
 
+  const updateFields: Record<string, unknown> = {
+    gift_data: cleanGiftData,
+    status: "completed",
+    completed_at: completedAt,
+  };
+  if (!requirePin) {
+    updateFields.unlock_pin = "";
+  } else if (unlockPinHash) {
+    updateFields.unlock_pin = unlockPinHash;
+  }
+
   const { data, error } = await supabase
     .from("gift_products")
-    .update({
-      gift_data: cleanGiftData,
-      ...(unlockPinHash ? { unlock_pin: unlockPinHash } : {}),
-      status: "completed",
-      completed_at: completedAt,
-    })
+    .update(updateFields)
     .eq("token", cleanToken)
     .select("id");
 

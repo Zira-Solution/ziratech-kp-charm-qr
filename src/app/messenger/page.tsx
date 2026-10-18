@@ -453,7 +453,7 @@ function MessengerPageInner() {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [shownMessages, isTyping]);
+  }, [shownMessages, isTyping, afterFilmStep]);
 
   // Lockscreen notification click
   const handleOpenNotification = () => {
@@ -497,11 +497,28 @@ function MessengerPageInner() {
 
   // Closing the film reel: the chat sends a line, the voice note, then a closing line
   useEffect(() => {
-    if (stage !== "chat" || afterFilmStep < 1 || afterFilmStep === 3 || afterFilmStep > 4) return;
-    const delay = afterFilmStep === 1 ? 900 : afterFilmStep === 2 ? 1600 : 1200;
+    if (stage !== "chat" || afterFilmStep < 1 || afterFilmStep > 4) return;
+
+    // When on step 3 with a voice note, allow 6s for user to listen or auto-advance
+    if (afterFilmStep === 3 && settings.voiceUrl) {
+      const timeout = window.setTimeout(() => {
+        setAfterFilmStep((prev) => (prev === 3 ? 4 : prev));
+      }, 6000);
+      return () => window.clearTimeout(timeout);
+    }
+
+    const delay =
+      afterFilmStep === 1
+        ? 900
+        : afterFilmStep === 2
+          ? 1600
+          : afterFilmStep === 3
+            ? 1500 // If no voice note, show the bubble briefly (1.5s) then jump down to the closing message!
+            : 1100;
+
     const timeout = window.setTimeout(() => setAfterFilmStep(afterFilmStep + 1), delay);
     return () => window.clearTimeout(timeout);
-  }, [stage, afterFilmStep]);
+  }, [stage, afterFilmStep, settings.voiceUrl]);
 
   // Leaving the chat (film, lock) stops any playing voice note
   useEffect(() => {
@@ -538,7 +555,9 @@ function MessengerPageInner() {
     const audio = voiceAudioRef.current;
     if (!audio || !settings.voiceUrl) {
       setVoiceHint(true);
-      window.setTimeout(() => setVoiceHint(false), 3000);
+      window.setTimeout(() => setVoiceHint(false), 2500);
+      // If there is no voice note, advance immediately to the next message
+      setAfterFilmStep((prev) => (prev === 3 ? 4 : prev));
       return;
     }
     if (audio.paused) {
@@ -1736,7 +1755,7 @@ function MessengerPageInner() {
                         </div>
                         {voiceHint && (
                           <span className="mt-0.5 ml-1 text-[10px] text-slate-600">
-                            Chưa có ghi âm. Thêm trong Tùy chỉnh.
+                            {hideConfig ? "Chưa có ghi âm thoại." : "Chưa có ghi âm. Thêm trong Tùy chỉnh."}
                           </span>
                         )}
                       </div>

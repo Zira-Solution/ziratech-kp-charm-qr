@@ -13,7 +13,6 @@ interface Props {
 
 export const WALLPAPER_PRESETS = [
   { name: "Ảnh mẫu cô gái", url: "/images/default_lockscreen_girl.jpg" },
-  { name: "Ảnh gốc tham khảo", url: "/images/messenger_reference.png" },
   { name: "Hoàng hôn Anime", url: "/images/anime_sunset_couple.jpg" },
   { name: "Cặp đôi hoàng hôn", url: "/thamkhao/sunset_couple_clean.jpg" },
 ];

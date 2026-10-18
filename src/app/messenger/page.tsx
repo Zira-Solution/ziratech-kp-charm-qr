@@ -129,7 +129,6 @@ function formatVoiceTime(sec: number): string {
 
 const WALLPAPER_PRESETS = [
   { name: "Ảnh mẫu cô gái", url: "/images/default_lockscreen_girl.jpg" },
-  { name: "Ảnh gốc tham khảo", url: "/images/messenger_reference.png" },
   { name: "Hoàng hôn Anime", url: "/images/anime_sunset_couple.jpg" },
   { name: "Cặp đôi hoàng hôn", url: "/thamkhao/sunset_couple_clean.jpg" },
 ];
@@ -226,6 +225,7 @@ function MessengerPageInner() {
   const searchParams = useSearchParams();
   const isEmbedded = searchParams?.get("embed") === "true";
   const hideConfig = searchParams?.get("hideConfig") === "true" || isEmbedded;
+  const isPreview = searchParams?.get("preview") === "true" || searchParams?.get("mode") === "preview" || (!isEmbedded && !hideConfig);
 
   // Settings state
   const [settings, setSettings] = useState<CustomSettings>(DEFAULT_SETTINGS);
@@ -286,8 +286,15 @@ function MessengerPageInner() {
 
   // Filmstrip stage state
   const [isFilmPaused, setIsFilmPaused] = useState(false);
-  const [filmSpeed, setFilmSpeed] = useState<number>(120); // 120s: very slow, smooth & romantic
+  const [filmSpeedSetting, setFilmSpeedSetting] = useState<"normal" | "fast" | "slow">("normal");
   const [selectedFilmPhoto, setSelectedFilmPhoto] = useState<string | null>(null);
+  const [isFilmDragging, setIsFilmDragging] = useState(false);
+  const filmTrackRef = useRef<HTMLDivElement>(null);
+  const filmDragActiveRef = useRef(false);
+  const filmDragStartX = useRef(0);
+  const filmDragStartScrollLeft = useRef(0);
+  const filmHasMoved = useRef(false);
+  const filmResumeTimer = useRef<number | null>(null);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const letterScrollRef = useRef<HTMLDivElement>(null);
@@ -604,6 +611,100 @@ function MessengerPageInner() {
     }, 600);
   };
 
+  // Continuous film reel auto-scroll with rAF, pausing seamlessly when user drags or touches
+  useEffect(() => {
+    if (stage !== "film" || isFilmPaused) return;
+
+    let animId: number;
+    let lastTime = performance.now();
+
+    const loop = (currentTime: number) => {
+      const dt = (currentTime - lastTime) / 1000;
+      lastTime = currentTime;
+
+      const track = filmTrackRef.current;
+      if (track && !filmDragActiveRef.current) {
+        // speed in px/sec: fast 150, normal 75, slow 35
+        const pxPerSec = filmSpeedSetting === "fast" ? 150 : filmSpeedSetting === "slow" ? 35 : 75;
+        track.scrollLeft += pxPerSec * Math.min(dt, 0.1);
+
+        const half = track.scrollWidth / 2;
+        if (half > 0 && track.scrollLeft >= half) {
+          track.scrollLeft -= half;
+        }
+      }
+      animId = requestAnimationFrame(loop);
+    };
+
+    animId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animId);
+  }, [stage, isFilmPaused, filmSpeedSetting]);
+
+  const handleFilmMouseDown = (e: React.MouseEvent) => {
+    const track = filmTrackRef.current;
+    if (!track) return;
+    if (filmResumeTimer.current) window.clearTimeout(filmResumeTimer.current);
+    filmDragActiveRef.current = true;
+    filmDragStartX.current = e.clientX;
+    filmDragStartScrollLeft.current = track.scrollLeft;
+    filmHasMoved.current = false;
+    setIsFilmDragging(true);
+  };
+
+  const handleFilmMouseMove = (e: React.MouseEvent) => {
+    if (!filmDragActiveRef.current) return;
+    const track = filmTrackRef.current;
+    if (!track) return;
+    const dx = e.clientX - filmDragStartX.current;
+    if (Math.abs(dx) > 5) {
+      filmHasMoved.current = true;
+    }
+    track.scrollLeft = filmDragStartScrollLeft.current - dx;
+    const half = track.scrollWidth / 2;
+    if (half > 0) {
+      if (track.scrollLeft >= half) track.scrollLeft -= half;
+      else if (track.scrollLeft <= 0) track.scrollLeft += half;
+    }
+  };
+
+  const handleFilmMouseUp = () => {
+    if (!filmDragActiveRef.current) return;
+    filmDragActiveRef.current = false;
+    setIsFilmDragging(false);
+  };
+
+  const handleFilmTouchStart = (e: React.TouchEvent) => {
+    if (filmResumeTimer.current) window.clearTimeout(filmResumeTimer.current);
+    filmDragActiveRef.current = true;
+    filmHasMoved.current = false;
+    const touch = e.touches[0];
+    if (touch && filmTrackRef.current) {
+      filmDragStartX.current = touch.clientX;
+      filmDragStartScrollLeft.current = filmTrackRef.current.scrollLeft;
+    }
+  };
+
+  const handleFilmTouchMove = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    if (touch && filmTrackRef.current) {
+      const dx = touch.clientX - filmDragStartX.current;
+      if (Math.abs(dx) > 5) {
+        filmHasMoved.current = true;
+      }
+      const half = filmTrackRef.current.scrollWidth / 2;
+      if (half > 0) {
+        if (filmTrackRef.current.scrollLeft >= half) filmTrackRef.current.scrollLeft -= half;
+        else if (filmTrackRef.current.scrollLeft <= 0) filmTrackRef.current.scrollLeft += half;
+      }
+    }
+  };
+
+  const handleFilmTouchEnd = () => {
+    filmResumeTimer.current = window.setTimeout(() => {
+      filmDragActiveRef.current = false;
+    }, 1200);
+  };
+
   useEffect(
     () => () => {
       if (letterHoldTimer.current !== null) window.clearTimeout(letterHoldTimer.current);
@@ -864,7 +965,7 @@ function MessengerPageInner() {
   );
 
   return (
-    <div className="relative min-h-screen w-full bg-[#0d0f12] text-slate-100 flex flex-col items-center justify-center overflow-x-hidden selection:bg-rose-500/30 selection:text-white">
+    <div data-lenis-prevent className="relative min-h-screen w-full bg-[#0d0f12] text-slate-100 flex flex-col items-center justify-center overflow-x-hidden selection:bg-rose-500/30 selection:text-white">
       <audio ref={musicAudioRef} src={settings.musicUrl || undefined} loop preload="none" />
 
       {/* Background ambient lighting for desktop showcase - lightweight radial gradients, zero blur GPU overhead */}
@@ -1163,6 +1264,25 @@ function MessengerPageInner() {
                     <p className="text-center text-[11px] font-ios text-white/70 mt-1.5 drop-shadow-sm">
                       Chạm vào thông báo để mở tin nhắn
                     </p>
+
+                    {isPreview && (
+                      <div className="mt-1.5 flex justify-center">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShownMessages(0);
+                            setChatPhase("envelope");
+                            setAfterFilmStep(0);
+                            setStage("chat");
+                          }}
+                          className="px-2.5 py-0.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-[11px] font-medium border border-white/25 active:scale-95 transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+                          title="Chỉ hiển thị khi xem trước thiệp"
+                        >
+                          <span className="material-symbols-outlined text-[13px]">bolt</span>
+                          <span>Mở nhanh tin nhắn (Xem trước)</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Shortcuts (Flashlight & Camera) & Home Indicator */}
@@ -1228,15 +1348,17 @@ function MessengerPageInner() {
                     ))}
                   </div>
 
-                  {pinError ? (
-                    <p className="text-xs text-rose-300 font-medium mt-2.5">
-                      Mật mã chưa chính xác, thử lại nhé
-                    </p>
-                  ) : (
-                    <p className="text-[11px] text-white/60 mt-2">
-                      Mã mở khóa: <strong className="text-white/90">{settings.pin}</strong>
-                    </p>
-                  )}
+                  <div className="h-6 mt-2 flex items-center justify-center">
+                    {pinError ? (
+                      <p className="text-xs text-rose-300 font-medium animate-fade-in">
+                        Mật mã chưa chính xác, thử lại nhé
+                      </p>
+                    ) : isPreview ? (
+                      <p className="text-[11px] text-white/60">
+                        Xem trước • Mã PIN: <strong className="text-white/90">{settings.pin}</strong>
+                      </p>
+                    ) : null}
+                  </div>
                 </div>
 
                 {/* Keypad Grid with Crystal Transparent Glass Keys */}
@@ -1265,33 +1387,37 @@ function MessengerPageInner() {
                 </div>
 
                 {/* Bottom actions matching iOS Passcode Screen */}
-                <div className="w-full flex items-center justify-between px-3 pb-2">
+                <div className="w-full flex items-center justify-between px-6 pb-2">
                   <button
                     type="button"
                     onClick={() => {
                       // Trigger emergency call notification/hint
                       alert("Tính năng cuộc gọi khẩn cấp (Emergency SOS) - K&P Atelier");
                     }}
-                    className="text-[15px] font-ios font-medium text-white/90 hover:text-white drop-shadow-sm active:scale-95 transition-transform"
+                    className="text-[15px] font-ios font-medium text-white/90 hover:text-white drop-shadow-sm active:scale-95 transition-transform cursor-pointer"
                   >
                     Khẩn cấp
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEnteredPin(settings.pin);
-                      window.setTimeout(() => {
-                        setShownMessages(0);
-                        setChatPhase("envelope");
-                        setAfterFilmStep(0);
-                        setStage("chat");
-                      }, 200);
-                    }}
-                    className="text-xs font-semibold text-rose-300 hover:text-rose-200 underline underline-offset-4"
-                  >
-                    Mở nhanh ({settings.pin})
-                  </button>
+                  {/* Nút Mở nhanh chỉ hiển thị khi ở chế độ xem trước thiệp */}
+                  {isPreview && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEnteredPin(settings.pin);
+                        window.setTimeout(() => {
+                          setShownMessages(0);
+                          setChatPhase("envelope");
+                          setAfterFilmStep(0);
+                          setStage("chat");
+                        }, 180);
+                      }}
+                      className="text-xs font-semibold text-rose-300 hover:text-rose-200 underline underline-offset-4 cursor-pointer active:scale-95 transition-all"
+                      title="Chỉ hiển thị khi xem trước thiệp, người nhận sẽ không thấy nút này"
+                    >
+                      Mở nhanh ({settings.pin})
+                    </button>
+                  )}
 
                   <button
                     type="button"
@@ -1303,7 +1429,7 @@ function MessengerPageInner() {
                         setStage("lock");
                       }
                     }}
-                    className="text-[15px] font-ios font-medium text-white/90 hover:text-white drop-shadow-sm active:scale-95 transition-transform"
+                    className="text-[15px] font-ios font-medium text-white/90 hover:text-white drop-shadow-sm active:scale-95 transition-transform cursor-pointer"
                   >
                     {enteredPin.length > 0 ? "Xóa" : "Hủy"}
                   </button>
@@ -1410,7 +1536,8 @@ function MessengerPageInner() {
                 {/* Chat Message Scrollable Area */}
                 <div
                   ref={chatContainerRef}
-                  className="relative flex-1 overflow-y-auto px-3.5 py-3 space-y-2.5 z-10"
+                  data-lenis-prevent
+                  className="relative flex-1 overflow-y-auto px-3.5 py-3 space-y-2.5 z-10 touch-pan-y overscroll-contain"
                 >
                   {/* Base text messages */}
                   {baseMessages.slice(0, Math.min(shownMessages, baseMessages.length)).map(renderBubble)}
@@ -1724,73 +1851,88 @@ function MessengerPageInner() {
 
                 {/* Center 35mm Continuous Film Reel matching user reference image */}
                 <div className="relative my-auto py-2 w-full overflow-hidden flex flex-col justify-center z-20">
-                  {/* Infinite Horizontal Filmstrip Track (No dark black backing, clouds shine through) */}
+                  {/* Interactive Draggable & Scrollable Filmstrip Track */}
                   <div
-                    className="animate-filmstrip py-1 select-none cursor-grab active:cursor-grabbing"
-                    style={{
-                      animationPlayState: isFilmPaused ? "paused" : "running",
-                      animationDuration: `${filmSpeed}s`,
-                    }}
+                    ref={filmTrackRef}
+                    data-lenis-prevent
+                    onMouseDown={handleFilmMouseDown}
+                    onMouseMove={handleFilmMouseMove}
+                    onMouseUp={handleFilmMouseUp}
+                    onMouseLeave={handleFilmMouseUp}
+                    onTouchStart={handleFilmTouchStart}
+                    onTouchMove={handleFilmTouchMove}
+                    onTouchEnd={handleFilmTouchEnd}
+                    className={`w-full overflow-x-auto py-2 select-none flex items-center touch-pan-x overscroll-contain [&::-webkit-scrollbar]:hidden ${
+                      isFilmDragging ? "cursor-grabbing" : "cursor-grab"
+                    }`}
+                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                   >
-                    {(() => {
-                      const list =
-                        settings.filmPhotos && settings.filmPhotos.length > 0
-                          ? settings.filmPhotos
-                          : DEFAULT_FILM_PHOTOS;
-                      const repeat = Math.max(1, Math.ceil(6 / list.length));
-                      const half = Array(repeat).fill(list).flat();
-                      const looped = [...half, ...half];
+                    <div className="flex items-center shrink-0 w-max">
+                      {(() => {
+                        const list =
+                          settings.filmPhotos && settings.filmPhotos.length > 0
+                            ? settings.filmPhotos
+                            : DEFAULT_FILM_PHOTOS;
+                        const repeat = Math.max(3, Math.ceil(8 / list.length));
+                        const half = Array(repeat).fill(list).flat();
+                        const looped = [...half, ...half];
 
-                      return looped.map((photoUrl, idx) => {
-                        const frameNum = (idx % list.length) + 1;
-                        return (
-                          <div
-                            key={idx}
-                            className="shrink-0 flex flex-col items-center bg-[#b87d96] border-y-[2px] border-[#a56782] shadow-[0_12px_32px_rgba(110,40,70,0.3)] mx-1 rounded-xs p-1.5 transition-transform hover:scale-102 duration-200 group"
-                          >
-                            {/* Top Continuous Sprocket Holes */}
-                            <div className="w-full flex items-center justify-between px-1 py-0.5 border-b border-white/20 select-none overflow-hidden gap-1.5">
-                              {Array.from({ length: 8 }).map((_, holeIdx) => (
-                                <span
-                                  key={`top-hole-${holeIdx}`}
-                                  className="w-3 h-1.5 rounded-[1px] bg-white/95 shadow-2xs shrink-0"
-                                />
-                              ))}
-                            </div>
-
-                            {/* Photo Frame */}
+                        return looped.map((photoUrl, idx) => {
+                          const frameNum = (idx % list.length) + 1;
+                          return (
                             <div
-                              onClick={() => setSelectedFilmPhoto(photoUrl)}
-                              className="relative w-[155px] sm:w-[175px] h-[215px] sm:h-[240px] my-1 bg-black/30 rounded-[2px] overflow-hidden shadow-inner cursor-pointer"
+                              key={idx}
+                              className="shrink-0 flex flex-col items-center bg-[#b87d96] border-y-[2px] border-[#a56782] shadow-[0_12px_32px_rgba(110,40,70,0.3)] mx-1 rounded-xs p-1.5 transition-transform hover:scale-102 duration-200 group"
                             >
-                              <img
-                                src={photoUrl}
-                                alt={`Kỷ niệm ${frameNum}`}
-                                className="w-full h-full object-cover group-hover:brightness-105 transition-all duration-300"
-                                loading="lazy"
-                              />
+                              {/* Top Continuous Sprocket Holes */}
+                              <div className="w-full flex items-center justify-between px-1 py-0.5 border-b border-white/20 select-none overflow-hidden gap-1.5 pointer-events-none">
+                                {Array.from({ length: 8 }).map((_, holeIdx) => (
+                                  <span
+                                    key={`top-hole-${holeIdx}`}
+                                    className="w-3 h-1.5 rounded-[1px] bg-white/95 shadow-2xs shrink-0"
+                                  />
+                                ))}
+                              </div>
 
-                              {/* Film frame subtle highlight */}
-                              <div className="absolute inset-0 ring-1 ring-inset ring-white/20 pointer-events-none rounded-[2px]" />
-                            </div>
-
-                            {/* Bottom Continuous Sprocket Holes */}
-                            <div className="w-full flex items-center justify-between px-1 py-0.5 border-t border-white/20 select-none overflow-hidden gap-1.5">
-                              {Array.from({ length: 8 }).map((_, holeIdx) => (
-                                <span
-                                  key={`bot-hole-${holeIdx}`}
-                                  className="w-3 h-1.5 rounded-[1px] bg-white/95 shadow-2xs shrink-0"
+                              {/* Photo Frame */}
+                              <div
+                                onClick={() => {
+                                  if (!filmHasMoved.current) {
+                                    setSelectedFilmPhoto(photoUrl);
+                                  }
+                                }}
+                                className="relative w-[155px] sm:w-[175px] h-[215px] sm:h-[240px] my-1 bg-black/30 rounded-[2px] overflow-hidden shadow-inner cursor-pointer"
+                              >
+                                <img
+                                  src={photoUrl}
+                                  alt={`Kỷ niệm ${frameNum}`}
+                                  draggable={false}
+                                  className="w-full h-full object-cover group-hover:brightness-105 transition-all duration-300 pointer-events-none"
+                                  loading="lazy"
                                 />
-                              ))}
+
+                                {/* Film frame subtle highlight */}
+                                <div className="absolute inset-0 ring-1 ring-inset ring-white/20 pointer-events-none rounded-[2px]" />
+                              </div>
+
+                              {/* Bottom Continuous Sprocket Holes */}
+                              <div className="w-full flex items-center justify-between px-1 py-0.5 border-t border-white/20 select-none overflow-hidden gap-1.5 pointer-events-none">
+                                {Array.from({ length: 8 }).map((_, holeIdx) => (
+                                  <span
+                                    key={`bot-hole-${holeIdx}`}
+                                    className="w-3 h-1.5 rounded-[1px] bg-white/95 shadow-2xs shrink-0"
+                                  />
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      });
-                    })()}
+                          );
+                        });
+                      })()}
+                    </div>
                   </div>
 
                   <p className="text-center text-[11px] font-sans text-[#5c233c] mt-2 drop-shadow-[0_1px_1px_rgba(255,255,255,0.85)] font-medium">
-                    Chạm giữ để dừng phim • Chạm vào ảnh để phóng to
+                    Kéo hoặc vuốt để tua nhanh • Chạm vào ảnh để phóng to ✨
                   </p>
                 </div>
 
@@ -1824,13 +1966,13 @@ function MessengerPageInner() {
                     <button
                       type="button"
                       onClick={() => {
-                        setFilmSpeed((prev) => (prev === 120 ? 80 : prev === 80 ? 50 : 120));
+                        setFilmSpeedSetting((prev) => (prev === "normal" ? "fast" : prev === "fast" ? "slow" : "normal"));
                       }}
                       className="py-1.5 px-2.5 rounded-full bg-white/70 hover:bg-white text-[#5e223c] font-medium text-xs shadow-2xs transition-all active:scale-95 flex items-center gap-1 cursor-pointer border border-pink-200/60"
                       title="Chạm để đổi tốc độ quay cuộn phim"
                     >
                       <span className="material-symbols-outlined text-[15px]">speed</span>
-                      <span>{filmSpeed === 120 ? "Siêu chậm" : filmSpeed === 80 ? "Chậm vừa" : "Vừa"}</span>
+                      <span>{filmSpeedSetting === "fast" ? "Tua nhanh" : filmSpeedSetting === "slow" ? "Tua chậm" : "Tốc độ vừa"}</span>
                     </button>
 
                     {/* Back to Lock */}
@@ -1946,66 +2088,69 @@ function MessengerPageInner() {
                   {/* Letter Scrollable Writing Area - strictly mapped to the ivory paper */}
                   <div
                     ref={letterScrollRef}
+                    data-lenis-prevent
                     onScroll={handleCheckLetterScroll}
-                    className="absolute top-[14%] bottom-[40%] left-[15%] right-[15%] overflow-y-auto px-1.5 sm:px-2.5 pt-1 pb-2 text-center z-10 flex flex-col justify-between [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-rose-300/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-rose-400"
+                    className="absolute top-[14%] bottom-[36%] left-[13%] right-[13%] overflow-y-auto px-1.5 sm:px-2.5 pt-1 pb-2 text-center z-10 touch-pan-y overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-rose-300/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-rose-400"
                   >
-                    <div>
-                      {/* Title: Romantic Cursive matching user reference */}
-                      <h3 className="font-handwriting italic font-normal text-[19px] sm:text-[22px] text-[#6b2135] leading-snug tracking-wide text-center max-w-[210px] mx-auto pt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">
-                        {settings.letterTitle || `Gửi tới ${settings.recipientName} yêu thương,`}
-                      </h3>
+                    <div className="min-h-full flex flex-col justify-between">
+                      <div>
+                        {/* Title: Romantic Cursive matching user reference */}
+                        <h3 className="font-handwriting italic font-normal text-[19px] sm:text-[22px] text-[#6b2135] leading-snug tracking-wide text-center max-w-[210px] mx-auto pt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">
+                          {settings.letterTitle || `Gửi tới ${settings.recipientName} yêu thương,`}
+                        </h3>
 
-                      {/* Body: Natural letter typography filling the ivory paper */}
-                      <div className="mt-2 font-serif text-[12px] sm:text-[13px] leading-[1.8] text-[#3e1f27] text-center whitespace-pre-line select-text px-0.5">
-                        {settings.letterContent}
-                      </div>
-                    </div>
-
-                    {/* Divider + Sign-off + Scroll Pill */}
-                    <div className="pt-2">
-                      {/* Decorative ✧ ♡ ✧ */}
-                      <div className="flex items-center justify-center gap-2 text-rose-400/90 text-xs my-1.5 select-none">
-                        <span>✧</span>
-                        <span>♡</span>
-                        <span>✧</span>
+                        {/* Body: Natural letter typography filling the ivory paper */}
+                        <div className="mt-2 font-serif text-[12px] sm:text-[13px] leading-[1.8] text-[#3e1f27] text-center whitespace-pre-line select-text px-0.5">
+                          {settings.letterContent}
+                        </div>
                       </div>
 
-                      {/* Interactive "Cuộn để đọc tiếp ↓" Pill Button */}
-                      {canScrollLetter && (
-                        <div className="sticky bottom-0 pt-0.5 pb-1 flex justify-center z-30">
+                      {/* Divider + Sign-off + Scroll Pill */}
+                      <div className="pt-2">
+                        {/* Decorative ✧ ♡ ✧ */}
+                        <div className="flex items-center justify-center gap-2 text-rose-400/90 text-xs my-1.5 select-none">
+                          <span>✧</span>
+                          <span>♡</span>
+                          <span>✧</span>
+                        </div>
+
+                        {/* Interactive "Cuộn để đọc tiếp ↓" Pill Button */}
+                        {canScrollLetter && (
+                          <div className="sticky bottom-0 pt-0.5 pb-1 flex justify-center z-30">
+                            <button
+                              type="button"
+                              onClick={handleScrollLetterDown}
+                              className="px-3 py-0.5 rounded-full bg-[#fffcf7]/95 hover:bg-white text-[#6b2234] text-[10.5px] font-sans font-medium shadow-xs border border-rose-200/90 backdrop-blur-xs flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer animate-pulse"
+                            >
+                              <span>Cuộn để đọc tiếp</span>
+                              <span className="text-[11px]">↓</span>
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Sender Sign-off */}
+                        <div className="text-center font-serif text-[11.5px] text-rose-900/90 pt-0.5">
+                          <span className="italic block text-slate-500 text-[9px]">Người gửi tặng:</span>
+                          <p className="font-handwriting text-base sm:text-[18px] text-rose-800 font-bold mt-0.5">
+                            {settings.senderName} ♡
+                          </p>
+                          {settings.letterSignature && (
+                            <p className="font-serif italic text-[9.5px] text-rose-800/80 mt-0.5">
+                              {settings.letterSignature}
+                            </p>
+                          )}
                           <button
                             type="button"
-                            onClick={handleScrollLetterDown}
-                            className="px-3 py-0.5 rounded-full bg-[#fffcf7]/95 hover:bg-white text-[#6b2234] text-[10.5px] font-sans font-medium shadow-xs border border-rose-200/90 backdrop-blur-xs flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer animate-pulse"
+                            onClick={() => {
+                              handleCloseLetter();
+                              setStage("film");
+                            }}
+                            className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-[10.5px] font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
                           >
-                            <span>Cuộn để đọc tiếp</span>
-                            <span className="text-[11px]">↓</span>
+                            <span>🎞️ Xem phim kỷ niệm</span>
+                            <span>→</span>
                           </button>
                         </div>
-                      )}
-
-                      {/* Sender Sign-off */}
-                      <div className="text-center font-serif text-[11.5px] text-rose-900/90 pt-0.5">
-                        <span className="italic block text-slate-500 text-[9px]">Người gửi tặng:</span>
-                        <p className="font-handwriting text-base sm:text-[18px] text-rose-800 font-bold mt-0.5">
-                          {settings.senderName} ♡
-                        </p>
-                        {settings.letterSignature && (
-                          <p className="font-serif italic text-[9.5px] text-rose-800/80 mt-0.5">
-                            {settings.letterSignature}
-                          </p>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handleCloseLetter();
-                            setStage("film");
-                          }}
-                          className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-[10.5px] font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
-                        >
-                          <span>🎞️ Xem phim kỷ niệm</span>
-                          <span>→</span>
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -2041,7 +2186,7 @@ function MessengerPageInner() {
           aria-modal="true"
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-fade-in text-slate-800"
         >
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-3xl p-6 shadow-2xl flex flex-col gap-5 border border-slate-200">
+          <div data-lenis-prevent className="w-full max-w-lg max-h-[90vh] overflow-y-auto overscroll-contain bg-white rounded-3xl p-6 shadow-2xl flex flex-col gap-5 border border-slate-200">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">

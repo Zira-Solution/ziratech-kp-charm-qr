@@ -138,6 +138,7 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
     const q = new URLSearchParams();
     q.set("embed", "true");
     q.set("hideConfig", "true");
+    q.set("preview", "true");
     if (mode === "demo") {
       return `/messenger?${q.toString()}`;
     }

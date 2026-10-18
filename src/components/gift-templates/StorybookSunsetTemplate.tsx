@@ -280,18 +280,39 @@ export default function StorybookSunsetTemplate({
           {slideNum} / 07
         </span>
       )}
-      <button
-        type="button"
-        onClick={() => setMenuOpen(true)}
-        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-          isArtCanvas
-            ? "bg-transparent hover:bg-black/10 text-[#8c4b3e]"
-            : "bg-white/75 hover:bg-white text-[#8c4b3e] shadow-2xs border border-[#ebdccd]"
-        }`}
-        aria-label="Mở menu danh mục"
-      >
-        <span className="material-symbols-outlined text-[20px]">menu</span>
-      </button>
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          onClick={toggleMusic}
+          className={`h-8 px-2.5 rounded-full flex items-center gap-1 text-xs font-bold transition-all cursor-pointer ${
+            isPlayingMusic
+              ? "bg-[#c13d28] text-white shadow-xs"
+              : isArtCanvas
+              ? "bg-white/40 hover:bg-white/60 text-[#8c4b3e] border border-white/50"
+              : "bg-white/75 hover:bg-white text-stone-600 shadow-2xs border border-[#ebdccd]"
+          }`}
+          aria-label={isPlayingMusic ? "Tắt loa nhạc nền" : "Bật loa nhạc nền"}
+          title={isPlayingMusic ? "Tắt loa nhạc nền" : "Bật loa nhạc nền"}
+        >
+          <span className="material-symbols-outlined text-[17px]">
+            {isPlayingMusic ? "volume_up" : "volume_off"}
+          </span>
+          <span className="text-[11px] hidden sm:inline">{isPlayingMusic ? "Nhạc" : "Tắt"}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+            isArtCanvas
+              ? "bg-transparent hover:bg-black/10 text-[#8c4b3e]"
+              : "bg-white/75 hover:bg-white text-[#8c4b3e] shadow-2xs border border-[#ebdccd]"
+          }`}
+          aria-label="Mở menu danh mục"
+        >
+          <span className="material-symbols-outlined text-[20px]">menu</span>
+        </button>
+      </div>
     </div>
   );
 

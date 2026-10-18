@@ -7,6 +7,7 @@ import { TEMPLATES } from "../gift-templates/template-config";
 import type { GiftTemplateId } from "../gift-templates/types";
 import { draftToPayload, type GiftDraft } from "./draft";
 import { Icon } from "./ui";
+import { useMusicPlayer } from "../gift-templates/media/useMusicPlayer";
 
 type Device = "fill" | "phone" | "tablet" | "desktop";
 
@@ -80,6 +81,7 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
   );
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const music = useMusicPlayer(draft.song.source === "preset" ? (draft.song.presetId || "lofi") : "lofi");
 
   const demoGift = useMemo<ViewerGift>(() => {
     return {
@@ -229,6 +231,24 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
               );
             })}
           </div>
+
+          {/* Quick Speaker Music Toggle */}
+          <button
+            type="button"
+            onClick={music.toggle}
+            className={`inline-flex items-center gap-1.5 rounded-2xl px-3 py-2 text-xs font-bold transition-all cursor-pointer border ${
+              music.playing
+                ? "bg-rose-50 text-[#721a28] border-rose-200/90 shadow-2xs"
+                : "bg-white/80 text-stone-600 border-slate-200 hover:bg-white"
+            }`}
+            title={music.playing ? "Tắt âm thanh nhạc nền" : "Bật âm thanh nhạc nền"}
+            aria-label={music.playing ? "Tắt âm thanh" : "Bật âm thanh"}
+          >
+            <span className={`material-symbols-outlined text-[17px] ${music.playing ? "text-[#c13d28]" : "text-stone-400"}`}>
+              {music.playing ? "volume_up" : "volume_off"}
+            </span>
+            <span className="hidden sm:inline font-sans">{music.playing ? "Nhạc: Bật" : "Nhạc: Tắt"}</span>
+          </button>
 
           {/* Close button: Quay lại bàn viết */}
           <button

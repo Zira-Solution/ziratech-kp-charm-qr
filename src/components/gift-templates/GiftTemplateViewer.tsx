@@ -71,8 +71,9 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
 
   // The built-in melody starts when the card opens. A browser may hold it back until the visitor first touches
   // the page, so the first touch or key press lets it through, and the button always shows the real state.
-  const hasMelody = gift.song?.source === "preset";
-  const music = useMusicPlayer(hasMelody ? gift.song?.presetId : undefined);
+  const hasMelody = gift.song?.source === "preset" || !gift.song;
+  const melodyPreset = gift.song?.source === "preset" ? (gift.song.presetId || "lofi") : "lofi";
+  const music = useMusicPlayer(hasMelody ? melodyPreset : undefined);
   useEffect(() => {
     music.start();
     const letSoundIn = () => musicPlayerSynth.resume();
@@ -248,22 +249,25 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
           onClick={music.toggle}
           aria-pressed={music.playing}
           aria-label={music.playing ? "Tắt âm thanh" : "Bật âm thanh"}
-          title={music.playing ? "Tắt loa" : "Bật loa"}
-          className="absolute left-3.5 top-3.5 z-40 flex h-9 w-9 items-center justify-center rounded-full border border-white/60 bg-white/40 hover:bg-white/60 text-stone-700 backdrop-blur-xl shadow-[0_4px_16px_0_rgba(0,0,0,0.06),inset_0_1px_1px_0_rgba(255,255,255,0.85)] hover:shadow-[0_6px_20px_0_rgba(0,0,0,0.1),inset_0_1px_2px_0_rgba(255,255,255,0.95)] active:scale-95 transition-all duration-300 cursor-pointer"
+          title={music.playing ? "Tắt loa nhạc nền" : "Bật loa nhạc nền"}
+          className="absolute left-3.5 top-3.5 z-40 flex items-center gap-1.5 min-h-10 px-3.5 rounded-full border border-white/80 bg-white/75 hover:bg-white text-stone-700 backdrop-blur-xl shadow-[0_4px_16px_0_rgba(0,0,0,0.08),inset_0_1px_1px_0_rgba(255,255,255,0.95)] hover:shadow-[0_6px_20px_0_rgba(0,0,0,0.12)] active:scale-95 transition-all duration-300 cursor-pointer"
         >
           <span
             aria-hidden="true"
-            className={`material-symbols-outlined text-[19px] leading-none transition-colors ${
+            className={`material-symbols-outlined text-[20px] leading-none transition-colors ${
               music.playing ? "text-[#c13d28]" : "text-stone-400"
             }`}
           >
             {music.playing ? "volume_up" : "volume_off"}
           </span>
+          <span className="text-xs font-bold font-sans text-stone-700">
+            {music.playing ? "Nhạc: Bật" : "Nhạc: Tắt"}
+          </span>
         </button>
       )}
 
       {(onBack || !embedded) && (
-        <div className={`absolute ${hasMelody ? "left-14" : "left-3.5"} top-3.5 z-40 flex items-center gap-2`}>
+        <div className={`absolute ${hasMelody ? "left-32 sm:left-36" : "left-3.5"} top-3.5 z-40 flex items-center gap-2`}>
           {onBack && (
             <button type="button" onClick={onBack} className={floating}>
               <span aria-hidden="true" className="material-symbols-outlined text-[16px] leading-none">

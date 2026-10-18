@@ -225,6 +225,7 @@ function MessengerPageInner() {
   const searchParams = useSearchParams();
   const isEmbedded = searchParams?.get("embed") === "true";
   const hideConfig = searchParams?.get("hideConfig") === "true" || isEmbedded;
+  const isPreview = searchParams?.get("preview") === "true" || searchParams?.get("mode") === "preview" || (!isEmbedded && !hideConfig);
 
   // Settings state
   const [settings, setSettings] = useState<CustomSettings>(DEFAULT_SETTINGS);
@@ -1263,6 +1264,25 @@ function MessengerPageInner() {
                     <p className="text-center text-[11px] font-ios text-white/70 mt-1.5 drop-shadow-sm">
                       Chạm vào thông báo để mở tin nhắn
                     </p>
+
+                    {isPreview && (
+                      <div className="mt-1.5 flex justify-center">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShownMessages(0);
+                            setChatPhase("envelope");
+                            setAfterFilmStep(0);
+                            setStage("chat");
+                          }}
+                          className="px-2.5 py-0.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white text-[11px] font-medium border border-white/25 active:scale-95 transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+                          title="Chỉ hiển thị khi xem trước thiệp"
+                        >
+                          <span className="material-symbols-outlined text-[13px]">bolt</span>
+                          <span>Mở nhanh tin nhắn (Xem trước)</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Shortcuts (Flashlight & Camera) & Home Indicator */}
@@ -1329,11 +1349,15 @@ function MessengerPageInner() {
                   </div>
 
                   <div className="h-6 mt-2 flex items-center justify-center">
-                    {pinError && (
+                    {pinError ? (
                       <p className="text-xs text-rose-300 font-medium animate-fade-in">
                         Mật mã chưa chính xác, thử lại nhé
                       </p>
-                    )}
+                    ) : isPreview ? (
+                      <p className="text-[11px] text-white/60">
+                        Xem trước • Mã PIN: <strong className="text-white/90">{settings.pin}</strong>
+                      </p>
+                    ) : null}
                   </div>
                 </div>
 
@@ -1374,6 +1398,26 @@ function MessengerPageInner() {
                   >
                     Khẩn cấp
                   </button>
+
+                  {/* Nút Mở nhanh chỉ hiển thị khi ở chế độ xem trước thiệp */}
+                  {isPreview && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEnteredPin(settings.pin);
+                        window.setTimeout(() => {
+                          setShownMessages(0);
+                          setChatPhase("envelope");
+                          setAfterFilmStep(0);
+                          setStage("chat");
+                        }, 180);
+                      }}
+                      className="text-xs font-semibold text-rose-300 hover:text-rose-200 underline underline-offset-4 cursor-pointer active:scale-95 transition-all"
+                      title="Chỉ hiển thị khi xem trước thiệp, người nhận sẽ không thấy nút này"
+                    >
+                      Mở nhanh ({settings.pin})
+                    </button>
+                  )}
 
                   <button
                     type="button"

@@ -4,6 +4,7 @@ import React from "react";
 import type { TimelineItem } from "@/components/gift-templates/types";
 import { MAX_TIMELINE } from "@/lib/validation/gift";
 import { Icon, StudioSection, fieldClass } from "../ui";
+import SmartDateInput from "../SmartDateInput";
 
 interface Props {
   step: number;
@@ -57,19 +58,18 @@ export default function TimelineBlock({ step, items, onChange }: Props) {
                   <Icon name="delete" className="text-[18px]" />
                 </button>
               </div>
-              <div className="grid gap-2.5 sm:grid-cols-[10rem_minmax(0,1fr)]">
+              <div className="grid gap-2.5 sm:grid-cols-[11rem_minmax(0,1fr)]">
                 <div>
                   <label htmlFor={`timeline-${i}-date`} className="sr-only">
                     Ngày của mốc số {i + 1}
                   </label>
-                  <input
+                  <SmartDateInput
                     id={`timeline-${i}-date`}
-                    type="date"
-                    min="1900-01-01"
-                    max="2100-12-31"
                     value={item.date}
-                    onChange={(e) => patch(i, { date: e.target.value })}
-                    className={`${fieldClass} !py-2`}
+                    onChange={(date) => patch(i, { date })}
+                    placeholder="dd/mm/yyyy"
+                    className="!py-2"
+                    ariaLabel={`Ngày của mốc số ${i + 1}`}
                   />
                 </div>
                 <div>

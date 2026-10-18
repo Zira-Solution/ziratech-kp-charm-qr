@@ -1,6 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { sniffAudio, MAX_VOICE_BYTES, AUDIO_CONTENT_TYPES } from "../lib/validation/audio.ts";
+import {
+  sniffAudio,
+  sniffVideo,
+  MAX_VOICE_BYTES,
+  MAX_SONG_BYTES,
+  MAX_VIDEO_BYTES,
+  AUDIO_CONTENT_TYPES,
+} from "../lib/validation/audio.ts";
 
 const bytes = (...b: number[]) => new Uint8Array([...b, ...new Array(64).fill(0)]);
 const ascii = (s: string) => [...s].map((c) => c.charCodeAt(0));
@@ -29,3 +36,15 @@ test("every recognised format has a content type and the size cap is 2 MB", () =
   }
   assert.equal(MAX_VOICE_BYTES, 2 * 1024 * 1024);
 });
+
+test("recognises video formats and checks video limits", () => {
+  assert.equal(sniffVideo(bytes(0x1a, 0x45, 0xdf, 0xa3)), "webm");
+  assert.equal(sniffVideo(bytes(0, 0, 0, 0x18, ...ascii("ftypisom"))), "mp4");
+  assert.equal(sniffVideo(bytes(0, 0, 0, 0x18, ...ascii("ftypqt  "))), "mov");
+  assert.equal(sniffVideo(bytes(0, 0, 0, 0x18, ...ascii("moov...."))), "mov");
+  assert.equal(sniffVideo(bytes(...ascii("RIFF"), 0, 0, 0, 0, ...ascii("AVI "))), null);
+  assert.equal(sniffVideo(new Uint8Array([0, 1, 2])), null);
+  assert.equal(MAX_SONG_BYTES, 10 * 1024 * 1024);
+  assert.equal(MAX_VIDEO_BYTES, 25 * 1024 * 1024);
+});
+

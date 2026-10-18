@@ -15,6 +15,17 @@ export const AUDIO_CONTENT_TYPES: Record<AudioKind, string> = {
   mp3: "audio/mpeg",
 };
 
+export const MAX_SONG_BYTES = 10 * 1024 * 1024; // 10MB
+export const MAX_VIDEO_BYTES = 25 * 1024 * 1024; // 25MB
+
+export type VideoKind = "mp4" | "webm" | "mov";
+
+export const VIDEO_CONTENT_TYPES: Record<VideoKind, string> = {
+  mp4: "video/mp4",
+  webm: "video/webm",
+  mov: "video/quicktime",
+};
+
 const startsWith = (b: Uint8Array, offset: number, text: string) =>
   b.length >= offset + text.length && [...text].every((c, i) => b[offset + i] === c.charCodeAt(0));
 
@@ -28,3 +39,16 @@ export function sniffAudio(b: Uint8Array): AudioKind | null {
   if (b[0] === 0xff && (b[1] & 0xe0) === 0xe0) return "mp3"; // MPEG audio frame sync
   return null;
 }
+
+export function sniffVideo(b: Uint8Array): VideoKind | null {
+  if (b.length < 12) return null;
+  if (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return "webm";
+  if (startsWith(b, 4, "ftyp")) {
+    const brand = String.fromCharCode(b[8], b[9], b[10], b[11]).toLowerCase();
+    if (brand.startsWith("qt")) return "mov";
+    return "mp4";
+  }
+  if (startsWith(b, 4, "moov")) return "mov";
+  return null;
+}
+

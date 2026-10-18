@@ -44,16 +44,41 @@ function PresetPlayer({ presetId, name, className }: { presetId: string; name: s
   );
 }
 
+function UploadPlayer({ audioUrl, name, className }: { audioUrl: string; name: string; className: string }) {
+  const { playing, toggle } = useMusicPlayer(undefined, audioUrl);
+  return (
+    <div className={`flex items-center gap-3 ${className}`}>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-pressed={playing}
+        aria-label={playing ? `Tạm dừng bài hát ${name}` : `Phát bài hát ${name}`}
+        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-white shadow-md cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-container"
+      >
+        <span aria-hidden="true" className="material-symbols-outlined leading-none text-[26px]">
+          {playing ? "pause" : "play_arrow"}
+        </span>
+      </button>
+      <div className="min-w-0">
+        <p className="truncate text-sm font-bold">{name}</p>
+        <p className="text-xs opacity-75">{playing ? "Đang phát bài hát" : "Bấm để nghe"}</p>
+      </div>
+    </div>
+  );
+}
+
 /**
- * The buyer's music: a built-in melody with a play button, or a YouTube / Spotify / SoundCloud player in
- * a sandboxed frame that the visitor starts themselves (browsers block other sites' sound from starting
- * on its own). The link to the original page is always offered.
+ * The buyer's music: a built-in melody with a play button, an uploaded MP3 song, or a YouTube / Spotify / SoundCloud player.
  */
 export default function MusicPlayer({ song, title, className = "" }: Props) {
   const name = title || song.title || "Nhạc kỷ niệm";
 
   if (song.source === "preset" && song.presetId) {
     return <PresetPlayer presetId={song.presetId} name={name} className={className} />;
+  }
+
+  if (song.source === "upload" && song.audioUrl) {
+    return <UploadPlayer audioUrl={song.audioUrl} name={name} className={className} />;
   }
 
   const embed = toMusicEmbed(song.link);

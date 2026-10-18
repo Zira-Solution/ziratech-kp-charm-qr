@@ -66,6 +66,22 @@ export async function GET(
       product.giftData = { ...product.giftData, voiceNote: { ...voice, audioUrl } };
     }
 
+    // Sign uploaded MP3 song link
+    const song = product.giftData?.song as { source?: string; audioPath?: string; audioUrl?: string } | undefined;
+    if (product.giftData && song?.source === "upload" && song.audioPath) {
+      const audioUrl = await signedVoiceUrl(song.audioPath);
+      product.giftData = { ...product.giftData, song: { ...song, audioUrl: audioUrl || song.audioUrl } };
+    }
+
+    // Sign uploaded video link
+    const videoUrl = product.giftData?.videoUrl;
+    if (product.giftData && typeof videoUrl === "string" && videoUrl.startsWith(`${token}/video-`)) {
+      const signedVideo = await signedVoiceUrl(videoUrl);
+      if (signedVideo) {
+        product.giftData = { ...product.giftData, videoUrl: signedVideo };
+      }
+    }
+
     const noCacheHeaders = {
       "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
       Pragma: "no-cache",

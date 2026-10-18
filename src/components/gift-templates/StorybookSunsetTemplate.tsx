@@ -118,7 +118,7 @@ export default function StorybookSunsetTemplate({
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [musicProgress, setMusicProgress] = useState(0);
   const [voiceProgress, setVoiceProgress] = useState(0);
-  const [selectedPhotoModal, setSelectedPhotoModal] = useState<string | null>(null);
+  const [selectedPhotoModal, setSelectedPhotoModal] = useState<{ url: string; caption?: string; date?: string } | null>(null);
 
   // Audio timer refs
   const musicTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -629,7 +629,7 @@ export default function StorybookSunsetTemplate({
   // -------------------------------------------------------------
   // FRAME 3: 03 / 07 Những ngày như thế... (4-Polaroid Grid)
   // -------------------------------------------------------------
-  const defaultPhotos = [
+  const defaultPhotos: { url: string; caption: string; date?: string }[] = [
     {
       url: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80",
       caption: "Những buổi chiều đi dạo...",
@@ -695,22 +695,34 @@ export default function StorybookSunsetTemplate({
         {photos.map((item, idx) => {
           const rotations = ["-rotate-2", "rotate-2", "rotate-1", "-rotate-1"];
           return (
-            <div
+            <button
+              type="button"
               key={idx}
-              onClick={() => setSelectedPhotoModal(item.url)}
-              className={`bg-white p-2 pb-3 rounded-lg shadow-lg border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx]} hover:rotate-0 hover:scale-105 transition-all duration-300 cursor-pointer group relative`}
+              onClick={() => setSelectedPhotoModal(item)}
+              className={`bg-white p-2 pb-3 rounded-lg shadow-lg border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx]} hover:rotate-0 hover:scale-105 transition-all duration-300 cursor-pointer group relative text-left focus:outline-none`}
             >
-              <div className="aspect-square w-full rounded-xs overflow-hidden bg-stone-100 mb-1.5 relative">
+              <div className="aspect-square w-full rounded-xs overflow-hidden bg-stone-100 mb-1.5 relative pointer-events-none">
                 <img
                   src={item.url}
                   alt={item.caption}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
-              <span className="font-handwriting text-sm text-[#1c3f50] font-bold text-center line-clamp-1 px-1">
-                {item.caption}
-              </span>
-            </div>
+              {(item.caption || item.date) && (
+                <div className="flex flex-col items-center px-1 pointer-events-none text-center">
+                  {item.caption && (
+                    <span className="font-handwriting text-sm text-[#1c3f50] font-bold line-clamp-1">
+                      {item.caption}
+                    </span>
+                  )}
+                  {item.date && (
+                    <span className="text-[10px] text-[#8c4b3e] font-sans font-medium line-clamp-1">
+                      {item.date}
+                    </span>
+                  )}
+                </div>
+              )}
+            </button>
           );
         })}
       </div>
@@ -1304,12 +1316,30 @@ export default function StorybookSunsetTemplate({
           className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
           onClick={() => setSelectedPhotoModal(null)}
         >
-          <div className="relative max-w-lg w-full bg-white p-3 rounded-2xl shadow-2xl">
-            <img src={selectedPhotoModal} alt="Zoomed" className="w-full h-auto rounded-xl object-contain max-h-[75vh]" />
+          <div className="relative max-w-lg w-full bg-white p-3.5 rounded-2xl shadow-2xl flex flex-col items-center text-center">
+            <img
+              src={selectedPhotoModal.url}
+              alt={selectedPhotoModal.caption || "Ảnh phóng to"}
+              className="w-full h-auto rounded-xl object-contain max-h-[70vh]"
+            />
+            {(selectedPhotoModal.caption || selectedPhotoModal.date) && (
+              <div className="mt-3 px-2 flex flex-col items-center">
+                {selectedPhotoModal.caption && (
+                  <p className="font-handwriting text-lg text-[#1c3f50] font-bold">
+                    {selectedPhotoModal.caption}
+                  </p>
+                )}
+                {selectedPhotoModal.date && (
+                  <p className="text-xs text-[#8c4b3e] font-sans font-medium mt-0.5">
+                    {selectedPhotoModal.date}
+                  </p>
+                )}
+              </div>
+            )}
             <button
               type="button"
               onClick={() => setSelectedPhotoModal(null)}
-              className="absolute top-5 right-5 w-9 h-9 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black transition-colors"
+              className="absolute top-5 right-5 w-9 h-9 rounded-full bg-black/70 text-white flex items-center justify-center hover:bg-black transition-colors cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">close</span>
             </button>

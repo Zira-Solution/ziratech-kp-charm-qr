@@ -362,6 +362,18 @@ function MessengerPageInner() {
 
     let initial = { ...DEFAULT_SETTINGS };
 
+    // Try reading sessionStorage if in preview mode (avoids huge query strings)
+    try {
+      if (searchParams?.get("preview") === "true") {
+        const previewDraft = sessionStorage.getItem("kp_preview_settings");
+        if (previewDraft) {
+          initial = { ...initial, ...JSON.parse(previewDraft) };
+        }
+      }
+    } catch {
+      // Ignore sessionStorage errors
+    }
+
     // Try reading localStorage for saved customizer draft
     try {
       const saved = localStorage.getItem("kp_messenger_settings");
@@ -992,7 +1004,10 @@ function MessengerPageInner() {
   );
 
   return (
-    <div data-lenis-prevent className="relative min-h-screen w-full bg-[#0d0f12] text-slate-100 flex flex-col items-center justify-center overflow-x-hidden selection:bg-rose-500/30 selection:text-white">
+    <div
+      data-lenis-prevent
+      className="relative h-screen h-dvh max-h-screen max-h-dvh w-full bg-[#0d0f12] text-slate-100 flex flex-col items-center justify-between overflow-hidden selection:bg-rose-500/30 selection:text-white"
+    >
       <audio ref={musicAudioRef} src={settings.musicUrl || undefined} loop preload="none" />
 
       {/* Background ambient lighting for desktop showcase - lightweight radial gradients, zero blur GPU overhead */}
@@ -1009,7 +1024,7 @@ function MessengerPageInner() {
 
       {/* Top Floating Controls Bar on Desktop */}
       {!isEmbedded && (
-        <header className="hidden sm:flex w-full max-w-5xl px-3 py-1.5 items-center justify-between gap-2 z-40 relative">
+        <header className="hidden sm:flex w-full max-w-5xl px-3 py-1.5 items-center justify-between gap-2 z-40 relative shrink-0">
           <Link
             href="/"
             className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
@@ -1128,15 +1143,13 @@ function MessengerPageInner() {
       )}
 
       {/* Main Showcase Area */}
-      <main className="w-full flex-1 flex items-center justify-center p-0 sm:py-1 sm:px-2 z-20 overflow-hidden">
-        {/* iPhone Outer Wrapper (Mockup on Desktop, flat full screen on Mobile or when fullscreen mode is selected) */}
+      <main className="w-full flex-1 min-h-0 flex items-center justify-center p-2 sm:p-3 lg:p-4 z-20 overflow-hidden">
+        {/* iPhone Outer Wrapper (Mockup on Desktop/iPad, flat full screen on Mobile or when fullscreen mode is selected) */}
         <div
           className={`relative transition-all duration-300 ${
             deviceMode === "mockup"
-              ? isEmbedded
-                ? "w-full sm:w-auto sm:aspect-[390/812] sm:h-[calc(100dvh-12px)] sm:max-h-[960px] h-[100dvh] sm:rounded-[52px] sm:border-[8px] sm:border-[#222329] sm:ring-1 sm:ring-white/20 sm:shadow-[0_25px_80px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)]"
-                : "w-full sm:w-auto sm:aspect-[390/812] sm:h-[calc(100dvh-50px)] sm:max-h-[960px] h-[100dvh] sm:rounded-[52px] sm:border-[8px] sm:border-[#222329] sm:ring-1 sm:ring-white/20 sm:shadow-[0_25px_80px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)]"
-              : "w-full h-[100dvh] max-w-none rounded-none border-none shadow-none fixed inset-0 z-30"
+              ? "w-auto h-full max-h-full max-w-full aspect-[390/812] rounded-[36px] sm:rounded-[44px] lg:rounded-[48px] border-[6px] sm:border-[8px] border-[#222329] ring-1 ring-white/20 shadow-[0_20px_70px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] shrink-0"
+              : "w-full h-full max-w-none rounded-none border-none shadow-none fixed inset-0 z-30"
           }`}
         >
 
@@ -1157,7 +1170,7 @@ function MessengerPageInner() {
           {/* Screen Bezel & Display Viewport */}
           <div
             className={`w-full h-full relative overflow-hidden bg-black select-none ${
-              deviceMode === "mockup" ? "sm:rounded-[46px]" : "rounded-none"
+              deviceMode === "mockup" ? "rounded-[30px] sm:rounded-[36px] lg:rounded-[40px]" : "rounded-none"
             }`}
           >
             {/* Wallpaper Layer */}

@@ -132,6 +132,41 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
   const gift = mode === "demo" ? demoGift : draftGift;
   const frame = DEVICES.find((d) => d.id === device)!;
 
+  // Synchronize draft preview settings to sessionStorage so iframe doesn't need huge query params
+  useEffect(() => {
+    if (template === "messenger") {
+      try {
+        const m = draft.messenger;
+        const previewSettings = {
+          recipientName: draft.recipientName || undefined,
+          senderName: draft.senderName || undefined,
+          pin: draft.unlockPin || undefined,
+          letterTitle: draft.letterTitle || undefined,
+          letterContent: draft.letterContent || undefined,
+          letterSignature: draft.letterSignature || undefined,
+          voiceUrl: draft.voice?.audioUrl || undefined,
+          musicUrl: draft.song?.link || undefined,
+          wallpaperUrl: m?.wallpaperUrl || undefined,
+          chatWallpaperUrl: m?.chatWallpaperUrl || undefined,
+          avatarUrl: m?.avatarUrl || undefined,
+          notificationText: m?.notificationText || undefined,
+          messages: m?.messages || undefined,
+          showFloatingHearts: m?.showFloatingHearts ?? true,
+          giftLeadMessage: m?.giftLeadMessage || undefined,
+          voiceLeadMessage: m?.voiceLeadMessage || undefined,
+          voiceAfterMessage: m?.voiceAfterMessage || undefined,
+          videoUrl: m?.videoUrl || draft.videoUrl || undefined,
+          videoLeadMessage: m?.videoLeadMessage || undefined,
+          videoTitle: m?.videoTitle || undefined,
+          filmPhotos: draft.photos?.map((p) => p.url) || undefined,
+        };
+        sessionStorage.setItem("kp_preview_settings", JSON.stringify(previewSettings));
+      } catch {
+        // Ignore sessionStorage quota errors
+      }
+    }
+  }, [template, draft]);
+
   const messengerPreviewUrl = useMemo(() => {
     const q = new URLSearchParams();
     q.set("embed", "true");
@@ -140,33 +175,36 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
     if (mode === "demo") {
       return `/messenger?${q.toString()}`;
     }
-    if (draft.recipientName) q.set("to", draft.recipientName);
-    if (draft.senderName) q.set("sender", draft.senderName);
-    if (draft.unlockPin) q.set("pin", draft.unlockPin);
-    if (draft.letterTitle) q.set("ltitle", draft.letterTitle);
-    if (draft.letterContent) q.set("lbody", draft.letterContent);
-    if (draft.letterSignature) q.set("lsig", draft.letterSignature);
-    if (draft.voice?.audioUrl) q.set("voice", draft.voice.audioUrl);
-    if (draft.song?.link) q.set("music", draft.song.link);
-    if (draft.photos?.length > 0) {
-      q.set("photos", JSON.stringify(draft.photos.map((p) => p.url)));
-    }
+    const safeSet = (key: string, val: string | undefined | null) => {
+      if (!val) return;
+      // Never put large data URLs in query string (causes URI_TOO_LONG / crash)
+      if (val.startsWith("data:") || val.length > 800) return;
+      q.set(key, val);
+    };
+    safeSet("to", draft.recipientName);
+    safeSet("sender", draft.senderName);
+    safeSet("pin", draft.unlockPin);
+    safeSet("ltitle", draft.letterTitle);
+    safeSet("lbody", draft.letterContent);
+    safeSet("lsig", draft.letterSignature);
+    safeSet("voice", draft.voice?.audioUrl);
+    safeSet("music", draft.song?.link);
     const m = draft.messenger;
     if (m) {
-      if (m.wallpaperUrl) q.set("wallpaper", m.wallpaperUrl);
-      if (m.chatWallpaperUrl) q.set("chatWallpaper", m.chatWallpaperUrl);
-      if (m.avatarUrl) q.set("avatar", m.avatarUrl);
-      if (m.notificationText) q.set("text", m.notificationText);
-      if (m.messages && m.messages.length > 0) q.set("msg", m.messages.join("||"));
+      safeSet("wallpaper", m.wallpaperUrl);
+      safeSet("chatWallpaper", m.chatWallpaperUrl);
+      safeSet("avatar", m.avatarUrl);
+      safeSet("text", m.notificationText);
+      if (m.messages && m.messages.length > 0) safeSet("msg", m.messages.join("||"));
       q.set("hearts", m.showFloatingHearts ? "1" : "0");
-      if (m.giftLeadMessage) q.set("glead", m.giftLeadMessage);
-      if (m.voiceLeadMessage) q.set("vlead", m.voiceLeadMessage);
-      if (m.voiceAfterMessage) q.set("vafter", m.voiceAfterMessage);
+      safeSet("glead", m.giftLeadMessage);
+      safeSet("vlead", m.voiceLeadMessage);
+      safeSet("vafter", m.voiceAfterMessage);
     }
     const vUrl = (m?.videoUrl || draft.videoUrl || "").trim();
-    if (vUrl) q.set("vurl", vUrl);
-    if (m?.videoLeadMessage) q.set("videolead", m.videoLeadMessage);
-    if (m?.videoTitle) q.set("vtitle", m.videoTitle);
+    safeSet("vurl", vUrl);
+    safeSet("videolead", m?.videoLeadMessage);
+    safeSet("vtitle", m?.videoTitle);
     return `/messenger?${q.toString()}`;
   }, [mode, draft]);
 
@@ -321,11 +359,10 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
       <div className="relative flex min-h-0 flex-1 items-center justify-center p-3 sm:p-5 lg:p-6">
         <div
           style={{
-            width: frame.width,
-            height: frame.height,
             maxWidth: "100%",
             maxHeight: "100%",
             aspectRatio: `${frame.width} / ${frame.height}`,
+            width: `min(${frame.width}px, 100%)`,
           }}
           className={`overflow-hidden bg-white transition-all duration-300 ${
             frame.id === "phone"

@@ -140,41 +140,114 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
             {/* Right: Adaptive Multi-Polaroid Grid */}
             <div className="col-span-8 flex items-center justify-center h-full min-h-0">
               {isMultiRowSix ? (
-                /* 6-Photo Layout: 3 columns x 2 rows (Flexible for 5-6 photos) */
-                <div className="grid grid-cols-3 gap-2.5 sm:gap-3 lg:gap-4 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl max-h-[76vh] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-1 items-center justify-center">
-                  {userPhotos.slice(0, 6).map((item: PhotoItem, idx: number) => (
-                    <button
-                      type="button"
-                      data-no-swipe
-                      key={idx}
-                      onClick={() => setActiveModalPhoto(item)}
-                      className={`bg-white p-2 pb-3 sm:p-2.5 sm:pb-3.5 rounded-xl shadow-lg hover:shadow-2xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % rotations.length]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group text-left focus:outline-none`}
-                    >
-                      <div className="aspect-square w-full rounded-sm overflow-hidden bg-stone-100 mb-1.5 relative pointer-events-none">
-                        <img
-                          src={item.url}
-                          alt={item.caption || "Kỷ niệm"}
-                          draggable={false}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
-                        />
-                      </div>
-                      {(item.caption || item.date) && (
-                        <div className="flex flex-col items-center px-1 pointer-events-none select-none text-center">
-                          {item.caption && (
-                            <span className="font-handwriting text-xs sm:text-sm lg:text-base text-[#1c3f50] font-bold line-clamp-1">
-                              {item.caption}
-                            </span>
+                /* 6-Photo Layout: 3 columns x 2 rows (Flexible for 5-6 photos, centered if 5) */
+                userPhotos.length === 5 ? (
+                  <div className="flex flex-col items-center justify-center gap-2.5 sm:gap-3 lg:gap-4 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl max-h-[76vh] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-1">
+                    <div className="flex items-center justify-center gap-2.5 sm:gap-3 lg:gap-4 w-full">
+                      {userPhotos.slice(0, 3).map((item: PhotoItem, idx: number) => (
+                        <button
+                          type="button"
+                          data-no-swipe
+                          key={idx}
+                          onClick={() => setActiveModalPhoto(item)}
+                          className={`bg-white p-2 pb-3 sm:p-2.5 sm:pb-3.5 rounded-xl shadow-lg hover:shadow-2xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % rotations.length]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group text-left focus:outline-none w-[130px] sm:w-[150px] lg:w-[175px] shrink-0`}
+                        >
+                          <div className="aspect-square w-full rounded-sm overflow-hidden bg-stone-100 mb-1.5 relative pointer-events-none">
+                            <img
+                              src={item.url}
+                              alt={item.caption || "Kỷ niệm"}
+                              draggable={false}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
+                            />
+                          </div>
+                          {(item.caption || item.date) && (
+                            <div className="flex flex-col items-center px-1 pointer-events-none select-none text-center">
+                              {item.caption && (
+                                <span className="font-handwriting text-xs sm:text-sm lg:text-base text-[#1c3f50] font-bold line-clamp-1">
+                                  {item.caption}
+                                </span>
+                              )}
+                              {item.date && (
+                                <span className="text-[10px] sm:text-xs text-[#8c4b3e] font-sans font-medium line-clamp-1">
+                                  {item.date}
+                                </span>
+                              )}
+                            </div>
                           )}
-                          {item.date && (
-                            <span className="text-[10px] sm:text-xs text-[#8c4b3e] font-sans font-medium line-clamp-1">
-                              {item.date}
-                            </span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-center gap-2.5 sm:gap-3 lg:gap-4 w-full">
+                      {userPhotos.slice(3, 5).map((item: PhotoItem, idx: number) => (
+                        <button
+                          type="button"
+                          data-no-swipe
+                          key={idx + 3}
+                          onClick={() => setActiveModalPhoto(item)}
+                          className={`bg-white p-2 pb-3 sm:p-2.5 sm:pb-3.5 rounded-xl shadow-lg hover:shadow-2xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[(idx + 3) % rotations.length]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group text-left focus:outline-none w-[130px] sm:w-[150px] lg:w-[175px] shrink-0`}
+                        >
+                          <div className="aspect-square w-full rounded-sm overflow-hidden bg-stone-100 mb-1.5 relative pointer-events-none">
+                            <img
+                              src={item.url}
+                              alt={item.caption || "Kỷ niệm"}
+                              draggable={false}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
+                            />
+                          </div>
+                          {(item.caption || item.date) && (
+                            <div className="flex flex-col items-center px-1 pointer-events-none select-none text-center">
+                              {item.caption && (
+                                <span className="font-handwriting text-xs sm:text-sm lg:text-base text-[#1c3f50] font-bold line-clamp-1">
+                                  {item.caption}
+                                </span>
+                              )}
+                              {item.date && (
+                                <span className="text-[10px] sm:text-xs text-[#8c4b3e] font-sans font-medium line-clamp-1">
+                                  {item.date}
+                                </span>
+                              )}
+                            </div>
                           )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2.5 sm:gap-3 lg:gap-4 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl max-h-[76vh] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-1 items-center justify-center">
+                    {userPhotos.slice(0, 6).map((item: PhotoItem, idx: number) => (
+                      <button
+                        type="button"
+                        data-no-swipe
+                        key={idx}
+                        onClick={() => setActiveModalPhoto(item)}
+                        className={`bg-white p-2 pb-3 sm:p-2.5 sm:pb-3.5 rounded-xl shadow-lg hover:shadow-2xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % rotations.length]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group text-left focus:outline-none`}
+                      >
+                        <div className="aspect-square w-full rounded-sm overflow-hidden bg-stone-100 mb-1.5 relative pointer-events-none">
+                          <img
+                            src={item.url}
+                            alt={item.caption || "Kỷ niệm"}
+                            draggable={false}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
+                          />
                         </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
+                        {(item.caption || item.date) && (
+                          <div className="flex flex-col items-center px-1 pointer-events-none select-none text-center">
+                            {item.caption && (
+                              <span className="font-handwriting text-xs sm:text-sm lg:text-base text-[#1c3f50] font-bold line-clamp-1">
+                                {item.caption}
+                              </span>
+                            )}
+                            {item.date && (
+                              <span className="text-[10px] sm:text-xs text-[#8c4b3e] font-sans font-medium line-clamp-1">
+                                {item.date}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )
               ) : (
                 /* 4-Photo Layout: 2 columns x 2 rows (Enlarged and perfectly balanced like mobile) */
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-5 w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl max-h-[76vh] overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-1 items-center justify-center">
@@ -216,7 +289,7 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
           </div>
         </div>
       ) : (
-        /* Mobile / Portrait view (Exact match to khung_03.png) */
+        /* Mobile / Portrait view (Balanced polaroid collage tailored for 1-6 photos) */
         <div className="relative flex h-full w-full flex-col justify-between p-4 sm:p-5 pb-8 sm:pb-9 select-none overflow-hidden">
           <StorybookHeader ctx={ctx} slides={slides} />
 
@@ -236,104 +309,125 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
             </span>
           </div>
 
-          {/* Polaroid Collage Grid (Adaptive: 2x2 for <=4 photos, 3x2 for 6 photos) */}
-          {isMultiRowSix ? (
-            /* 6-Photo Layout on Mobile: 3 columns x 2 rows */
-            <div className="relative z-10 my-auto grid grid-cols-3 gap-2 sm:gap-2.5 w-full max-w-sm sm:max-w-md mx-auto flex-1 items-center min-h-0">
-              {/* Floating Stars */}
-              <img
-                src="/thamkhao/star.png"
-                alt="Ngôi sao"
-                className="absolute -top-4 -right-2 w-6 h-6 object-contain pointer-events-none opacity-80 animate-pulse z-20"
-              />
-              <img
-                src="/thamkhao/star.png"
-                alt="Ngôi sao"
-                className="absolute -bottom-3 -left-2 w-5 h-5 object-contain pointer-events-none opacity-75 animate-pulse z-20"
-              />
+          {/* Polaroid Collage Container (Organic, centered, no giant voids) */}
+          <div className="relative z-10 my-auto flex flex-col items-center justify-center w-full max-w-sm mx-auto px-1">
+            {/* Floating Stars */}
+            <img
+              src="/thamkhao/star.png"
+              alt="Ngôi sao"
+              className="absolute -top-3 -right-1 w-6 h-6 object-contain pointer-events-none opacity-80 animate-pulse z-20"
+            />
+            <img
+              src="/thamkhao/star.png"
+              alt="Ngôi sao"
+              className="absolute -bottom-2 -left-1 w-5 h-5 object-contain pointer-events-none opacity-75 animate-pulse z-20"
+            />
 
-              {userPhotos.slice(0, 6).map((item: PhotoItem, idx: number) => (
-                <button
-                  type="button"
-                  data-no-swipe
-                  key={idx}
-                  onClick={() => setActiveModalPhoto(item)}
-                  className={`bg-white p-1.5 pb-2.5 sm:p-2 sm:pb-3 rounded-lg shadow-md hover:shadow-xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % rotations.length]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group relative text-left focus:outline-none`}
-                >
-                  <div className="aspect-square w-full rounded-xs overflow-hidden bg-stone-100 mb-1 relative pointer-events-none">
-                    <img
-                      src={item.url}
-                      alt={item.caption || "Ảnh kỷ niệm"}
-                      draggable={false}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
-                    />
-                  </div>
-                  {(item.caption || item.date) && (
-                    <div className="flex flex-col items-center px-0.5 pointer-events-none select-none text-center">
-                      {item.caption && (
-                        <span className="font-handwriting text-[10px] sm:text-xs text-[#1c3f50] font-bold line-clamp-1">
-                          {item.caption}
-                        </span>
-                      )}
-                      {item.date && (
-                        <span className="text-[9px] sm:text-[10px] text-[#8c4b3e] font-sans font-medium line-clamp-1">
-                          {item.date}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
-          ) : (
-            /* 4-Photo Layout on Mobile: 2 columns x 2 rows (Original 2x2 framing) */
-            <div className="relative z-10 my-auto grid grid-cols-2 gap-3 sm:gap-4 w-full max-w-xs sm:max-w-sm mx-auto flex-1 items-center min-h-0">
-              {/* Floating Stars */}
-              <img
-                src="/thamkhao/star.png"
-                alt="Ngôi sao"
-                className="absolute -top-4 -right-2 w-6 h-6 object-contain pointer-events-none opacity-80 animate-pulse z-20"
-              />
-              <img
-                src="/thamkhao/star.png"
-                alt="Ngôi sao"
-                className="absolute -bottom-3 -left-2 w-5 h-5 object-contain pointer-events-none opacity-75 animate-pulse z-20"
-              />
+            <div className="flex flex-col items-center justify-center gap-2.5 sm:gap-3.5 w-full">
+              {(() => {
+                const count = Math.min(userPhotos.length, 6);
+                const active = userPhotos.slice(0, 6);
 
-              {userPhotos.slice(0, 4).map((item: PhotoItem, idx: number) => (
-                <button
-                  type="button"
-                  data-no-swipe
-                  key={idx}
-                  onClick={() => setActiveModalPhoto(item)}
-                  className={`bg-white p-2.5 pb-3.5 sm:p-3 sm:pb-4 rounded-xl shadow-lg hover:shadow-xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % 4]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group relative text-left focus:outline-none`}
-                >
-                  <div className="aspect-square w-full rounded-sm overflow-hidden bg-stone-100 mb-1.5 relative pointer-events-none">
-                    <img
-                      src={item.url}
-                      alt={item.caption || "Ảnh kỷ niệm"}
-                      draggable={false}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
-                    />
+                // Row partitioning per count:
+                let rows: { item: PhotoItem; idx: number; sizeClass: string }[][];
+                if (count <= 1) {
+                  rows = [[{ item: active[0], idx: 0, sizeClass: "w-52 sm:w-60 max-w-[70vw] p-2.5 pb-4 sm:p-3 sm:pb-5 rounded-2xl" }]];
+                } else if (count === 2) {
+                  rows = [[
+                    { item: active[0], idx: 0, sizeClass: "w-[130px] sm:w-[145px] max-w-[42vw] p-2 pb-3.5 sm:p-2.5 sm:pb-4 rounded-xl" },
+                    { item: active[1], idx: 1, sizeClass: "w-[130px] sm:w-[145px] max-w-[42vw] p-2 pb-3.5 sm:p-2.5 sm:pb-4 rounded-xl" },
+                  ]];
+                } else if (count === 3) {
+                  rows = [
+                    [{ item: active[0], idx: 0, sizeClass: "w-[130px] sm:w-[145px] max-w-[42vw] p-2 pb-3.5 sm:p-2.5 sm:pb-4 rounded-xl" }],
+                    [
+                      { item: active[1], idx: 1, sizeClass: "w-[120px] sm:w-[135px] max-w-[40vw] p-2 pb-3.5 sm:p-2.5 sm:pb-4 rounded-xl" },
+                      { item: active[2], idx: 2, sizeClass: "w-[120px] sm:w-[135px] max-w-[40vw] p-2 pb-3.5 sm:p-2.5 sm:pb-4 rounded-xl" },
+                    ],
+                  ];
+                } else if (count === 4) {
+                  rows = [
+                    [
+                      { item: active[0], idx: 0, sizeClass: "w-[120px] sm:w-[135px] max-w-[40vw] p-2 pb-3.5 sm:p-2.5 sm:pb-4 rounded-xl" },
+                      { item: active[1], idx: 1, sizeClass: "w-[120px] sm:w-[135px] max-w-[40vw] p-2 pb-3.5 sm:p-2.5 sm:pb-4 rounded-xl" },
+                    ],
+                    [
+                      { item: active[2], idx: 2, sizeClass: "w-[120px] sm:w-[135px] max-w-[40vw] p-2 pb-3.5 sm:p-2.5 sm:pb-4 rounded-xl" },
+                      { item: active[3], idx: 3, sizeClass: "w-[120px] sm:w-[135px] max-w-[40vw] p-2 pb-3.5 sm:p-2.5 sm:pb-4 rounded-xl" },
+                    ],
+                  ];
+                } else if (count === 5) {
+                  rows = [
+                    [
+                      { item: active[0], idx: 0, sizeClass: "w-[96px] sm:w-[108px] max-w-[30vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                      { item: active[1], idx: 1, sizeClass: "w-[96px] sm:w-[108px] max-w-[30vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                      { item: active[2], idx: 2, sizeClass: "w-[96px] sm:w-[108px] max-w-[30vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                    ],
+                    [
+                      { item: active[3], idx: 3, sizeClass: "w-[102px] sm:w-[114px] max-w-[34vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                      { item: active[4], idx: 4, sizeClass: "w-[102px] sm:w-[114px] max-w-[34vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                    ],
+                  ];
+                } else {
+                  rows = [
+                    [
+                      { item: active[0], idx: 0, sizeClass: "w-[96px] sm:w-[108px] max-w-[30vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                      { item: active[1], idx: 1, sizeClass: "w-[96px] sm:w-[108px] max-w-[30vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                      { item: active[2], idx: 2, sizeClass: "w-[96px] sm:w-[108px] max-w-[30vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                    ],
+                    [
+                      { item: active[3], idx: 3, sizeClass: "w-[96px] sm:w-[108px] max-w-[30vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                      { item: active[4], idx: 4, sizeClass: "w-[96px] sm:w-[108px] max-w-[30vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                      { item: active[5], idx: 5, sizeClass: "w-[96px] sm:w-[108px] max-w-[30vw] p-1.5 pb-2.5 sm:p-2 sm:pb-3.5 rounded-lg sm:rounded-xl" },
+                    ],
+                  ];
+                }
+
+                return rows.map((row, rIdx) => (
+                  <div key={rIdx} className="flex items-center justify-center gap-2 sm:gap-2.5 w-full">
+                    {row.map(({ item, idx, sizeClass }) => (
+                      <button
+                        type="button"
+                        data-no-swipe
+                        key={idx}
+                        onClick={() => setActiveModalPhoto(item)}
+                        className={`bg-white ${sizeClass} shadow-[0_4px_14px_rgba(46,29,27,0.12)] hover:shadow-2xl border border-[#ebdccd] flex flex-col items-center transform ${rotations[idx % rotations.length]} hover:rotate-0 hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group relative text-left focus:outline-none shrink-0`}
+                      >
+                        <div className="aspect-square w-full rounded-xs sm:rounded-sm overflow-hidden bg-stone-100 ring-1 ring-black/5 mb-1 sm:mb-1.5 relative pointer-events-none">
+                          <img
+                            src={item.url}
+                            alt={item.caption || "Ảnh kỷ niệm"}
+                            draggable={false}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 select-none"
+                          />
+                        </div>
+                        {(item.caption || item.date) ? (
+                          <div className="flex flex-col items-center px-0.5 pointer-events-none select-none text-center w-full">
+                            {item.caption && (
+                              <span className="font-handwriting text-[10px] sm:text-xs text-[#1c3f50] font-bold line-clamp-1 w-full truncate">
+                                {item.caption}
+                              </span>
+                            )}
+                            {item.date && (
+                              <span className="text-[9px] sm:text-[10px] text-[#8c4b3e] font-sans font-medium line-clamp-1 w-full truncate">
+                                {item.date}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="h-1 sm:h-1.5 w-full pointer-events-none" />
+                        )}
+                      </button>
+                    ))}
                   </div>
-                  {(item.caption || item.date) && (
-                    <div className="flex flex-col items-center px-1 pointer-events-none select-none text-center">
-                      {item.caption && (
-                        <span className="font-handwriting text-xs sm:text-sm text-[#1c3f50] font-bold line-clamp-1">
-                          {item.caption}
-                        </span>
-                      )}
-                      {item.date && (
-                        <span className="text-[10px] sm:text-xs text-[#8c4b3e] font-sans font-medium line-clamp-1">
-                          {item.date}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </button>
-              ))}
+                ));
+              })()}
             </div>
-          )}
+
+            <p className="font-handwriting text-xs text-[#8c4b3e]/80 font-semibold mt-2.5 text-center pointer-events-none select-none">
+              Chạm vào ảnh để phóng to ✨
+            </p>
+          </div>
         </div>
       )}
     </div>

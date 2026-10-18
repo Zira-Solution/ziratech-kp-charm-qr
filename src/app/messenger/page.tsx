@@ -286,8 +286,15 @@ function MessengerPageInner() {
 
   // Filmstrip stage state
   const [isFilmPaused, setIsFilmPaused] = useState(false);
-  const [filmSpeed, setFilmSpeed] = useState<number>(120); // 120s: very slow, smooth & romantic
+  const [filmSpeedSetting, setFilmSpeedSetting] = useState<"normal" | "fast" | "slow">("normal");
   const [selectedFilmPhoto, setSelectedFilmPhoto] = useState<string | null>(null);
+  const [isFilmDragging, setIsFilmDragging] = useState(false);
+  const filmTrackRef = useRef<HTMLDivElement>(null);
+  const filmDragActiveRef = useRef(false);
+  const filmDragStartX = useRef(0);
+  const filmDragStartScrollLeft = useRef(0);
+  const filmHasMoved = useRef(false);
+  const filmResumeTimer = useRef<number | null>(null);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const letterScrollRef = useRef<HTMLDivElement>(null);
@@ -602,6 +609,100 @@ function MessengerPageInner() {
       setLetterHoldActive(false);
       handleOpenLetter();
     }, 600);
+  };
+
+  // Continuous film reel auto-scroll with rAF, pausing seamlessly when user drags or touches
+  useEffect(() => {
+    if (stage !== "film" || isFilmPaused) return;
+
+    let animId: number;
+    let lastTime = performance.now();
+
+    const loop = (currentTime: number) => {
+      const dt = (currentTime - lastTime) / 1000;
+      lastTime = currentTime;
+
+      const track = filmTrackRef.current;
+      if (track && !filmDragActiveRef.current) {
+        // speed in px/sec: fast 150, normal 75, slow 35
+        const pxPerSec = filmSpeedSetting === "fast" ? 150 : filmSpeedSetting === "slow" ? 35 : 75;
+        track.scrollLeft += pxPerSec * Math.min(dt, 0.1);
+
+        const half = track.scrollWidth / 2;
+        if (half > 0 && track.scrollLeft >= half) {
+          track.scrollLeft -= half;
+        }
+      }
+      animId = requestAnimationFrame(loop);
+    };
+
+    animId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animId);
+  }, [stage, isFilmPaused, filmSpeedSetting]);
+
+  const handleFilmMouseDown = (e: React.MouseEvent) => {
+    const track = filmTrackRef.current;
+    if (!track) return;
+    if (filmResumeTimer.current) window.clearTimeout(filmResumeTimer.current);
+    filmDragActiveRef.current = true;
+    filmDragStartX.current = e.clientX;
+    filmDragStartScrollLeft.current = track.scrollLeft;
+    filmHasMoved.current = false;
+    setIsFilmDragging(true);
+  };
+
+  const handleFilmMouseMove = (e: React.MouseEvent) => {
+    if (!filmDragActiveRef.current) return;
+    const track = filmTrackRef.current;
+    if (!track) return;
+    const dx = e.clientX - filmDragStartX.current;
+    if (Math.abs(dx) > 5) {
+      filmHasMoved.current = true;
+    }
+    track.scrollLeft = filmDragStartScrollLeft.current - dx;
+    const half = track.scrollWidth / 2;
+    if (half > 0) {
+      if (track.scrollLeft >= half) track.scrollLeft -= half;
+      else if (track.scrollLeft <= 0) track.scrollLeft += half;
+    }
+  };
+
+  const handleFilmMouseUp = () => {
+    if (!filmDragActiveRef.current) return;
+    filmDragActiveRef.current = false;
+    setIsFilmDragging(false);
+  };
+
+  const handleFilmTouchStart = (e: React.TouchEvent) => {
+    if (filmResumeTimer.current) window.clearTimeout(filmResumeTimer.current);
+    filmDragActiveRef.current = true;
+    filmHasMoved.current = false;
+    const touch = e.touches[0];
+    if (touch && filmTrackRef.current) {
+      filmDragStartX.current = touch.clientX;
+      filmDragStartScrollLeft.current = filmTrackRef.current.scrollLeft;
+    }
+  };
+
+  const handleFilmTouchMove = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    if (touch && filmTrackRef.current) {
+      const dx = touch.clientX - filmDragStartX.current;
+      if (Math.abs(dx) > 5) {
+        filmHasMoved.current = true;
+      }
+      const half = filmTrackRef.current.scrollWidth / 2;
+      if (half > 0) {
+        if (filmTrackRef.current.scrollLeft >= half) filmTrackRef.current.scrollLeft -= half;
+        else if (filmTrackRef.current.scrollLeft <= 0) filmTrackRef.current.scrollLeft += half;
+      }
+    }
+  };
+
+  const handleFilmTouchEnd = () => {
+    filmResumeTimer.current = window.setTimeout(() => {
+      filmDragActiveRef.current = false;
+    }, 1200);
   };
 
   useEffect(
@@ -1725,73 +1826,88 @@ function MessengerPageInner() {
 
                 {/* Center 35mm Continuous Film Reel matching user reference image */}
                 <div className="relative my-auto py-2 w-full overflow-hidden flex flex-col justify-center z-20">
-                  {/* Infinite Horizontal Filmstrip Track (No dark black backing, clouds shine through) */}
+                  {/* Interactive Draggable & Scrollable Filmstrip Track */}
                   <div
-                    className="animate-filmstrip py-1 select-none cursor-grab active:cursor-grabbing"
-                    style={{
-                      animationPlayState: isFilmPaused ? "paused" : "running",
-                      animationDuration: `${filmSpeed}s`,
-                    }}
+                    ref={filmTrackRef}
+                    data-lenis-prevent
+                    onMouseDown={handleFilmMouseDown}
+                    onMouseMove={handleFilmMouseMove}
+                    onMouseUp={handleFilmMouseUp}
+                    onMouseLeave={handleFilmMouseUp}
+                    onTouchStart={handleFilmTouchStart}
+                    onTouchMove={handleFilmTouchMove}
+                    onTouchEnd={handleFilmTouchEnd}
+                    className={`w-full overflow-x-auto py-2 select-none flex items-center touch-pan-x overscroll-contain [&::-webkit-scrollbar]:hidden ${
+                      isFilmDragging ? "cursor-grabbing" : "cursor-grab"
+                    }`}
+                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                   >
-                    {(() => {
-                      const list =
-                        settings.filmPhotos && settings.filmPhotos.length > 0
-                          ? settings.filmPhotos
-                          : DEFAULT_FILM_PHOTOS;
-                      const repeat = Math.max(1, Math.ceil(6 / list.length));
-                      const half = Array(repeat).fill(list).flat();
-                      const looped = [...half, ...half];
+                    <div className="flex items-center shrink-0 w-max">
+                      {(() => {
+                        const list =
+                          settings.filmPhotos && settings.filmPhotos.length > 0
+                            ? settings.filmPhotos
+                            : DEFAULT_FILM_PHOTOS;
+                        const repeat = Math.max(3, Math.ceil(8 / list.length));
+                        const half = Array(repeat).fill(list).flat();
+                        const looped = [...half, ...half];
 
-                      return looped.map((photoUrl, idx) => {
-                        const frameNum = (idx % list.length) + 1;
-                        return (
-                          <div
-                            key={idx}
-                            className="shrink-0 flex flex-col items-center bg-[#b87d96] border-y-[2px] border-[#a56782] shadow-[0_12px_32px_rgba(110,40,70,0.3)] mx-1 rounded-xs p-1.5 transition-transform hover:scale-102 duration-200 group"
-                          >
-                            {/* Top Continuous Sprocket Holes */}
-                            <div className="w-full flex items-center justify-between px-1 py-0.5 border-b border-white/20 select-none overflow-hidden gap-1.5">
-                              {Array.from({ length: 8 }).map((_, holeIdx) => (
-                                <span
-                                  key={`top-hole-${holeIdx}`}
-                                  className="w-3 h-1.5 rounded-[1px] bg-white/95 shadow-2xs shrink-0"
-                                />
-                              ))}
-                            </div>
-
-                            {/* Photo Frame */}
+                        return looped.map((photoUrl, idx) => {
+                          const frameNum = (idx % list.length) + 1;
+                          return (
                             <div
-                              onClick={() => setSelectedFilmPhoto(photoUrl)}
-                              className="relative w-[155px] sm:w-[175px] h-[215px] sm:h-[240px] my-1 bg-black/30 rounded-[2px] overflow-hidden shadow-inner cursor-pointer"
+                              key={idx}
+                              className="shrink-0 flex flex-col items-center bg-[#b87d96] border-y-[2px] border-[#a56782] shadow-[0_12px_32px_rgba(110,40,70,0.3)] mx-1 rounded-xs p-1.5 transition-transform hover:scale-102 duration-200 group"
                             >
-                              <img
-                                src={photoUrl}
-                                alt={`Kỷ niệm ${frameNum}`}
-                                className="w-full h-full object-cover group-hover:brightness-105 transition-all duration-300"
-                                loading="lazy"
-                              />
+                              {/* Top Continuous Sprocket Holes */}
+                              <div className="w-full flex items-center justify-between px-1 py-0.5 border-b border-white/20 select-none overflow-hidden gap-1.5 pointer-events-none">
+                                {Array.from({ length: 8 }).map((_, holeIdx) => (
+                                  <span
+                                    key={`top-hole-${holeIdx}`}
+                                    className="w-3 h-1.5 rounded-[1px] bg-white/95 shadow-2xs shrink-0"
+                                  />
+                                ))}
+                              </div>
 
-                              {/* Film frame subtle highlight */}
-                              <div className="absolute inset-0 ring-1 ring-inset ring-white/20 pointer-events-none rounded-[2px]" />
-                            </div>
-
-                            {/* Bottom Continuous Sprocket Holes */}
-                            <div className="w-full flex items-center justify-between px-1 py-0.5 border-t border-white/20 select-none overflow-hidden gap-1.5">
-                              {Array.from({ length: 8 }).map((_, holeIdx) => (
-                                <span
-                                  key={`bot-hole-${holeIdx}`}
-                                  className="w-3 h-1.5 rounded-[1px] bg-white/95 shadow-2xs shrink-0"
+                              {/* Photo Frame */}
+                              <div
+                                onClick={() => {
+                                  if (!filmHasMoved.current) {
+                                    setSelectedFilmPhoto(photoUrl);
+                                  }
+                                }}
+                                className="relative w-[155px] sm:w-[175px] h-[215px] sm:h-[240px] my-1 bg-black/30 rounded-[2px] overflow-hidden shadow-inner cursor-pointer"
+                              >
+                                <img
+                                  src={photoUrl}
+                                  alt={`Kỷ niệm ${frameNum}`}
+                                  draggable={false}
+                                  className="w-full h-full object-cover group-hover:brightness-105 transition-all duration-300 pointer-events-none"
+                                  loading="lazy"
                                 />
-                              ))}
+
+                                {/* Film frame subtle highlight */}
+                                <div className="absolute inset-0 ring-1 ring-inset ring-white/20 pointer-events-none rounded-[2px]" />
+                              </div>
+
+                              {/* Bottom Continuous Sprocket Holes */}
+                              <div className="w-full flex items-center justify-between px-1 py-0.5 border-t border-white/20 select-none overflow-hidden gap-1.5 pointer-events-none">
+                                {Array.from({ length: 8 }).map((_, holeIdx) => (
+                                  <span
+                                    key={`bot-hole-${holeIdx}`}
+                                    className="w-3 h-1.5 rounded-[1px] bg-white/95 shadow-2xs shrink-0"
+                                  />
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      });
-                    })()}
+                          );
+                        });
+                      })()}
+                    </div>
                   </div>
 
                   <p className="text-center text-[11px] font-sans text-[#5c233c] mt-2 drop-shadow-[0_1px_1px_rgba(255,255,255,0.85)] font-medium">
-                    Chạm giữ để dừng phim • Chạm vào ảnh để phóng to
+                    Kéo hoặc vuốt để tua nhanh • Chạm vào ảnh để phóng to ✨
                   </p>
                 </div>
 
@@ -1825,13 +1941,13 @@ function MessengerPageInner() {
                     <button
                       type="button"
                       onClick={() => {
-                        setFilmSpeed((prev) => (prev === 120 ? 80 : prev === 80 ? 50 : 120));
+                        setFilmSpeedSetting((prev) => (prev === "normal" ? "fast" : prev === "fast" ? "slow" : "normal"));
                       }}
                       className="py-1.5 px-2.5 rounded-full bg-white/70 hover:bg-white text-[#5e223c] font-medium text-xs shadow-2xs transition-all active:scale-95 flex items-center gap-1 cursor-pointer border border-pink-200/60"
                       title="Chạm để đổi tốc độ quay cuộn phim"
                     >
                       <span className="material-symbols-outlined text-[15px]">speed</span>
-                      <span>{filmSpeed === 120 ? "Siêu chậm" : filmSpeed === 80 ? "Chậm vừa" : "Vừa"}</span>
+                      <span>{filmSpeedSetting === "fast" ? "Tua nhanh" : filmSpeedSetting === "slow" ? "Tua chậm" : "Tốc độ vừa"}</span>
                     </button>
 
                     {/* Back to Lock */}

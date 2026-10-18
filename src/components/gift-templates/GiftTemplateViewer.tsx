@@ -29,6 +29,7 @@ const BACKGROUND: Record<GiftTemplateId, string> = {
   "retro-nostalgia": "bg-parchment-border",
   "storybook-sunset": "bg-[#fdebd8]",
   "kp-atelier": "bg-surface-container-low",
+  "messenger": "bg-pink-50",
 };
 
 const SWIPE_MIN = 50;

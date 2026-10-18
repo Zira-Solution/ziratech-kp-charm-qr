@@ -60,6 +60,23 @@ export default function TemplatePicker({ step, value, onChange, onPreview }: Pro
                     </div>
                   </div>
                 )}
+                {tpl.id === "messenger" && (
+                  <div className="w-full h-full rounded-lg bg-white/80 border border-pink-200 shadow-2xs flex flex-col justify-between p-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[9px] text-pink-600 font-bold">9:41</span>
+                      <span className="text-[10px] text-pink-500">♥</span>
+                    </div>
+                    <div className="flex flex-col gap-1 items-end my-auto">
+                      <div className="px-2 py-0.5 rounded-full bg-[#0084ff] text-white text-[8px] font-medium max-w-[85%] truncate">
+                        hello bé iu ❤️
+                      </div>
+                      <div className="px-1.5 py-0.5 rounded-full bg-pink-100 text-[#c13d28] text-[8px]">
+                        💌 Thư tay &amp; Voice
+                      </div>
+                    </div>
+                    <div className="w-10 h-0.5 rounded-full bg-stone-400/50 mx-auto" />
+                  </div>
+                )}
 
                 {/* Selection badge at top-right corner of thumbnail */}
                 {selected ? (
@@ -71,25 +88,37 @@ export default function TemplatePicker({ step, value, onChange, onPreview }: Pro
                 )}
               </div>
 
-              {/* Title: full width, never truncated */}
-              <h3 className="text-center text-sm font-bold text-slate-800 tracking-tight mb-2.5">
-                {tpl.name}
-              </h3>
+              {/* Title & Tag */}
+              <div className="text-center mb-2.5">
+                <span className="inline-block text-[10px] font-bold text-[#721a28] bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200/60 mb-1">
+                  {tpl.tag}
+                </span>
+                <h3 className="text-sm font-bold text-slate-800 tracking-tight leading-snug">
+                  {tpl.name}
+                </h3>
+                <p className="text-[11px] text-slate-500 line-clamp-2 mt-0.5 px-1 leading-snug">
+                  {tpl.desc}
+                </p>
+              </div>
 
               {/* Preview button */}
-              {onPreview && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (tpl.id === "messenger") {
+                    window.open("/messenger", "_blank");
+                  } else if (onPreview) {
                     onPreview(tpl.id);
-                  }}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-xl liquid-glass-pill py-2 px-3 text-xs font-bold text-[#721a28] border border-rose-200/80 hover:bg-[#721a28] hover:text-white hover:border-[#721a28] transition-all cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-[16px]">visibility</span>
-                  Xem thử
-                </button>
-              )}
+                  } else {
+                    window.open("/thamkhao?device=phone", "_blank");
+                  }
+                }}
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl liquid-glass-pill py-2 px-3 text-xs font-bold text-[#721a28] border border-rose-200/80 hover:bg-[#721a28] hover:text-white hover:border-[#721a28] transition-all cursor-pointer mt-auto"
+              >
+                <span className="material-symbols-outlined text-[16px]">visibility</span>
+                <span>Xem mẫu thiệp</span>
+              </button>
             </div>
           );
         })}

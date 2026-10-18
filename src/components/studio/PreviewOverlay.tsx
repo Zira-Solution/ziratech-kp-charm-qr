@@ -259,7 +259,15 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
               : "rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white/95 shadow-[0_28px_80px_rgba(70,30,20,0.16),0_10px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/5"
           }`}
         >
-          <GiftTemplateViewer gift={gift} embedded />
+          {template === "messenger" ? (
+            <iframe
+              src="/messenger"
+              className="w-full h-full border-0"
+              title="Xem thử Hộp Quà Messenger"
+            />
+          ) : (
+            <GiftTemplateViewer gift={gift} embedded />
+          )}
         </div>
       </div>
     </div>

@@ -95,6 +95,24 @@ export default function RecipientGiftPage() {
   };
 
   if (phase === "ready" && gift) {
+    if (gift.template === "messenger") {
+      const q = new URLSearchParams();
+      if (gift.recipientName) q.set("to", gift.recipientName);
+      if (gift.sender) q.set("sender", gift.sender);
+      if (gift.letter?.title) q.set("ltitle", gift.letter.title);
+      if (gift.letter?.content) q.set("lbody", gift.letter.content);
+      if (gift.letter?.signature) q.set("lsig", gift.letter.signature);
+      if (gift.voice?.audioUrl) q.set("voice", gift.voice.audioUrl);
+      return (
+        <div className="kp-card-in h-dvh w-full overflow-hidden bg-black">
+          <iframe
+            src={`/messenger?${q.toString()}`}
+            className="w-full h-full border-0"
+            title="Thiệp quà số Messenger"
+          />
+        </div>
+      );
+    }
     return (
       <div className="kp-card-in h-dvh">
         <GiftTemplateViewer gift={gift} refreshVoiceUrl={refreshVoiceUrl} />

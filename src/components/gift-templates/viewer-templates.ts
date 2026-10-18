@@ -9,6 +9,7 @@ import type { GiftTemplateId } from "./types";
 /** The template that draws each look: a skin on the shared pages. */
 const TEMPLATES: Record<GiftTemplateId, GiftTemplate> = {
   "storybook-sunset": STORYBOOK_TEMPLATE,
+  "messenger": STORYBOOK_TEMPLATE,
   "vintage-scrapbook": makeTemplate(VINTAGE_SKIN),
   "retro-nostalgia": makeTemplate(RETRO_SKIN),
   "kp-atelier": makeTemplate(ATELIER_SKIN),

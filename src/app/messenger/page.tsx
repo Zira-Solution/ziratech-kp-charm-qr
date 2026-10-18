@@ -683,79 +683,115 @@ function MessengerPageInner() {
       />
 
       {/* Top Floating Controls Bar on Desktop */}
-      <header className="hidden sm:flex w-full max-w-2xl px-4 py-3 sm:py-4 items-center justify-between gap-2 z-40 relative">
+      <header className="hidden sm:flex w-full max-w-4xl px-4 py-3 sm:py-4 items-center justify-between gap-3 z-40 relative">
         <Link
           href="/"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
         >
           <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-          <span className="hidden sm:inline">Trang chủ K&amp;P</span>
+          <span>Trang chủ</span>
         </Link>
 
-        {/* Device Mode Switcher (Desktop only) */}
+        {/* 2 Sample Templates Switcher */}
         <div className="flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
+          <Link
+            href="/thamkhao?device=phone"
+            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all"
+            title="Chuyển sang xem Mẫu 1: Storybook Hoàng Hôn 20/10"
+          >
+            <span>🌅</span>
+            <span>Mẫu 1: Storybook</span>
+          </Link>
+
+          <button
+            type="button"
+            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-600 text-white shadow-xs"
+            title="Đang xem Mẫu 2: Hộp Quà Messenger"
+          >
+            <span>💬</span>
+            <span>Mẫu 2: Messenger</span>
+          </button>
+        </div>
+
+        {/* Device Mode Switcher (Desktop only) */}
+        <div className="hidden lg:flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
           <button
             type="button"
             onClick={() => setDeviceMode("mockup")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
               deviceMode === "mockup"
-                ? "bg-rose-600 text-white shadow-sm"
+                ? "bg-rose-600 text-white shadow-xs"
                 : "text-white/70 hover:text-white"
             }`}
           >
-            <span className="material-symbols-outlined text-[15px]">phone_iphone</span>
+            <span className="material-symbols-outlined text-[14px]">phone_iphone</span>
             <span>Khung iPhone</span>
           </button>
           <button
             type="button"
             onClick={() => setDeviceMode("fullscreen")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-all ${
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
               deviceMode === "fullscreen"
-                ? "bg-rose-600 text-white shadow-sm"
+                ? "bg-rose-600 text-white shadow-xs"
                 : "text-white/70 hover:text-white"
             }`}
           >
-            <span className="material-symbols-outlined text-[15px]">fullscreen</span>
+            <span className="material-symbols-outlined text-[14px]">fullscreen</span>
             <span>Toàn màn hình</span>
           </button>
         </div>
 
         {/* Right Action Buttons */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleCopyShareLink}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95"
-            title="Sao chép link quà tặng mang thông số tùy chỉnh"
-          >
-            <span className="material-symbols-outlined text-[16px]">
-              {copiedLink ? "done" : "share"}
-            </span>
-            <span>{copiedLink ? "Đã sao chép!" : "Chia sẻ link"}</span>
-          </button>
-
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setIsConfigOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-linear-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white text-xs font-semibold shadow-md transition-all active:scale-95 cursor-pointer"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-semibold text-white transition-all active:scale-95 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[16px]">tune</span>
+            <span className="material-symbols-outlined text-[15px]">tune</span>
             <span>Tùy chỉnh</span>
           </button>
+
+          <Link
+            href="/gift"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-linear-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-[15px]">edit</span>
+            <span>Tự tạo thiệp</span>
+          </Link>
         </div>
       </header>
 
-      {/* Discrete Mobile Floating Action Pill */}
-      <div className="sm:hidden fixed top-3 right-3 z-50 flex items-center gap-1.5">
+      {/* Mobile Floating Bar for Template Switching & Actions */}
+      <div className="sm:hidden fixed top-3 inset-x-2 z-50 flex items-center justify-between gap-1 p-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/20 shadow-lg text-[11px]">
+        <Link
+          href="/thamkhao?device=phone"
+          className="flex items-center gap-1 px-2.5 py-1 rounded-full text-white/80 hover:text-white"
+        >
+          <span>🌅</span>
+          <span>Mẫu 1: Storybook</span>
+        </Link>
+
+        <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-600 text-white font-bold shadow-xs">
+          <span>💬</span>
+          <span>Mẫu 2: Messenger</span>
+        </span>
+
         <button
           type="button"
           onClick={() => setIsConfigOpen(true)}
-          className="h-8 px-2.5 rounded-full bg-black/40 hover:bg-black/60 text-white/90 backdrop-blur-xl border border-white/20 text-[11px] font-medium flex items-center gap-1 shadow-md active:scale-95"
-          title="Tùy chỉnh hình nền, tên và nội dung"
+          className="px-2 py-1 rounded-full bg-white/20 text-white font-medium flex items-center gap-0.5"
+          title="Tùy chỉnh thiệp mẫu"
         >
-          <span className="material-symbols-outlined text-[14px]">tune</span>
-          <span>Tùy chỉnh</span>
+          <span className="material-symbols-outlined text-[13px]">tune</span>
         </button>
+
+        <Link
+          href="/gift"
+          className="px-2.5 py-1 rounded-full bg-linear-to-r from-rose-600 to-pink-600 text-white font-bold"
+        >
+          Tạo thiệp
+        </Link>
       </div>
 
       {/* Main Showcase Area */}

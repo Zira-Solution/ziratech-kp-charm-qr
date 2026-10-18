@@ -68,61 +68,95 @@ export default function ThamKhaoPage() {
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-stone-900 font-sans text-stone-900 select-none">
       {/* Top Floating Control Bar */}
-      <header className="fixed top-3 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-xl border border-white/80">
+      <header className="fixed top-3 left-1/2 -translate-x-1/2 z-40 flex flex-wrap items-center justify-center gap-2 px-3 py-1.5 rounded-2xl sm:rounded-full bg-white/95 backdrop-blur-md shadow-2xl border border-white/80 max-w-[96vw]">
         <Link
           href="/"
           className="flex items-center gap-1 px-3 py-1 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] text-xs font-bold transition-all"
         >
           <span className="material-symbols-outlined text-[15px]">arrow_back</span>
-          <span>Trang chủ</span>
+          <span className="hidden sm:inline">Trang chủ</span>
         </Link>
 
-        <div className="h-4 w-px bg-stone-300 mx-1" />
+        <div className="h-4 w-px bg-stone-300 mx-0.5 hidden sm:block" />
 
-        {/* Device Switcher */}
-        <div className="flex items-center gap-1 bg-stone-100 p-0.5 rounded-full">
+        {/* 2 Sample Templates Switcher */}
+        <div className="flex items-center gap-1 bg-stone-100/90 p-0.5 rounded-full border border-stone-200/60">
+          <button
+            type="button"
+            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-[#c13d28] text-white shadow-xs"
+            title="Đang xem Mẫu 1: Storybook Hoàng Hôn 20/10"
+          >
+            <span>🌅</span>
+            <span>Mẫu 1: Storybook</span>
+          </button>
+
+          <Link
+            href="/messenger"
+            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold text-stone-700 hover:bg-white/80 transition-all"
+            title="Chuyển sang xem Mẫu 2: Hộp Quà Messenger"
+          >
+            <span>💬</span>
+            <span>Mẫu 2: Messenger</span>
+          </Link>
+        </div>
+
+        <div className="h-4 w-px bg-stone-300 mx-0.5 hidden md:block" />
+
+        {/* Device Switcher (Desktop / iPad / Phone) */}
+        <div className="hidden md:flex items-center gap-1 bg-stone-100 p-0.5 rounded-full">
           <button
             type="button"
             onClick={() => switchDevice("desktop")}
-            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
               device === "desktop"
-                ? "bg-[#c13d28] text-white shadow-xs"
+                ? "bg-stone-800 text-white shadow-xs"
                 : "text-stone-700 hover:bg-white/60"
             }`}
             title="Xem toàn màn hình Desktop"
           >
-            <span className="material-symbols-outlined text-[16px]">desktop_windows</span>
+            <span className="material-symbols-outlined text-[15px]">desktop_windows</span>
             <span>Desktop</span>
           </button>
 
           <button
             type="button"
             onClick={() => switchDevice("ipad")}
-            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
               device === "ipad"
-                ? "bg-[#c13d28] text-white shadow-xs"
+                ? "bg-stone-800 text-white shadow-xs"
                 : "text-stone-700 hover:bg-white/60"
             }`}
             title="Xem chế độ iPad ngang"
           >
-            <span className="material-symbols-outlined text-[16px]">tablet</span>
+            <span className="material-symbols-outlined text-[15px]">tablet</span>
             <span>iPad</span>
           </button>
 
           <button
             type="button"
             onClick={() => switchDevice("phone")}
-            className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
               device === "phone"
-                ? "bg-[#c13d28] text-white shadow-xs"
+                ? "bg-stone-800 text-white shadow-xs"
                 : "text-stone-700 hover:bg-white/60"
             }`}
-            title="Xem chế độ Điện thoại (Mobile 7 khung chuẩn)"
+            title="Xem chế độ Điện thoại (Mobile chuẩn)"
           >
-            <span className="material-symbols-outlined text-[16px]">smartphone</span>
+            <span className="material-symbols-outlined text-[15px]">smartphone</span>
             <span>Điện thoại</span>
           </button>
         </div>
+
+        <div className="h-4 w-px bg-stone-300 mx-0.5 hidden sm:block" />
+
+        {/* CTA: Create gift with this template */}
+        <Link
+          href="/gift"
+          className="flex items-center gap-1 px-3 py-1 rounded-full bg-linear-to-r from-[#721a28] to-[#9b2c3d] text-white text-xs font-bold shadow-xs hover:opacity-95 transition-all"
+        >
+          <span className="material-symbols-outlined text-[14px]">edit</span>
+          <span>Tự tạo thiệp</span>
+        </Link>
       </header>
 
       {/* Main Presentation Stage */}

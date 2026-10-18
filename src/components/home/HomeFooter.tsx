@@ -36,7 +36,7 @@ export default function HomeFooter() {
   ];
 
   const serviceLinks = [
-    { label: "Studio tạo thiệp quà số", href: "/messenger", isRoute: true },
+    { label: "Studio tạo thiệp quà số", href: "/gift", isRoute: true },
     { label: "Đặt trước hoa tươi 20/10", href: "#preorder" },
     { label: "Trải nghiệm workshop tự làm", href: "#workshop" },
     { label: "Minh bạch quỹ thiện nguyện", href: "#shelter-donate" },

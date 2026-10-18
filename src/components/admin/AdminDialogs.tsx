@@ -61,9 +61,8 @@ export function OrderCreatedDialog({ created, onClose }: { created: CreatedOrder
     "K&P Atelier - Quà Tặng 20/10",
     `Mã thiệp: ${order.token}`,
     `OTP tạo thiệp (cho người mua): ${codes?.creatorKey ?? ""}`,
-    `OTP xem thiệp (cho người nhận): ${codes?.unlockPin ?? ""}`,
     `Tạo thiệp (người mua): ${origin}/gift`,
-    `Xem thiệp (người nhận): nhập mã thiệp và OTP xem thiệp tại ${origin}`,
+    `Xem thiệp (người nhận): quét mã QR trên thẻ hoặc nhập mã thiệp tại ${origin}`,
   ].join("\n");
 
   return (
@@ -95,23 +94,20 @@ export function OrderCreatedDialog({ created, onClose }: { created: CreatedOrder
       )}
 
       <div className="space-y-3">
-        <CodeBox label="Mã thiệp" hint="In trên thẻ nhung." value={order.token} copied={copied === "token"} onCopy={() => copy("token", order.token)} />
-        <div className="grid gap-3 sm:grid-cols-2">
-          <CodeBox
-            label="OTP tạo thiệp"
-            hint="Dành cho người mua."
-            value={codes?.creatorKey ?? "—"}
-            copied={copied === "creator"}
-            onCopy={() => codes && copy("creator", codes.creatorKey)}
-          />
-          <CodeBox
-            label="OTP xem thiệp"
-            hint="In trên thẻ, dành cho người nhận."
-            value={codes?.unlockPin ?? "—"}
-            copied={copied === "pin"}
-            onCopy={() => codes && copy("pin", codes.unlockPin)}
-          />
-        </div>
+        <CodeBox
+          label="Mã thiệp"
+          hint="In trên thẻ nhung hoặc gắn kèm mã QR."
+          value={order.token}
+          copied={copied === "token"}
+          onCopy={() => copy("token", order.token)}
+        />
+        <CodeBox
+          label="OTP tạo thiệp"
+          hint="Dành cho người mua để vào Studio soạn thiệp & tự đặt mã bảo vệ."
+          value={codes?.creatorKey ?? "—"}
+          copied={copied === "creator"}
+          onCopy={() => codes && copy("creator", codes.creatorKey)}
+        />
       </div>
 
       <button
@@ -125,7 +121,7 @@ export function OrderCreatedDialog({ created, onClose }: { created: CreatedOrder
 
       <p className="mt-4 flex items-start gap-2 rounded-lg bg-amber-50 px-3 py-2.5 text-xs text-amber-800 ring-1 ring-amber-200">
         <Icon name="lock" className="mt-0.5 text-[16px]" />
-        Mã được mã hóa và chỉ hiện lần này. Hãy in OTP xem thiệp lên thẻ hoặc đưa cho khách trước khi đóng.
+        Mã OTP tạo thiệp chỉ hiển thị một lần này. Người mua sẽ tự tay thiết kế và cài mã bảo mật riêng trong Studio.
       </p>
 
       <dl className="mt-4 space-y-1.5 border-t border-slate-100 pt-4 text-sm">

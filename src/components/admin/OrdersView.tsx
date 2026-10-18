@@ -87,7 +87,7 @@ function RowActions({
         <Icon name="edit" className="text-[18px]" />
       </Link>
       {order.status === "completed" && (
-        <Link href={`/g/${order.token}`} target="_blank" className={iconButton} title="Xem thiệp (cần OTP xem thiệp)" aria-label={`Xem thiệp ${order.token}`}>
+        <Link href={`/g/${order.token}`} target="_blank" className={iconButton} title="Xem thiệp" aria-label={`Xem thiệp ${order.token}`}>
           <Icon name="open_in_new" className="text-[18px]" />
         </Link>
       )}

@@ -82,7 +82,7 @@ export default function TimelineBlock({ step, items, onChange }: Props) {
                     maxLength={60}
                     value={item.title}
                     onChange={(e) => patch(i, { title: e.target.value })}
-                    placeholder="Tiêu đề, ví dụ: Lần đầu gặp nhau"
+                    placeholder="Ví dụ: Lần đầu gặp gỡ..."
                     className={`${fieldClass} !py-2`}
                   />
                 </div>
@@ -96,7 +96,7 @@ export default function TimelineBlock({ step, items, onChange }: Props) {
                 maxLength={200}
                 value={item.text}
                 onChange={(e) => patch(i, { text: e.target.value })}
-                placeholder="Mô tả ngắn (không bắt buộc)"
+                placeholder="Ví dụ: Một chiều thu Hà Nội đầy nắng và những câu chuyện không dứt..."
                 className={`${fieldClass} mt-2.5 resize-y !py-2`}
               />
             </li>

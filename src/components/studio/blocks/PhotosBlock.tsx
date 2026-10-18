@@ -138,8 +138,8 @@ export default function PhotosBlock({ id, step, title, hint, items, max, showDat
                 maxLength={200}
                 value={photo.caption}
                 onChange={(e) => patch(i, { caption: e.target.value })}
-                placeholder="Ghi chú kỷ niệm..."
-                className={`${fieldClass} mt-2.5 !py-1.5 !text-xs font-handwriting`}
+                placeholder="Ví dụ: Ngày đầu hẹn hò..."
+                className={`${fieldClass} mt-2.5 !py-1.5 !text-xs font-handwriting placeholder:font-sans placeholder:italic`}
               />
               {showDate && (
                 <>
@@ -152,7 +152,7 @@ export default function PhotosBlock({ id, step, title, hint, items, max, showDat
                     maxLength={50}
                     value={photo.date}
                     onChange={(e) => patch(i, { date: e.target.value })}
-                    placeholder="Ngày (ví dụ: Thu 2026)"
+                    placeholder="Ví dụ: Thu 2026"
                     className={`${fieldClass} mt-1.5 !py-1.5 !text-xs`}
                   />
                 </>

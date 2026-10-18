@@ -56,6 +56,7 @@ export default function CardStudioPage() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<GiftTemplateId>("storybook-sunset");
   const [previewInitialMode, setPreviewInitialMode] = useState<"demo" | "draft">("demo");
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
 
   const openPreview = (tpl?: GiftTemplateId, mode: "demo" | "draft" = "demo") => {
     setPreviewTemplate(tpl || draft.template);
@@ -81,7 +82,6 @@ export default function CardStudioPage() {
 
         const saved = data.product.giftData;
         const loaded = draftFromSaved(saved);
-        if (!saved && !loaded.senderName) loaded.senderName = data.product.customerName || "";
 
         // Check for locally auto-saved draft
         let initialDraft = loaded;
@@ -242,6 +242,25 @@ export default function CardStudioPage() {
 
   const go = (to: Stage) => {
     setStage(to);
+  };
+
+  const handleResetDraft = () => {
+    setConfirmResetOpen(true);
+  };
+
+  const executeResetDraft = () => {
+    setConfirmResetOpen(false);
+    try {
+      localStorage.removeItem(DRAFT_KEY(token));
+      localStorage.removeItem(STAGE_KEY(token));
+    } catch {
+      // ignore
+    }
+    setDraft(emptyDraft());
+    setStage(1);
+    setReached(1);
+    setDirty(false);
+    showToast("✨ Đã làm mới bàn viết về trắng tinh.", "info", 3000);
   };
 
   /** The first thing the server would refuse, and which step and field it lives in. */
@@ -441,10 +460,19 @@ export default function CardStudioPage() {
             <span>K&amp;P Atelier · Về trang chủ</span>
           </Link>
           <div className="flex items-center gap-2 text-xs">
+            <button
+              type="button"
+              onClick={handleResetDraft}
+              title="Xóa nháp và làm mới lại bàn viết trắng tinh"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-slate-200/90 text-slate-500 hover:text-[#721a28] hover:border-rose-200 text-xs font-medium shadow-2xs transition-all cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[15px]">restart_alt</span>
+              <span>Làm mới bàn viết</span>
+            </button>
             {dirty ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-amber-200/90 bg-amber-50/70 text-amber-800 font-semibold text-xs shadow-2xs">
                 <span className="material-symbols-outlined text-[15px] text-amber-600">save</span>
-                <span>Tự động lưu nháp · Chưa lưu hoàn tất</span>
+                <span>Tự động lưu nháp</span>
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-emerald-200/90 bg-emerald-50/70 text-emerald-800 font-semibold text-xs shadow-2xs">
@@ -507,6 +535,7 @@ export default function CardStudioPage() {
                   onChange={update}
                   errors={errors}
                   idPrefix="m-"
+                  customerName={product.customerName}
                 />
               </div>
               <MessagePicker
@@ -659,6 +688,7 @@ export default function CardStudioPage() {
             draft={draft}
             onChange={update}
             errors={errors}
+            customerName={product.customerName}
             compact
           />
           <p className="px-1 text-center text-xs leading-relaxed text-slate-500">
@@ -687,6 +717,43 @@ export default function CardStudioPage() {
           }}
           onClose={() => setPreviewOpen(false)}
         />
+      )}
+
+      {confirmResetOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="reset-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in"
+        >
+          <div className="w-full max-w-sm rounded-3xl liquid-glass-card border border-rose-200/90 p-6 text-center shadow-2xl bg-white/95">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-[#721a28]">
+              <span className="material-symbols-outlined text-[24px]">restart_alt</span>
+            </div>
+            <h3 id="reset-modal-title" className="text-base font-bold text-slate-800">
+              Làm mới bàn viết?
+            </h3>
+            <p className="mt-1.5 text-xs text-slate-600 leading-relaxed">
+              Toàn bộ nội dung bản nháp trên máy này sẽ được đưa về trắng tinh để bạn bắt đầu viết lại từ đầu.
+            </p>
+            <div className="mt-5 flex gap-2.5">
+              <button
+                type="button"
+                onClick={() => setConfirmResetOpen(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+              >
+                Giữ lại
+              </button>
+              <button
+                type="button"
+                onClick={executeResetDraft}
+                className="flex-1 py-2.5 rounded-xl liquid-glass-btn-primary text-xs font-bold text-white shadow-xs transition-colors cursor-pointer"
+              >
+                Xác nhận xóa
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -31,8 +31,8 @@ export default function LetterBlock({ step, draft, onChange, errors }: Props) {
               maxLength={200}
               value={draft.letterTitle}
               onChange={(e) => onChange({ letterTitle: e.target.value })}
-              placeholder="GỬI NGƯỜI THƯƠNG"
-              className={`${fieldClass} font-serif tracking-wide uppercase font-bold text-[#721a28]`}
+              placeholder="Ví dụ: GỬI NGƯỜI THƯƠNG"
+              className={`${fieldClass} font-serif tracking-wide uppercase font-bold text-[#721a28] placeholder:normal-case placeholder:font-sans placeholder:font-normal placeholder:tracking-normal`}
             />
           </Field>
           <Field label="Lời đề từ phụ (nhỏ phía trên)" htmlFor="letter-subtitle" hint="Không bắt buộc">
@@ -42,7 +42,7 @@ export default function LetterBlock({ step, draft, onChange, errors }: Props) {
               maxLength={200}
               value={draft.letterSubtitle}
               onChange={(e) => onChange({ letterSubtitle: e.target.value })}
-              placeholder="Vẫn còn vài điều mình muốn kể bạn nghe..."
+              placeholder="Ví dụ: Vẫn còn vài điều mình muốn kể bạn nghe..."
               className={fieldClass}
             />
           </Field>
@@ -61,7 +61,7 @@ export default function LetterBlock({ step, draft, onChange, errors }: Props) {
             maxLength={MAX_LETTER}
             value={draft.letterContent}
             onChange={(e) => onChange({ letterContent: e.target.value })}
-            placeholder="Viết những lời nhắn gửi chân thành nhất tại đây..."
+            placeholder="Nhấp vào đây để viết những lời nhắn gửi chân thành nhất..."
             aria-invalid={errors.letterContent ? true : undefined}
             className={`${fieldClass} resize-y leading-relaxed font-sans`}
           />
@@ -75,8 +75,8 @@ export default function LetterBlock({ step, draft, onChange, errors }: Props) {
               maxLength={100}
               value={draft.letterSignature}
               onChange={(e) => onChange({ letterSignature: e.target.value })}
-              placeholder="Ví dụ: Người luôn dõi theo bạn ♡"
-              className={`${fieldClass} font-handwriting text-lg text-[#721a28]`}
+              placeholder="Ví dụ: Người luôn thương bạn ♡"
+              className={`${fieldClass} font-handwriting text-lg text-[#721a28] placeholder:font-sans placeholder:text-sm placeholder:font-normal`}
             />
           </div>
         </Field>

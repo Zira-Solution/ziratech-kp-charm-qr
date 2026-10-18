@@ -63,12 +63,15 @@ export default function CardStudioPage() {
     setPreviewOpen(true);
   };
 
+  const DRAFT_KEY = (t: string) => `kp_draft_v1_${t.toUpperCase()}`;
+  const STAGE_KEY = (t: string) => `kp_stage_v1_${t.toUpperCase()}`;
+
   // Load the order and any card that was already saved.
   useEffect(() => {
     if (!token) return;
     (async () => {
       try {
-        const res = await fetch(`/api/gifts/${token}?as=create`);
+        const res = await fetch(`/api/gifts/${token}?as=create`, { cache: "no-store" });
         const data = await res.json();
         if (res.status === 401) setNeedsAuth(true);
         if (!res.ok || !data.success || data.scope !== "create") {
@@ -79,8 +82,63 @@ export default function CardStudioPage() {
         const saved = data.product.giftData;
         const loaded = draftFromSaved(saved);
         if (!saved && !loaded.senderName) loaded.senderName = data.product.customerName || "";
-        setDraft(loaded);
-        setPreviewTemplate(loaded.template);
+
+        // Check for locally auto-saved draft
+        let initialDraft = loaded;
+        let restoredLocal = false;
+        try {
+          const rawLocal = localStorage.getItem(DRAFT_KEY(token));
+          if (rawLocal) {
+            const parsed = JSON.parse(rawLocal);
+            if (parsed && typeof parsed === "object") {
+              const hasContent =
+                Boolean(parsed.recipientName?.trim()) ||
+                (Array.isArray(parsed.blocks) && parsed.blocks.length > 0) ||
+                Boolean(parsed.letterContent?.trim());
+              if (!saved && hasContent) {
+                initialDraft = { ...loaded, ...parsed };
+                restoredLocal = true;
+              } else if (saved && hasContent && parsed._updatedAt) {
+                const serverTime = new Date(data.product.completedAt || data.product.createdAt || 0).getTime();
+                if (parsed._updatedAt > serverTime) {
+                  initialDraft = { ...loaded, ...parsed };
+                  restoredLocal = true;
+                }
+              }
+            }
+          }
+        } catch {
+          // ignore localStorage error
+        }
+
+        setDraft(initialDraft);
+        setPreviewTemplate(initialDraft.template);
+
+        // Restore stage position
+        let initialStage: Stage = 1;
+        let initialReached: Stage = 1;
+        try {
+          const rawStage = Number(localStorage.getItem(STAGE_KEY(token)));
+          if (rawStage >= 1 && rawStage <= 3) {
+            initialStage = rawStage as Stage;
+            initialReached = Math.max(1, rawStage) as Stage;
+          } else if (data.product.status === "completed" || (saved && initialDraft.blocks.length > 0)) {
+            // When already saved or completed, start at Step 3 summary
+            initialStage = 3;
+            initialReached = 3;
+          }
+        } catch {
+          if (data.product.status === "completed" || (saved && initialDraft.blocks.length > 0)) {
+            initialStage = 3;
+            initialReached = 3;
+          }
+        }
+        setStage(initialStage);
+        setReached(initialReached);
+
+        if (restoredLocal) {
+          showToast("✨ Đã tự động khôi phục bản nháp bạn đang viết dở.", "success", 4000);
+        }
       } catch (err) {
         setLoadError(err instanceof Error ? err.message : "Không tải được thông tin thiệp");
       } finally {
@@ -149,6 +207,23 @@ export default function CardStudioPage() {
   const [stage, setStage] = useState<Stage>(1);
   const [reached, setReached] = useState<Stage>(1);
   const focusTarget = useRef<string | null>(null);
+
+  // Auto-save draft and stage to localStorage on every change
+  useEffect(() => {
+    if (!token || loading) return;
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          DRAFT_KEY(token),
+          JSON.stringify({ ...draft, _updatedAt: Date.now() })
+        );
+        localStorage.setItem(STAGE_KEY(token), String(stage));
+      } catch {
+        // ignore localStorage errors
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [draft, stage, token, loading]);
 
   // After a step opens, land on the field that needs attention, or at the top of the new step.
   useEffect(() => {
@@ -254,6 +329,10 @@ export default function CardStudioPage() {
       }
 
       setDirty(false);
+      try {
+        localStorage.setItem(DRAFT_KEY(token), JSON.stringify({ ...draft, _updatedAt: Date.now() }));
+        localStorage.setItem(STAGE_KEY(token), "3");
+      } catch {}
       showToast("Đã lưu thiệp thành công!", "success");
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#721a28", "#ffd700", "#fea095", "#ffffff"] });
       setTimeout(() => router.push(`/g/${token}`), 900);
@@ -348,6 +427,14 @@ export default function CardStudioPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
           <Link
             href="/"
+            onClick={(e) => {
+              if (dirty) {
+                const ok = window.confirm(
+                  "Bạn có thay đổi chưa bấm lưu hoàn tất. Bạn có muốn về trang chủ không? (Bản nháp của bạn vẫn được tự động lưu an toàn trên máy)."
+                );
+                if (!ok) e.preventDefault();
+              }
+            }}
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full liquid-glass-pill text-[#721a28] text-xs font-bold border border-rose-200/80 hover:bg-white shadow-2xs transition-all"
           >
             <img src="/images/logo_icon_kp.png" alt="Team K&P" className="w-4 h-4 object-contain" />
@@ -355,14 +442,14 @@ export default function CardStudioPage() {
           </Link>
           <div className="flex items-center gap-2 text-xs">
             {dirty ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-rose-200 text-rose-800 font-semibold text-xs shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                Có thay đổi chưa lưu
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-amber-200/90 bg-amber-50/70 text-amber-800 font-semibold text-xs shadow-2xs">
+                <span className="material-symbols-outlined text-[15px] text-amber-600">save</span>
+                <span>Tự động lưu nháp · Chưa lưu hoàn tất</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-emerald-200 text-emerald-800 font-semibold text-xs shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                Đã lưu an toàn
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-emerald-200/90 bg-emerald-50/70 text-emerald-800 font-semibold text-xs shadow-2xs">
+                <span className="material-symbols-outlined text-[15px] text-emerald-600">check_circle</span>
+                <span>Đã lưu hoàn tất</span>
               </span>
             )}
           </div>

@@ -66,19 +66,28 @@ export async function GET(
       product.giftData = { ...product.giftData, voiceNote: { ...voice, audioUrl } };
     }
 
+    const noCacheHeaders = {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    };
+
     if (scope === "open") {
-      const res = NextResponse.json({
-        success: true,
-        scope,
-        product: { token: product.token, status: product.status, giftData: product.giftData },
-      });
+      const res = NextResponse.json(
+        {
+          success: true,
+          scope,
+          product: { token: product.token, status: product.status, giftData: product.giftData },
+        },
+        { headers: noCacheHeaders }
+      );
       if (!isPinRequired && !hasGiftSession(req, "open", token)) {
         issueGiftSession(res, "open", product.token);
       }
       return res;
     }
 
-    return NextResponse.json({ success: true, scope, product });
+    return NextResponse.json({ success: true, scope, product }, { headers: noCacheHeaders });
   } catch (err: any) {
     console.error("[API Get Gift By Token Error]:", err);
     return NextResponse.json(

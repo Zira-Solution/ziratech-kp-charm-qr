@@ -30,6 +30,7 @@ export default function RecipientGiftPage() {
 
   const [phase, setPhase] = useState<Phase>("loading");
   const [gift, setGift] = useState<ViewerGift | null>(null);
+  const [isCreator, setIsCreator] = useState(false);
 
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState("");
@@ -39,10 +40,11 @@ export default function RecipientGiftPage() {
   const load = useCallback(async () => {
     if (!token) return;
     try {
-      const res = await fetch(`/api/gifts/${token}`);
+      const res = await fetch(`/api/gifts/${token}`, { cache: "no-store" });
       if (res.status === 401) return setPhase("pin");
       if (!res.ok) return setPhase("error");
       const data = await res.json();
+      setIsCreator(data.scope === "create");
       const card = data.product?.giftData ? normalizeGift(data.product.giftData) : null;
       if (!card || card.blocks.length === 0) return setPhase("notReady"); // verified, but the sender has not finished it
       setGift(card);
@@ -59,7 +61,7 @@ export default function RecipientGiftPage() {
   // The recording link is signed and lasts an hour: the player asks for a new one when it stops working.
   const refreshVoiceUrl = useCallback(async (): Promise<string | null> => {
     try {
-      const res = await fetch(`/api/gifts/${token}`);
+      const res = await fetch(`/api/gifts/${token}`, { cache: "no-store" });
       if (!res.ok) return null;
       const data = await res.json();
       return data.product?.giftData?.voiceNote?.audioUrl ?? null;
@@ -104,7 +106,17 @@ export default function RecipientGiftPage() {
       if (gift.letter?.signature) q.set("lsig", gift.letter.signature);
       if (gift.voice?.audioUrl) q.set("voice", gift.voice.audioUrl);
       return (
-        <div className="kp-card-in h-dvh w-full overflow-hidden bg-black">
+        <div className="kp-card-in h-dvh w-full overflow-hidden bg-black relative">
+          {isCreator && (
+            <Link
+              href={`/create/${token}`}
+              className="fixed top-4 right-4 z-50 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/90 backdrop-blur-md text-[#721a28] text-xs font-bold shadow-lg border border-rose-200/90 hover:bg-white hover:scale-105 transition-all"
+              title="Quay lại bàn thiết kế để sửa nội dung thiệp"
+            >
+              <Icon name="edit" />
+              <span>Sửa lại thiệp</span>
+            </Link>
+          )}
           <iframe
             src={`/messenger?${q.toString()}`}
             className="w-full h-full border-0"
@@ -114,7 +126,17 @@ export default function RecipientGiftPage() {
       );
     }
     return (
-      <div className="kp-card-in h-dvh">
+      <div className="kp-card-in h-dvh relative">
+        {isCreator && (
+          <Link
+            href={`/create/${token}`}
+            className="fixed top-4 right-4 z-50 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/90 backdrop-blur-md text-[#721a28] text-xs font-bold shadow-lg border border-rose-200/90 hover:bg-white hover:scale-105 transition-all"
+            title="Quay lại bàn thiết kế để sửa nội dung thiệp"
+          >
+            <Icon name="edit" />
+            <span>Sửa lại thiệp</span>
+          </Link>
+        )}
         <GiftTemplateViewer gift={gift} refreshVoiceUrl={refreshVoiceUrl} />
       </div>
     );

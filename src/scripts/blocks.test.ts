@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { BLOCK_IDS, BLOCK_LABELS, DEFAULT_BLOCK_ORDER, deriveBlocks, isBlockId } from "../src/components/gift-templates/blocks.ts";
+import { BLOCK_IDS, BLOCK_LABELS, DEFAULT_BLOCK_ORDER, deriveBlocks, isBlockId } from "../components/gift-templates/blocks.ts";
 
 test("there are eight kinds of message, each with a label and a place in the default order", () => {
   assert.equal(BLOCK_IDS.length, 8);

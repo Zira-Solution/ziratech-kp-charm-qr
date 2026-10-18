@@ -7,7 +7,7 @@ import {
   getDefaultVoiceNote,
   getDefaultFinalMessage,
   adaptTextPronouns,
-} from "../src/components/gift-templates/addressing.ts";
+} from "../components/gift-templates/addressing.ts";
 
 test("parseAddressing parses 'an-em' correctly", () => {
   const p = parseAddressing("an-em");

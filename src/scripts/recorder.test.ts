@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { pickRecorderMime, extensionForMime, formatClock, describeMicError, MAX_RECORD_SECONDS } from "../src/components/studio/recorder.ts";
+import { pickRecorderMime, extensionForMime, formatClock, describeMicError, MAX_RECORD_SECONDS } from "../components/studio/recorder.ts";
 
 test("pickRecorderMime takes the first format the browser supports", () => {
   assert.equal(pickRecorderMime(() => true), "audio/webm;codecs=opus"); // Chrome, Edge
@@ -33,6 +33,6 @@ test("describeMicError explains the common failures", () => {
 });
 
 test("the recorder cap matches the server's voice limit", async () => {
-  const { MAX_VOICE_SECONDS } = await import("../src/lib/validation/gift.ts");
+  const { MAX_VOICE_SECONDS } = await import("../lib/validation/gift.ts");
   assert.equal(MAX_RECORD_SECONDS, MAX_VOICE_SECONDS);
 });

@@ -1,17 +1,24 @@
 #!/usr/bin/env node
 // floor-guard.mjs — diff-scoped enforcement of the CONSTRAINTS.md floor.
-// Usage: node scripts/floor-guard.mjs [--base <ref>]
+// Usage (from src/): node scripts/floor-guard.mjs [--base <ref>]
 // Default base: origin/main when it exists, otherwise HEAD (so uncommitted work is still checked).
 // Exit codes: 0 clean, 1 floor violation, 2 the guard could not run.
 import { execFileSync } from 'node:child_process';
 
 // `git diff --no-index` exits 1 whenever the two sides differ, which is the normal case for a
 // new file, so that output is kept. Any other failure is null, and null never reads as clean.
+// The app lives in src/, but the floor covers the whole repository (docs/, CONSTRAINTS.md), so every
+// git command runs from the repository root wherever the guard is started.
+const root = (() => {
+  try { return execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim(); }
+  catch { return null; }
+})();
 const git = (args, { diffExit = false } = {}) => {
-  try { return execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }); }
+  try { return execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }); }
   catch (e) { return diffExit && e.status === 1 && typeof e.stdout === 'string' ? e.stdout : null; }
 };
 const bail = (msg) => { console.error('floor-guard: ' + msg); process.exit(2); };
+if (!root) bail('not inside a git repository');
 
 const base = (() => {
   const i = process.argv.indexOf('--base');

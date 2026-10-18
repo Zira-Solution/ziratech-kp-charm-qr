@@ -39,12 +39,12 @@ const NAV_ITEMS: NavItem[] = [
     desc: "Đặt sớm giữ trọn mẫu hoa độc quyền",
   },
   {
-    href: "#keepsake-templates",
+    href: "#keepsake",
     id: "keepsake",
-    label: "Thiệp mẫu 20/10",
-    shortLabel: "Thiệp mẫu",
+    label: "Thiệp số 20/10",
+    shortLabel: "Thiệp số",
     icon: "auto_stories",
-    desc: "Khám phá 2 mẫu thiệp: Storybook & Messenger",
+    desc: "Thiệp số kỷ niệm đa phương tiện & bảo mật",
   },
   {
     href: "#shelter",

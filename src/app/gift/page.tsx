@@ -60,6 +60,10 @@ function CreatorPortalContent() {
         throw new Error(data.error || "Mã thiệp hoặc OTP tạo thiệp không đúng.");
       }
 
+      try {
+        sessionStorage.setItem(`kp_verified_${code}`, "true");
+      } catch {}
+
       router.push(data.redirectUrl);
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Đã xảy ra lỗi kiểm tra mã.");

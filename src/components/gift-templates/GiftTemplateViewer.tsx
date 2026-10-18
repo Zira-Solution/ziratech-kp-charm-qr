@@ -250,7 +250,7 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
           aria-pressed={music.playing}
           aria-label={music.playing ? "Tắt âm thanh" : "Bật âm thanh"}
           title={music.playing ? "Tắt loa nhạc nền" : "Bật loa nhạc nền"}
-          className="absolute left-3.5 top-3.5 z-40 flex items-center gap-1.5 min-h-10 px-3.5 rounded-full border border-white/80 bg-white/75 hover:bg-white text-stone-700 backdrop-blur-xl shadow-[0_4px_16px_0_rgba(0,0,0,0.08),inset_0_1px_1px_0_rgba(255,255,255,0.95)] hover:shadow-[0_6px_20px_0_rgba(0,0,0,0.12)] active:scale-95 transition-all duration-300 cursor-pointer"
+          className="absolute left-3.5 top-3.5 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-white/80 bg-white/75 hover:bg-white text-stone-700 backdrop-blur-xl shadow-[0_4px_16px_0_rgba(0,0,0,0.08),inset_0_1px_1px_0_rgba(255,255,255,0.95)] hover:shadow-[0_6px_20px_0_rgba(0,0,0,0.12)] active:scale-95 transition-all duration-300 cursor-pointer"
         >
           <span
             aria-hidden="true"
@@ -260,14 +260,11 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
           >
             {music.playing ? "volume_up" : "volume_off"}
           </span>
-          <span className="text-xs font-bold font-sans text-stone-700">
-            {music.playing ? "Nhạc: Bật" : "Nhạc: Tắt"}
-          </span>
         </button>
       )}
 
       {(onBack || !embedded) && (
-        <div className={`absolute ${hasMelody ? "left-32 sm:left-36" : "left-3.5"} top-3.5 z-40 flex items-center gap-2`}>
+        <div className={`absolute ${hasMelody ? "left-15 sm:left-16" : "left-3.5"} top-3.5 z-40 flex items-center gap-2`}>
           {onBack && (
             <button type="button" onClick={onBack} className={floating}>
               <span aria-hidden="true" className="material-symbols-outlined text-[16px] leading-none">

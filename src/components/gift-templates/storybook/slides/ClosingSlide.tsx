@@ -5,6 +5,7 @@ import confetti from "canvas-confetti";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
 import StorybookHeader from "./StorybookHeader";
+import { parseAddressing, getDefaultFinalMessage } from "@/components/gift-templates/addressing";
 import { exportHtmlKeepsake } from "@/components/gift-templates/exportHtmlKeepsake";
 
 interface Props {
@@ -40,6 +41,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
 
 export default function ClosingSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
+  const pronouns = parseAddressing(gift.addressing);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -48,9 +50,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
   const [downloadedHtmlName, setDownloadedHtmlName] = useState("");
   const [previewModalUrl, setPreviewModalUrl] = useState<string | null>(null);
 
-  const finalMsg =
-    gift.finalMessage ||
-    "Món quà này sẽ luôn ở đây,\nmỗi khi bạn muốn nhớ lại.";
+  const finalMsg = gift.finalMessage || getDefaultFinalMessage(pronouns);
 
   const handleReplay = () => {
     confetti({
@@ -149,20 +149,20 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
       c.fillStyle = botGrad;
       c.fillRect(0, 1600, canvas.width, 320);
 
-      // 3. Header text: "Cảm ơn bạn ❤️"
+      // 3. Header text: "Cảm ơn [người nhận] ❤️"
       c.textAlign = "center";
       c.textBaseline = "middle";
       c.fillStyle = "#1c3f50";
       c.font = "bold 84px 'Dancing Script', 'Merriweather', serif";
       c.shadowColor = "rgba(255, 255, 255, 0.95)";
       c.shadowBlur = 10;
-      c.fillText("Cảm ơn bạn ❤️", canvas.width / 2, 175);
+      c.fillText(`Cảm ơn ${pronouns.Recipient} ❤️`, canvas.width / 2, 175);
 
       // Subtitle
       c.fillStyle = "#3d2417";
       c.font = "bold 42px 'Dancing Script', 'Merriweather', serif";
       c.shadowBlur = 6;
-      c.fillText("đã đi qua những ngày này cùng mình.", canvas.width / 2, 255);
+      c.fillText(`đã đi qua những ngày này cùng ${pronouns.sender}.`, canvas.width / 2, 255);
       c.shadowBlur = 0;
 
       // 4. White frosted card for the message
@@ -284,12 +284,12 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
             <div className="text-center flex flex-col items-center shrink-0 max-w-4xl px-2">
               <div className="inline-flex items-center justify-center gap-3">
                 <h2 className="font-handwriting font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-[#1c3f50] drop-shadow-[0_2px_4px_rgba(255,255,255,0.9)]">
-                  Cảm ơn bạn
+                  Cảm ơn {pronouns.recipient}
                 </h2>
                 <span className="text-[#c13d28] text-4xl sm:text-5xl lg:text-6xl animate-pulse">❤️</span>
               </div>
               <p className="font-handwriting text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-[#3d2417] font-bold -mt-0.5 lg:-mt-1 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
-                đã đi qua những ngày này cùng mình.
+                đã đi qua những ngày này cùng {pronouns.sender}.
               </p>
 
               {/* Final Message card floating in the sunset sky */}
@@ -350,12 +350,12 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
           <div className="relative z-10 text-center mt-1 flex flex-col items-center shrink-0 px-2">
             <div className="inline-flex items-center justify-center gap-2">
               <h2 className="font-handwriting font-black text-3xl sm:text-4xl text-[#1c3f50] drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]">
-                Cảm ơn bạn
+                Cảm ơn {pronouns.recipient}
               </h2>
               <span className="text-[#c13d28] text-2xl sm:text-3xl animate-pulse">❤️</span>
             </div>
             <p className="font-handwriting text-base sm:text-lg text-[#3d2417] font-bold mt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
-              đã đi qua những ngày này cùng mình.
+              đã đi qua những ngày này cùng {pronouns.sender}.
             </p>
 
             {/* Keepsake Message card floating softly in the pastel sky */}

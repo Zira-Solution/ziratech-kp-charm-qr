@@ -1,9 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import confetti from "canvas-confetti";
 import { RecipientGiftData, DEFAULT_GIFT_DATA } from "./types";
 import { musicPlayerSynth } from "./audio-helper";
+import {
+  parseAddressing,
+  formatSalutation,
+  getDefaultLetterContent,
+  getDefaultVoiceNote,
+  getDefaultFinalMessage,
+} from "./addressing";
 
 interface TemplateProps {
   data?: Partial<RecipientGiftData>;
@@ -118,10 +125,24 @@ export default function StorybookSunsetTemplate({
   const voiceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Slide 2 Letter Typewriter Effect
-  const letterSalutation = `Gửi ${data.recipientName || "bạn"},`;
-  const letterBody =
-    data.letterContent ||
-    "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này.";
+  const pronouns = parseAddressing(data.addressing);
+  const togetherLead =
+    pronouns.sender !== "mình"
+      ? `${pronouns.Sender} và ${pronouns.recipient} đã có`
+      : "Chúng mình đã có";
+
+  const slideTitles = [
+    { id: 1, title: "Mở món quà", label: "Có một món quà", icon: "featured_seasonal_and_gifts" },
+    { id: 2, title: "Bức thư tay", label: `Lời nhắn gửi ${pronouns.recipient}`, icon: "mail" },
+    { id: 3, title: "Những ngày như thế", label: "Album kỷ niệm", icon: "photo_library" },
+    { id: 4, title: `Video dành cho ${pronouns.recipient}`, label: "Thước phim kỷ niệm", icon: "movie" },
+    { id: 5, title: "Giai điệu kỷ niệm", label: "Băng cassette âm nhạc", icon: "graphic_eq" },
+    { id: 6, title: `Giọng nói của ${pronouns.sender}`, label: "Lời nhắn giọng nói", icon: "mic" },
+    { id: 7, title: "Lời cảm ơn", label: "Lưu giữ kỷ niệm", icon: "favorite" },
+  ];
+
+  const letterSalutation = formatSalutation(data.recipientName, pronouns.recipient);
+  const letterBody = data.letterContent || getDefaultLetterContent(pronouns);
   const letterSig = data.senderName ? `— ${data.senderName}` : "";
   const letterTotalLength = letterSalutation.length + letterBody.length + letterSig.length;
   const [letterTypedCount, setLetterTypedCount] = useState(0);
@@ -388,7 +409,7 @@ export default function StorybookSunsetTemplate({
             món quà
           </h1>
           <span className="block font-handwriting text-xl sm:text-2xl text-[#1c3f50] font-bold italic mt-0.5 drop-shadow-xs relative z-10">
-            dành cho bạn
+            dành cho {data.recipientName || pronouns.recipient}
           </span>
         </div>
       </div>
@@ -499,7 +520,7 @@ export default function StorybookSunsetTemplate({
         </h2>
         <div className="flex items-center justify-center gap-2 mt-0.5">
           <span className="font-handwriting text-xl sm:text-2xl text-[#8c4b3e] font-bold italic">
-            Gửi đến bạn...
+            Gửi đến {pronouns.recipient}...
           </span>
           <img src="/thamkhao/heart_2.png" alt="Heart" className="w-6 h-6 object-contain inline-block" />
           <img src="/thamkhao/music_notes.png" alt="Music" className="w-4 h-4 object-contain inline-block" />
@@ -644,7 +665,7 @@ export default function StorybookSunsetTemplate({
       {/* Main Header */}
       <div className="relative z-10 text-center mt-1 flex flex-col items-center">
         <span className="font-handwriting text-lg sm:text-xl text-[#1c3f50] font-bold block -mb-1">
-          Mình đã có
+          {togetherLead}
         </span>
         <div className="flex items-center justify-center gap-2">
           <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#c13d28] tracking-wider uppercase">
@@ -742,7 +763,7 @@ export default function StorybookSunsetTemplate({
 
         <div className="flex items-center justify-center gap-2 -mt-1 transform -rotate-[3deg]">
           <span className="font-handwriting text-2xl sm:text-3xl text-[#c13d28] font-bold italic drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
-            dành cho bạn
+            dành cho {pronouns.recipient}
           </span>
           <span className="text-[#c13d28] text-2xl font-sans inline-block transform -rotate-6">
             ♡
@@ -808,7 +829,7 @@ export default function StorybookSunsetTemplate({
           />
           <div className="absolute inset-0 px-6 py-3 flex items-center justify-center text-center">
             <p className="font-handwriting text-xs sm:text-sm text-[#2e1d1b] font-medium leading-relaxed">
-              Một video đặc biệt gửi riêng cho bạn, với thật nhiều lời muốn nói và những kỷ niệm đẹp...{" "}
+              Một video đặc biệt gửi riêng cho {pronouns.recipient}, với thật nhiều lời muốn nói và những kỷ niệm đẹp...{" "}
               <span className="text-[#c13d28] inline-block font-sans ml-0.5 text-sm">♡</span>
             </p>
           </div>
@@ -844,11 +865,11 @@ export default function StorybookSunsetTemplate({
           Còn một điều
         </span>
         <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#c13d28] tracking-wider uppercase">
-          MÌNH MUỐN NÓI
+          {pronouns.senderUpper} MUỐN NÓI
         </h2>
         <div className="flex items-center justify-center gap-1.5">
           <span className="font-handwriting text-lg sm:text-xl text-[#1c3f50] font-bold">
-            với bạn
+            với {pronouns.recipient}
           </span>
           <img src="/thamkhao/music_notes.png" alt="Notes" className="w-4 h-4 object-contain" />
         </div>
@@ -1002,7 +1023,7 @@ export default function StorybookSunsetTemplate({
         </h2>
         <div className="flex items-center justify-center gap-1.5">
           <span className="font-handwriting text-lg sm:text-xl text-[#1c3f50] font-bold">
-            của mình
+            của {pronouns.sender}
           </span>
           <img src="/thamkhao/microphone.png" alt="Mic" className="w-5 h-5 object-contain inline-block" />
         </div>
@@ -1112,8 +1133,7 @@ export default function StorybookSunsetTemplate({
           {/* Note Quote with outlined heart */}
           <div className="text-center pt-1 max-w-xs mx-auto">
             <p className="font-handwriting text-xs sm:text-sm text-[#172b3a] leading-snug font-semibold">
-              {data.voiceNote?.noteText ||
-                "Có những điều viết ra vẫn chưa đủ. Nên lần này, mình muốn bạn nghe bằng chính giọng nói của mình."}
+              {data.voiceNote?.noteText || getDefaultVoiceNote(pronouns)}
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -1152,18 +1172,18 @@ export default function StorybookSunsetTemplate({
       <div className="relative z-10 text-center mt-2 flex flex-col items-center px-2">
         <div className="inline-flex items-center justify-center gap-2">
           <h2 className="font-handwriting font-black text-3xl sm:text-4xl text-[#1c3f50] drop-shadow-md">
-            Cảm ơn bạn
+            Cảm ơn {pronouns.Recipient}
           </h2>
           <span className="text-[#c13d28] text-2xl sm:text-3xl animate-pulse">❤️</span>
         </div>
         <p className="font-handwriting text-base sm:text-lg text-[#3d2417] font-bold mt-0.5 drop-shadow-xs">
-          đã đi qua những ngày này cùng mình.
+          đã đi qua những ngày này cùng {pronouns.sender}.
         </p>
 
         {/* Message card floating softly in the pastel sky */}
         <div className="mt-2 px-4 py-2 rounded-2xl bg-white/80 backdrop-blur-xs border border-white/85 shadow-sm max-w-[280px] sm:max-w-xs text-center">
           <p className="font-handwriting text-sm sm:text-base text-[#2e1d1b] font-semibold leading-snug">
-            Món quà này sẽ luôn ở đây, mỗi khi bạn muốn nhớ lại.
+            {data.finalMessage || getDefaultFinalMessage(pronouns)}
           </p>
         </div>
       </div>
@@ -1233,7 +1253,7 @@ export default function StorybookSunsetTemplate({
 
             {/* Chapters list */}
             <div className="flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto">
-              {SLIDE_TITLES.map((item) => (
+              {slideTitles.map((item) => (
                 <button
                   key={item.id}
                   type="button"

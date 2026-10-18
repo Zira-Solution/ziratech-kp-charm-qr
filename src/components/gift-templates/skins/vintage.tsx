@@ -1,6 +1,7 @@
 import React from "react";
 import { Sticker } from "../slides/Art";
 import type { Skin, SlideKind } from "../slides/skin";
+import { parseAddressing } from "../addressing";
 
 const ART = "/thamkhao";
 
@@ -41,25 +42,32 @@ export const VINTAGE_SKIN: Skin = {
   photoFrame: "polaroid-card -rotate-2",
 
   title(kind: SlideKind, gift) {
+    const pronouns = parseAddressing(gift.addressing);
     switch (kind) {
       case "open":
-        return { title: "Có một món quà", sub: `gửi ${gift.recipientName || "bạn"}` };
+        return { title: "Có một món quà", sub: `gửi ${gift.recipientName || pronouns.recipient}` };
       case "letter":
-        return { title: gift.letter?.title || "Lời nhắn", sub: gift.letter?.subtitle || "Gửi đến bạn…" };
+        return { title: gift.letter?.title || "Lời nhắn", sub: gift.letter?.subtitle || `Gửi đến ${pronouns.recipient}…` };
       case "photos":
-        return { title: "Những trang kỷ niệm", sub: "Dán vào sổ nhỏ của mình" };
+        return {
+          title: "Những trang kỷ niệm",
+          sub: pronouns.sender !== "mình" ? `Dán vào sổ nhỏ của ${pronouns.sender}` : "Dán vào sổ nhỏ của mình",
+        };
       case "video":
-        return { title: "Thước phim cũ", sub: "Một đoạn ký ức" };
+        return { title: "Thước phim cũ", sub: `Dành cho ${pronouns.recipient}` };
       case "music":
-        return { title: "Giai điệu xưa", sub: "Bài hát của mình" };
+        return {
+          title: "Giai điệu xưa",
+          sub: `Bài hát của ${pronouns.sender === "mình" ? "mình" : `${pronouns.sender} và ${pronouns.recipient}`}`,
+        };
       case "voice":
-        return { title: "Giọng nói của mình", sub: "Lời nhắn giọng nói" };
+        return { title: `Giọng nói của ${pronouns.sender}`, sub: "Lời nhắn giọng nói" };
       case "anniversary":
         return { title: "Ngày đáng nhớ", sub: "Những ngày bên nhau" };
       case "timeline":
         return { title: "Dòng thời gian", sub: "Những khoảnh khắc đáng nhớ" };
       case "closing":
-        return { title: "Cảm ơn bạn", sub: "đã đọc hết cuốn sổ này" };
+        return { title: `Cảm ơn ${pronouns.Recipient}`, sub: `đã đọc hết cuốn sổ của ${pronouns.sender}` };
     }
   },
 

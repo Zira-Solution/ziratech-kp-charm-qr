@@ -1,4 +1,12 @@
 import type { ViewerGift } from "./normalize";
+import {
+  parseAddressing,
+  formatSalutation,
+  getDefaultLetterContent,
+  getDefaultLetterSubtitle,
+  getDefaultVoiceNote,
+  getDefaultFinalMessage,
+} from "./addressing";
 
 /**
  * Compresses and inlines an image to a Base64 data URL via Canvas.
@@ -45,9 +53,10 @@ async function fetchImageAsDataUrl(url: string, maxWidth = 1280, quality = 0.82)
  * The recipient can open it offline on any device (iOS, Android, PC, Mac) without needing internet or server.
  */
 export async function exportHtmlKeepsake(gift: ViewerGift): Promise<string> {
-  const recipient = gift.recipientName || "Bạn";
+  const pronouns = parseAddressing(gift.addressing);
+  const recipient = gift.recipientName || pronouns.Recipient;
   const sender = gift.sender || "";
-  const finalMsg = gift.finalMessage || "Món quà này sẽ luôn ở đây,\nmỗi khi bạn muốn nhớ lại.";
+  const finalMsg = gift.finalMessage || getDefaultFinalMessage(pronouns);
 
   // Pre-inline key template graphics
   const [
@@ -83,19 +92,16 @@ export async function exportHtmlKeepsake(gift: ViewerGift): Promise<string> {
   );
 
   const letterTitle = gift.letter?.title || "LỜI NHẮN";
-  const letterSubtitle = gift.letter?.subtitle || "Gửi đến bạn...";
-  const letterContent =
-    gift.letter?.content ||
-    "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này.";
+  const letterSubtitle = gift.letter?.subtitle || getDefaultLetterSubtitle(pronouns);
+  const letterContent = gift.letter?.content || getDefaultLetterContent(pronouns);
   const letterSig = gift.letter?.signature || sender;
+  const salutationText = formatSalutation(gift.recipientName, pronouns.recipient);
 
   const videoUrl = gift.video || "https://youtu.be/dQw4w9WgXcQ";
   const songTitle = gift.song?.title || "Giai điệu kỷ niệm";
   const songArtist = gift.song?.artist || "K&P Melody";
   const voiceDuration = gift.voice?.duration || "02:34";
-  const voiceNote =
-    gift.voice?.noteText ||
-    "Có những điều viết ra vẫn chưa đủ. Nên lần này, mình muốn bạn nghe bằng chính giọng nói của mình. ❤️";
+  const voiceNote = gift.voice?.noteText || getDefaultVoiceNote(pronouns);
 
   const photosJson = JSON.stringify(inlinedPhotos);
 
@@ -564,7 +570,7 @@ export async function exportHtmlKeepsake(gift: ViewerGift): Promise<string> {
             </div>
 
             <div class="font-handwriting" style="font-size: 20px; font-weight: 700; color: #1c3f50;" id="letter-salutation">
-              Gửi ${recipient},
+              ${salutationText}
             </div>
             <p class="font-handwriting" style="font-size: 17px; color: #2e1d1b; white-space: pre-line; margin-top: 4px;" id="letter-body">
               ${letterContent}
@@ -651,7 +657,7 @@ export async function exportHtmlKeepsake(gift: ViewerGift): Promise<string> {
             GIAI ĐIỆU KỶ NIỆM
           </h2>
           <p class="font-handwriting" style="font-size: 20px; font-style: italic; color: #8c4b3e; font-weight: 700;">
-            Khúc nhạc dành riêng bạn...
+            Khúc nhạc dành riêng ${pronouns.recipient}...
           </p>
         </div>
 
@@ -689,7 +695,7 @@ export async function exportHtmlKeepsake(gift: ViewerGift): Promise<string> {
       <div class="slide" id="slide-6" style="background-image: url('${bgUrl}');">
         <div style="text-align: center; margin-top: 46px;">
           <h2 class="font-serif" style="font-size: 26px; font-weight: 800; color: #1c3f50;">
-            GIỌNG NÓI CỦA MÌNH
+            GIỌNG NÓI CỦA ${pronouns.senderUpper}
           </h2>
           <p class="font-handwriting" style="font-size: 20px; font-style: italic; color: #8c4b3e; font-weight: 700;">
             Lắng nghe tâm sự...
@@ -730,12 +736,12 @@ export async function exportHtmlKeepsake(gift: ViewerGift): Promise<string> {
         <div style="position: relative; z-index: 10; text-align: center; margin-top: 48px;">
           <div style="display: inline-flex; align-items: center; gap: 6px;">
             <h2 class="font-handwriting" style="font-size: 38px; font-weight: 700; color: #1c3f50; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">
-              Cảm ơn bạn
+              Cảm ơn ${pronouns.Recipient}
             </h2>
             <span style="font-size: 28px;">❤️</span>
           </div>
           <p class="font-handwriting" style="font-size: 18px; font-weight: 700; color: #3d2417; text-shadow: 0 1px 1px rgba(255,255,255,0.8);">
-            đã đi qua những ngày này cùng mình.
+            đã đi qua những ngày này cùng ${pronouns.sender}.
           </p>
 
           <!-- Keepsake message note -->
@@ -790,11 +796,11 @@ export async function exportHtmlKeepsake(gift: ViewerGift): Promise<string> {
 
     const CHAPTERS = [
       { id: 1, title: "Mở món quà", label: "Có một món quà" },
-      { id: 2, title: "Bức thư tay", label: "Lời nhắn gửi bạn" },
+      { id: 2, title: "Bức thư tay", label: "Lời nhắn gửi " + pronouns.recipient },
       { id: 3, title: "Những ngày như thế", label: "Album kỷ niệm" },
-      { id: 4, title: "Video dành cho bạn", label: "Thước phim kỷ niệm" },
+      { id: 4, title: "Video dành cho " + pronouns.recipient, label: "Thước phim kỷ niệm" },
       { id: 5, title: "Giai điệu kỷ niệm", label: "Băng cassette âm nhạc" },
-      { id: 6, title: "Giọng nói của mình", label: "Lời nhắn giọng nói" },
+      { id: 6, title: "Giọng nói của " + pronouns.sender, label: "Lời nhắn giọng nói" },
       { id: 7, title: "Lời cảm ơn", label: "Lưu giữ kỷ niệm" },
     ];
 

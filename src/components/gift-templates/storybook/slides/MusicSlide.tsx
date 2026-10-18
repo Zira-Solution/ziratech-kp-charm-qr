@@ -6,6 +6,7 @@ import type { SlideDef, TemplateContext } from "@/components/gift-templates/temp
 import { useMusicPlayer } from "@/components/gift-templates/media/useMusicPlayer";
 import { toMusicEmbed } from "@/lib/media/embed";
 import { formatClock } from "@/components/studio/recorder";
+import { parseAddressing } from "@/components/gift-templates/addressing";
 import StorybookHeader from "./StorybookHeader";
 
 interface Props {
@@ -23,6 +24,7 @@ const TOTAL_SECONDS = 154; // 2:34
 
 export default function MusicSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
+  const pronouns = parseAddressing(gift.addressing);
   const song = gift.song;
   const isPreset = !song || song.source === "preset";
   const presetId = song?.source === "preset" ? song.presetId : "lofi";
@@ -222,11 +224,11 @@ export default function MusicSlide({ gift, ctx, slides }: Props) {
                   Còn một điều
                 </span>
                 <h2 className="font-serif font-black text-4xl lg:text-5xl xl:text-6xl text-[#ba4230] tracking-wider uppercase drop-shadow-2xs leading-tight my-1">
-                  MÌNH MUỐN NÓI
+                  {pronouns.senderUpper} MUỐN NÓI
                 </h2>
                 <div className="flex items-center justify-center gap-2 mt-1">
                   <span className="font-handwriting text-2xl lg:text-3xl text-[#172b3a] font-bold">
-                    với bạn
+                    với {pronouns.recipient}
                   </span>
                   <img src="/thamkhao/music_notes.png" alt="Nốt nhạc" className="w-5 h-5 object-contain inline-block" />
                 </div>
@@ -264,11 +266,11 @@ export default function MusicSlide({ gift, ctx, slides }: Props) {
               Còn một điều
             </span>
             <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#ba4230] tracking-wider uppercase drop-shadow-2xs">
-              MÌNH MUỐN NÓI
+              {pronouns.senderUpper} MUỐN NÓI
             </h2>
             <div className="flex items-center justify-center gap-1.5 mt-0.5">
               <span className="font-handwriting text-lg sm:text-xl text-[#172b3a] font-bold">
-                với bạn
+                với {pronouns.recipient}
               </span>
               <img src="/thamkhao/music_notes.png" alt="Nốt nhạc" className="w-4 h-4 object-contain inline-block" />
             </div>

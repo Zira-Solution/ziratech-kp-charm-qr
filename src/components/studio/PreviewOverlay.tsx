@@ -8,6 +8,13 @@ import type { GiftTemplateId } from "../gift-templates/types";
 import { draftToPayload, type GiftDraft } from "./draft";
 import { Icon } from "./ui";
 import { useMusicPlayer } from "../gift-templates/media/useMusicPlayer";
+import {
+  parseAddressing,
+  getDefaultLetterContent,
+  getDefaultLetterSubtitle,
+  getDefaultVoiceNote,
+  getDefaultFinalMessage,
+} from "../gift-templates/addressing";
 
 type Device = "fill" | "phone" | "tablet" | "desktop";
 
@@ -84,14 +91,29 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
   const music = useMusicPlayer(draft.song.source === "preset" ? (draft.song.presetId || "lofi") : "lofi");
 
   const demoGift = useMemo<ViewerGift>(() => {
+    const addressing = draft.addressing?.trim() || STORYBOOK_DEMO_GIFT.addressing;
+    const pronouns = parseAddressing(addressing);
     return {
       ...STORYBOOK_DEMO_GIFT,
       template,
+      addressing,
       recipientName: draft.recipientName?.trim() || STORYBOOK_DEMO_GIFT.recipientName,
       sender: draft.anonymous ? "" : (draft.senderName?.trim() || STORYBOOK_DEMO_GIFT.sender),
       anonymous: draft.anonymous,
+      letter: {
+        ...STORYBOOK_DEMO_GIFT.letter!,
+        subtitle: getDefaultLetterSubtitle(pronouns),
+        content: getDefaultLetterContent(pronouns),
+      },
+      voice: STORYBOOK_DEMO_GIFT.voice
+        ? {
+            ...STORYBOOK_DEMO_GIFT.voice,
+            noteText: getDefaultVoiceNote(pronouns),
+          }
+        : undefined,
+      finalMessage: getDefaultFinalMessage(pronouns),
     };
-  }, [template, draft.recipientName, draft.senderName, draft.anonymous]);
+  }, [template, draft.addressing, draft.recipientName, draft.senderName, draft.anonymous]);
 
   const draftGift = useMemo(() => normalizeGift({ ...draftToPayload(draft).giftData, template }), [draft, template]);
 

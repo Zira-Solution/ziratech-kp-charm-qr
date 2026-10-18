@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
+import { parseAddressing } from "@/components/gift-templates/addressing";
 import StorybookHeader from "./StorybookHeader";
 
 interface Props {
@@ -19,6 +20,11 @@ interface PhotoItem {
 
 export default function PhotosSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
+  const pronouns = parseAddressing(gift.addressing);
+  const togetherLead =
+    pronouns.sender !== "mình"
+      ? `${pronouns.Sender} và ${pronouns.recipient} đã có`
+      : "Chúng mình đã có";
   const [activeModalPhoto, setActiveModalPhoto] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -88,7 +94,7 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
             {/* Left: Title & Vintage Camera Motif */}
             <div className="col-span-4 flex flex-col items-center justify-center text-center px-4 relative">
               <span className="font-handwriting text-2xl lg:text-3xl text-[#1c3f50] font-bold block mb-1">
-                Mình đã có
+                {togetherLead}
               </span>
               <div className="flex items-center justify-center gap-3">
                 <h2 className="font-serif font-black text-4xl lg:text-5xl text-[#c13d28] tracking-wider uppercase drop-shadow-2xs">
@@ -184,7 +190,7 @@ export default function PhotosSlide({ gift, ctx, slides }: Props) {
           {/* Main Header */}
           <div className="relative z-10 text-center mt-1 flex flex-col items-center shrink-0">
             <span className="font-handwriting text-lg sm:text-xl text-[#1c3f50] font-bold block -mb-1">
-              Mình đã có
+              {togetherLead}
             </span>
             <div className="flex items-center justify-center gap-2">
               <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#c13d28] tracking-wider uppercase">

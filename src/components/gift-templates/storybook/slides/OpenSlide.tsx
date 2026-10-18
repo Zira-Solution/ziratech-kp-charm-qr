@@ -4,6 +4,7 @@ import React from "react";
 import confetti from "canvas-confetti";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
+import { parseAddressing } from "@/components/gift-templates/addressing";
 import StorybookHeader from "./StorybookHeader";
 
 interface Props {
@@ -14,7 +15,8 @@ interface Props {
 
 export default function OpenSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
-  const recipient = gift.recipientName || "bạn";
+  const pronouns = parseAddressing(gift.addressing);
+  const recipient = gift.recipientName || pronouns.recipient;
 
   // Navigation targets from the wooden signpost boards
   const findSlide = (id: string) => {

@@ -53,6 +53,11 @@ export default function CardStudioPage() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [saving, setSaving] = useState(false);
 
+  // The writing desk has three steps: 1. Pick template & blocks, 2. Write content, 3. Finish & Save.
+  const [stage, setStage] = useState<Stage>(1);
+  const [reached, setReached] = useState<Stage>(1);
+  const focusTarget = useRef<string | null>(null);
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<GiftTemplateId>("storybook-sunset");
   const [previewInitialMode, setPreviewInitialMode] = useState<"demo" | "draft">("demo");
@@ -203,10 +208,6 @@ export default function CardStudioPage() {
     showToast(text, "info", 2500);
   };
 
-  // The writing desk has three steps: 1. Pick template & blocks, 2. Write content, 3. Finish & Save.
-  const [stage, setStage] = useState<Stage>(1);
-  const [reached, setReached] = useState<Stage>(1);
-  const focusTarget = useRef<string | null>(null);
 
   // Auto-save draft and stage to localStorage on every change
   useEffect(() => {

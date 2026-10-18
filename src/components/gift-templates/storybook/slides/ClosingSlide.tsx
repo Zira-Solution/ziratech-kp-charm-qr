@@ -51,6 +51,8 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
   const [previewModalUrl, setPreviewModalUrl] = useState<string | null>(null);
 
   const finalMsg = gift.finalMessage || getDefaultFinalMessage(pronouns);
+  const closingTitle = gift.finalTitle || `Cảm ơn ${pronouns.recipient}`;
+  const closingSubtitle = gift.finalSubtitle || `đã đi qua những ngày này cùng ${pronouns.sender}.`;
 
   const handleReplay = () => {
     confetti({
@@ -156,13 +158,13 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
       c.font = "bold 84px 'Dancing Script', 'Merriweather', serif";
       c.shadowColor = "rgba(255, 255, 255, 0.95)";
       c.shadowBlur = 10;
-      c.fillText(`Cảm ơn ${pronouns.Recipient} ❤️`, canvas.width / 2, 175);
+      c.fillText(`${closingTitle} ❤️`, canvas.width / 2, 175);
 
       // Subtitle
       c.fillStyle = "#3d2417";
       c.font = "bold 42px 'Dancing Script', 'Merriweather', serif";
       c.shadowBlur = 6;
-      c.fillText(`đã đi qua những ngày này cùng ${pronouns.sender}.`, canvas.width / 2, 255);
+      c.fillText(closingSubtitle, canvas.width / 2, 255);
       c.shadowBlur = 0;
 
       // 4. White frosted card for the message
@@ -284,12 +286,12 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
             <div className="text-center flex flex-col items-center shrink-0 max-w-4xl px-2">
               <div className="inline-flex items-center justify-center gap-3">
                 <h2 className="font-handwriting font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-[#1c3f50] drop-shadow-[0_2px_4px_rgba(255,255,255,0.9)]">
-                  Cảm ơn {pronouns.recipient}
+                  {closingTitle}
                 </h2>
                 <span className="text-[#c13d28] text-4xl sm:text-5xl lg:text-6xl animate-pulse">❤️</span>
               </div>
               <p className="font-handwriting text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-[#3d2417] font-bold -mt-0.5 lg:-mt-1 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
-                đã đi qua những ngày này cùng {pronouns.sender}.
+                {closingSubtitle}
               </p>
 
               {/* Final Message card floating in the sunset sky */}
@@ -350,12 +352,12 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
           <div className="relative z-10 text-center mt-1 flex flex-col items-center shrink-0 px-2">
             <div className="inline-flex items-center justify-center gap-2">
               <h2 className="font-handwriting font-black text-3xl sm:text-4xl text-[#1c3f50] drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]">
-                Cảm ơn {pronouns.recipient}
+                {closingTitle}
               </h2>
               <span className="text-[#c13d28] text-2xl sm:text-3xl animate-pulse">❤️</span>
             </div>
             <p className="font-handwriting text-base sm:text-lg text-[#3d2417] font-bold mt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
-              đã đi qua những ngày này cùng {pronouns.sender}.
+              {closingSubtitle}
             </p>
 
             {/* Keepsake Message card floating softly in the pastel sky */}

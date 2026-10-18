@@ -121,20 +121,6 @@ export default function Preorder() {
               </p>
             )}
           </form>
-
-          <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 opacity-60 bg-white/40 backdrop-blur-md p-4 rounded-3xl sm:rounded-full border border-white/50">
-            <div className="flex items-center gap-2 px-2">
-              <span className="material-symbols-outlined text-outline">history_toggle_off</span>
-              <span className="font-sans text-xs text-on-surface-variant italic">Minh họa trạng thái sau 23:59 ngày 18/10:</span>
-            </div>
-            <button
-              className="px-5 py-2 rounded-full bg-white/50 text-on-surface-variant font-sans text-xs font-semibold cursor-not-allowed border border-white/40"
-              disabled
-              type="button"
-            >
-              Đã hết hạn đặt trước hoa
-            </button>
-          </div>
         </div>
       </div>
     </section>

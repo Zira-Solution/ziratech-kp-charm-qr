@@ -203,20 +203,6 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
                         isFinished ? "opacity-90 scale-100" : "opacity-0 scale-75"
                       }`}
                     />
-                    {isFinished && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setTypedCount(0);
-                        }}
-                        className="inline-flex items-center gap-1 text-xs text-[#8c4b3e]/70 hover:text-[#c13d28] font-sans transition-colors mt-2 cursor-pointer"
-                        title="Xem lại hiệu ứng viết thư"
-                      >
-                        <span className="material-symbols-outlined text-[15px]">replay</span>
-                        <span>Viết lại</span>
-                      </button>
-                    )}
                   </div>
                 </div>
               </div>
@@ -322,7 +308,7 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
                 </div>
               )}
 
-              {/* Heart Signature & Replay */}
+              {/* Heart Signature */}
               <div className="flex flex-col items-center justify-center mt-2 pb-1">
                 <img
                   src="/thamkhao/heart.png"
@@ -331,20 +317,6 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
                     isFinished ? "opacity-100 scale-100" : "opacity-0 scale-75"
                   } hover:scale-125`}
                 />
-                {isFinished && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setTypedCount(0);
-                    }}
-                    className="inline-flex items-center gap-1 text-[10px] text-[#8c4b3e]/70 hover:text-[#c13d28] font-sans transition-colors mt-1.5 cursor-pointer"
-                    title="Xem lại hiệu ứng viết thư"
-                  >
-                    <span className="material-symbols-outlined text-[13px]">replay</span>
-                    <span>Viết lại</span>
-                  </button>
-                )}
               </div>
             </div>
           </div>

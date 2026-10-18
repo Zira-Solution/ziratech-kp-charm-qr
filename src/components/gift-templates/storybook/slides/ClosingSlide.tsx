@@ -5,6 +5,7 @@ import confetti from "canvas-confetti";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
 import StorybookHeader from "./StorybookHeader";
+import { exportHtmlKeepsake } from "@/components/gift-templates/exportHtmlKeepsake";
 
 interface Props {
   gift: ViewerGift;
@@ -40,7 +41,11 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
 export default function ClosingSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGeneratingPng, setIsGeneratingPng] = useState(false);
+  const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+  const [downloadedHtmlName, setDownloadedHtmlName] = useState("");
   const [previewModalUrl, setPreviewModalUrl] = useState<string | null>(null);
 
   const finalMsg =
@@ -57,9 +62,55 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
     ctx.go(0);
   };
 
-  const handleSaveKeepsake = async () => {
+  /**
+   * Tải toàn bộ thiệp dưới dạng file HTML độc lập (offline single-file storybook)
+   * Người nhận có thể mở xem trọn vẹn 7 trang từ đầu tới cuối mà không cần mạng.
+   */
+  const handleDownloadHtmlKeepsake = async () => {
     if (isGenerating) return;
     setIsGenerating(true);
+
+    try {
+      const htmlContent = await exportHtmlKeepsake(gift);
+      const filename = `thiep-ky-niem-${(gift.recipientName || "20-10").toLowerCase().replace(/\s+/g, "-")}.html`;
+
+      const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      // Confetti celebration
+      confetti({
+        particleCount: 120,
+        spread: 85,
+        origin: { y: 0.5 },
+        colors: ["#c13d28", "#d99b26", "#fea095", "#ffffff"],
+      });
+
+      setDownloadedHtmlName(filename);
+      setSuccessMessage("Đã tải thiệp HTML trọn vẹn về máy!");
+      setSavedSuccess(true);
+      setDownloadModalOpen(true);
+      setTimeout(() => setSavedSuccess(false), 5000);
+    } catch (err) {
+      console.error("Lỗi đóng gói file thiệp HTML:", err);
+      alert("Không thể đóng gói file thiệp HTML. Vui lòng thử lại!");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  /**
+   * Tải ảnh thẻ PNG nếu người dùng muốn làm hình nền điện thoại
+   */
+  const handleSavePngCard = async () => {
+    if (isGeneratingPng) return;
+    setIsGeneratingPng(true);
 
     try {
       const canvas = document.createElement("canvas");
@@ -201,7 +252,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
     } catch (err) {
       console.error("Lỗi tạo ảnh thiệp kỷ niệm:", err);
     } finally {
-      setIsGenerating(false);
+      setIsGeneratingPng(false);
     }
   };
 
@@ -220,7 +271,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
           className="fixed top-8 left-1/2 -translate-x-1/2 z-50 rounded-full bg-white/95 px-6 py-2.5 shadow-2xl border border-rose-200 backdrop-blur-md flex items-center gap-2 text-xs font-bold text-[#c13d28] animate-in fade-in slide-in-from-top-4 duration-300"
         >
           <span className="material-symbols-outlined text-[18px]">check_circle</span>
-          <span>Đã tải ảnh thiệp về máy & sao chép liên kết!</span>
+          <span>{successMessage || "Đã tải thiệp về máy & sao chép liên kết!"}</span>
         </div>
       )}
 
@@ -271,19 +322,19 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
 
               <button
                 type="button"
-                onClick={handleSaveKeepsake}
+                onClick={handleDownloadHtmlKeepsake}
                 disabled={isGenerating}
                 className="py-2.5 px-8 sm:py-3 sm:px-10 lg:py-3.5 lg:px-12 rounded-full bg-[#c13d28] hover:bg-[#a83232] text-white font-serif font-bold text-base sm:text-lg lg:text-xl shadow-2xl border-2 border-white/80 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-75"
               >
                 {isGenerating ? (
                   <>
                     <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Đang tạo ảnh...</span>
+                    <span>Đang đóng gói thiệp...</span>
                   </>
                 ) : (
                   <>
                     <span className="material-symbols-outlined text-[22px] lg:text-[26px]">download</span>
-                    <span>Lưu ảnh thiệp</span>
+                    <span>Lưu thiệp trọn vẹn (HTML)</span>
                   </>
                 )}
               </button>
@@ -328,7 +379,7 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
             <button
               type="button"
               onClick={handleReplay}
-              className="flex-1 max-w-[140px] py-2.5 px-4 rounded-full bg-[#1c3f50]/95 hover:bg-[#142d3a] text-white font-serif font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer backdrop-blur-xs"
+              className="flex-1 max-w-[130px] py-2.5 px-4 rounded-full bg-[#1c3f50]/95 hover:bg-[#142d3a] text-white font-serif font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer backdrop-blur-xs"
             >
               <span className="material-symbols-outlined text-[18px]">replay</span>
               <span>Xem lại</span>
@@ -336,22 +387,103 @@ export default function ClosingSlide({ gift, ctx, slides }: Props) {
 
             <button
               type="button"
-              onClick={handleSaveKeepsake}
+              onClick={handleDownloadHtmlKeepsake}
               disabled={isGenerating}
-              className="flex-1 max-w-[140px] py-2.5 px-4 rounded-full bg-[#c13d28]/95 hover:bg-[#a83232] text-white font-serif font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer backdrop-blur-xs disabled:opacity-75"
+              className="flex-1 max-w-[170px] py-2.5 px-3 rounded-full bg-[#c13d28]/95 hover:bg-[#a83232] text-white font-serif font-bold text-xs sm:text-sm shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer backdrop-blur-xs disabled:opacity-75"
             >
               {isGenerating ? (
                 <>
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Đang tạo...</span>
+                  <span>Đang tải...</span>
                 </>
               ) : (
                 <>
                   <span className="material-symbols-outlined text-[18px]">download</span>
-                  <span>Lưu ảnh thiệp</span>
+                  <span>Tải thiệp (HTML)</span>
                 </>
               )}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* HTML Keepsake Download Success Modal */}
+      {downloadModalOpen && (
+        <div
+          data-no-swipe
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setDownloadModalOpen(false);
+          }}
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+        >
+          <div className="relative max-w-sm w-full bg-white rounded-3xl p-5 shadow-2xl border border-white/80 flex flex-col items-center animate-in zoom-in-95 duration-200 text-center">
+            <button
+              type="button"
+              onClick={() => setDownloadModalOpen(false)}
+              className="absolute top-3.5 right-3.5 z-10 w-8 h-8 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center hover:bg-stone-200 transition-colors cursor-pointer"
+              title="Đóng"
+            >
+              <span className="material-symbols-outlined text-[18px] font-bold">close</span>
+            </button>
+
+            <div className="w-14 h-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-[#c13d28] mb-3">
+              <span className="material-symbols-outlined text-[32px]">html</span>
+            </div>
+
+            <h3 className="font-serif font-bold text-lg text-[#1c3f50]">Đã Tải Thiệp Kỷ Niệm (HTML)</h3>
+            <p className="text-xs text-stone-600 mt-1 leading-relaxed px-1">
+              File <code className="bg-amber-100 px-1 py-0.5 rounded text-[#c13d28] font-bold">{downloadedHtmlName}</code> đã được lưu về thiết bị của bạn.
+            </p>
+
+            <div className="mt-3 p-3 rounded-2xl bg-stone-50 border border-stone-200 text-left text-xs text-stone-600 space-y-1.5 w-full">
+              <div className="flex items-start gap-2">
+                <span className="text-[#c13d28] font-bold">✓</span>
+                <span>Xem trọn vẹn <strong>7 trang</strong> từ đầu tới cuối (hộp quà, thư tay, album ảnh, video, cassette nhạc, voice).</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-[#c13d28] font-bold">✓</span>
+                <span>Mở xem <strong>offline không cần internet</strong> trên mọi điện thoại & máy tính.</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-[#c13d28] font-bold">✓</span>
+                <span>Dễ dàng gửi tặng qua Zalo, Messenger, Email hoặc lưu vào Google Drive.</span>
+              </div>
+            </div>
+
+            <div className="w-full mt-4 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={handleSavePngCard}
+                disabled={isGeneratingPng}
+                className="w-full py-2.5 px-4 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-75"
+              >
+                {isGeneratingPng ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-stone-600 border-t-transparent rounded-full animate-spin" />
+                    <span>Đang tạo ảnh PNG...</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined text-[17px]">wallpaper</span>
+                    <span>Tải thêm ảnh thẻ làm hình nền (PNG)</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined" && navigator.clipboard) {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert("Đã sao chép liên kết thiệp vào bộ nhớ tạm!");
+                  }
+                }}
+                className="w-full py-2.5 px-4 rounded-full bg-[#1c3f50] hover:bg-[#142d3a] text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[17px]">content_copy</span>
+                <span>Sao chép link xem online</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

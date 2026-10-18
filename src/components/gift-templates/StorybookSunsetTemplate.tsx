@@ -565,20 +565,6 @@ export default function StorybookSunsetTemplate({
                     isLetterFinished ? "opacity-100 scale-100" : "opacity-0 scale-75"
                   } hover:scale-125`}
                 />
-                {isLetterFinished && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setLetterTypedCount(0);
-                    }}
-                    className="inline-flex items-center gap-1 text-[10px] text-[#8c4b3e]/70 hover:text-[#c13d28] font-sans transition-colors mt-1.5 cursor-pointer"
-                    title="Xem lại hiệu ứng viết thư"
-                  >
-                    <span className="material-symbols-outlined text-[13px]">replay</span>
-                    <span>Viết lại</span>
-                  </button>
-                )}
               </div>
             </div>
           </div>

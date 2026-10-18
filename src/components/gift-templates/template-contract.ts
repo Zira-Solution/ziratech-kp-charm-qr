@@ -44,7 +44,7 @@ const BLOCK_SLIDE: Record<BlockId, { label: string; icon: string }> = {
   letter: { label: "Bức thư tay", icon: "mail" },
   photos: { label: "Album kỷ niệm", icon: "photo_library" },
   voice: { label: "Lời nhắn giọng nói", icon: "mic" },
-  video: { label: "Thước phim kỷ niệm", icon: "movie" },
+  video: { label: "Còn một điều muốn nói", icon: "movie" },
   music: { label: "Giai điệu âm nhạc", icon: "music_note" },
   anniversary: { label: "Ngày kỷ niệm", icon: "event" },
   timeline: { label: "Mốc thời gian", icon: "timeline" },
@@ -53,12 +53,12 @@ const BLOCK_SLIDE: Record<BlockId, { label: string; icon: string }> = {
 
 /**
  * Opening, one page per ticked message, closing. The closing line ("Lời kết") is shown on the closing
- * page, so it has no page of its own. A template may use this as it is.
+ * page, so it has no page of its own. Music is played as background melody so it has no separate slide.
  */
 export function defaultSlides(gift: ViewerGift): SlideDef[] {
   return [
     { id: "open", label: "Có một món quà", icon: "featured_seasonal_and_gifts" },
-    ...gift.blocks.filter((block) => block !== "finalMessage").map((block) => ({ id: block, ...BLOCK_SLIDE[block] })),
+    ...gift.blocks.filter((block) => block !== "finalMessage" && block !== "music").map((block) => ({ id: block, ...BLOCK_SLIDE[block] })),
     { id: "closing", label: "Lưu giữ kỷ niệm", icon: "favorite" },
   ];
 }

@@ -120,30 +120,17 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
             {/* Right: Header & Taped Note */}
             <div className="col-span-6 flex flex-col items-center justify-center text-center px-2 lg:px-4">
               <div className="relative mb-4 lg:mb-5">
-                <div className="flex items-center justify-center gap-3 transform -rotate-[5deg]">
-                  <svg
-                    viewBox="0 0 32 32"
-                    className="w-9 h-9 lg:w-12 lg:h-12 text-[#c13d28] fill-none stroke-current"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="3" y="8" width="18" height="15" rx="3.5" />
-                    <polygon points="21,13 29,8 29,23 21,18" />
-                    <circle cx="10" cy="15.5" r="2.5" />
-                  </svg>
-                  <h2 className="font-handwriting font-bold text-6xl sm:text-7xl lg:text-8xl xl:text-9xl text-[#16384c] drop-shadow-xs">
-                    Video
-                  </h2>
-                  <span className="text-[#c13d28] text-4xl lg:text-5xl font-sans inline-block transform rotate-12">
-                    ♡
+                <span className="font-handwriting text-2xl lg:text-3xl text-[#172b3a] font-bold block mb-1 transform -rotate-1">
+                  Còn một điều
+                </span>
+                <h2 className="font-serif font-black text-4xl lg:text-5xl xl:text-6xl text-[#ba4230] tracking-wider uppercase drop-shadow-2xs leading-tight my-1">
+                  {pronouns.senderUpper} MUỐN NÓI
+                </h2>
+                <div className="flex items-center justify-center gap-2 mt-1">
+                  <span className="font-handwriting text-2xl lg:text-3xl text-[#172b3a] font-bold">
+                    với {pronouns.recipient}
                   </span>
-                </div>
-                <div className="flex items-center justify-center gap-2 mt-0.5 lg:mt-1 transform -rotate-[3deg]">
-                  <span className="font-handwriting text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-[#c13d28] font-bold italic drop-shadow-xs">
-                    dành cho {pronouns.recipient}
-                  </span>
-                  <span className="text-[#c13d28] text-2xl lg:text-3xl font-sans inline-block transform -rotate-6">
+                  <span className="text-[#c13d28] text-2xl lg:text-3xl font-sans inline-block transform rotate-12">
                     ♡
                   </span>
                 </div>
@@ -182,40 +169,17 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
             {/* Sparkle top right */}
             <span className="absolute top-1 right-9 text-amber-400 text-xs pointer-events-none select-none">✦</span>
 
-            <div className="relative inline-flex items-center justify-center">
-              {/* Hand-drawn Camcorder Doodle Icon on the left */}
-              <div className="absolute -left-10 sm:-left-12 -top-1 transform -rotate-12 pointer-events-none select-none">
-                <svg
-                  viewBox="0 0 32 32"
-                  className="w-8 h-8 sm:w-9 sm:h-9 text-[#c13d28] fill-none stroke-current"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="8" width="18" height="15" rx="3.5" />
-                  <polygon points="21,13 29,8 29,23 21,18" />
-                  <circle cx="10" cy="15.5" r="2.5" />
-                </svg>
-              </div>
-
-              {/* Tilted Large "Video" */}
-              <div className="flex items-center gap-2 transform -rotate-[6deg]">
-                <h2 className="font-handwriting font-bold text-5xl sm:text-6xl text-[#16384c] tracking-tight drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
-                  Video
-                </h2>
-                {/* Outlined Heart Doodle next to Video */}
-                <span className="text-[#c13d28] text-2xl sm:text-3xl font-sans inline-block transform rotate-12 drop-shadow-xs">
-                  ♡
-                </span>
-              </div>
-            </div>
-
-            {/* "dành cho [người nhận]" slightly tilted with heart doodle */}
-            <div className="flex items-center justify-center gap-2 -mt-1 transform -rotate-[3deg]">
-              <span className="font-handwriting text-2xl sm:text-3xl text-[#c13d28] font-bold italic drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
-                dành cho {pronouns.recipient}
+            <span className="font-handwriting text-lg sm:text-xl text-[#172b3a] font-bold block -mb-0.5 transform -rotate-1">
+              Còn một điều
+            </span>
+            <h2 className="font-serif font-black text-2xl sm:text-3xl text-[#ba4230] tracking-wider uppercase drop-shadow-2xs">
+              {pronouns.senderUpper} MUỐN NÓI
+            </h2>
+            <div className="flex items-center justify-center gap-1.5 mt-0.5">
+              <span className="font-handwriting text-lg sm:text-xl text-[#172b3a] font-bold">
+                với {pronouns.recipient}
               </span>
-              <span className="text-[#c13d28] text-2xl font-sans inline-block transform -rotate-6">
+              <span className="text-[#c13d28] text-lg font-sans inline-block transform rotate-12">
                 ♡
               </span>
             </div>
@@ -331,7 +295,20 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
             >
               {isPlaying && videoUrl ? (
                 <div className="relative h-full w-full">
-                  <VideoEmbed link={videoUrl} aspectRatio={aspect} className="h-full w-full" />
+                  {!videoUrl.includes("youtube.com") &&
+                  !videoUrl.includes("youtu.be") &&
+                  !videoUrl.includes("vimeo.com") &&
+                  !videoUrl.includes("drive.google.com") ? (
+                    <video
+                      src={videoUrl}
+                      controls
+                      autoPlay
+                      playsInline
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <VideoEmbed link={videoUrl} aspectRatio={aspect} className="h-full w-full" />
+                  )}
                 </div>
               ) : (
                 <div

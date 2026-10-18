@@ -69,11 +69,14 @@ export default function GiftTemplateViewer({ gift, refreshVoiceUrl, onBack, back
     setRequested((i) => moveIndex(i, -1, slides.length));
   }, [slides.length]);
 
-  // The built-in melody starts when the card opens. A browser may hold it back until the visitor first touches
-  // the page, so the first touch or key press lets it through, and the button always shows the real state.
-  const hasMelody = gift.song?.source === "preset" || !gift.song;
-  const melodyPreset = gift.song?.source === "preset" ? (gift.song.presetId || "lofi") : "lofi";
-  const music = useMusicPlayer(hasMelody ? melodyPreset : undefined);
+  // The background music starts when the card opens (either uploaded MP3 or built-in melody preset).
+  // A browser may hold it back until the visitor first touches the page, so the first touch lets it through.
+  const isUploadedSong = gift.song?.source === "upload" && Boolean(gift.song.audioUrl);
+  const isPreset = gift.song?.source === "preset" || !gift.song;
+  const hasMelody = isUploadedSong || isPreset;
+  const melodyPreset = isPreset ? (gift.song?.presetId || "lofi") : undefined;
+  const uploadedAudioUrl = isUploadedSong ? gift.song?.audioUrl : undefined;
+  const music = useMusicPlayer(melodyPreset, uploadedAudioUrl);
   useEffect(() => {
     music.start();
     const letSoundIn = () => musicPlayerSynth.resume();

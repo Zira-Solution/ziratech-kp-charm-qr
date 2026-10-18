@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { BLOCK_IDS, BLOCK_LABELS, DEFAULT_BLOCK_ORDER, deriveBlocks, isBlockId } from "../components/gift-templates/blocks.ts";
+import { BLOCK_IDS, BLOCK_LABELS, DEFAULT_BLOCK_ORDER, deriveBlocks, insertBlockInOrder, isBlockId, sortBlocksByDefault } from "../components/gift-templates/blocks.ts";
 
 test("there are eight kinds of message, each with a label and a place in the default order", () => {
   assert.equal(BLOCK_IDS.length, 8);
@@ -47,4 +47,25 @@ test("deriveBlocks ignores empty values, a song with no source and a recording w
 
 test("deriveBlocks counts old highlight photos as photos", () => {
   assert.deepEqual(deriveBlocks({ momentPhotos: [{ url: "https://e.com/a.jpg", caption: "" }] }), ["photos"]);
+});
+
+test("sortBlocksByDefault preserves canonical order with finalMessage last", () => {
+  assert.deepEqual(sortBlocksByDefault(["finalMessage", "video", "letter"]), ["letter", "video", "finalMessage"]);
+  assert.deepEqual(sortBlocksByDefault(["finalMessage", "photos"]), ["photos", "finalMessage"]);
+  assert.deepEqual(sortBlocksByDefault(["timeline", "voice", "letter"]), ["letter", "voice", "timeline"]);
+});
+
+test("insertBlockInOrder keeps finalMessage last and preserves custom user ordering", () => {
+  // Fresh/canonical progression
+  assert.deepEqual(insertBlockInOrder(["letter", "finalMessage"], "video"), ["letter", "video", "finalMessage"]);
+  assert.deepEqual(insertBlockInOrder(["letter", "video", "finalMessage"], "photos"), ["letter", "photos", "video", "finalMessage"]);
+  assert.deepEqual(insertBlockInOrder(["finalMessage"], "letter"), ["letter", "finalMessage"]);
+
+  // Custom ordering made by user in Step 2: user reversed video and letter
+  const custom = ["video", "letter", "finalMessage"] as const;
+  // Adding music should insert before finalMessage without swapping video and letter
+  assert.deepEqual(insertBlockInOrder(custom, "music"), ["video", "letter", "music", "finalMessage"]);
+
+  // If already in list, do not duplicate
+  assert.deepEqual(insertBlockInOrder(["letter", "video"], "video"), ["letter", "video"]);
 });

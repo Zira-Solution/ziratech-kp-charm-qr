@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import confetti from "canvas-confetti";
-import { BLOCK_LABELS, type BlockId } from "@/components/gift-templates/blocks";
+import { BLOCK_LABELS, insertBlockInOrder, sortBlocksByDefault, type BlockId } from "@/components/gift-templates/blocks";
 import type { GiftTemplateId } from "@/components/gift-templates/types";
 import PreviewOverlay from "@/components/studio/PreviewOverlay";
 import { draftFromSaved, draftToPayload, emptyBlocks, emptyDraft, type GiftDraft } from "@/components/studio/draft";
@@ -117,6 +117,16 @@ export default function CardStudioPage() {
           // ignore localStorage error
         }
 
+        if (!saved && Array.isArray(initialDraft.blocks)) {
+          const fmIndex = initialDraft.blocks.indexOf("finalMessage");
+          if (fmIndex !== -1 && fmIndex < initialDraft.blocks.length - 1) {
+            initialDraft = {
+              ...initialDraft,
+              blocks: sortBlocksByDefault(initialDraft.blocks),
+            };
+          }
+        }
+
         setDraft(initialDraft);
         setPreviewTemplate(initialDraft.template);
 
@@ -202,7 +212,10 @@ export default function CardStudioPage() {
 
   const toggleBlock = (block: BlockId) => {
     const ticked = draft.blocks.includes(block);
-    update({ blocks: ticked ? draft.blocks.filter((b) => b !== block) : [...draft.blocks, block] });
+    const nextBlocks = ticked
+      ? draft.blocks.filter((b) => b !== block)
+      : insertBlockInOrder(draft.blocks, block);
+    update({ blocks: nextBlocks });
     const text = ticked ? `Đã bỏ mục ${BLOCK_LABELS[block]}` : `Đã thêm mục ${BLOCK_LABELS[block]}`;
     setAnnouncement(text);
     showToast(text, "info", 2500);
@@ -436,11 +449,11 @@ export default function CardStudioPage() {
       case "timeline":
         return <TimelineBlock key={block} step={nextStep()} items={draft.timeline} onChange={(timeline) => update({ timeline })} />;
       case "music":
-        return <MusicBlock key={block} step={nextStep()} draft={draft} onChange={update} />;
+        return <MusicBlock key={block} step={nextStep()} token={token} draft={draft} onChange={update} />;
       case "voice":
         return <VoiceBlock key={block} step={nextStep()} token={token} draft={draft} onChange={update} />;
       case "video":
-        return <VideoBlock key={block} step={nextStep()} draft={draft} onChange={update} />;
+        return <VideoBlock key={block} step={nextStep()} token={token} draft={draft} onChange={update} />;
       default:
         return null;
     }

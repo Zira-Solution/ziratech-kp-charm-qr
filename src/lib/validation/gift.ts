@@ -152,9 +152,11 @@ export interface CleanSong {
   duration: string;
   presetId?: string;
   link?: string;
+  audioPath?: string;
+  audioUrl?: string;
 }
 
-export function parseSong(input: unknown): Parsed<CleanSong> {
+export function parseSong(input: unknown, token?: string): Parsed<CleanSong> {
   const none: CleanSong = { source: "none", title: "", artist: "", duration: "" };
   if (input === undefined || input === null) return ok(none);
 
@@ -168,6 +170,24 @@ export function parseSong(input: unknown): Parsed<CleanSong> {
       const preset = getMusicPreset(s.presetId);
       if (!preset) return fail("Giai điệu đã chọn không có trong danh sách");
       return ok({ source: "preset", presetId: preset.id, title: preset.name, artist: "", duration: "--:--" });
+    }
+
+    case "upload": {
+      const audioPath = cleanText(s.audioPath, 300);
+      const audioUrl = cleanText(s.audioUrl, 2000);
+      if (!audioPath && !audioUrl) return fail("Chưa có tệp bài hát tải lên");
+      if (token && audioPath) {
+        const allowed = new RegExp(`^${token}/song-\\d{10,15}\\.(mp3|m4a|wav|webm|ogg)$`);
+        if (!allowed.test(audioPath)) return fail("Tệp nhạc không thuộc thiệp này");
+      }
+      return ok({
+        source: "upload",
+        audioPath: audioPath || undefined,
+        audioUrl: audioUrl || undefined,
+        title: cleanText(s.title, 100) || "Bài hát yêu thích",
+        artist: cleanText(s.artist, 100),
+        duration: "--:--",
+      });
     }
 
     case "link": {
@@ -288,6 +308,8 @@ export interface StoredGiftData {
   letterSignature?: string;
   memoryPhotos: CleanPhoto[];
   finalMessage?: string;
+  finalTitle?: string;
+  finalSubtitle?: string;
   videoUrl?: string;
   videoAspectRatio?: "16:9" | "1:1" | "9:16";
   song?: CleanSong;
@@ -361,6 +383,10 @@ export function parseGiftData(input: unknown, ctx: { token: string }): Parsed<St
     const message = cleanText(g.finalMessage, 200);
     if (!message) return empty("finalMessage");
     out.finalMessage = message;
+    const title = cleanText(g.finalTitle, 100);
+    if (title) out.finalTitle = title;
+    const subtitle = cleanText(g.finalSubtitle, 200);
+    if (subtitle) out.finalSubtitle = subtitle;
   }
 
   if (has("anniversary")) {
@@ -380,9 +406,20 @@ export function parseGiftData(input: unknown, ctx: { token: string }): Parsed<St
   if (has("video")) {
     const raw = typeof g.videoUrl === "string" ? g.videoUrl.trim() : "";
     if (!raw) return empty("video");
-    const v = parseHttpsLink(raw, VIDEO_HOSTS, "Liên kết video");
-    if (!v.ok) return v;
-    out.videoUrl = v.value;
+    const isUploadedVideo =
+      (Boolean(ctx.token) && new RegExp(`^${ctx.token}/video-\\d{10,15}\\.(mp4|webm|mov)$`).test(raw)) ||
+      raw.startsWith("blob:") ||
+      raw.startsWith("data:") ||
+      raw.startsWith("/api/");
+
+    if (isUploadedVideo) {
+      out.videoUrl = raw;
+    } else {
+      const v = parseHttpsLink(raw, VIDEO_HOSTS, "Liên kết video");
+      if (!v.ok) return v;
+      out.videoUrl = v.value;
+    }
+
     const aspect = typeof g.videoAspectRatio === "string" ? g.videoAspectRatio.trim() : "";
     if (["16:9", "1:1", "9:16"].includes(aspect)) {
       out.videoAspectRatio = aspect as "16:9" | "1:1" | "9:16";
@@ -390,7 +427,7 @@ export function parseGiftData(input: unknown, ctx: { token: string }): Parsed<St
   }
 
   if (has("music")) {
-    const s = parseSong(g.song);
+    const s = parseSong(g.song, ctx.token);
     if (!s.ok) return s;
     if (s.value.source === "none") return empty("music");
     out.song = s.value;

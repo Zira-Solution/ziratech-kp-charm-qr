@@ -21,9 +21,11 @@ export interface ViewerGift {
   letter?: { title: string; subtitle: string; content: string; signature: string };
   photos: { url: string; caption: string; date: string }[];
   finalMessage?: string;
+  finalTitle?: string;
+  finalSubtitle?: string;
   video?: string;
   videoAspectRatio?: "16:9" | "1:1" | "9:16";
-  song?: { source: "preset" | "link"; presetId?: string; link?: string; title: string; artist: string };
+  song?: { source: "preset" | "link" | "upload"; presetId?: string; link?: string; audioPath?: string; audioUrl?: string; title: string; artist: string };
   voice?: { audioPath: string; audioUrl?: string; duration: string; noteText: string };
   anniversary?: { date: string; label: string };
   timeline: TimelineItem[];
@@ -113,6 +115,14 @@ export function normalizeGift(saved: unknown): ViewerGift {
       if (source === "preset" && str(s.presetId)) {
         // The melody's own name when the card does not carry one (a draft being previewed does not).
         out.song = { source, presetId: str(s.presetId), title: str(s.title) || getMusicPreset(s.presetId)?.name || "", artist: str(s.artist) };
+      } else if (source === "upload" && (str(s.audioPath) || str(s.audioUrl))) {
+        out.song = {
+          source: "upload",
+          audioPath: str(s.audioPath) || undefined,
+          audioUrl: str(s.audioUrl) || undefined,
+          title: str(s.title) || "Bài hát yêu thích",
+          artist: str(s.artist),
+        };
       } else if (source === "link" && str(s.link)) {
         out.song = { source, link: str(s.link), title: str(s.title), artist: str(s.artist) };
       }
@@ -142,7 +152,11 @@ export function normalizeGift(saved: unknown): ViewerGift {
     },
     finalMessage: () => {
       const text = str(g.finalMessage).trim();
-      if (text) out.finalMessage = text;
+      if (text) {
+        out.finalMessage = text;
+        if (str(g.finalTitle).trim()) out.finalTitle = str(g.finalTitle).trim();
+        if (str(g.finalSubtitle).trim()) out.finalSubtitle = str(g.finalSubtitle).trim();
+      }
       return !!text;
     },
   };

@@ -18,6 +18,17 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
         lerp: 0.1,
         duration: 1.2,
         smoothWheel: true,
+        allowNestedScroll: true,
+        prevent: (node) => {
+          if (!node || typeof node.hasAttribute !== "function") return false;
+          return Boolean(
+            node.hasAttribute("data-lenis-prevent") ||
+            node.closest?.("[data-lenis-prevent]") ||
+            node.closest?.(".overflow-y-auto") ||
+            node.closest?.(".overflow-x-auto") ||
+            node.closest?.(".overflow-auto")
+          );
+        },
       }}
     >
       {children}

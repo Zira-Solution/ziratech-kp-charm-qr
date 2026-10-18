@@ -864,7 +864,7 @@ function MessengerPageInner() {
   );
 
   return (
-    <div className="relative min-h-screen w-full bg-[#0d0f12] text-slate-100 flex flex-col items-center justify-center overflow-x-hidden selection:bg-rose-500/30 selection:text-white">
+    <div data-lenis-prevent className="relative min-h-screen w-full bg-[#0d0f12] text-slate-100 flex flex-col items-center justify-center overflow-x-hidden selection:bg-rose-500/30 selection:text-white">
       <audio ref={musicAudioRef} src={settings.musicUrl || undefined} loop preload="none" />
 
       {/* Background ambient lighting for desktop showcase - lightweight radial gradients, zero blur GPU overhead */}
@@ -1410,7 +1410,8 @@ function MessengerPageInner() {
                 {/* Chat Message Scrollable Area */}
                 <div
                   ref={chatContainerRef}
-                  className="relative flex-1 overflow-y-auto px-3.5 py-3 space-y-2.5 z-10"
+                  data-lenis-prevent
+                  className="relative flex-1 overflow-y-auto px-3.5 py-3 space-y-2.5 z-10 touch-pan-y overscroll-contain"
                 >
                   {/* Base text messages */}
                   {baseMessages.slice(0, Math.min(shownMessages, baseMessages.length)).map(renderBubble)}
@@ -1946,66 +1947,69 @@ function MessengerPageInner() {
                   {/* Letter Scrollable Writing Area - strictly mapped to the ivory paper */}
                   <div
                     ref={letterScrollRef}
+                    data-lenis-prevent
                     onScroll={handleCheckLetterScroll}
-                    className="absolute top-[14%] bottom-[40%] left-[15%] right-[15%] overflow-y-auto px-1.5 sm:px-2.5 pt-1 pb-2 text-center z-10 flex flex-col justify-between [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-rose-300/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-rose-400"
+                    className="absolute top-[14%] bottom-[36%] left-[13%] right-[13%] overflow-y-auto px-1.5 sm:px-2.5 pt-1 pb-2 text-center z-10 touch-pan-y overscroll-contain [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-rose-300/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-rose-400"
                   >
-                    <div>
-                      {/* Title: Romantic Cursive matching user reference */}
-                      <h3 className="font-handwriting italic font-normal text-[19px] sm:text-[22px] text-[#6b2135] leading-snug tracking-wide text-center max-w-[210px] mx-auto pt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">
-                        {settings.letterTitle || `Gửi tới ${settings.recipientName} yêu thương,`}
-                      </h3>
+                    <div className="min-h-full flex flex-col justify-between">
+                      <div>
+                        {/* Title: Romantic Cursive matching user reference */}
+                        <h3 className="font-handwriting italic font-normal text-[19px] sm:text-[22px] text-[#6b2135] leading-snug tracking-wide text-center max-w-[210px] mx-auto pt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)]">
+                          {settings.letterTitle || `Gửi tới ${settings.recipientName} yêu thương,`}
+                        </h3>
 
-                      {/* Body: Natural letter typography filling the ivory paper */}
-                      <div className="mt-2 font-serif text-[12px] sm:text-[13px] leading-[1.8] text-[#3e1f27] text-center whitespace-pre-line select-text px-0.5">
-                        {settings.letterContent}
-                      </div>
-                    </div>
-
-                    {/* Divider + Sign-off + Scroll Pill */}
-                    <div className="pt-2">
-                      {/* Decorative ✧ ♡ ✧ */}
-                      <div className="flex items-center justify-center gap-2 text-rose-400/90 text-xs my-1.5 select-none">
-                        <span>✧</span>
-                        <span>♡</span>
-                        <span>✧</span>
+                        {/* Body: Natural letter typography filling the ivory paper */}
+                        <div className="mt-2 font-serif text-[12px] sm:text-[13px] leading-[1.8] text-[#3e1f27] text-center whitespace-pre-line select-text px-0.5">
+                          {settings.letterContent}
+                        </div>
                       </div>
 
-                      {/* Interactive "Cuộn để đọc tiếp ↓" Pill Button */}
-                      {canScrollLetter && (
-                        <div className="sticky bottom-0 pt-0.5 pb-1 flex justify-center z-30">
+                      {/* Divider + Sign-off + Scroll Pill */}
+                      <div className="pt-2">
+                        {/* Decorative ✧ ♡ ✧ */}
+                        <div className="flex items-center justify-center gap-2 text-rose-400/90 text-xs my-1.5 select-none">
+                          <span>✧</span>
+                          <span>♡</span>
+                          <span>✧</span>
+                        </div>
+
+                        {/* Interactive "Cuộn để đọc tiếp ↓" Pill Button */}
+                        {canScrollLetter && (
+                          <div className="sticky bottom-0 pt-0.5 pb-1 flex justify-center z-30">
+                            <button
+                              type="button"
+                              onClick={handleScrollLetterDown}
+                              className="px-3 py-0.5 rounded-full bg-[#fffcf7]/95 hover:bg-white text-[#6b2234] text-[10.5px] font-sans font-medium shadow-xs border border-rose-200/90 backdrop-blur-xs flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer animate-pulse"
+                            >
+                              <span>Cuộn để đọc tiếp</span>
+                              <span className="text-[11px]">↓</span>
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Sender Sign-off */}
+                        <div className="text-center font-serif text-[11.5px] text-rose-900/90 pt-0.5">
+                          <span className="italic block text-slate-500 text-[9px]">Người gửi tặng:</span>
+                          <p className="font-handwriting text-base sm:text-[18px] text-rose-800 font-bold mt-0.5">
+                            {settings.senderName} ♡
+                          </p>
+                          {settings.letterSignature && (
+                            <p className="font-serif italic text-[9.5px] text-rose-800/80 mt-0.5">
+                              {settings.letterSignature}
+                            </p>
+                          )}
                           <button
                             type="button"
-                            onClick={handleScrollLetterDown}
-                            className="px-3 py-0.5 rounded-full bg-[#fffcf7]/95 hover:bg-white text-[#6b2234] text-[10.5px] font-sans font-medium shadow-xs border border-rose-200/90 backdrop-blur-xs flex items-center justify-center gap-1 active:scale-95 transition-all cursor-pointer animate-pulse"
+                            onClick={() => {
+                              handleCloseLetter();
+                              setStage("film");
+                            }}
+                            className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-[10.5px] font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
                           >
-                            <span>Cuộn để đọc tiếp</span>
-                            <span className="text-[11px]">↓</span>
+                            <span>🎞️ Xem phim kỷ niệm</span>
+                            <span>→</span>
                           </button>
                         </div>
-                      )}
-
-                      {/* Sender Sign-off */}
-                      <div className="text-center font-serif text-[11.5px] text-rose-900/90 pt-0.5">
-                        <span className="italic block text-slate-500 text-[9px]">Người gửi tặng:</span>
-                        <p className="font-handwriting text-base sm:text-[18px] text-rose-800 font-bold mt-0.5">
-                          {settings.senderName} ♡
-                        </p>
-                        {settings.letterSignature && (
-                          <p className="font-serif italic text-[9.5px] text-rose-800/80 mt-0.5">
-                            {settings.letterSignature}
-                          </p>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            handleCloseLetter();
-                            setStage("film");
-                          }}
-                          className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-linear-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-[10.5px] font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
-                        >
-                          <span>🎞️ Xem phim kỷ niệm</span>
-                          <span>→</span>
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -2041,7 +2045,7 @@ function MessengerPageInner() {
           aria-modal="true"
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-fade-in text-slate-800"
         >
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-3xl p-6 shadow-2xl flex flex-col gap-5 border border-slate-200">
+          <div data-lenis-prevent className="w-full max-w-lg max-h-[90vh] overflow-y-auto overscroll-contain bg-white rounded-3xl p-6 shadow-2xl flex flex-col gap-5 border border-slate-200">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">

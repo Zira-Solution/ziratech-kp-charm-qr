@@ -4,6 +4,7 @@ import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } fr
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import confetti from "canvas-confetti";
+import { toVideoEmbed } from "@/lib/media/embed";
 
 const DEFAULT_MUSIC_URL = "/audio/test-music.wav";
 
@@ -32,6 +33,36 @@ const DEFAULT_FILM_PHOTOS: string[] = [
   "/images/anime_sunset_gift_box.jpg",
 ];
 
+function getYouTubeThumbnail(urlStr?: string): string | null {
+  if (!urlStr) return null;
+  try {
+    const url = new URL(urlStr.trim());
+    const host = url.hostname.toLowerCase();
+    const parts = url.pathname.split("/").filter(Boolean);
+    let id: string | null = null;
+    if (host === "youtu.be") id = parts[0] ?? null;
+    else if (host === "youtube.com" || host.endsWith(".youtube.com")) {
+      if (url.pathname === "/watch") id = url.searchParams.get("v");
+      else if (parts[0] === "shorts" || parts[0] === "embed" || parts[0] === "live") id = parts[1] ?? null;
+    }
+    if (id && /^[A-Za-z0-9_-]{11}$/.test(id)) {
+      return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+    }
+  } catch {}
+  return null;
+}
+
+function getVideoPlatform(urlStr?: string): string {
+  if (!urlStr) return "Video";
+  try {
+    const host = new URL(urlStr.trim()).hostname.toLowerCase();
+    if (host.includes("youtube.com") || host === "youtu.be") return "YouTube";
+    if (host.includes("drive.google.com")) return "Google Drive";
+    if (host.includes("vimeo.com")) return "Vimeo";
+  } catch {}
+  return "Video";
+}
+
 interface CustomSettings {
   senderName: string;
   notificationText: string;
@@ -54,6 +85,9 @@ interface CustomSettings {
   voiceAfterMessage: string; // sent after the voice note
   musicUrl: string; // background music while the letter or the film reel is open
   voiceUrl: string; // recorded voice note from the giver; empty means none yet
+  videoUrl?: string; // video embed link (YouTube, Drive, Vimeo)
+  videoLeadMessage?: string; // teaser text sent right before video bubble
+  videoTitle?: string; // title on video bubble
 }
 
 const DEFAULT_SETTINGS: CustomSettings = {
@@ -79,6 +113,9 @@ const DEFAULT_SETTINGS: CustomSettings = {
   voiceAfterMessage: VOICE_AFTER_MESSAGE,
   musicUrl: DEFAULT_MUSIC_URL,
   voiceUrl: "",
+  videoUrl: "https://youtu.be/dQw4w9WgXcQ",
+  videoLeadMessage: "Anh có một video nhỏ gửi cho em nè 🎬",
+  videoTitle: "Video kỷ niệm dành riêng cho em",
 };
 
 const VOICE_BARS = [6, 10, 16, 9, 20, 13, 7, 18, 24, 12, 8, 19, 14, 22, 10, 6, 15, 21, 9, 13, 7, 11];
@@ -197,6 +234,7 @@ function MessengerPageInner() {
   const [shownMessages, setShownMessages] = useState<number>(0);
   const [isTyping, setIsTyping] = useState(false);
   const [isLetterOpen, setIsLetterOpen] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   // "envelope": only the small letter is shown; "gift": chat plays and ends with the gift icon
   const [chatPhase, setChatPhase] = useState<"envelope" | "gift">("envelope");
   const [letterHoldActive, setLetterHoldActive] = useState(false);
@@ -215,10 +253,26 @@ function MessengerPageInner() {
   const voiceFileInputRef = useRef<HTMLInputElement>(null);
   const musicAudioRef = useRef<HTMLAudioElement>(null);
   const musicFileInputRef = useRef<HTMLInputElement>(null);
-  const chatList = useMemo(
-    () => [...(settings.messages || DEFAULT_MESSAGES), ...(chatPhase === "gift" ? [settings.giftLeadMessage.trim() || GIFT_LEAD_MESSAGE] : [])],
-    [settings.messages, settings.giftLeadMessage, chatPhase]
-  );
+
+  const hasVideo = Boolean(settings.videoUrl?.trim());
+  const baseMessages = useMemo(() => settings.messages || DEFAULT_MESSAGES, [settings.messages]);
+
+  const videoEmbedUrl = useMemo(() => toVideoEmbed(settings.videoUrl), [settings.videoUrl]);
+  const videoThumbnail = useMemo(() => getYouTubeThumbnail(settings.videoUrl), [settings.videoUrl]);
+  const videoPlatform = useMemo(() => getVideoPlatform(settings.videoUrl), [settings.videoUrl]);
+  const displayThumbnail = videoThumbnail || "/images/anime_sunset_couple.jpg";
+
+  const chatList = useMemo(() => {
+    const list: string[] = [...baseMessages];
+    if (hasVideo) {
+      list.push(settings.videoLeadMessage?.trim() || "Anh có một video nhỏ gửi cho em nè 🎬");
+      list.push("__VIDEO_CARD__");
+    }
+    if (chatPhase === "gift") {
+      list.push(settings.giftLeadMessage.trim() || GIFT_LEAD_MESSAGE);
+    }
+    return list;
+  }, [baseMessages, hasVideo, settings.videoLeadMessage, chatPhase, settings.giftLeadMessage]);
 
   // Filmstrip stage state
   const [isFilmPaused, setIsFilmPaused] = useState(false);
@@ -254,6 +308,15 @@ function MessengerPageInner() {
     }
   }, [isLetterOpen, settings.letterContent, handleCheckLetterScroll]);
 
+  useEffect(() => {
+    if (!isVideoModalOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsVideoModalOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isVideoModalOpen]);
+
   // Initialize from URL params or LocalStorage (runs once on mount / param change)
   useEffect(() => {
     // Read URL search params first
@@ -274,6 +337,9 @@ function MessengerPageInner() {
     const pVoiceAfter = searchParams?.get("vafter");
     const pFilmTitle = searchParams?.get("ftitle");
     const pFilmSubtitle = searchParams?.get("fsub");
+    const pVideo = searchParams?.get("video") ?? searchParams?.get("vurl");
+    const pVideoLead = searchParams?.get("videolead") ?? searchParams?.get("vlead_msg");
+    const pVideoTitle = searchParams?.get("vtitle");
 
     let initial = { ...DEFAULT_SETTINGS };
 
@@ -316,6 +382,13 @@ function MessengerPageInner() {
     if (pVoiceAfter) initial.voiceAfterMessage = pVoiceAfter;
     if (pFilmTitle) initial.filmTitle = pFilmTitle;
     if (pFilmSubtitle) initial.filmSubtitle = pFilmSubtitle;
+    if (pVideo !== null && pVideo !== undefined) {
+      initial.videoUrl = pVideo.trim();
+    } else if (pRecipient || pSender || pMsg || searchParams?.has("embed")) {
+      initial.videoUrl = "";
+    }
+    if (pVideoLead) initial.videoLeadMessage = pVideoLead;
+    if (pVideoTitle) initial.videoTitle = pVideoTitle;
 
     const pHearts = searchParams?.get("hearts");
     if (pHearts !== null && pHearts !== undefined) {
@@ -650,6 +723,9 @@ function MessengerPageInner() {
     url.searchParams.set("glead", settings.giftLeadMessage);
     url.searchParams.set("vlead", settings.voiceLeadMessage);
     url.searchParams.set("vafter", settings.voiceAfterMessage);
+    if (settings.videoUrl) url.searchParams.set("video", settings.videoUrl);
+    if (settings.videoLeadMessage) url.searchParams.set("videolead", settings.videoLeadMessage);
+    if (settings.videoTitle) url.searchParams.set("vtitle", settings.videoTitle);
     if (settings.musicUrl && !settings.musicUrl.startsWith("data:") && settings.musicUrl !== DEFAULT_MUSIC_URL) {
       url.searchParams.set("music", settings.musicUrl);
     }
@@ -669,23 +745,92 @@ function MessengerPageInner() {
 
   const renderBubble = (text: string, idx: number) => (
     <div
-                      key={idx}
-                      className="flex items-end gap-2 justify-start animate-fade-in"
-                    >
-                      {/* Sender Avatar */}
-                      <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-0.5 shadow-2xs ring-1 ring-pink-100">
-                        <img
-                          src={settings.avatarUrl || "/images/default_avatar.png"}
-                          alt={settings.senderName}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+      key={idx}
+      className="flex items-end gap-2 justify-start animate-fade-in"
+    >
+      {/* Sender Avatar */}
+      <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-0.5 shadow-2xs ring-1 ring-pink-100">
+        <img
+          src={settings.avatarUrl || "/images/default_avatar.png"}
+          alt={settings.senderName}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-                      {/* 1-way Bubble in pure white with soft shadow, matching reference style */}
-                      <div className="max-w-[78%] px-3.5 py-2 text-[14px] leading-snug break-words bg-white text-slate-800 rounded-[18px] rounded-bl-xs shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-                        {text}
-                      </div>
-                    </div>
+      {/* 1-way Bubble in pure white with soft shadow, matching reference style */}
+      <div className="max-w-[78%] px-3.5 py-2 text-[14px] leading-snug break-words bg-white text-slate-800 rounded-[18px] rounded-bl-xs shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+        {text}
+      </div>
+    </div>
+  );
+
+  const renderVideoBubble = () => (
+    <div key="video-attachment-card" className="flex items-end gap-2 justify-start animate-fade-in">
+      {/* Sender Avatar */}
+      <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-0.5 shadow-2xs ring-1 ring-pink-100">
+        <img
+          src={settings.avatarUrl || "/images/default_avatar.png"}
+          alt={settings.senderName}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Video Bubble Card */}
+      <div className="max-w-[84%] sm:max-w-[320px] rounded-[20px] rounded-bl-xs overflow-hidden bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-pink-100/90 group">
+        <button
+          type="button"
+          onClick={() => setIsVideoModalOpen(true)}
+          className="w-full text-left cursor-pointer focus:outline-none block transition-all"
+          aria-label="Mở video kỷ niệm"
+        >
+          {/* Video Preview Frame */}
+          <div className="relative aspect-[16/9] w-full bg-slate-900 overflow-hidden flex items-center justify-center">
+            <img
+              src={displayThumbnail}
+              alt={settings.videoTitle || "Video kỷ niệm"}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            {/* Ambient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/30" />
+
+            {/* Glowing animated Play button in center */}
+            <div className="relative z-10 w-12 h-12 rounded-full bg-white/95 text-[#e02476] flex items-center justify-center shadow-lg group-hover:scale-110 active:scale-95 transition-all">
+              <span className="material-symbols-outlined text-[30px] ml-0.5">play_arrow</span>
+              <span className="absolute inset-0 rounded-full border-2 border-white/80 animate-ping opacity-60 pointer-events-none" />
+            </div>
+
+            {/* Top Platform Tag */}
+            <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white shadow-xs">
+              <span>🎬</span>
+              <span>{videoPlatform}</span>
+            </div>
+
+            {/* Top HD Badge */}
+            <div className="absolute top-2 right-2 z-10 px-1.5 py-0.5 rounded-md bg-black/50 text-[10px] font-bold text-white/90">
+              HD
+            </div>
+
+            {/* Bottom Title */}
+            <div className="absolute bottom-2 left-2.5 right-2.5 z-10">
+              <p className="text-[12px] sm:text-[13px] font-semibold text-white drop-shadow-md truncate">
+                {settings.videoTitle || "Video kỷ niệm dành riêng cho em"}
+              </p>
+            </div>
+          </div>
+
+          {/* Bottom Call-To-Action Banner: encouraging tap */}
+          <div className="px-3.5 py-2.5 bg-gradient-to-r from-pink-50 via-rose-50 to-white flex items-center justify-between border-t border-pink-100">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#e02476]">
+              <span className="animate-pulse text-[13px]">▶</span>
+              <span className="tracking-tight">Bấm vào để xem video nha 🌸</span>
+            </div>
+            <span className="text-[12px] text-rose-400 group-hover:translate-x-0.5 transition-transform">
+              ➔
+            </span>
+          </div>
+        </button>
+      </div>
+    </div>
   );
 
   return (
@@ -1237,10 +1382,21 @@ function MessengerPageInner() {
                   ref={chatContainerRef}
                   className="relative flex-1 overflow-y-auto px-3.5 py-3 space-y-2.5 z-10"
                 >
-                  {chatList.slice(0, Math.min(shownMessages, (settings.messages || DEFAULT_MESSAGES).length)).map(renderBubble)}
+                  {/* Base text messages */}
+                  {baseMessages.slice(0, Math.min(shownMessages, baseMessages.length)).map(renderBubble)}
 
-                  {/* Letter sent as a message: press and hold to open */}
-                  {shownMessages >= (settings.messages || DEFAULT_MESSAGES).length && (
+                  {/* Video lead message */}
+                  {hasVideo && shownMessages > baseMessages.length && (
+                    renderBubble(settings.videoLeadMessage?.trim() || "Anh có một video nhỏ gửi cho em nè 🎬", 9991)
+                  )}
+
+                  {/* Video attachment bubble card */}
+                  {hasVideo && shownMessages > baseMessages.length + 1 && (
+                    renderVideoBubble()
+                  )}
+
+                  {/* Letter sent as a message: tap to open */}
+                  {shownMessages >= (baseMessages.length + (hasVideo ? 2 : 0)) && (
                     <div className="flex items-end gap-2 justify-start animate-fade-in">
                       <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-0.5 shadow-2xs ring-1 ring-pink-100">
                         <img
@@ -1268,7 +1424,9 @@ function MessengerPageInner() {
                   )}
 
                   {/* Lead-in to the gift, sent below the letter */}
-                  {chatList.slice((settings.messages || DEFAULT_MESSAGES).length, shownMessages).map((text, i) => renderBubble(text, (settings.messages || DEFAULT_MESSAGES).length + i))}
+                  {chatPhase === "gift" && shownMessages >= (baseMessages.length + (hasVideo ? 2 : 0) + 1) && (
+                    renderBubble(settings.giftLeadMessage.trim() || GIFT_LEAD_MESSAGE, 9992)
+                  )}
 
                   {/* Typing Bubble */}
                   {isTyping && (
@@ -2364,6 +2522,62 @@ function MessengerPageInner() {
                     className="hidden"
                   />
                 </div>
+
+                {/* Video kỷ niệm gửi kèm */}
+                <div className="space-y-2.5 pt-3 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="block font-semibold text-slate-700">Video kỷ niệm gửi kèm</label>
+                      <p className="text-[11px] text-slate-500">
+                        Gửi thêm 1 khung video (YouTube / Google Drive / Vimeo) vào tin nhắn
+                      </p>
+                    </div>
+                    {settings.videoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => updateSetting("videoUrl", "")}
+                        className="text-[11px] text-rose-600 hover:text-rose-700 underline cursor-pointer"
+                      >
+                        Xóa video
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    type="url"
+                    value={settings.videoUrl || ""}
+                    onChange={(e) => updateSetting("videoUrl", e.target.value)}
+                    placeholder="https://youtu.be/... hoặc link Google Drive"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 font-sans text-xs"
+                  />
+                  {settings.videoUrl && (
+                    <div className="space-y-2 pt-1">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-0.5">
+                          Tin nhắn dẫn dắt trước video
+                        </label>
+                        <input
+                          type="text"
+                          value={settings.videoLeadMessage || ""}
+                          onChange={(e) => updateSetting("videoLeadMessage", e.target.value)}
+                          placeholder="Anh có một video nhỏ gửi cho em nè 🎬"
+                          className="w-full px-3 py-1.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-0.5">
+                          Tiêu đề khung video
+                        </label>
+                        <input
+                          type="text"
+                          value={settings.videoTitle || ""}
+                          onChange={(e) => updateSetting("videoTitle", e.target.value)}
+                          placeholder="Video kỷ niệm dành riêng cho em"
+                          className="w-full px-3 py-1.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-xs"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -2396,6 +2610,84 @@ function MessengerPageInner() {
                   Áp dụng &amp; Xem ngay
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Video Lightbox Player Modal */}
+      {isVideoModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in"
+          onClick={() => setIsVideoModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-2xl bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-4 py-3 bg-slate-800/80 border-b border-white/10">
+              <div className="flex items-center gap-2 truncate">
+                <span className="text-rose-400 text-sm">🎬</span>
+                <span className="text-xs sm:text-sm font-semibold text-white truncate">
+                  {settings.videoTitle || "Video kỷ niệm dành riêng cho em"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsVideoModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Đóng video"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Responsive 16:9 Video Player */}
+            <div className="relative aspect-video w-full bg-black">
+              {videoEmbedUrl ? (
+                <iframe
+                  src={`${videoEmbedUrl}${videoEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`}
+                  title={settings.videoTitle || "Video"}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-white">
+                  <span className="material-symbols-outlined text-4xl text-rose-400 mb-2">smart_display</span>
+                  <p className="text-sm font-semibold mb-3">Không thể phát trực tiếp liên kết này trong khung nhúng</p>
+                  {settings.videoUrl && (
+                    <a
+                      href={settings.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-xs font-bold text-white transition-all inline-flex items-center gap-1.5"
+                    >
+                      <span>Mở xem trên trang ngoài</span>
+                      <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-4 py-2.5 bg-slate-800/60 border-t border-white/10 flex items-center justify-between text-[11px] text-white/70">
+              <span>Gửi tặng từ {settings.senderName}</span>
+              {settings.videoUrl && (
+                <a
+                  href={settings.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose-400 hover:text-rose-300 underline flex items-center gap-1"
+                >
+                  <span>Xem link gốc</span>
+                  <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                </a>
+              )}
             </div>
           </div>
         </div>

@@ -321,6 +321,9 @@ test("parseGiftData preserves and cleans messenger settings when template is mes
       messages: ["Tin 1", "Tin 2"],
       showFloatingHearts: true,
       giftLeadMessage: "Mở quà nha",
+      videoUrl: "https://youtu.be/dQw4w9WgXcQ",
+      videoLeadMessage: "Anh có video gửi em nè 🎬",
+      videoTitle: "Kỷ niệm của tụi mình",
     },
   });
   assert.equal(res.ok, true);
@@ -330,5 +333,8 @@ test("parseGiftData preserves and cleans messenger settings when template is mes
     assert.deepEqual(res.value.messenger?.messages, ["Tin 1", "Tin 2"]);
     assert.equal(res.value.messenger?.wallpaperUrl, "https://example.com/custom.jpg");
     assert.equal(res.value.messenger?.giftLeadMessage, "Mở quà nha");
+    assert.equal(res.value.messenger?.videoUrl, "https://youtu.be/dQw4w9WgXcQ");
+    assert.equal(res.value.messenger?.videoLeadMessage, "Anh có video gửi em nè 🎬");
+    assert.equal(res.value.messenger?.videoTitle, "Kỷ niệm của tụi mình");
   }
 });

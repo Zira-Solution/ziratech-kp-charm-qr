@@ -224,6 +224,9 @@ export interface CleanMessenger {
   giftLeadMessage: string;
   voiceLeadMessage: string;
   voiceAfterMessage: string;
+  videoUrl?: string;
+  videoLeadMessage?: string;
+  videoTitle?: string;
 }
 
 export function parseMessenger(input: unknown): CleanMessenger {
@@ -258,6 +261,10 @@ export function parseMessenger(input: unknown): CleanMessenger {
       cleanText(m.voiceLeadMessage, 300) || "Anh có ghi âm một đoạn nhỏ gửi em, em nghe thử nhé 🎧",
     voiceAfterMessage:
       cleanText(m.voiceAfterMessage, 300) || "Anh thương em nhiều lắm, chúc em ngày 20/10 thật vui nha 💕",
+    videoUrl: cleanText(m.videoUrl, 500) || undefined,
+    videoLeadMessage:
+      cleanText(m.videoLeadMessage, 300) || "Anh có một video nhỏ gửi cho em nè 🎬",
+    videoTitle: cleanText(m.videoTitle, 150) || "Video kỷ niệm dành riêng cho em",
   };
 }
 

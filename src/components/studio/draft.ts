@@ -34,6 +34,9 @@ export interface MessengerDraft {
   giftLeadMessage: string;
   voiceLeadMessage: string;
   voiceAfterMessage: string;
+  videoUrl?: string;
+  videoLeadMessage?: string;
+  videoTitle?: string;
 }
 
 export const DEFAULT_MESSENGER_DRAFT: MessengerDraft = {
@@ -53,6 +56,9 @@ export const DEFAULT_MESSENGER_DRAFT: MessengerDraft = {
   giftLeadMessage: "Còn một món quà nhỏ nữa anh để dành cho em, chạm vào hộp quà bên dưới nhé 🎁",
   voiceLeadMessage: "Anh có ghi âm một đoạn nhỏ gửi em, em nghe thử nhé 🎧",
   voiceAfterMessage: "Anh thương em nhiều lắm, chúc em ngày 20/10 thật vui nha 💕",
+  videoUrl: "",
+  videoLeadMessage: "Anh có một video nhỏ gửi cho em nè 🎬",
+  videoTitle: "Video kỷ niệm dành riêng cho em",
 };
 
 export interface GiftDraft {
@@ -203,7 +209,13 @@ export function draftFromSaved(saved: unknown): GiftDraft {
       giftLeadMessage: str(m.giftLeadMessage) || DEFAULT_MESSENGER_DRAFT.giftLeadMessage,
       voiceLeadMessage: str(m.voiceLeadMessage) || DEFAULT_MESSENGER_DRAFT.voiceLeadMessage,
       voiceAfterMessage: str(m.voiceAfterMessage) || DEFAULT_MESSENGER_DRAFT.voiceAfterMessage,
+      videoUrl: str(m.videoUrl) || str(g.videoUrl) || "",
+      videoLeadMessage: str(m.videoLeadMessage) || DEFAULT_MESSENGER_DRAFT.videoLeadMessage || "Anh có một video nhỏ gửi cho em nè 🎬",
+      videoTitle: str(m.videoTitle) || DEFAULT_MESSENGER_DRAFT.videoTitle || "Video kỷ niệm dành riêng cho em",
     };
+    if (d.messenger.videoUrl && !d.videoUrl) {
+      d.videoUrl = d.messenger.videoUrl;
+    }
   }
 
   return d;
@@ -211,6 +223,7 @@ export function draftFromSaved(saved: unknown): GiftDraft {
 
 /** The body sent to POST /api/gifts/[token]/save. The server validates everything again. */
 export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown> } {
+  const videoUrl = (d.messenger?.videoUrl || d.videoUrl || "").trim();
   const giftData: Record<string, unknown> = {
     template: d.template,
     blocks: d.blocks,
@@ -227,7 +240,7 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
     finalMessage: d.finalMessage,
     anniversary: { date: d.anniversaryDate, label: d.anniversaryLabel },
     timeline: d.timeline,
-    videoUrl: d.videoUrl,
+    videoUrl,
     videoAspectRatio: d.videoAspectRatio || "16:9",
     song: {
       source: d.song.source,
@@ -241,7 +254,10 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
       durationSec: d.voice.durationSec,
       noteText: d.voice.noteText,
     },
-    messenger: d.messenger,
+    messenger: {
+      ...d.messenger,
+      videoUrl: videoUrl || undefined,
+    },
   };
   if (/^\d{4}$/.test(d.unlockPin)) giftData.pinCode = d.unlockPin;
   return { giftData };
@@ -256,7 +272,7 @@ export function emptyBlocks(d: GiftDraft): BlockId[] {
     letter: d.letterContent.trim() !== "",
     photos: d.photos.length > 0,
     voice: d.voice.audioPath !== "",
-    video: d.videoUrl.trim() !== "",
+    video: d.videoUrl.trim() !== "" || (d.messenger?.videoUrl?.trim() ?? "") !== "",
     music: d.song.source !== "none",
     anniversary: d.anniversaryDate.trim() !== "",
     timeline: d.timeline.length > 0,

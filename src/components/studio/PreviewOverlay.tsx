@@ -149,6 +149,10 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
       if (m.voiceLeadMessage) q.set("vlead", m.voiceLeadMessage);
       if (m.voiceAfterMessage) q.set("vafter", m.voiceAfterMessage);
     }
+    const vUrl = (m?.videoUrl || draft.videoUrl || "").trim();
+    if (vUrl) q.set("vurl", vUrl);
+    if (m?.videoLeadMessage) q.set("videolead", m.videoLeadMessage);
+    if (m?.videoTitle) q.set("vtitle", m.videoTitle);
     return `/messenger?${q.toString()}`;
   }, [mode, draft]);
 

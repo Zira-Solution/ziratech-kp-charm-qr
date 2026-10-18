@@ -122,6 +122,10 @@ export default function RecipientGiftPage() {
         if (m.voiceLeadMessage) q.set("vlead", m.voiceLeadMessage);
         if (m.voiceAfterMessage) q.set("vafter", m.voiceAfterMessage);
       }
+      const vUrl = (m?.videoUrl || gift.video || "").trim();
+      if (vUrl) q.set("vurl", vUrl);
+      if (m?.videoLeadMessage) q.set("videolead", m.videoLeadMessage);
+      if (m?.videoTitle) q.set("vtitle", m.videoTitle);
       return (
         <div className="kp-card-in h-dvh w-full overflow-hidden bg-black relative">
           {isCreator && (

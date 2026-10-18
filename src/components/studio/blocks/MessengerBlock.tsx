@@ -354,7 +354,139 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
           />
         </div>
 
-        {/* 5. TÙY CHỌN TIN NHẮN DẪN DẮT (NÂNG CAO) */}
+        {/* 5. GỬI KÈM VIDEO KỶ NIỆM (YOUTUBE / DRIVE / VIMEO) */}
+        <div className="pt-4 border-t border-rose-100/80">
+          <div className="flex items-center justify-between mb-1.5">
+            <label htmlFor="messenger-video-url" className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[16px] text-rose-600">smart_display</span>
+              Video kỷ niệm gửi kèm (YouTube / Drive / Vimeo)
+            </label>
+            {(messenger.videoUrl || draft.videoUrl) ? (
+              <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 flex items-center gap-1">
+                <span>✓ Đã gắn video</span>
+              </span>
+            ) : (
+              <span className="text-[11px] text-slate-400">Không bắt buộc</span>
+            )}
+          </div>
+
+          <p className="text-[11.5px] text-slate-500 mb-3 leading-relaxed">
+            Gửi thêm 1 video kỷ niệm vào cuộc trò chuyện Messenger. Hệ thống sẽ tự động gửi 1 tin nhắn thông báo tò mò, sau đó xuất hiện khung video như tin nhắn thật có nút phát và lời mời chạm mở.
+          </p>
+
+          <div className="space-y-3 p-3.5 rounded-2xl bg-white border border-rose-100 shadow-2xs">
+            <Field
+              label="Đường dẫn video (YouTube, Shorts, Google Drive, Vimeo...)"
+              htmlFor="messenger-video-url"
+              hint="Ví dụ: https://youtu.be/dQw4w9WgXcQ hoặc link Google Drive (đã bật quyền 'Bất kỳ ai có liên kết')"
+            >
+              <div className="relative">
+                <input
+                  id="messenger-video-url"
+                  type="url"
+                  value={messenger.videoUrl ?? draft.videoUrl ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onChange({
+                      videoUrl: val,
+                      messenger: {
+                        ...messenger,
+                        videoUrl: val,
+                      },
+                    });
+                  }}
+                  placeholder="https://youtu.be/..."
+                  className={`${fieldClass} !text-xs !py-2 pr-8`}
+                />
+                {(messenger.videoUrl || draft.videoUrl) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onChange({
+                        videoUrl: "",
+                        messenger: {
+                          ...messenger,
+                          videoUrl: "",
+                        },
+                      });
+                    }}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 text-xs font-bold cursor-pointer"
+                    title="Xóa video"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </Field>
+
+            {(messenger.videoUrl || draft.videoUrl) && (
+              <>
+                <Field
+                  label="Tin nhắn dẫn dắt trước video"
+                  htmlFor="messenger-video-lead"
+                  hint="Tin nhắn sẽ gửi ngay trước khung video để tạo sự háo hức"
+                >
+                  <input
+                    id="messenger-video-lead"
+                    type="text"
+                    maxLength={150}
+                    value={messenger.videoLeadMessage ?? "Anh có một video nhỏ gửi cho em nè 🎬"}
+                    onChange={(e) => updateMessenger({ videoLeadMessage: e.target.value })}
+                    placeholder="Anh có một video nhỏ gửi cho em nè 🎬"
+                    className={`${fieldClass} !text-xs !py-1.5`}
+                  />
+                </Field>
+
+                <Field
+                  label="Tiêu đề hiển thị trên khung video"
+                  htmlFor="messenger-video-title"
+                  hint="Hiện ở chân khung video kèm lời nhắc bấm xem"
+                >
+                  <input
+                    id="messenger-video-title"
+                    type="text"
+                    maxLength={100}
+                    value={messenger.videoTitle ?? "Video kỷ niệm dành riêng cho em"}
+                    onChange={(e) => updateMessenger({ videoTitle: e.target.value })}
+                    placeholder="Video kỷ niệm dành riêng cho em"
+                    className={`${fieldClass} !text-xs !py-1.5`}
+                  />
+                </Field>
+
+                {/* Live Preview Card */}
+                <div className="pt-2">
+                  <span className="text-[11px] font-semibold text-slate-500 block mb-1.5">
+                    Xem trước bong bóng video trong Messenger:
+                  </span>
+                  <div className="max-w-[280px] p-2 rounded-2xl bg-white border border-pink-200/80 shadow-xs">
+                    <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 flex items-center justify-center group">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10" />
+                      <div className="w-10 h-10 rounded-full bg-white/90 text-rose-600 flex items-center justify-center shadow-lg z-20 group-hover:scale-110 transition-transform">
+                        <span className="material-symbols-outlined text-[24px] ml-0.5">play_arrow</span>
+                      </div>
+                      <span className="absolute top-2 left-2 z-20 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-xs text-[10px] font-bold text-white flex items-center gap-1">
+                        <span>🎬</span>
+                        <span>Video gửi kèm</span>
+                      </span>
+                      <span className="absolute bottom-2 left-2 right-2 z-20 text-[11px] font-semibold text-white truncate drop-shadow-sm">
+                        {messenger.videoTitle || "Video kỷ niệm dành riêng cho em"}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 px-1 flex items-center justify-between text-[11px]">
+                      <span className="text-rose-600 font-bold flex items-center gap-1">
+                        <span>▶</span>
+                        <span>Bấm vào để xem video nha</span>
+                      </span>
+                      <span className="text-slate-400 text-[10px]">HD</span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* 6. TÙY CHỌN TIN NHẮN DẪN DẮT (NÂNG CAO) */}
         <div className="pt-4 border-t border-rose-100/80">
           <button
             type="button"

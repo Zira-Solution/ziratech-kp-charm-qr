@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGiftProductByToken, markProductEmailSent, setGiftSecretHash } from "@/lib/supabase/products";
-import { sendGiftActivationEmail } from "@/lib/mail/mailer";
+import { resolveSiteUrl, sendGiftActivationEmail } from "@/lib/mail/mailer";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { generateCreatorKey, hashSecret, normalizeCreatorKey } from "@/lib/auth/crypto";
 import { normalizeToken } from "@/lib/auth/gift-session";
@@ -33,14 +33,18 @@ export async function POST(req: NextRequest) {
     const creatorKey = generateCreatorKey();
     await setGiftSecretHash(product.token, "creator", await hashSecret(normalizeCreatorKey(creatorKey)));
 
-    const origin = req.nextUrl.origin || "http://localhost:3000";
+    const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+    const proto = req.headers.get("x-forwarded-proto") || "https";
+    const requestOrigin = host ? `${proto}://${host}` : req.nextUrl.origin;
+    const siteUrl = resolveSiteUrl(requestOrigin);
+
     const mailRes = await sendGiftActivationEmail({
       customerName: product.customerName,
       customerEmail: product.customerEmail,
       token: product.token,
       creatorKey,
       chainName: product.chainName,
-      siteUrl: origin,
+      siteUrl,
     });
 
     if (mailRes.success && !mailRes.simulated) {

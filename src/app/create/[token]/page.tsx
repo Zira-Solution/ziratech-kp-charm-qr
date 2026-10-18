@@ -142,7 +142,18 @@ export default function CardStudioPage() {
         setStage(initialStage);
         setReached(initialReached);
 
-        if (restoredLocal) {
+        // Only announce auto-restoring draft if the user has just entered the card code and verified from /gift
+        let justVerified = false;
+        try {
+          if (sessionStorage.getItem(`kp_verified_${token}`) === "true") {
+            justVerified = true;
+            sessionStorage.removeItem(`kp_verified_${token}`);
+          }
+        } catch (sessionErr) {
+          console.warn("[studio] Could not read verification state:", sessionErr);
+        }
+
+        if (restoredLocal && justVerified) {
           showToast("✨ Đã tự động khôi phục bản nháp bạn đang viết dở.", "success", 4000);
         }
       } catch (err) {
@@ -210,9 +221,9 @@ export default function CardStudioPage() {
   };
 
 
-  // Auto-save draft and stage to localStorage on every change
+  // Auto-save draft and stage to localStorage on every change (only when user has made edits)
   useEffect(() => {
-    if (!token || loading) return;
+    if (!token || loading || !dirty) return;
     const timer = setTimeout(() => {
       try {
         localStorage.setItem(
@@ -225,7 +236,7 @@ export default function CardStudioPage() {
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [draft, stage, token, loading]);
+  }, [draft, stage, token, loading, dirty]);
 
   // After a step opens, land on the field that needs attention, or at the top of the new step.
   useEffect(() => {
@@ -351,9 +362,12 @@ export default function CardStudioPage() {
 
       setDirty(false);
       try {
-        localStorage.setItem(DRAFT_KEY(token), JSON.stringify({ ...draft, _updatedAt: Date.now() }));
+        // Clear local unsaved draft because card has been successfully saved to server
+        localStorage.removeItem(DRAFT_KEY(token));
         localStorage.setItem(STAGE_KEY(token), "3");
-      } catch {}
+      } catch (storageErr) {
+        console.warn("[studio] Could not clear local draft storage:", storageErr);
+      }
       showToast("Đã lưu thiệp thành công!", "success");
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#721a28", "#ffd700", "#fea095", "#ffffff"] });
       setTimeout(() => router.push(`/g/${token}`), 900);

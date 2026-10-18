@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createGiftProductInDb, markProductEmailSent, toAdminView } from "@/lib/supabase/products";
-import { sendGiftActivationEmail } from "@/lib/mail/mailer";
+import { resolveSiteUrl, sendGiftActivationEmail } from "@/lib/mail/mailer";
 import { CreateProductPayload } from "@/types/gift-order";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { isValidEmail } from "@/lib/validation/security";
@@ -69,7 +69,11 @@ export async function POST(req: NextRequest) {
     const { order, issued } = await createGiftProductInDb(payload);
 
     // 2. Send email to customer
-    const origin = req.nextUrl.origin || "http://localhost:3000";
+    const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+    const proto = req.headers.get("x-forwarded-proto") || "https";
+    const requestOrigin = host ? `${proto}://${host}` : req.nextUrl.origin;
+    const siteUrl = resolveSiteUrl(requestOrigin);
+
     const mailRes = await sendGiftActivationEmail({
       customerName: order.customerName,
       customerEmail: order.customerEmail,
@@ -77,7 +81,7 @@ export async function POST(req: NextRequest) {
       creatorKey: issued.creatorKey,
       unlockPin: issued.unlockPin,
       chainName: order.chainName,
-      siteUrl: origin,
+      siteUrl,
     });
 
     // Simulated mode (no SMTP configured) does not count as sent.

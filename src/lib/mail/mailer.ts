@@ -20,6 +20,44 @@ const escapeHtml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
+/**
+ * Resolves the public site URL for customer emails.
+ * Prioritizes explicitly configured environment variables (NEXT_PUBLIC_SITE_URL or SITE_URL)
+ * and Vercel system production URLs over localhost/internal origins.
+ */
+export function resolveSiteUrl(explicitUrl?: string): string {
+  // 1. Explicit configured production site URL from env
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL;
+  if (envUrl && envUrl.trim()) {
+    const formatted = envUrl.trim().replace(/\/+$/, "");
+    return formatted.startsWith("http://") || formatted.startsWith("https://") ? formatted : `https://${formatted}`;
+  }
+
+  // 2. Vercel auto-injected system production URL
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.trim().replace(/\/+$/, "")}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL.trim().replace(/\/+$/, "")}`;
+  }
+
+  // 3. Request origin passed in (only if public and not localhost/local network)
+  if (explicitUrl) {
+    try {
+      const parsed = new URL(explicitUrl);
+      const host = parsed.hostname.toLowerCase();
+      if (host !== "localhost" && host !== "127.0.0.1" && !host.startsWith("192.168.") && !host.startsWith("10.")) {
+        return parsed.origin;
+      }
+    } catch (e) {
+      console.warn("[mailer] Invalid explicit siteUrl:", e);
+    }
+  }
+
+  // 4. Fallback to default localhost (dev only)
+  return (explicitUrl || "http://localhost:3000").replace(/\/+$/, "");
+}
+
 export async function sendGiftActivationEmail({
   customerName,
   customerEmail,
@@ -27,8 +65,9 @@ export async function sendGiftActivationEmail({
   creatorKey,
   unlockPin,
   chainName,
-  siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  siteUrl: rawSiteUrl,
 }: SendActivationEmailParams): Promise<{ success: boolean; simulated?: boolean; error?: string }> {
+  const siteUrl = resolveSiteUrl(rawSiteUrl);
   const activationUrl = `${siteUrl}/gift?token=${token}`;
   const safeName = escapeHtml(customerName);
   const safeChainName = escapeHtml(chainName);

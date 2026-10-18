@@ -62,7 +62,9 @@ function CreatorPortalContent() {
 
       try {
         sessionStorage.setItem(`kp_verified_${code}`, "true");
-      } catch {}
+      } catch (storageErr) {
+        console.warn("[gift] Could not save verification flag:", storageErr);
+      }
 
       router.push(data.redirectUrl);
     } catch (err) {

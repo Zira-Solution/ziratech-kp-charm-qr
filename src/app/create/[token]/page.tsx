@@ -149,7 +149,9 @@ export default function CardStudioPage() {
             justVerified = true;
             sessionStorage.removeItem(`kp_verified_${token}`);
           }
-        } catch {}
+        } catch (sessionErr) {
+          console.warn("[studio] Could not read verification state:", sessionErr);
+        }
 
         if (restoredLocal && justVerified) {
           showToast("✨ Đã tự động khôi phục bản nháp bạn đang viết dở.", "success", 4000);
@@ -363,7 +365,9 @@ export default function CardStudioPage() {
         // Clear local unsaved draft because card has been successfully saved to server
         localStorage.removeItem(DRAFT_KEY(token));
         localStorage.setItem(STAGE_KEY(token), "3");
-      } catch {}
+      } catch (storageErr) {
+        console.warn("[studio] Could not clear local draft storage:", storageErr);
+      }
       showToast("Đã lưu thiệp thành công!", "success");
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#721a28", "#ffd700", "#fea095", "#ffffff"] });
       setTimeout(() => router.push(`/g/${token}`), 900);

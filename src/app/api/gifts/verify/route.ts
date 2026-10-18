@@ -91,7 +91,15 @@ export async function POST(req: NextRequest) {
     const normalize = mode === "create" ? normalizeCreatorKey : normalizeUnlockPin;
     const stored = mode === "create" ? product?.creatorKeyHash : product?.unlockPinHash;
 
-    const check = await checkSecret(stored, passcode, normalize);
+    let check = await checkSecret(stored, passcode, normalize);
+    if (!check.ok && mode === "create" && !passcode.toUpperCase().startsWith("TAO-")) {
+      // Allow entering creator OTP without the "TAO-" prefix (e.g. typing "2010" instead of "TAO-2010")
+      check = await checkSecret(stored, `TAO-${passcode}`, normalize);
+    } else if (!check.ok && mode === "open" && passcode.toUpperCase().startsWith("TAO-")) {
+      // Allow entering unlock PIN if user accidentally included the "TAO-" prefix
+      check = await checkSecret(stored, passcode.replace(/^TAO-/i, ""), normalize);
+    }
+
     if (!check.ok) {
       await recordFailure(lockKey);
       return NextResponse.json({ success: false, error: INVALID_CREDENTIALS }, { status: 401 });

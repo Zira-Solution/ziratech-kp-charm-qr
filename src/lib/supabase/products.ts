@@ -189,8 +189,12 @@ export async function getGiftProductByToken(token: string): Promise<GiftProductO
 
   const supabase = getClient();
   if (!supabase) {
-    const hit = memoryStore().find((item) => item.token.toUpperCase() === cleanToken);
-    return hit && !hit.deletedAt ? hit : null;
+    const cleanNoHyphen = cleanToken.replace(/-/g, "");
+    const hit = memoryStore().find((item) => {
+      const itemToken = item.token.toUpperCase();
+      return (itemToken === cleanToken || itemToken.replace(/-/g, "") === cleanNoHyphen) && !item.deletedAt;
+    });
+    return hit ?? null;
   }
 
   let { data, error } = await supabase
@@ -203,6 +207,11 @@ export async function getGiftProductByToken(token: string): Promise<GiftProductO
   if (isMissingColumn(error)) {
     // Soft delete is not set up yet, so no order can be deleted: read without the filter.
     ({ data, error } = await supabase.from("gift_products").select("*").eq("token", cleanToken).maybeSingle());
+  }
+
+  if (!data && !cleanToken.includes("-") && cleanToken.startsWith("KP2010")) {
+    const withHyphen = `KP-2010-${cleanToken.slice(6)}`;
+    ({ data, error } = await supabase.from("gift_products").select("*").eq("token", withHyphen).maybeSingle());
   }
 
   if (error) throw dbError("read order", error);

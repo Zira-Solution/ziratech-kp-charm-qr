@@ -1329,15 +1329,13 @@ function MessengerPageInner() {
                     ))}
                   </div>
 
-                  {pinError ? (
-                    <p className="text-xs text-rose-300 font-medium mt-2.5">
-                      Mật mã chưa chính xác, thử lại nhé
-                    </p>
-                  ) : (
-                    <p className="text-[11px] text-white/60 mt-2">
-                      Mã mở khóa: <strong className="text-white/90">{settings.pin}</strong>
-                    </p>
-                  )}
+                  <div className="h-6 mt-2 flex items-center justify-center">
+                    {pinError && (
+                      <p className="text-xs text-rose-300 font-medium animate-fade-in">
+                        Mật mã chưa chính xác, thử lại nhé
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Keypad Grid with Crystal Transparent Glass Keys */}
@@ -1366,32 +1364,16 @@ function MessengerPageInner() {
                 </div>
 
                 {/* Bottom actions matching iOS Passcode Screen */}
-                <div className="w-full flex items-center justify-between px-3 pb-2">
+                <div className="w-full flex items-center justify-between px-6 pb-2">
                   <button
                     type="button"
                     onClick={() => {
                       // Trigger emergency call notification/hint
                       alert("Tính năng cuộc gọi khẩn cấp (Emergency SOS) - K&P Atelier");
                     }}
-                    className="text-[15px] font-ios font-medium text-white/90 hover:text-white drop-shadow-sm active:scale-95 transition-transform"
+                    className="text-[15px] font-ios font-medium text-white/90 hover:text-white drop-shadow-sm active:scale-95 transition-transform cursor-pointer"
                   >
                     Khẩn cấp
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEnteredPin(settings.pin);
-                      window.setTimeout(() => {
-                        setShownMessages(0);
-                        setChatPhase("envelope");
-                        setAfterFilmStep(0);
-                        setStage("chat");
-                      }, 200);
-                    }}
-                    className="text-xs font-semibold text-rose-300 hover:text-rose-200 underline underline-offset-4"
-                  >
-                    Mở nhanh ({settings.pin})
                   </button>
 
                   <button
@@ -1404,7 +1386,7 @@ function MessengerPageInner() {
                         setStage("lock");
                       }
                     }}
-                    className="text-[15px] font-ios font-medium text-white/90 hover:text-white drop-shadow-sm active:scale-95 transition-transform"
+                    className="text-[15px] font-ios font-medium text-white/90 hover:text-white drop-shadow-sm active:scale-95 transition-transform cursor-pointer"
                   >
                     {enteredPin.length > 0 ? "Xóa" : "Hủy"}
                   </button>

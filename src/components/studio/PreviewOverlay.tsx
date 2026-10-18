@@ -113,7 +113,21 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
     };
   }, [template, draft.addressing, draft.recipientName, draft.senderName, draft.anonymous]);
 
-  const draftGift = useMemo(() => normalizeGift({ ...draftToPayload(draft).giftData, template }), [draft, template]);
+  const draftGift = useMemo(() => {
+    const payload = draftToPayload(draft).giftData;
+    const normalized = normalizeGift({
+      ...payload,
+      template,
+      voiceNote: {
+        ...(payload.voiceNote as Record<string, unknown> | undefined),
+        audioUrl: draft.voice?.audioUrl || undefined,
+      },
+    });
+    if (normalized.voice && draft.voice?.audioUrl) {
+      normalized.voice.audioUrl = draft.voice.audioUrl;
+    }
+    return normalized;
+  }, [draft, template]);
 
   const gift = mode === "demo" ? demoGift : draftGift;
   const frame = DEVICES.find((d) => d.id === device)!;

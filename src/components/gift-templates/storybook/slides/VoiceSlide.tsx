@@ -233,7 +233,9 @@ export default function VoiceSlide({ gift, ctx, slides }: Props) {
 
                 {failed && (
                   <p className="text-xs font-bold text-rose-700 mb-2">
-                    Không phát được ghi âm. Hãy tải lại trang.
+                    {!audioUrl
+                      ? "Chưa có bản ghi âm. Hãy quay lại bàn viết để thu âm giọng nói nhé."
+                      : "Không phát được ghi âm. Hãy tải lại trang."}
                   </p>
                 )}
 
@@ -382,7 +384,9 @@ export default function VoiceSlide({ gift, ctx, slides }: Props) {
 
               {failed && (
                 <p className="text-[10px] font-bold text-rose-700 text-center mb-1">
-                  Không phát được ghi âm. Hãy tải lại trang.
+                  {!audioUrl
+                    ? "Chưa có bản ghi âm. Hãy quay lại bàn viết để thu âm giọng nói nhé."
+                    : "Không phát được ghi âm. Hãy tải lại trang."}
                 </p>
               )}
 

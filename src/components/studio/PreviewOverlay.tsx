@@ -15,12 +15,10 @@ import {
   getDefaultFinalMessage,
 } from "../gift-templates/addressing";
 
-type Device = "fill" | "phone" | "tablet" | "desktop";
+type Device = "phone" | "tablet" | "desktop";
 
 // The card fills its frame: a phone is upright, an iPad is held sideways, a computer is wide.
 const DEVICES: { id: Device; label: string; icon: string; width: number; height: number }[] = [
-  // "fill" is the card as the recipient sees it on THIS screen: it takes the whole window, upright or wide.
-  { id: "fill", label: "Màn hình này", icon: "fullscreen", width: 0, height: 0 },
   { id: "phone", label: "Điện thoại", icon: "smartphone", width: 390, height: 844 },
   { id: "tablet", label: "iPad", icon: "tablet_mac", width: 1024, height: 768 },
   { id: "desktop", label: "Máy tính", icon: "desktop_windows", width: 1280, height: 720 },
@@ -80,8 +78,8 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
  * demonstration or inspect what they have authored in their draft so far.
  */
 export default function PreviewOverlay({ draft, template, onTemplateChange, onClose, initialMode }: Props) {
-  // Opens as the card looks on the screen in the buyer's hands (full window); the other frames are one click away.
-  const [device, setDevice] = useState<Device>("fill");
+  // Opens as the card looks on a phone frame; other frames are one click away.
+  const [device, setDevice] = useState<Device>("phone");
   const [mode, setMode] = useState<"demo" | "draft">(
     initialMode ?? (draft.blocks.length > 0 ? "draft" : "demo")
   );
@@ -320,17 +318,11 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
       </header>
 
       {/* Main Stage with Device Frame */}
-      <div className={`relative flex min-h-0 flex-1 items-center justify-center ${device === "fill" ? "" : "p-3 sm:p-5 lg:p-6"}`}>
+      <div className="relative flex min-h-0 flex-1 items-center justify-center p-3 sm:p-5 lg:p-6">
         <div
-          style={
-            frame.id === "fill"
-              ? { width: "100%", height: "100%" }
-              : { width: frame.width, height: frame.height, maxWidth: "100%", maxHeight: "100%" }
-          }
+          style={{ width: frame.width, height: frame.height, maxWidth: "100%", maxHeight: "100%" }}
           className={`overflow-hidden bg-white transition-all duration-300 ${
-            frame.id === "fill"
-              ? ""
-              : frame.id === "phone"
+            frame.id === "phone"
               ? "rounded-[38px] sm:rounded-[44px] border-[6px] sm:border-[8px] border-[#2e2624] shadow-[0_30px_80px_rgba(70,30,20,0.22),0_12px_28px_rgba(0,0,0,0.08)] ring-1 ring-black/10"
               : "rounded-2xl sm:rounded-3xl border-4 sm:border-[6px] border-white/95 shadow-[0_28px_80px_rgba(70,30,20,0.16),0_10px_30px_rgba(0,0,0,0.06)] ring-1 ring-black/5"
           }`}

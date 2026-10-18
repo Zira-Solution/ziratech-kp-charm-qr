@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGiftProductByToken, toPublicView } from "@/lib/supabase/products";
 import { checkRateLimit } from "@/lib/validation/security";
-import { hasGiftSession, normalizeToken } from "@/lib/auth/gift-session";
+import { hasGiftSession, issueGiftSession, normalizeToken } from "@/lib/auth/gift-session";
 import { signedVoiceUrl } from "@/lib/supabase/media";
 
 /**
  * Returns gift content only to a caller that already proved knowledge of a code for this token:
  *  - "create" session (buyer): the studio view, without secrets or contact details.
- *  - "open" session (recipient): the finished card only.
+ *  - "open" session (recipient): the finished card only (or opened directly if buyer turned off PIN requirement).
  */
 export async function GET(
   req: NextRequest,
@@ -29,13 +29,22 @@ export async function GET(
       return NextResponse.json({ error: "Mã token không hợp lệ" }, { status: 400 });
     }
 
+    const order = await getGiftProductByToken(token);
+    if (!order) {
+      return NextResponse.json({ error: "Không tìm thấy thiệp với mã này" }, { status: 404 });
+    }
+
     // The studio passes ?as=create so a recipient session (view-only) can never load the editor.
     const requireCreate = req.nextUrl.searchParams.get("as") === "create";
+    const isPinRequired = order.giftData?.requirePin !== false;
+
     const scope = hasGiftSession(req, "create", token)
       ? "create"
       : !requireCreate && hasGiftSession(req, "open", token)
         ? "open"
-        : null;
+        : !requireCreate && !isPinRequired
+          ? "open"
+          : null;
 
     if (!scope) {
       return NextResponse.json(
@@ -48,11 +57,6 @@ export async function GET(
       );
     }
 
-    const order = await getGiftProductByToken(token);
-    if (!order) {
-      return NextResponse.json({ error: "Không tìm thấy thiệp với mã này" }, { status: 404 });
-    }
-
     const product = toPublicView(order);
 
     // The recording is private: hand out a link that works for one hour.
@@ -63,11 +67,15 @@ export async function GET(
     }
 
     if (scope === "open") {
-      return NextResponse.json({
+      const res = NextResponse.json({
         success: true,
         scope,
         product: { token: product.token, status: product.status, giftData: product.giftData },
       });
+      if (!isPinRequired && !hasGiftSession(req, "open", token)) {
+        issueGiftSession(res, "open", product.token);
+      }
+      return res;
     }
 
     return NextResponse.json({ success: true, scope, product });

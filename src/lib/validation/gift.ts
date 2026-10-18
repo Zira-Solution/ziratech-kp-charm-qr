@@ -223,6 +223,8 @@ export interface StoredGiftData {
   blocks: BlockId[];
   recipientName: string;
   senderName: string;
+  /** Whether recipient must enter a 4-digit OTP/PIN to view the card (defaults to true). */
+  requirePin?: boolean;
   addressing?: string;
   anonymous?: boolean;
   letterTitle?: string;
@@ -276,6 +278,7 @@ export function parseGiftData(input: unknown, ctx: { token: string }): Parsed<St
     recipientName,
     senderName: cleanText(g.senderName, 100) || "Người gửi",
     memoryPhotos: [],
+    requirePin: g.requirePin !== false,
   };
 
   const addressing = cleanText(g.addressing, 40);

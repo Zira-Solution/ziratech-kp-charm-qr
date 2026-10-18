@@ -575,7 +575,15 @@ export default function CardStudioPage() {
             compact
           />
           <p className="px-1 text-center text-xs leading-relaxed text-slate-500">
-            Người nhận mở thiệp ở trang chủ bằng <strong>mã thiệp</strong> và <strong>mã OTP</strong> bảo mật.
+            {draft.requirePin ? (
+              <>
+                Người nhận mở thiệp bằng <strong>mã thiệp</strong> và <strong>mã OTP {draft.unlockPin ? `(${draft.unlockPin})` : "bảo mật"}</strong>.
+              </>
+            ) : (
+              <>
+                Chế độ <strong>mở trực tiếp</strong>: Người nhận quét QR hoặc bấm link là xem được ngay (không cần OTP).
+              </>
+            )}
           </p>
         </aside>
       </main>

@@ -46,6 +46,8 @@ export interface GiftDraft {
   videoAspectRatio: "16:9" | "1:1" | "9:16";
   song: SongDraft;
   voice: VoiceDraft;
+  /** Whether the recipient must enter a 4-digit OTP/PIN to unlock the card (defaults to true). */
+  requirePin: boolean;
   /** New 4-digit "OTP xem thiệp". Empty keeps the current one. */
   unlockPin: string;
 }
@@ -71,6 +73,7 @@ export function emptyDraft(): GiftDraft {
     videoAspectRatio: "16:9",
     song: { source: "none", presetId: "", link: "", title: "", artist: "" },
     voice: { audioPath: "", audioUrl: "", durationSec: 0, noteText: "" },
+    requirePin: true,
     unlockPin: "",
   };
 }
@@ -103,6 +106,7 @@ export function draftFromSaved(saved: unknown): GiftDraft {
   d.recipientName = str(g.recipientName);
   d.addressing = str(g.addressing);
   d.anonymous = g.anonymous === true;
+  d.requirePin = g.requirePin !== false;
   d.letterTitle = str(g.letterTitle);
   d.letterSubtitle = str(g.letterSubtitle);
   d.letterContent = str(g.letterContent);
@@ -163,6 +167,7 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
     blocks: d.blocks,
     senderName: d.senderName,
     recipientName: d.recipientName,
+    requirePin: d.requirePin,
     addressing: d.addressing,
     anonymous: d.anonymous,
     letterTitle: d.letterTitle,

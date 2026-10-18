@@ -81,7 +81,7 @@ export default function RecipientGiftPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setPinError(data.error || "Mã PIN chưa đúng. Bạn kiểm tra lại mã trong email nhé.");
+        setPinError(data.error || "Mã OTP chưa đúng. Bạn kiểm tra lại với người gửi hoặc mã in trên thẻ nhé.");
         return;
       }
       setPin("");
@@ -128,7 +128,9 @@ export default function RecipientGiftPage() {
             <Icon name="redeem" />
           </span>
           <h1 className="text-2xl font-bold leading-snug text-primary">Có một món quà đang chờ bạn</h1>
-          <p className="mt-2 text-base leading-relaxed text-on-surface-variant">Nhập mã PIN 4 số nhận qua email để mở thiệp.</p>
+          <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+            Nhập mã OTP 4 số do người gửi đặt (hoặc in trên thẻ) để mở thiệp.
+          </p>
 
           <label htmlFor="gift-pin" className="sr-only">
             Mã PIN xem thiệp (4 số)

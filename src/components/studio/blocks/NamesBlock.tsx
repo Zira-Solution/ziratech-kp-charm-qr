@@ -12,6 +12,7 @@ interface Props {
   errors: { recipientName?: string };
   compact?: boolean;
   idPrefix?: string;
+  customerName?: string;
 }
 
 export default function NamesBlock({
@@ -22,6 +23,7 @@ export default function NamesBlock({
   errors,
   compact = false,
   idPrefix = "",
+  customerName = "",
 }: Props) {
   return (
     <StudioSection
@@ -41,7 +43,7 @@ export default function NamesBlock({
             autoComplete="off"
             value={draft.recipientName}
             onChange={(e) => onChange({ recipientName: e.target.value })}
-            placeholder="Ví dụ: Bảo Ngọc"
+            placeholder="Ví dụ: Bảo Ngọc (hoặc Tên / Biệt danh người thương)"
             aria-invalid={errors.recipientName ? true : undefined}
             className={fieldClass}
           />
@@ -55,7 +57,7 @@ export default function NamesBlock({
             autoComplete="off"
             value={draft.senderName}
             onChange={(e) => onChange({ senderName: e.target.value, anonymous: false })}
-            placeholder="Ví dụ: Hoàng Nam"
+            placeholder={customerName ? `Ví dụ: ${customerName}` : "Ví dụ: Hoàng Nam"}
             className={fieldClass}
           />
         </Field>
@@ -68,9 +70,29 @@ export default function NamesBlock({
             autoComplete="off"
             value={draft.addressing}
             onChange={(e) => onChange({ addressing: e.target.value })}
-            placeholder="Ví dụ: Anh - Em"
+            placeholder="Ví dụ: Anh - Em (hoặc Tớ - Cậu, Bạn - Mình)"
             className={fieldClass}
           />
+          {/* Quick preset chips */}
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {["Anh - Em", "Em - Anh", "Tớ - Cậu", "Mình - Bạn", "Chị - Em"].map((preset) => {
+              const active = draft.addressing.trim().toLowerCase() === preset.toLowerCase();
+              return (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => onChange({ addressing: preset })}
+                  className={`text-xs px-2.5 py-1 rounded-full border transition-all cursor-pointer font-medium ${
+                    active
+                      ? "bg-[#ba4230] text-white border-[#ba4230] shadow-xs"
+                      : "bg-[#fffdfa] text-stone-600 border-stone-200 hover:border-[#ba4230]/50 hover:bg-stone-50"
+                  }`}
+                >
+                  {preset}
+                </button>
+              );
+            })}
+          </div>
         </Field>
       </div>
     </StudioSection>

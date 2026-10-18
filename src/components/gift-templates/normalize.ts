@@ -2,6 +2,7 @@ import { deriveBlocks, isBlockId, type BlockId } from "./blocks.ts";
 import { getMusicPreset } from "./music-presets.ts";
 import { DEFAULT_TEMPLATE, getTemplate } from "./template-config.ts";
 import type { GiftTemplateId, TimelineItem } from "./types.ts";
+import type { CleanMessenger } from "../../lib/validation/gift.ts";
 
 /**
  * A card ready to draw. Built from whatever was saved, never from sample data: a message that was not
@@ -26,6 +27,7 @@ export interface ViewerGift {
   voice?: { audioPath: string; audioUrl?: string; duration: string; noteText: string };
   anniversary?: { date: string; label: string };
   timeline: TimelineItem[];
+  messenger?: CleanMessenger;
 }
 
 const MAX_PHOTOS = 6;
@@ -73,7 +75,7 @@ export function normalizeGift(saved: unknown): ViewerGift {
     sender: anonymous ? "" : str(g.senderName).trim(),
     anonymous,
     addressing: str(g.addressing).trim(),
-    finalMessage: str(g.finalMessage).trim() || undefined,
+    finalMessage: undefined,
     photos: [],
     timeline: [],
   };
@@ -147,5 +149,8 @@ export function normalizeGift(saved: unknown): ViewerGift {
 
   // Keep the buyer's order; an unknown id was already dropped above.
   out.blocks = chosen.filter((id) => content[id]());
+  if (g.messenger && typeof g.messenger === "object") {
+    out.messenger = g.messenger as CleanMessenger;
+  }
   return out;
 }

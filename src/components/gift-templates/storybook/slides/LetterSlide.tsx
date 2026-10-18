@@ -3,6 +3,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
+import {
+  parseAddressing,
+  formatSalutation,
+  getDefaultLetterContent,
+  getDefaultLetterSubtitle,
+} from "@/components/gift-templates/addressing";
 import StorybookHeader from "./StorybookHeader";
 
 interface Props {
@@ -13,14 +19,13 @@ interface Props {
 
 export default function LetterSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
-  const recipient = gift.recipientName || "bạn";
+  const pronouns = parseAddressing(gift.addressing);
   const letter = gift.letter;
-  const content =
-    letter?.content ||
-    "Có vài điều mình luôn muốn nói nhưng chưa có dịp...\nHôm nay, mình muốn gửi tất cả vào món quà này.";
+  const content = letter?.content || getDefaultLetterContent(pronouns);
+  const subtitle = letter?.subtitle || getDefaultLetterSubtitle(pronouns);
   const signature = letter?.signature || gift.sender;
 
-  const salutationText = `Gửi ${recipient},`;
+  const salutationText = formatSalutation(gift.recipientName, pronouns.recipient);
   const bodyText = content;
   const sigText = signature ? `— ${signature}` : "";
   const totalLength = salutationText.length + bodyText.length + sigText.length;
@@ -135,7 +140,7 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
                 </h2>
                 <div className="flex items-center justify-center gap-2 mt-1">
                   <span className="font-handwriting text-2xl lg:text-3xl text-[#8c4b3e] font-bold italic">
-                    {letter?.subtitle || "Gửi đến bạn..."}
+                    {subtitle}
                   </span>
                   <img src="/thamkhao/heart_2.png" alt="Trái tim" className="w-6 h-6 object-contain inline-block" />
                   <img src="/thamkhao/music_notes.png" alt="Nốt nhạc" className="w-5 h-5 object-contain inline-block" />
@@ -230,7 +235,7 @@ export default function LetterSlide({ gift, ctx, slides }: Props) {
         </h2>
         <div className="flex items-center justify-center gap-2 mt-0.5">
           <span className="font-handwriting text-xl sm:text-2xl text-[#8c4b3e] font-bold italic">
-            {letter?.subtitle || "Gửi đến bạn..."}
+            {subtitle}
           </span>
           <img src="/thamkhao/heart_2.png" alt="Trái tim" className="w-5 h-5 object-contain inline-block" />
           <img src="/thamkhao/music_notes.png" alt="Nốt nhạc" className="w-4 h-4 object-contain inline-block" />

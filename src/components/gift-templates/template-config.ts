@@ -28,6 +28,7 @@ export const TEMPLATE_ALLOWED_BLOCKS: Record<GiftTemplateId, readonly BlockId[]>
   "messenger": [
     "letter",
     "photos",
+    "video",
     "voice",
     "music",
     "finalMessage",
@@ -67,7 +68,7 @@ export const TEMPLATES: readonly TemplateInfo[] = [
     id: "messenger",
     name: "Hộp Quà Messenger",
     icon: "💬",
-    desc: "Màn hình khóa iPhone 20/10, tin nhắn Messenger tâm tình, cuộn phim kỷ niệm, thư tay & voice note",
+    desc: "Màn hình khóa iPhone 20/10, tin nhắn Messenger tâm tình, video kỷ niệm, cuộn phim ảnh, thư tay & voice note",
     tag: "Mẫu 2 · Khóa iPhone & Chat",
     accentColor: "#e11d48",
     previewBg: "linear-gradient(135deg, #fce7f3 0%, #ffe4e6 100%)",

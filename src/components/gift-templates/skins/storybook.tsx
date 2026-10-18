@@ -1,6 +1,6 @@
-import React from "react";
 import { Photo, Sticker } from "../slides/Art";
 import type { Skin, SlideKind } from "../slides/skin";
+import { parseAddressing } from "../addressing";
 
 const ART = "/thamkhao";
 
@@ -20,25 +20,32 @@ export const STORYBOOK_SKIN: Skin = {
   photoFrame: "rounded-sm bg-white p-2 pb-8 shadow-xl -rotate-1",
 
   title(kind: SlideKind, gift) {
+    const pronouns = parseAddressing(gift.addressing);
     switch (kind) {
       case "open":
-        return { title: "Có một món quà", sub: `dành cho ${gift.recipientName || "bạn"}` };
+        return { title: "Có một món quà", sub: `dành cho ${gift.recipientName || pronouns.recipient}` };
       case "letter":
-        return { title: gift.letter?.title || "Lời nhắn", sub: gift.letter?.subtitle || "Gửi đến bạn…" };
+        return { title: gift.letter?.title || "Lời nhắn", sub: gift.letter?.subtitle || `Gửi đến ${pronouns.recipient}…` };
       case "photos":
-        return { title: "Những ngày như thế", sub: "Mình đã có…" };
+        return {
+          title: "Những ngày như thế",
+          sub: pronouns.sender !== "mình" ? `${pronouns.Sender} và ${pronouns.recipient} đã có…` : "Chúng mình đã có…",
+        };
       case "video":
-        return { title: "Video dành cho bạn", sub: "Thước phim kỷ niệm" };
+        return { title: `Video dành cho ${pronouns.recipient}`, sub: "Thước phim kỷ niệm" };
       case "music":
-        return { title: "Giai điệu kỷ niệm", sub: "Bài hát của mình" };
+        return {
+          title: "Giai điệu kỷ niệm",
+          sub: `Bài hát của ${pronouns.sender === "mình" ? "chúng mình" : `${pronouns.sender} và ${pronouns.recipient}`}`,
+        };
       case "voice":
-        return { title: "Giọng nói của mình", sub: "Lời nhắn giọng nói" };
+        return { title: `Giọng nói của ${pronouns.sender}`, sub: "Lời nhắn giọng nói" };
       case "anniversary":
         return { title: "Ngày kỷ niệm", sub: "Những ngày bên nhau" };
       case "timeline":
         return { title: "Mốc thời gian", sub: "Những khoảnh khắc đáng nhớ" };
       case "closing":
-        return { title: "Cảm ơn bạn", sub: "đã đi qua những ngày này cùng mình" };
+        return { title: `Cảm ơn ${pronouns.Recipient}`, sub: `đã đi qua những ngày này cùng ${pronouns.sender}` };
     }
   },
 

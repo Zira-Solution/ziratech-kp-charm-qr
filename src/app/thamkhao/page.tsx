@@ -68,7 +68,7 @@ export default function ThamKhaoPage() {
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-stone-900 font-sans text-stone-900 select-none">
       {/* Top Floating Control Bar */}
-      <header className="fixed top-3 left-1/2 -translate-x-1/2 z-40 flex flex-wrap items-center justify-center gap-2 px-3 py-1.5 rounded-2xl sm:rounded-full bg-white/95 backdrop-blur-md shadow-2xl border border-white/80 max-w-[96vw]">
+      <header className="fixed top-3 left-1/2 -translate-x-1/2 z-40 flex flex-wrap md:flex-nowrap whitespace-nowrap items-center justify-center gap-2 px-4 py-1.5 rounded-2xl md:rounded-full bg-white/95 backdrop-blur-md shadow-2xl border border-white/80 max-w-[96vw]">
         <Link
           href="/"
           className="flex items-center gap-1 px-3 py-1 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] text-xs font-bold transition-all"
@@ -146,6 +146,8 @@ export default function ThamKhaoPage() {
             <span>Điện thoại</span>
           </button>
         </div>
+
+
 
         <div className="h-4 w-px bg-stone-300 mx-0.5 hidden sm:block" />
 

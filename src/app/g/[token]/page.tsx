@@ -30,6 +30,7 @@ export default function RecipientGiftPage() {
 
   const [phase, setPhase] = useState<Phase>("loading");
   const [gift, setGift] = useState<ViewerGift | null>(null);
+  const [isCreator, setIsCreator] = useState(false);
 
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState("");
@@ -39,10 +40,11 @@ export default function RecipientGiftPage() {
   const load = useCallback(async () => {
     if (!token) return;
     try {
-      const res = await fetch(`/api/gifts/${token}`);
+      const res = await fetch(`/api/gifts/${token}`, { cache: "no-store" });
       if (res.status === 401) return setPhase("pin");
       if (!res.ok) return setPhase("error");
       const data = await res.json();
+      setIsCreator(data.scope === "create");
       const card = data.product?.giftData ? normalizeGift(data.product.giftData) : null;
       if (!card || card.blocks.length === 0) return setPhase("notReady"); // verified, but the sender has not finished it
       setGift(card);
@@ -59,7 +61,7 @@ export default function RecipientGiftPage() {
   // The recording link is signed and lasts an hour: the player asks for a new one when it stops working.
   const refreshVoiceUrl = useCallback(async (): Promise<string | null> => {
     try {
-      const res = await fetch(`/api/gifts/${token}`);
+      const res = await fetch(`/api/gifts/${token}`, { cache: "no-store" });
       if (!res.ok) return null;
       const data = await res.json();
       return data.product?.giftData?.voiceNote?.audioUrl ?? null;
@@ -81,7 +83,7 @@ export default function RecipientGiftPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setPinError(data.error || "Mã PIN chưa đúng. Bạn kiểm tra lại mã trong email nhé.");
+        setPinError(data.error || "Mã OTP chưa đúng. Bạn kiểm tra lại với người gửi hoặc mã in trên thẻ nhé.");
         return;
       }
       setPin("");
@@ -97,14 +99,46 @@ export default function RecipientGiftPage() {
   if (phase === "ready" && gift) {
     if (gift.template === "messenger") {
       const q = new URLSearchParams();
+      q.set("embed", "true");
+      q.set("hideConfig", "true");
       if (gift.recipientName) q.set("to", gift.recipientName);
       if (gift.sender) q.set("sender", gift.sender);
       if (gift.letter?.title) q.set("ltitle", gift.letter.title);
       if (gift.letter?.content) q.set("lbody", gift.letter.content);
       if (gift.letter?.signature) q.set("lsig", gift.letter.signature);
       if (gift.voice?.audioUrl) q.set("voice", gift.voice.audioUrl);
+      if (gift.song?.link) q.set("music", gift.song.link);
+      if (gift.photos && gift.photos.length > 0) {
+        q.set("photos", JSON.stringify(gift.photos.map((p) => p.url)));
+      }
+      const m = gift.messenger;
+      if (m) {
+        if (m.wallpaperUrl) q.set("wallpaper", m.wallpaperUrl);
+        if (m.chatWallpaperUrl) q.set("chatWallpaper", m.chatWallpaperUrl);
+        if (m.avatarUrl) q.set("avatar", m.avatarUrl);
+        if (m.notificationText) q.set("text", m.notificationText);
+        if (m.messages && m.messages.length > 0) q.set("msg", m.messages.join("||"));
+        q.set("hearts", m.showFloatingHearts ? "1" : "0");
+        if (m.giftLeadMessage) q.set("glead", m.giftLeadMessage);
+        if (m.voiceLeadMessage) q.set("vlead", m.voiceLeadMessage);
+        if (m.voiceAfterMessage) q.set("vafter", m.voiceAfterMessage);
+      }
+      const vUrl = (m?.videoUrl || gift.video || "").trim();
+      if (vUrl) q.set("vurl", vUrl);
+      if (m?.videoLeadMessage) q.set("videolead", m.videoLeadMessage);
+      if (m?.videoTitle) q.set("vtitle", m.videoTitle);
       return (
-        <div className="kp-card-in h-dvh w-full overflow-hidden bg-black">
+        <div className="kp-card-in h-dvh w-full overflow-hidden bg-black relative">
+          {isCreator && (
+            <Link
+              href={`/create/${token}`}
+              className="fixed top-4 right-4 z-50 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/90 backdrop-blur-md text-[#721a28] text-xs font-bold shadow-lg border border-rose-200/90 hover:bg-white hover:scale-105 transition-all"
+              title="Quay lại bàn thiết kế để sửa nội dung thiệp"
+            >
+              <Icon name="edit" />
+              <span>Sửa lại thiệp</span>
+            </Link>
+          )}
           <iframe
             src={`/messenger?${q.toString()}`}
             className="w-full h-full border-0"
@@ -114,7 +148,17 @@ export default function RecipientGiftPage() {
       );
     }
     return (
-      <div className="kp-card-in h-dvh">
+      <div className="kp-card-in h-dvh relative">
+        {isCreator && (
+          <Link
+            href={`/create/${token}`}
+            className="fixed top-4 right-4 z-50 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/90 backdrop-blur-md text-[#721a28] text-xs font-bold shadow-lg border border-rose-200/90 hover:bg-white hover:scale-105 transition-all"
+            title="Quay lại bàn thiết kế để sửa nội dung thiệp"
+          >
+            <Icon name="edit" />
+            <span>Sửa lại thiệp</span>
+          </Link>
+        )}
         <GiftTemplateViewer gift={gift} refreshVoiceUrl={refreshVoiceUrl} />
       </div>
     );
@@ -128,7 +172,9 @@ export default function RecipientGiftPage() {
             <Icon name="redeem" />
           </span>
           <h1 className="text-2xl font-bold leading-snug text-primary">Có một món quà đang chờ bạn</h1>
-          <p className="mt-2 text-base leading-relaxed text-on-surface-variant">Nhập mã PIN 4 số nhận qua email để mở thiệp.</p>
+          <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+            Nhập mã OTP 4 số do người gửi đặt (hoặc in trên thẻ) để mở thiệp.
+          </p>
 
           <label htmlFor="gift-pin" className="sr-only">
             Mã PIN xem thiệp (4 số)

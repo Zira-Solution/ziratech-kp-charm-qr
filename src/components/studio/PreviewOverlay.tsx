@@ -7,6 +7,14 @@ import { TEMPLATES } from "../gift-templates/template-config";
 import type { GiftTemplateId } from "../gift-templates/types";
 import { draftToPayload, type GiftDraft } from "./draft";
 import { Icon } from "./ui";
+import { useMusicPlayer } from "../gift-templates/media/useMusicPlayer";
+import {
+  parseAddressing,
+  getDefaultLetterContent,
+  getDefaultLetterSubtitle,
+  getDefaultVoiceNote,
+  getDefaultFinalMessage,
+} from "../gift-templates/addressing";
 
 type Device = "fill" | "phone" | "tablet" | "desktop";
 
@@ -80,21 +88,74 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
   );
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const music = useMusicPlayer(draft.song.source === "preset" ? (draft.song.presetId || "lofi") : "lofi");
 
   const demoGift = useMemo<ViewerGift>(() => {
+    const addressing = draft.addressing?.trim() || STORYBOOK_DEMO_GIFT.addressing;
+    const pronouns = parseAddressing(addressing);
     return {
       ...STORYBOOK_DEMO_GIFT,
       template,
+      addressing,
       recipientName: draft.recipientName?.trim() || STORYBOOK_DEMO_GIFT.recipientName,
       sender: draft.anonymous ? "" : (draft.senderName?.trim() || STORYBOOK_DEMO_GIFT.sender),
       anonymous: draft.anonymous,
+      letter: {
+        ...STORYBOOK_DEMO_GIFT.letter!,
+        subtitle: getDefaultLetterSubtitle(pronouns),
+        content: getDefaultLetterContent(pronouns),
+      },
+      voice: STORYBOOK_DEMO_GIFT.voice
+        ? {
+            ...STORYBOOK_DEMO_GIFT.voice,
+            noteText: getDefaultVoiceNote(pronouns),
+          }
+        : undefined,
+      finalMessage: getDefaultFinalMessage(pronouns),
     };
-  }, [template, draft.recipientName, draft.senderName, draft.anonymous]);
+  }, [template, draft.addressing, draft.recipientName, draft.senderName, draft.anonymous]);
 
   const draftGift = useMemo(() => normalizeGift({ ...draftToPayload(draft).giftData, template }), [draft, template]);
 
   const gift = mode === "demo" ? demoGift : draftGift;
   const frame = DEVICES.find((d) => d.id === device)!;
+
+  const messengerPreviewUrl = useMemo(() => {
+    const q = new URLSearchParams();
+    q.set("embed", "true");
+    q.set("hideConfig", "true");
+    if (mode === "demo") {
+      return `/messenger?${q.toString()}`;
+    }
+    if (draft.recipientName) q.set("to", draft.recipientName);
+    if (draft.senderName) q.set("sender", draft.senderName);
+    if (draft.unlockPin) q.set("pin", draft.unlockPin);
+    if (draft.letterTitle) q.set("ltitle", draft.letterTitle);
+    if (draft.letterContent) q.set("lbody", draft.letterContent);
+    if (draft.letterSignature) q.set("lsig", draft.letterSignature);
+    if (draft.voice?.audioUrl) q.set("voice", draft.voice.audioUrl);
+    if (draft.song?.link) q.set("music", draft.song.link);
+    if (draft.photos?.length > 0) {
+      q.set("photos", JSON.stringify(draft.photos.map((p) => p.url)));
+    }
+    const m = draft.messenger;
+    if (m) {
+      if (m.wallpaperUrl) q.set("wallpaper", m.wallpaperUrl);
+      if (m.chatWallpaperUrl) q.set("chatWallpaper", m.chatWallpaperUrl);
+      if (m.avatarUrl) q.set("avatar", m.avatarUrl);
+      if (m.notificationText) q.set("text", m.notificationText);
+      if (m.messages && m.messages.length > 0) q.set("msg", m.messages.join("||"));
+      q.set("hearts", m.showFloatingHearts ? "1" : "0");
+      if (m.giftLeadMessage) q.set("glead", m.giftLeadMessage);
+      if (m.voiceLeadMessage) q.set("vlead", m.voiceLeadMessage);
+      if (m.voiceAfterMessage) q.set("vafter", m.voiceAfterMessage);
+    }
+    const vUrl = (m?.videoUrl || draft.videoUrl || "").trim();
+    if (vUrl) q.set("vurl", vUrl);
+    if (m?.videoLeadMessage) q.set("videolead", m.videoLeadMessage);
+    if (m?.videoTitle) q.set("vtitle", m.videoTitle);
+    return `/messenger?${q.toString()}`;
+  }, [mode, draft]);
 
   // Move focus in when it opens, give it back when it closes, and keep the page behind from scrolling.
   useEffect(() => {
@@ -230,6 +291,24 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
             })}
           </div>
 
+          {/* Quick Speaker Music Toggle */}
+          <button
+            type="button"
+            onClick={music.toggle}
+            className={`inline-flex items-center gap-1.5 rounded-2xl px-3 py-2 text-xs font-bold transition-all cursor-pointer border ${
+              music.playing
+                ? "bg-rose-50 text-[#721a28] border-rose-200/90 shadow-2xs"
+                : "bg-white/80 text-stone-600 border-slate-200 hover:bg-white"
+            }`}
+            title={music.playing ? "Tắt âm thanh nhạc nền" : "Bật âm thanh nhạc nền"}
+            aria-label={music.playing ? "Tắt âm thanh" : "Bật âm thanh"}
+          >
+            <span className={`material-symbols-outlined text-[17px] ${music.playing ? "text-[#c13d28]" : "text-stone-400"}`}>
+              {music.playing ? "volume_up" : "volume_off"}
+            </span>
+            <span className="hidden sm:inline font-sans">{music.playing ? "Nhạc: Bật" : "Nhạc: Tắt"}</span>
+          </button>
+
           {/* Close button: Quay lại bàn viết */}
           <button
             ref={closeRef}
@@ -261,7 +340,7 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
         >
           {template === "messenger" ? (
             <iframe
-              src="/messenger"
+              src={messengerPreviewUrl}
               className="w-full h-full border-0"
               title="Xem thử Hộp Quà Messenger"
             />

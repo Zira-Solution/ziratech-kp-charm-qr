@@ -4,6 +4,7 @@ import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } fr
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import confetti from "canvas-confetti";
+import { toVideoEmbed } from "@/lib/media/embed";
 
 const DEFAULT_MUSIC_URL = "/audio/test-music.wav";
 
@@ -32,10 +33,41 @@ const DEFAULT_FILM_PHOTOS: string[] = [
   "/images/anime_sunset_gift_box.jpg",
 ];
 
+function getYouTubeThumbnail(urlStr?: string): string | null {
+  if (!urlStr) return null;
+  try {
+    const url = new URL(urlStr.trim());
+    const host = url.hostname.toLowerCase();
+    const parts = url.pathname.split("/").filter(Boolean);
+    let id: string | null = null;
+    if (host === "youtu.be") id = parts[0] ?? null;
+    else if (host === "youtube.com" || host.endsWith(".youtube.com")) {
+      if (url.pathname === "/watch") id = url.searchParams.get("v");
+      else if (parts[0] === "shorts" || parts[0] === "embed" || parts[0] === "live") id = parts[1] ?? null;
+    }
+    if (id && /^[A-Za-z0-9_-]{11}$/.test(id)) {
+      return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+    }
+  } catch {}
+  return null;
+}
+
+function getVideoPlatform(urlStr?: string): string {
+  if (!urlStr) return "Video";
+  try {
+    const host = new URL(urlStr.trim()).hostname.toLowerCase();
+    if (host.includes("youtube.com") || host === "youtu.be") return "YouTube";
+    if (host.includes("drive.google.com")) return "Google Drive";
+    if (host.includes("vimeo.com")) return "Vimeo";
+  } catch {}
+  return "Video";
+}
+
 interface CustomSettings {
   senderName: string;
   notificationText: string;
   wallpaperUrl: string;
+  chatWallpaperUrl: string;
   avatarUrl?: string;
   pin: string;
   enablePin: boolean;
@@ -54,12 +86,16 @@ interface CustomSettings {
   voiceAfterMessage: string; // sent after the voice note
   musicUrl: string; // background music while the letter or the film reel is open
   voiceUrl: string; // recorded voice note from the giver; empty means none yet
+  videoUrl?: string; // video embed link (YouTube, Drive, Vimeo)
+  videoLeadMessage?: string; // teaser text sent right before video bubble
+  videoTitle?: string; // title on video bubble
 }
 
 const DEFAULT_SETTINGS: CustomSettings = {
   senderName: "Anh iu ❤️",
   notificationText: "hello bé iu",
   wallpaperUrl: "/images/default_lockscreen_girl.jpg",
+  chatWallpaperUrl: "/images/messenger_pink_theme_bg.png",
   avatarUrl: "/images/default_avatar.png",
   pin: "2010",
   enablePin: true,
@@ -79,6 +115,9 @@ const DEFAULT_SETTINGS: CustomSettings = {
   voiceAfterMessage: VOICE_AFTER_MESSAGE,
   musicUrl: DEFAULT_MUSIC_URL,
   voiceUrl: "",
+  videoUrl: "https://youtu.be/dQw4w9WgXcQ",
+  videoLeadMessage: "Anh có một video nhỏ gửi cho em nè 🎬",
+  videoTitle: "Video kỷ niệm dành riêng cho em",
 };
 
 const VOICE_BARS = [6, 10, 16, 9, 20, 13, 7, 18, 24, 12, 8, 19, 14, 22, 10, 6, 15, 21, 9, 13, 7, 11];
@@ -93,6 +132,14 @@ const WALLPAPER_PRESETS = [
   { name: "Ảnh gốc tham khảo", url: "/images/messenger_reference.png" },
   { name: "Hoàng hôn Anime", url: "/images/anime_sunset_couple.jpg" },
   { name: "Cặp đôi hoàng hôn", url: "/thamkhao/sunset_couple_clean.jpg" },
+];
+
+const CHAT_WALLPAPER_PRESETS = [
+  { name: "Trái tim hồng", url: "/images/messenger_pink_theme_bg.png" },
+  { name: "Mây hồng hoàng hôn", url: "/images/pink_clouds_sunset_sky.webp" },
+  { name: "Hoàng hôn Anime", url: "/images/anime_sunset_couple.jpg" },
+  { name: "Cặp đôi hoàng hôn", url: "/thamkhao/sunset_couple_clean.jpg" },
+  { name: "Nắng nhẹ cô gái", url: "/images/default_lockscreen_girl.jpg" },
 ];
 
 // Isolated Live Lockscreen Clock: Only this subcomponent re-renders every second, NOT the whole page
@@ -177,6 +224,8 @@ const LiveStatusClock = React.memo(function LiveStatusClock({
 
 function MessengerPageInner() {
   const searchParams = useSearchParams();
+  const isEmbedded = searchParams?.get("embed") === "true";
+  const hideConfig = searchParams?.get("hideConfig") === "true" || isEmbedded;
 
   // Settings state
   const [settings, setSettings] = useState<CustomSettings>(DEFAULT_SETTINGS);
@@ -195,6 +244,7 @@ function MessengerPageInner() {
   const [shownMessages, setShownMessages] = useState<number>(0);
   const [isTyping, setIsTyping] = useState(false);
   const [isLetterOpen, setIsLetterOpen] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   // "envelope": only the small letter is shown; "gift": chat plays and ends with the gift icon
   const [chatPhase, setChatPhase] = useState<"envelope" | "gift">("envelope");
   const [letterHoldActive, setLetterHoldActive] = useState(false);
@@ -213,10 +263,26 @@ function MessengerPageInner() {
   const voiceFileInputRef = useRef<HTMLInputElement>(null);
   const musicAudioRef = useRef<HTMLAudioElement>(null);
   const musicFileInputRef = useRef<HTMLInputElement>(null);
-  const chatList = useMemo(
-    () => [...(settings.messages || DEFAULT_MESSAGES), ...(chatPhase === "gift" ? [settings.giftLeadMessage.trim() || GIFT_LEAD_MESSAGE] : [])],
-    [settings.messages, settings.giftLeadMessage, chatPhase]
-  );
+
+  const hasVideo = Boolean(settings.videoUrl?.trim());
+  const baseMessages = useMemo(() => settings.messages || DEFAULT_MESSAGES, [settings.messages]);
+
+  const videoEmbedUrl = useMemo(() => toVideoEmbed(settings.videoUrl), [settings.videoUrl]);
+  const videoThumbnail = useMemo(() => getYouTubeThumbnail(settings.videoUrl), [settings.videoUrl]);
+  const videoPlatform = useMemo(() => getVideoPlatform(settings.videoUrl), [settings.videoUrl]);
+  const displayThumbnail = videoThumbnail || "/images/anime_sunset_couple.jpg";
+
+  const chatList = useMemo(() => {
+    const list: string[] = [...baseMessages];
+    if (hasVideo) {
+      list.push(settings.videoLeadMessage?.trim() || "Anh có một video nhỏ gửi cho em nè 🎬");
+      list.push("__VIDEO_CARD__");
+    }
+    if (chatPhase === "gift") {
+      list.push(settings.giftLeadMessage.trim() || GIFT_LEAD_MESSAGE);
+    }
+    return list;
+  }, [baseMessages, hasVideo, settings.videoLeadMessage, chatPhase, settings.giftLeadMessage]);
 
   // Filmstrip stage state
   const [isFilmPaused, setIsFilmPaused] = useState(false);
@@ -227,6 +293,7 @@ function MessengerPageInner() {
   const letterScrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLetter, setCanScrollLetter] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const chatWallpaperFileInputRef = useRef<HTMLInputElement>(null);
   const avatarFileInputRef = useRef<HTMLInputElement>(null);
   const filmFileInputRef = useRef<HTMLInputElement>(null);
   const customizerFilmInputRef = useRef<HTMLInputElement>(null);
@@ -252,6 +319,15 @@ function MessengerPageInner() {
     }
   }, [isLetterOpen, settings.letterContent, handleCheckLetterScroll]);
 
+  useEffect(() => {
+    if (!isVideoModalOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsVideoModalOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isVideoModalOpen]);
+
   // Initialize from URL params or LocalStorage (runs once on mount / param change)
   useEffect(() => {
     // Read URL search params first
@@ -272,6 +348,10 @@ function MessengerPageInner() {
     const pVoiceAfter = searchParams?.get("vafter");
     const pFilmTitle = searchParams?.get("ftitle");
     const pFilmSubtitle = searchParams?.get("fsub");
+    const pVideo = searchParams?.get("video") ?? searchParams?.get("vurl");
+    const pVideoLead = searchParams?.get("videolead") ?? searchParams?.get("vlead_msg");
+    const pVideoTitle = searchParams?.get("vtitle");
+    const pChatWallpaper = searchParams?.get("chatWallpaper") ?? searchParams?.get("chatbg");
 
     let initial = { ...DEFAULT_SETTINGS };
 
@@ -314,6 +394,34 @@ function MessengerPageInner() {
     if (pVoiceAfter) initial.voiceAfterMessage = pVoiceAfter;
     if (pFilmTitle) initial.filmTitle = pFilmTitle;
     if (pFilmSubtitle) initial.filmSubtitle = pFilmSubtitle;
+    if (pVideo !== null && pVideo !== undefined) {
+      initial.videoUrl = pVideo.trim();
+    } else if (pRecipient || pSender || pMsg || searchParams?.has("embed")) {
+      initial.videoUrl = "";
+    }
+    if (pVideoLead) initial.videoLeadMessage = pVideoLead;
+    if (pVideoTitle) initial.videoTitle = pVideoTitle;
+    if (pChatWallpaper) initial.chatWallpaperUrl = pChatWallpaper;
+
+    const pHearts = searchParams?.get("hearts");
+    if (pHearts !== null && pHearts !== undefined) {
+      initial.showFloatingHearts = pHearts === "1" || pHearts === "true";
+    }
+
+    const pPhotos = searchParams?.get("photos");
+    if (pPhotos) {
+      try {
+        const parsed = JSON.parse(pPhotos);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          initial.filmPhotos = parsed
+            .map((item: unknown) => (typeof item === "string" ? item : (item as { url?: string })?.url))
+            .filter((url): url is string => typeof url === "string" && Boolean(url.trim()));
+        }
+      } catch {
+        const list = pPhotos.split(",").filter(Boolean);
+        if (list.length > 0) initial.filmPhotos = list;
+      }
+    }
 
     setSettings(initial);
   }, [searchParams]);
@@ -533,6 +641,20 @@ function MessengerPageInner() {
     reader.readAsDataURL(file);
   };
 
+  // Customizer image upload (Chat Wallpaper)
+  const handleChatWallpaperUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        updateSetting("chatWallpaperUrl", reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
   // Customizer image upload (Chat Avatar)
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -628,6 +750,12 @@ function MessengerPageInner() {
     url.searchParams.set("glead", settings.giftLeadMessage);
     url.searchParams.set("vlead", settings.voiceLeadMessage);
     url.searchParams.set("vafter", settings.voiceAfterMessage);
+    if (settings.videoUrl) url.searchParams.set("video", settings.videoUrl);
+    if (settings.videoLeadMessage) url.searchParams.set("videolead", settings.videoLeadMessage);
+    if (settings.videoTitle) url.searchParams.set("vtitle", settings.videoTitle);
+    if (settings.chatWallpaperUrl && !settings.chatWallpaperUrl.startsWith("data:") && settings.chatWallpaperUrl !== "/images/messenger_pink_theme_bg.png") {
+      url.searchParams.set("chatWallpaper", settings.chatWallpaperUrl);
+    }
     if (settings.musicUrl && !settings.musicUrl.startsWith("data:") && settings.musicUrl !== DEFAULT_MUSIC_URL) {
       url.searchParams.set("music", settings.musicUrl);
     }
@@ -647,23 +775,92 @@ function MessengerPageInner() {
 
   const renderBubble = (text: string, idx: number) => (
     <div
-                      key={idx}
-                      className="flex items-end gap-2 justify-start animate-fade-in"
-                    >
-                      {/* Sender Avatar */}
-                      <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-0.5 shadow-2xs ring-1 ring-pink-100">
-                        <img
-                          src={settings.avatarUrl || "/images/default_avatar.png"}
-                          alt={settings.senderName}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+      key={idx}
+      className="flex items-end gap-2 justify-start animate-fade-in"
+    >
+      {/* Sender Avatar */}
+      <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-0.5 shadow-2xs ring-1 ring-pink-100">
+        <img
+          src={settings.avatarUrl || "/images/default_avatar.png"}
+          alt={settings.senderName}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-                      {/* 1-way Bubble in pure white with soft shadow, matching reference style */}
-                      <div className="max-w-[78%] px-3.5 py-2 text-[14px] leading-snug break-words bg-white text-slate-800 rounded-[18px] rounded-bl-xs shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
-                        {text}
-                      </div>
-                    </div>
+      {/* 1-way Bubble in pure white with soft shadow, matching reference style */}
+      <div className="max-w-[78%] px-3.5 py-2 text-[14px] leading-snug break-words bg-white text-slate-800 rounded-[18px] rounded-bl-xs shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+        {text}
+      </div>
+    </div>
+  );
+
+  const renderVideoBubble = () => (
+    <div key="video-attachment-card" className="flex items-end gap-2 justify-start animate-fade-in">
+      {/* Sender Avatar */}
+      <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-0.5 shadow-2xs ring-1 ring-pink-100">
+        <img
+          src={settings.avatarUrl || "/images/default_avatar.png"}
+          alt={settings.senderName}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Video Bubble Card */}
+      <div className="max-w-[84%] sm:max-w-[320px] rounded-[20px] rounded-bl-xs overflow-hidden bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-pink-100/90 group">
+        <button
+          type="button"
+          onClick={() => setIsVideoModalOpen(true)}
+          className="w-full text-left cursor-pointer focus:outline-none block transition-all"
+          aria-label="Mở video kỷ niệm"
+        >
+          {/* Video Preview Frame */}
+          <div className="relative aspect-[16/9] w-full bg-slate-900 overflow-hidden flex items-center justify-center">
+            <img
+              src={displayThumbnail}
+              alt={settings.videoTitle || "Video kỷ niệm"}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            {/* Ambient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/30" />
+
+            {/* Glowing animated Play button in center */}
+            <div className="relative z-10 w-12 h-12 rounded-full bg-white/95 text-[#e02476] flex items-center justify-center shadow-lg group-hover:scale-110 active:scale-95 transition-all">
+              <span className="material-symbols-outlined text-[30px] ml-0.5">play_arrow</span>
+              <span className="absolute inset-0 rounded-full border-2 border-white/80 animate-ping opacity-60 pointer-events-none" />
+            </div>
+
+            {/* Top Platform Tag */}
+            <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white shadow-xs">
+              <span>🎬</span>
+              <span>{videoPlatform}</span>
+            </div>
+
+            {/* Top HD Badge */}
+            <div className="absolute top-2 right-2 z-10 px-1.5 py-0.5 rounded-md bg-black/50 text-[10px] font-bold text-white/90">
+              HD
+            </div>
+
+            {/* Bottom Title */}
+            <div className="absolute bottom-2 left-2.5 right-2.5 z-10">
+              <p className="text-[12px] sm:text-[13px] font-semibold text-white drop-shadow-md truncate">
+                {settings.videoTitle || "Video kỷ niệm dành riêng cho em"}
+              </p>
+            </div>
+          </div>
+
+          {/* Bottom Call-To-Action Banner: encouraging tap */}
+          <div className="px-3.5 py-2.5 bg-gradient-to-r from-pink-50 via-rose-50 to-white flex items-center justify-between border-t border-pink-100">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#e02476]">
+              <span className="animate-pulse text-[13px]">▶</span>
+              <span className="tracking-tight">Bấm vào để xem video nha 🌸</span>
+            </div>
+            <span className="text-[12px] text-rose-400 group-hover:translate-x-0.5 transition-transform">
+              ➔
+            </span>
+          </div>
+        </button>
+      </div>
+    </div>
   );
 
   return (
@@ -683,116 +880,124 @@ function MessengerPageInner() {
       />
 
       {/* Top Floating Controls Bar on Desktop */}
-      <header className="hidden sm:flex w-full max-w-4xl px-4 py-3 sm:py-4 items-center justify-between gap-3 z-40 relative">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
-        >
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-          <span>Trang chủ</span>
-        </Link>
+      {!isEmbedded && (
+        <header className="hidden sm:flex w-full max-w-4xl px-4 py-3 sm:py-4 items-center justify-between gap-3 z-40 relative">
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
+          >
+            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Trang chủ</span>
+          </Link>
 
-        {/* 2 Sample Templates Switcher */}
-        <div className="flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
+          {/* 2 Sample Templates Switcher */}
+          <div className="flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
+            <Link
+              href="/thamkhao?device=phone"
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all"
+              title="Chuyển sang xem Mẫu 1: Storybook Hoàng Hôn 20/10"
+            >
+              <span>🌅</span>
+              <span>Mẫu 1: Storybook</span>
+            </Link>
+
+            <button
+              type="button"
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-600 text-white shadow-xs"
+              title="Đang xem Mẫu 2: Hộp Quà Messenger"
+            >
+              <span>💬</span>
+              <span>Mẫu 2: Messenger</span>
+            </button>
+          </div>
+
+          {/* Device Mode Switcher (Desktop only) */}
+          <div className="hidden lg:flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
+            <button
+              type="button"
+              onClick={() => setDeviceMode("mockup")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                deviceMode === "mockup"
+                  ? "bg-rose-600 text-white shadow-xs"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              <span className="material-symbols-outlined text-[14px]">phone_iphone</span>
+              <span>Khung iPhone</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeviceMode("fullscreen")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                deviceMode === "fullscreen"
+                  ? "bg-rose-600 text-white shadow-xs"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              <span className="material-symbols-outlined text-[14px]">fullscreen</span>
+              <span>Toàn màn hình</span>
+            </button>
+          </div>
+
+          {/* Right Action Buttons */}
+          <div className="flex items-center gap-2 shrink-0">
+            {!hideConfig && (
+              <button
+                type="button"
+                onClick={() => setIsConfigOpen(true)}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-semibold text-white transition-all active:scale-95 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[15px]">tune</span>
+                <span>Tùy chỉnh</span>
+              </button>
+            )}
+
+            <Link
+              href="/gift"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-linear-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[15px]">edit</span>
+              <span>Tự tạo thiệp</span>
+            </Link>
+          </div>
+        </header>
+      )}
+
+      {/* Mobile Floating Bar for Template Switching & Actions */}
+      {!isEmbedded && (
+        <div className="sm:hidden fixed top-3 inset-x-2 z-50 flex items-center justify-between gap-1 p-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/20 shadow-lg text-[11px]">
           <Link
             href="/thamkhao?device=phone"
-            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all"
-            title="Chuyển sang xem Mẫu 1: Storybook Hoàng Hôn 20/10"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full text-white/80 hover:text-white"
           >
             <span>🌅</span>
             <span>Mẫu 1: Storybook</span>
           </Link>
 
-          <button
-            type="button"
-            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-600 text-white shadow-xs"
-            title="Đang xem Mẫu 2: Hộp Quà Messenger"
-          >
+          <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-600 text-white font-bold shadow-xs">
             <span>💬</span>
             <span>Mẫu 2: Messenger</span>
-          </button>
-        </div>
+          </span>
 
-        {/* Device Mode Switcher (Desktop only) */}
-        <div className="hidden lg:flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
-          <button
-            type="button"
-            onClick={() => setDeviceMode("mockup")}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-              deviceMode === "mockup"
-                ? "bg-rose-600 text-white shadow-xs"
-                : "text-white/70 hover:text-white"
-            }`}
-          >
-            <span className="material-symbols-outlined text-[14px]">phone_iphone</span>
-            <span>Khung iPhone</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setDeviceMode("fullscreen")}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-              deviceMode === "fullscreen"
-                ? "bg-rose-600 text-white shadow-xs"
-                : "text-white/70 hover:text-white"
-            }`}
-          >
-            <span className="material-symbols-outlined text-[14px]">fullscreen</span>
-            <span>Toàn màn hình</span>
-          </button>
-        </div>
-
-        {/* Right Action Buttons */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => setIsConfigOpen(true)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-semibold text-white transition-all active:scale-95 cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-[15px]">tune</span>
-            <span>Tùy chỉnh</span>
-          </button>
+          {!hideConfig && (
+            <button
+              type="button"
+              onClick={() => setIsConfigOpen(true)}
+              className="px-2 py-1 rounded-full bg-white/20 text-white font-medium flex items-center gap-0.5"
+              title="Tùy chỉnh thiệp mẫu"
+            >
+              <span className="material-symbols-outlined text-[13px]">tune</span>
+            </button>
+          )}
 
           <Link
             href="/gift"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-linear-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+            className="px-2.5 py-1 rounded-full bg-linear-to-r from-rose-600 to-pink-600 text-white font-bold"
           >
-            <span className="material-symbols-outlined text-[15px]">edit</span>
-            <span>Tự tạo thiệp</span>
+            Tạo thiệp
           </Link>
         </div>
-      </header>
-
-      {/* Mobile Floating Bar for Template Switching & Actions */}
-      <div className="sm:hidden fixed top-3 inset-x-2 z-50 flex items-center justify-between gap-1 p-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/20 shadow-lg text-[11px]">
-        <Link
-          href="/thamkhao?device=phone"
-          className="flex items-center gap-1 px-2.5 py-1 rounded-full text-white/80 hover:text-white"
-        >
-          <span>🌅</span>
-          <span>Mẫu 1: Storybook</span>
-        </Link>
-
-        <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-600 text-white font-bold shadow-xs">
-          <span>💬</span>
-          <span>Mẫu 2: Messenger</span>
-        </span>
-
-        <button
-          type="button"
-          onClick={() => setIsConfigOpen(true)}
-          className="px-2 py-1 rounded-full bg-white/20 text-white font-medium flex items-center gap-0.5"
-          title="Tùy chỉnh thiệp mẫu"
-        >
-          <span className="material-symbols-outlined text-[13px]">tune</span>
-        </button>
-
-        <Link
-          href="/gift"
-          className="px-2.5 py-1 rounded-full bg-linear-to-r from-rose-600 to-pink-600 text-white font-bold"
-        >
-          Tạo thiệp
-        </Link>
-      </div>
+      )}
 
       {/* Main Showcase Area */}
       <main className="w-full flex-1 flex items-center justify-center p-0 sm:p-3 z-20 overflow-hidden">
@@ -1116,7 +1321,7 @@ function MessengerPageInner() {
             {stage === "chat" && (
               <div
                 className="relative h-full w-full flex flex-col font-sans z-20 bg-cover bg-center select-none"
-                style={{ backgroundImage: `url('/images/messenger_pink_theme_bg.png')` }}
+                style={{ backgroundImage: `url('${settings.chatWallpaperUrl || "/images/messenger_pink_theme_bg.png"}')` }}
               >
                 {/* Soft overlay so text and bubbles pop */}
                 <div className="absolute inset-0 bg-pink-100/10 pointer-events-none" />
@@ -1207,10 +1412,21 @@ function MessengerPageInner() {
                   ref={chatContainerRef}
                   className="relative flex-1 overflow-y-auto px-3.5 py-3 space-y-2.5 z-10"
                 >
-                  {chatList.slice(0, Math.min(shownMessages, (settings.messages || DEFAULT_MESSAGES).length)).map(renderBubble)}
+                  {/* Base text messages */}
+                  {baseMessages.slice(0, Math.min(shownMessages, baseMessages.length)).map(renderBubble)}
 
-                  {/* Letter sent as a message: press and hold to open */}
-                  {shownMessages >= (settings.messages || DEFAULT_MESSAGES).length && (
+                  {/* Video lead message */}
+                  {hasVideo && shownMessages > baseMessages.length && (
+                    renderBubble(settings.videoLeadMessage?.trim() || "Anh có một video nhỏ gửi cho em nè 🎬", 9991)
+                  )}
+
+                  {/* Video attachment bubble card */}
+                  {hasVideo && shownMessages > baseMessages.length + 1 && (
+                    renderVideoBubble()
+                  )}
+
+                  {/* Letter sent as a message: tap to open */}
+                  {shownMessages >= (baseMessages.length + (hasVideo ? 2 : 0)) && (
                     <div className="flex items-end gap-2 justify-start animate-fade-in">
                       <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-0.5 shadow-2xs ring-1 ring-pink-100">
                         <img
@@ -1238,7 +1454,9 @@ function MessengerPageInner() {
                   )}
 
                   {/* Lead-in to the gift, sent below the letter */}
-                  {chatList.slice((settings.messages || DEFAULT_MESSAGES).length, shownMessages).map((text, i) => renderBubble(text, (settings.messages || DEFAULT_MESSAGES).length + i))}
+                  {chatPhase === "gift" && shownMessages >= (baseMessages.length + (hasVideo ? 2 : 0) + 1) && (
+                    renderBubble(settings.giftLeadMessage.trim() || GIFT_LEAD_MESSAGE, 9992)
+                  )}
 
                   {/* Typing Bubble */}
                   {isTyping && (
@@ -1845,6 +2063,22 @@ function MessengerPageInner() {
 
             {/* Customization Form */}
             <div className="space-y-4 text-xs font-sans">
+              {/* Banner dẫn sang Bàn tạo thiệp chính thức */}
+              <div className="rounded-2xl bg-linear-to-r from-rose-50 to-pink-50 border border-rose-200/80 p-3.5 flex items-center justify-between gap-3 shadow-2xs">
+                <div className="text-xs">
+                  <p className="font-bold text-[#721a28]">💡 Tùy chỉnh trực tiếp trên Bàn tạo thiệp</p>
+                  <p className="text-[11px] text-slate-600 mt-0.5">
+                    Bàn tạo thiệp (/create) đã đưa toàn bộ tùy chọn hình nền, avatar, tin nhắn ra ngoài để bạn thiết kế và lưu vào mã QR vòng tay!
+                  </p>
+                </div>
+                <Link
+                  href="/gift"
+                  className="shrink-0 px-3 py-1.5 rounded-xl bg-linear-to-r from-rose-600 to-pink-600 text-white text-xs font-bold shadow-xs whitespace-nowrap hover:opacity-95 cursor-pointer"
+                >
+                  Vào Bàn tạo thiệp
+                </Link>
+              </div>
+
               {/* Tên người gửi & Tên người nhận */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -1937,6 +2171,69 @@ function MessengerPageInner() {
                   />
                   <span className="text-[11px] text-slate-400">
                     Hỗ trợ JPG, PNG từ điện thoại hoặc máy tính
+                  </span>
+                </div>
+              </div>
+
+              {/* Chọn hình nền cuộc trò chuyện Messenger */}
+              <div className="pt-2 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-semibold text-slate-700">
+                    Hình nền cuộc trò chuyện Messenger
+                  </label>
+                  {!CHAT_WALLPAPER_PRESETS.some((p) => p.url === settings.chatWallpaperUrl) && (
+                    <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                      Ảnh tự tải
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11.5px] text-slate-500 mb-2">
+                  Chủ đề nền hiển thị phía sau các bong bóng chat Messenger.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-2">
+                  {CHAT_WALLPAPER_PRESETS.map((p) => (
+                    <button
+                      key={p.url}
+                      type="button"
+                      onClick={() => updateSetting("chatWallpaperUrl", p.url)}
+                      className={`relative rounded-xl overflow-hidden border-2 aspect-[9/16] h-28 mx-auto w-full transition-all cursor-pointer ${
+                        settings.chatWallpaperUrl === p.url
+                          ? "border-rose-600 ring-2 ring-rose-300 scale-102"
+                          : "border-slate-200 hover:border-slate-400 opacity-80 hover:opacity-100"
+                      }`}
+                    >
+                      <img
+                        src={p.url}
+                        alt={p.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <span className="absolute bottom-0 inset-x-0 bg-black/60 text-[10px] text-white py-0.5 px-1 truncate text-center">
+                        {p.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => chatWallpaperFileInputRef.current?.click()}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 font-semibold text-slate-700 transition-all cursor-pointer text-xs"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">
+                      upload_file
+                    </span>
+                    <span>Tải ảnh nền chat từ máy bạn</span>
+                  </button>
+                  <input
+                    ref={chatWallpaperFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleChatWallpaperUpload}
+                    className="hidden"
+                  />
+                  <span className="text-[11px] text-slate-400">
+                    Tùy biến hình nền khung chat
                   </span>
                 </div>
               </div>
@@ -2318,6 +2615,62 @@ function MessengerPageInner() {
                     className="hidden"
                   />
                 </div>
+
+                {/* Video kỷ niệm gửi kèm */}
+                <div className="space-y-2.5 pt-3 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="block font-semibold text-slate-700">Video kỷ niệm gửi kèm</label>
+                      <p className="text-[11px] text-slate-500">
+                        Gửi thêm 1 khung video (YouTube / Google Drive / Vimeo) vào tin nhắn
+                      </p>
+                    </div>
+                    {settings.videoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => updateSetting("videoUrl", "")}
+                        className="text-[11px] text-rose-600 hover:text-rose-700 underline cursor-pointer"
+                      >
+                        Xóa video
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    type="url"
+                    value={settings.videoUrl || ""}
+                    onChange={(e) => updateSetting("videoUrl", e.target.value)}
+                    placeholder="https://youtu.be/... hoặc link Google Drive"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 font-sans text-xs"
+                  />
+                  {settings.videoUrl && (
+                    <div className="space-y-2 pt-1">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-0.5">
+                          Tin nhắn dẫn dắt trước video
+                        </label>
+                        <input
+                          type="text"
+                          value={settings.videoLeadMessage || ""}
+                          onChange={(e) => updateSetting("videoLeadMessage", e.target.value)}
+                          placeholder="Anh có một video nhỏ gửi cho em nè 🎬"
+                          className="w-full px-3 py-1.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 mb-0.5">
+                          Tiêu đề khung video
+                        </label>
+                        <input
+                          type="text"
+                          value={settings.videoTitle || ""}
+                          onChange={(e) => updateSetting("videoTitle", e.target.value)}
+                          placeholder="Video kỷ niệm dành riêng cho em"
+                          className="w-full px-3 py-1.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-rose-500 text-xs"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -2350,6 +2703,84 @@ function MessengerPageInner() {
                   Áp dụng &amp; Xem ngay
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Video Lightbox Player Modal */}
+      {isVideoModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in"
+          onClick={() => setIsVideoModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-2xl bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-4 py-3 bg-slate-800/80 border-b border-white/10">
+              <div className="flex items-center gap-2 truncate">
+                <span className="text-rose-400 text-sm">🎬</span>
+                <span className="text-xs sm:text-sm font-semibold text-white truncate">
+                  {settings.videoTitle || "Video kỷ niệm dành riêng cho em"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsVideoModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Đóng video"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Responsive 16:9 Video Player */}
+            <div className="relative aspect-video w-full bg-black">
+              {videoEmbedUrl ? (
+                <iframe
+                  src={`${videoEmbedUrl}${videoEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`}
+                  title={settings.videoTitle || "Video"}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-white">
+                  <span className="material-symbols-outlined text-4xl text-rose-400 mb-2">smart_display</span>
+                  <p className="text-sm font-semibold mb-3">Không thể phát trực tiếp liên kết này trong khung nhúng</p>
+                  {settings.videoUrl && (
+                    <a
+                      href={settings.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-xs font-bold text-white transition-all inline-flex items-center gap-1.5"
+                    >
+                      <span>Mở xem trên trang ngoài</span>
+                      <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-4 py-2.5 bg-slate-800/60 border-t border-white/10 flex items-center justify-between text-[11px] text-white/70">
+              <span>Gửi tặng từ {settings.senderName}</span>
+              {settings.videoUrl && (
+                <a
+                  href={settings.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose-400 hover:text-rose-300 underline flex items-center gap-1"
+                >
+                  <span>Xem link gốc</span>
+                  <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                </a>
+              )}
             </div>
           </div>
         </div>

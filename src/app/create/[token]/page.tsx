@@ -24,6 +24,7 @@ import TimelineBlock from "@/components/studio/blocks/TimelineBlock";
 import VideoBlock from "@/components/studio/blocks/VideoBlock";
 import MusicBlock from "@/components/studio/blocks/MusicBlock";
 import VoiceBlock from "@/components/studio/blocks/VoiceBlock";
+import MessengerBlock from "@/components/studio/blocks/MessengerBlock";
 import { getTemplate, getTemplateAllowedBlocks } from "@/components/gift-templates/template-config";
 import { parseGiftData } from "@/lib/validation/gift";
 import { ToastContainer, useToastState } from "@/components/ui/Toast";
@@ -53,9 +54,15 @@ export default function CardStudioPage() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [saving, setSaving] = useState(false);
 
+  // The writing desk has three steps: 1. Pick template & blocks, 2. Write content, 3. Finish & Save.
+  const [stage, setStage] = useState<Stage>(1);
+  const [reached, setReached] = useState<Stage>(1);
+  const focusTarget = useRef<string | null>(null);
+
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<GiftTemplateId>("storybook-sunset");
   const [previewInitialMode, setPreviewInitialMode] = useState<"demo" | "draft">("demo");
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
 
   const openPreview = (tpl?: GiftTemplateId, mode: "demo" | "draft" = "demo") => {
     setPreviewTemplate(tpl || draft.template);
@@ -63,12 +70,15 @@ export default function CardStudioPage() {
     setPreviewOpen(true);
   };
 
+  const DRAFT_KEY = (t: string) => `kp_draft_v1_${t.toUpperCase()}`;
+  const STAGE_KEY = (t: string) => `kp_stage_v1_${t.toUpperCase()}`;
+
   // Load the order and any card that was already saved.
   useEffect(() => {
     if (!token) return;
     (async () => {
       try {
-        const res = await fetch(`/api/gifts/${token}?as=create`);
+        const res = await fetch(`/api/gifts/${token}?as=create`, { cache: "no-store" });
         const data = await res.json();
         if (res.status === 401) setNeedsAuth(true);
         if (!res.ok || !data.success || data.scope !== "create") {
@@ -78,9 +88,63 @@ export default function CardStudioPage() {
 
         const saved = data.product.giftData;
         const loaded = draftFromSaved(saved);
-        if (!saved && !loaded.senderName) loaded.senderName = data.product.customerName || "";
-        setDraft(loaded);
-        setPreviewTemplate(loaded.template);
+
+        // Check for locally auto-saved draft
+        let initialDraft = loaded;
+        let restoredLocal = false;
+        try {
+          const rawLocal = localStorage.getItem(DRAFT_KEY(token));
+          if (rawLocal) {
+            const parsed = JSON.parse(rawLocal);
+            if (parsed && typeof parsed === "object") {
+              const hasContent =
+                Boolean(parsed.recipientName?.trim()) ||
+                (Array.isArray(parsed.blocks) && parsed.blocks.length > 0) ||
+                Boolean(parsed.letterContent?.trim());
+              if (!saved && hasContent) {
+                initialDraft = { ...loaded, ...parsed };
+                restoredLocal = true;
+              } else if (saved && hasContent && parsed._updatedAt) {
+                const serverTime = new Date(data.product.completedAt || data.product.createdAt || 0).getTime();
+                if (parsed._updatedAt > serverTime) {
+                  initialDraft = { ...loaded, ...parsed };
+                  restoredLocal = true;
+                }
+              }
+            }
+          }
+        } catch {
+          // ignore localStorage error
+        }
+
+        setDraft(initialDraft);
+        setPreviewTemplate(initialDraft.template);
+
+        // Restore stage position
+        let initialStage: Stage = 1;
+        let initialReached: Stage = 1;
+        try {
+          const rawStage = Number(localStorage.getItem(STAGE_KEY(token)));
+          if (rawStage >= 1 && rawStage <= 3) {
+            initialStage = rawStage as Stage;
+            initialReached = Math.max(1, rawStage) as Stage;
+          } else if (data.product.status === "completed" || (saved && initialDraft.blocks.length > 0)) {
+            // When already saved or completed, start at Step 3 summary
+            initialStage = 3;
+            initialReached = 3;
+          }
+        } catch {
+          if (data.product.status === "completed" || (saved && initialDraft.blocks.length > 0)) {
+            initialStage = 3;
+            initialReached = 3;
+          }
+        }
+        setStage(initialStage);
+        setReached(initialReached);
+
+        if (restoredLocal) {
+          showToast("✨ Đã tự động khôi phục bản nháp bạn đang viết dở.", "success", 4000);
+        }
       } catch (err) {
         setLoadError(err instanceof Error ? err.message : "Không tải được thông tin thiệp");
       } finally {
@@ -145,10 +209,23 @@ export default function CardStudioPage() {
     showToast(text, "info", 2500);
   };
 
-  // The writing desk has three steps: 1. Pick template & blocks, 2. Write content, 3. Finish & Save.
-  const [stage, setStage] = useState<Stage>(1);
-  const [reached, setReached] = useState<Stage>(1);
-  const focusTarget = useRef<string | null>(null);
+
+  // Auto-save draft and stage to localStorage on every change
+  useEffect(() => {
+    if (!token || loading) return;
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          DRAFT_KEY(token),
+          JSON.stringify({ ...draft, _updatedAt: Date.now() })
+        );
+        localStorage.setItem(STAGE_KEY(token), String(stage));
+      } catch {
+        // ignore localStorage errors
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [draft, stage, token, loading]);
 
   // After a step opens, land on the field that needs attention, or at the top of the new step.
   useEffect(() => {
@@ -167,6 +244,25 @@ export default function CardStudioPage() {
 
   const go = (to: Stage) => {
     setStage(to);
+  };
+
+  const handleResetDraft = () => {
+    setConfirmResetOpen(true);
+  };
+
+  const executeResetDraft = () => {
+    setConfirmResetOpen(false);
+    try {
+      localStorage.removeItem(DRAFT_KEY(token));
+      localStorage.removeItem(STAGE_KEY(token));
+    } catch {
+      // ignore
+    }
+    setDraft(emptyDraft());
+    setStage(1);
+    setReached(1);
+    setDirty(false);
+    showToast("✨ Đã làm mới bàn viết về trắng tinh.", "info", 3000);
   };
 
   /** The first thing the server would refuse, and which step and field it lives in. */
@@ -254,6 +350,10 @@ export default function CardStudioPage() {
       }
 
       setDirty(false);
+      try {
+        localStorage.setItem(DRAFT_KEY(token), JSON.stringify({ ...draft, _updatedAt: Date.now() }));
+        localStorage.setItem(STAGE_KEY(token), "3");
+      } catch {}
       showToast("Đã lưu thiệp thành công!", "success");
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 }, colors: ["#721a28", "#ffd700", "#fea095", "#ffffff"] });
       setTimeout(() => router.push(`/g/${token}`), 900);
@@ -348,21 +448,38 @@ export default function CardStudioPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
           <Link
             href="/"
+            onClick={(e) => {
+              if (dirty) {
+                const ok = window.confirm(
+                  "Bạn có thay đổi chưa bấm lưu hoàn tất. Bạn có muốn về trang chủ không? (Bản nháp của bạn vẫn được tự động lưu an toàn trên máy)."
+                );
+                if (!ok) e.preventDefault();
+              }
+            }}
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full liquid-glass-pill text-[#721a28] text-xs font-bold border border-rose-200/80 hover:bg-white shadow-2xs transition-all"
           >
             <img src="/images/logo_icon_kp.png" alt="Team K&P" className="w-4 h-4 object-contain" />
             <span>K&amp;P Atelier · Về trang chủ</span>
           </Link>
           <div className="flex items-center gap-2 text-xs">
+            <button
+              type="button"
+              onClick={handleResetDraft}
+              title="Xóa nháp và làm mới lại bàn viết trắng tinh"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-slate-200/90 text-slate-500 hover:text-[#721a28] hover:border-rose-200 text-xs font-medium shadow-2xs transition-all cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[15px]">restart_alt</span>
+              <span>Làm mới bàn viết</span>
+            </button>
             {dirty ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-rose-200 text-rose-800 font-semibold text-xs shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                Có thay đổi chưa lưu
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-amber-200/90 bg-amber-50/70 text-amber-800 font-semibold text-xs shadow-2xs">
+                <span className="material-symbols-outlined text-[15px] text-amber-600">save</span>
+                <span>Tự động lưu nháp</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-emerald-200 text-emerald-800 font-semibold text-xs shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                Đã lưu an toàn
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full liquid-glass-pill border border-emerald-200/90 bg-emerald-50/70 text-emerald-800 font-semibold text-xs shadow-2xs">
+                <span className="material-symbols-outlined text-[15px] text-emerald-600">check_circle</span>
+                <span>Đã lưu hoàn tất</span>
               </span>
             )}
           </div>
@@ -420,6 +537,7 @@ export default function CardStudioPage() {
                   onChange={update}
                   errors={errors}
                   idPrefix="m-"
+                  customerName={product.customerName}
                 />
               </div>
               <MessagePicker
@@ -435,6 +553,13 @@ export default function CardStudioPage() {
           {/* STAGE 2: Write & Arrange the chosen content blocks */}
           {stage === 2 && (
             <div className="space-y-6">
+              {draft.template === "messenger" && (
+                <MessengerBlock
+                  step={nextStep()}
+                  draft={draft}
+                  onChange={update}
+                />
+              )}
               {draft.blocks.length === 0 ? (
                 <div role="status" className="rounded-3xl liquid-glass-section border border-rose-200/80 p-8 text-center shadow-sm">
                   <p className="text-base font-bold text-slate-800">Bạn chưa chọn thông điệp nào.</p>
@@ -572,10 +697,19 @@ export default function CardStudioPage() {
             draft={draft}
             onChange={update}
             errors={errors}
+            customerName={product.customerName}
             compact
           />
           <p className="px-1 text-center text-xs leading-relaxed text-slate-500">
-            Người nhận mở thiệp ở trang chủ bằng <strong>mã thiệp</strong> và <strong>mã OTP</strong> bảo mật.
+            {draft.requirePin ? (
+              <>
+                Người nhận mở thiệp bằng <strong>mã thiệp</strong> và <strong>mã OTP {draft.unlockPin ? `(${draft.unlockPin})` : "bảo mật"}</strong>.
+              </>
+            ) : (
+              <>
+                Chế độ <strong>mở trực tiếp</strong>: Người nhận quét QR hoặc bấm link là xem được ngay (không cần OTP).
+              </>
+            )}
           </p>
         </aside>
       </main>
@@ -592,6 +726,43 @@ export default function CardStudioPage() {
           }}
           onClose={() => setPreviewOpen(false)}
         />
+      )}
+
+      {confirmResetOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="reset-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fade-in"
+        >
+          <div className="w-full max-w-sm rounded-3xl liquid-glass-card border border-rose-200/90 p-6 text-center shadow-2xl bg-white/95">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-[#721a28]">
+              <span className="material-symbols-outlined text-[24px]">restart_alt</span>
+            </div>
+            <h3 id="reset-modal-title" className="text-base font-bold text-slate-800">
+              Làm mới bàn viết?
+            </h3>
+            <p className="mt-1.5 text-xs text-slate-600 leading-relaxed">
+              Toàn bộ nội dung bản nháp trên máy này sẽ được đưa về trắng tinh để bạn bắt đầu viết lại từ đầu.
+            </p>
+            <div className="mt-5 flex gap-2.5">
+              <button
+                type="button"
+                onClick={() => setConfirmResetOpen(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+              >
+                Giữ lại
+              </button>
+              <button
+                type="button"
+                onClick={executeResetDraft}
+                className="flex-1 py-2.5 rounded-xl liquid-glass-btn-primary text-xs font-bold text-white shadow-xs transition-colors cursor-pointer"
+              >
+                Xác nhận xóa
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

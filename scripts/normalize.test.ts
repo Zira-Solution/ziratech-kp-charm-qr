@@ -6,7 +6,7 @@ import { DEFAULT_TEMPLATE } from "../src/components/gift-templates/template-conf
 const photo = (n: number) => ({ url: `https://e.com/${n}.jpg`, caption: `ảnh ${n}`, date: "" });
 
 const saved = {
-  template: "retro-nostalgia",
+  template: "storybook-sunset",
   blocks: ["video", "letter", "photos"],
   recipientName: "Lan",
   senderName: "An",
@@ -21,7 +21,7 @@ const saved = {
 
 test("a saved card keeps its own template, names and the order of its messages", () => {
   const g = normalizeGift(saved);
-  assert.equal(g.template, "retro-nostalgia");
+  assert.equal(g.template, "storybook-sunset");
   assert.deepEqual(g.blocks, ["video", "letter", "photos"]);
   assert.equal(g.recipientName, "Lan");
   assert.equal(g.sender, "An");

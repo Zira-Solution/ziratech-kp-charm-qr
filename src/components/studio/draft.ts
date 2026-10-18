@@ -25,6 +25,44 @@ export interface VoiceDraft {
   noteText: string;
 }
 
+export interface MessengerDraft {
+  wallpaperUrl: string;
+  chatWallpaperUrl?: string;
+  avatarUrl: string;
+  notificationText: string;
+  messages: string[];
+  showFloatingHearts: boolean;
+  giftLeadMessage: string;
+  voiceLeadMessage: string;
+  voiceAfterMessage: string;
+  videoUrl?: string;
+  videoLeadMessage?: string;
+  videoTitle?: string;
+}
+
+export const DEFAULT_MESSENGER_DRAFT: MessengerDraft = {
+  wallpaperUrl: "/images/default_lockscreen_girl.jpg",
+  chatWallpaperUrl: "/images/messenger_pink_theme_bg.png",
+  avatarUrl: "/images/default_avatar.png",
+  notificationText: "hello bé iu",
+  messages: [
+    "Hello bé iu của anh ❤️",
+    "Hôm nay là 20/10, ngày phụ nữ Việt Nam nè 🌸",
+    "Anh có chuẩn bị một món quà bất ngờ nho nhỏ dành riêng cho em",
+    "Cảm ơn em vì đã luôn ở bên cạnh anh, làm cho mỗi ngày trôi qua đều thật ấm áp và ngập tràn hạnh phúc",
+    "Chúc công chúa của anh luôn xinh đẹp, rạng rỡ và luôn nở nụ cười thật tươi nhé ✨",
+    "Thương em nhiều lắm! 💕",
+    "Giữ lá thư nhỏ bên dưới để mở thư tay anh viết riêng cho em nhé 💌",
+  ],
+  showFloatingHearts: true,
+  giftLeadMessage: "Còn một món quà nhỏ nữa anh để dành cho em, chạm vào hộp quà bên dưới nhé 🎁",
+  voiceLeadMessage: "Anh có ghi âm một đoạn nhỏ gửi em, em nghe thử nhé 🎧",
+  voiceAfterMessage: "Anh thương em nhiều lắm, chúc em ngày 20/10 thật vui nha 💕",
+  videoUrl: "",
+  videoLeadMessage: "Anh có một video nhỏ gửi cho em nè 🎬",
+  videoTitle: "Video kỷ niệm dành riêng cho em",
+};
+
 export interface GiftDraft {
   template: GiftTemplateId;
   /** The messages the buyer ticked, in the order they are shown. Unticked ones keep their content here. */
@@ -46,8 +84,11 @@ export interface GiftDraft {
   videoAspectRatio: "16:9" | "1:1" | "9:16";
   song: SongDraft;
   voice: VoiceDraft;
+  /** Whether the recipient must enter a 4-digit OTP/PIN to unlock the card (defaults to true). */
+  requirePin: boolean;
   /** New 4-digit "OTP xem thiệp". Empty keeps the current one. */
   unlockPin: string;
+  messenger: MessengerDraft;
 }
 
 export function emptyDraft(): GiftDraft {
@@ -71,7 +112,9 @@ export function emptyDraft(): GiftDraft {
     videoAspectRatio: "16:9",
     song: { source: "none", presetId: "", link: "", title: "", artist: "" },
     voice: { audioPath: "", audioUrl: "", durationSec: 0, noteText: "" },
+    requirePin: true,
     unlockPin: "",
+    messenger: { ...DEFAULT_MESSENGER_DRAFT, messages: [...DEFAULT_MESSENGER_DRAFT.messages] },
   };
 }
 
@@ -103,6 +146,7 @@ export function draftFromSaved(saved: unknown): GiftDraft {
   d.recipientName = str(g.recipientName);
   d.addressing = str(g.addressing);
   d.anonymous = g.anonymous === true;
+  d.requirePin = g.requirePin !== false;
   d.letterTitle = str(g.letterTitle);
   d.letterSubtitle = str(g.letterSubtitle);
   d.letterContent = str(g.letterContent);
@@ -153,16 +197,42 @@ export function draftFromSaved(saved: unknown): GiftDraft {
       noteText: str(v.noteText),
     };
   }
+
+  const m = g.messenger as Record<string, unknown> | undefined;
+  if (m && typeof m === "object") {
+    d.messenger = {
+      wallpaperUrl: str(m.wallpaperUrl) || DEFAULT_MESSENGER_DRAFT.wallpaperUrl,
+      chatWallpaperUrl: str(m.chatWallpaperUrl) || DEFAULT_MESSENGER_DRAFT.chatWallpaperUrl,
+      avatarUrl: str(m.avatarUrl) || DEFAULT_MESSENGER_DRAFT.avatarUrl,
+      notificationText: str(m.notificationText) || DEFAULT_MESSENGER_DRAFT.notificationText,
+      messages: Array.isArray(m.messages)
+        ? (m.messages as unknown[]).map(str).filter(Boolean)
+        : [...DEFAULT_MESSENGER_DRAFT.messages],
+      showFloatingHearts: m.showFloatingHearts !== false,
+      giftLeadMessage: str(m.giftLeadMessage) || DEFAULT_MESSENGER_DRAFT.giftLeadMessage,
+      voiceLeadMessage: str(m.voiceLeadMessage) || DEFAULT_MESSENGER_DRAFT.voiceLeadMessage,
+      voiceAfterMessage: str(m.voiceAfterMessage) || DEFAULT_MESSENGER_DRAFT.voiceAfterMessage,
+      videoUrl: str(m.videoUrl) || str(g.videoUrl) || "",
+      videoLeadMessage: str(m.videoLeadMessage) || DEFAULT_MESSENGER_DRAFT.videoLeadMessage || "Anh có một video nhỏ gửi cho em nè 🎬",
+      videoTitle: str(m.videoTitle) || DEFAULT_MESSENGER_DRAFT.videoTitle || "Video kỷ niệm dành riêng cho em",
+    };
+    if (d.messenger.videoUrl && !d.videoUrl) {
+      d.videoUrl = d.messenger.videoUrl;
+    }
+  }
+
   return d;
 }
 
 /** The body sent to POST /api/gifts/[token]/save. The server validates everything again. */
 export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown> } {
+  const videoUrl = (d.messenger?.videoUrl || d.videoUrl || "").trim();
   const giftData: Record<string, unknown> = {
     template: d.template,
     blocks: d.blocks,
     senderName: d.senderName,
     recipientName: d.recipientName,
+    requirePin: d.requirePin,
     addressing: d.addressing,
     anonymous: d.anonymous,
     letterTitle: d.letterTitle,
@@ -173,7 +243,7 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
     finalMessage: d.finalMessage,
     anniversary: { date: d.anniversaryDate, label: d.anniversaryLabel },
     timeline: d.timeline,
-    videoUrl: d.videoUrl,
+    videoUrl,
     videoAspectRatio: d.videoAspectRatio || "16:9",
     song: {
       source: d.song.source,
@@ -186,6 +256,11 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
       audioPath: d.voice.audioPath || undefined,
       durationSec: d.voice.durationSec,
       noteText: d.voice.noteText,
+    },
+    messenger: {
+      ...d.messenger,
+      chatWallpaperUrl: d.messenger.chatWallpaperUrl || DEFAULT_MESSENGER_DRAFT.chatWallpaperUrl,
+      videoUrl: videoUrl || undefined,
     },
   };
   if (/^\d{4}$/.test(d.unlockPin)) giftData.pinCode = d.unlockPin;
@@ -201,7 +276,7 @@ export function emptyBlocks(d: GiftDraft): BlockId[] {
     letter: d.letterContent.trim() !== "",
     photos: d.photos.length > 0,
     voice: d.voice.audioPath !== "",
-    video: d.videoUrl.trim() !== "",
+    video: d.videoUrl.trim() !== "" || (d.messenger?.videoUrl?.trim() ?? "") !== "",
     music: d.song.source !== "none",
     anniversary: d.anniversaryDate.trim() !== "",
     timeline: d.timeline.length > 0,

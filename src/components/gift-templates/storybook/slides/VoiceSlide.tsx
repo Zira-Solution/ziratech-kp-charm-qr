@@ -5,6 +5,7 @@ import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
 import { useVoicePlayer } from "@/components/gift-templates/media/useVoicePlayer";
 import { formatClock } from "@/components/studio/recorder";
+import { parseAddressing, getDefaultVoiceNote } from "@/components/gift-templates/addressing";
 import StorybookHeader from "./StorybookHeader";
 
 interface Props {
@@ -85,6 +86,7 @@ function Forward15Icon({ className = "w-7 h-7" }: { className?: string }) {
 
 export default function VoiceSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
+  const pronouns = parseAddressing(gift.addressing);
   const voice = gift.voice;
   const audioUrl = voice?.audioUrl;
   const recordedDuration = secondsFrom(voice?.duration);
@@ -148,7 +150,7 @@ export default function VoiceSlide({ gift, ctx, slides }: Props) {
                 </h2>
                 <div className="flex items-center justify-center gap-2 mt-1">
                   <span className="font-handwriting text-2xl lg:text-3xl text-[#172b3a] font-bold">
-                    của mình
+                    của {pronouns.sender}
                   </span>
                   <img src="/thamkhao/microphone.png" alt="Mic" className="w-6 h-6 object-contain inline-block" />
                 </div>
@@ -238,8 +240,7 @@ export default function VoiceSlide({ gift, ctx, slides }: Props) {
                 {/* Handwritten quote with outlined heart */}
                 <div className="text-center pt-2 max-w-sm mx-auto">
                   <p className="font-handwriting text-base lg:text-lg text-[#172b3a] leading-relaxed font-semibold">
-                    {voice?.noteText ||
-                      "Có những điều viết ra vẫn chưa đủ. Nên lần này, mình muốn bạn nghe bằng chính giọng nói của mình."}
+                    {voice?.noteText || getDefaultVoiceNote(pronouns)}
                     <svg
                       viewBox="0 0 24 24"
                       fill="none"
@@ -285,7 +286,7 @@ export default function VoiceSlide({ gift, ctx, slides }: Props) {
             </h2>
             <div className="flex items-center justify-center gap-1.5 mt-0.5">
               <span className="font-handwriting text-lg sm:text-xl text-[#172b3a] font-bold">
-                của mình
+                của {pronouns.sender}
               </span>
               <img src="/thamkhao/microphone.png" alt="Mic" className="w-5 h-5 object-contain inline-block" />
             </div>
@@ -388,8 +389,7 @@ export default function VoiceSlide({ gift, ctx, slides }: Props) {
               {/* Note Quote with outlined heart */}
               <div className="text-center pt-1 max-w-xs mx-auto">
                 <p className="font-handwriting text-xs sm:text-sm text-[#172b3a] leading-snug font-semibold">
-                  {voice?.noteText ||
-                    "Có những điều viết ra vẫn chưa đủ. Nên lần này, mình muốn bạn nghe bằng chính giọng nói của mình."}
+                  {voice?.noteText || getDefaultVoiceNote(pronouns)}
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"

@@ -42,6 +42,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const product = await getGiftProductByToken(token);
+    if (!product) {
+      return NextResponse.json({ success: false, error: INVALID_CREDENTIALS }, { status: 401 });
+    }
+
+    // When viewing a card that does not require an OTP, grant access immediately
+    if (mode === "open" && product.giftData?.requirePin === false) {
+      const isCompleted = product.status === "completed" && !!product.giftData;
+      const res = NextResponse.json({
+        success: true,
+        mode: "open",
+        token: product.token,
+        redirectUrl: `/g/${product.token}`,
+        status: product.status,
+        isCompleted,
+        message: "Mở thiệp thành công!",
+      });
+      issueGiftSession(res, "open", product.token);
+      return res;
+    }
+
     if (!passcode || typeof passcode !== "string" || passcode.length > 64) {
       return NextResponse.json(
         {
@@ -67,12 +88,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const product = await getGiftProductByToken(token);
     const normalize = mode === "create" ? normalizeCreatorKey : normalizeUnlockPin;
     const stored = mode === "create" ? product?.creatorKeyHash : product?.unlockPinHash;
 
     const check = await checkSecret(stored, passcode, normalize);
-    if (!product || !check.ok) {
+    if (!check.ok) {
       await recordFailure(lockKey);
       return NextResponse.json({ success: false, error: INVALID_CREDENTIALS }, { status: 401 });
     }

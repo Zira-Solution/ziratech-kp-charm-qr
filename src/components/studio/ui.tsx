@@ -7,7 +7,7 @@ import React from "react";
 
 export const fieldClass =
   "w-full px-4 py-2.5 rounded-xl liquid-glass-input text-base sm:text-sm font-sans text-espresso border border-white/90 " +
-  "placeholder:text-warm-neutral/60 focus:outline-none focus:ring-2 focus:ring-primary-container/30";
+  "placeholder:text-stone-400 placeholder:font-normal placeholder:italic focus:placeholder:text-transparent focus:outline-none focus:ring-2 focus:ring-primary-container/30 transition-colors";
 
 export const ghostButton =
   "px-3 py-1.5 rounded-xl text-xs font-sans font-bold text-primary border border-white/90 liquid-glass-pill hover:bg-white " +

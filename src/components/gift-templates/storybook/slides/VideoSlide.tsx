@@ -5,6 +5,7 @@ import confetti from "canvas-confetti";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
 import type { SlideDef, TemplateContext } from "@/components/gift-templates/template-contract";
 import VideoEmbed from "@/components/gift-templates/media/VideoEmbed";
+import { parseAddressing } from "@/components/gift-templates/addressing";
 import StorybookHeader from "./StorybookHeader";
 
 interface Props {
@@ -17,6 +18,7 @@ type AspectRatio = "16:9" | "1:1" | "9:16";
 
 export default function VideoSlide({ gift, ctx, slides }: Props) {
   const isLandscape = ctx.layout === "landscape";
+  const pronouns = parseAddressing(gift.addressing);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const videoUrl = gift.video;
@@ -139,7 +141,7 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
                 </div>
                 <div className="flex items-center justify-center gap-2 mt-0.5 lg:mt-1 transform -rotate-[3deg]">
                   <span className="font-handwriting text-3xl sm:text-4xl lg:text-5xl xl:text-6xl text-[#c13d28] font-bold italic drop-shadow-xs">
-                    dành cho bạn
+                    dành cho {pronouns.recipient}
                   </span>
                   <span className="text-[#c13d28] text-2xl lg:text-3xl font-sans inline-block transform -rotate-6">
                     ♡
@@ -160,7 +162,7 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
                 {/* Text area placed strictly below the top masking tape (top-[15%]) with comfortable padding */}
                 <div className="absolute inset-x-0 bottom-0 top-[15%] px-7 sm:px-9 lg:px-11 xl:px-13 pb-3 sm:pb-4 lg:pb-5 flex items-center justify-center text-center">
                   <p className="font-handwriting text-base sm:text-lg lg:text-xl xl:text-2xl text-[#2e1d1b] font-medium leading-relaxed sm:leading-relaxed lg:leading-relaxed">
-                    Một video đặc biệt gửi riêng cho bạn, với thật nhiều lời muốn nói và những kỷ niệm đẹp...{" "}
+                    Một video đặc biệt gửi riêng cho {pronouns.recipient}, với thật nhiều lời muốn nói và những kỷ niệm đẹp...{" "}
                     <span className="text-[#c13d28] font-sans inline-block">♡</span>
                   </p>
                 </div>
@@ -208,10 +210,10 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
               </div>
             </div>
 
-            {/* "dành cho bạn" slightly tilted with heart doodle */}
+            {/* "dành cho [người nhận]" slightly tilted with heart doodle */}
             <div className="flex items-center justify-center gap-2 -mt-1 transform -rotate-[3deg]">
               <span className="font-handwriting text-2xl sm:text-3xl text-[#c13d28] font-bold italic drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
-                dành cho bạn
+                dành cho {pronouns.recipient}
               </span>
               <span className="text-[#c13d28] text-2xl font-sans inline-block transform -rotate-6">
                 ♡
@@ -281,7 +283,7 @@ export default function VideoSlide({ gift, ctx, slides }: Props) {
             {/* Text area strictly below top masking tape at ~15% */}
             <div className="absolute inset-x-0 bottom-0 top-[15%] px-5 sm:px-6 pb-2 sm:pb-2.5 flex items-center justify-center text-center">
               <p className="font-handwriting text-xs sm:text-sm text-[#2e1d1b] font-medium leading-relaxed">
-                Một video đặc biệt gửi riêng cho bạn, với thật nhiều lời muốn nói và những kỷ niệm đẹp...{" "}
+                Một video đặc biệt gửi riêng cho {pronouns.recipient}, với thật nhiều lời muốn nói và những kỷ niệm đẹp...{" "}
                 <span className="text-[#c13d28] inline-block font-sans ml-0.5 text-sm">♡</span>
               </p>
             </div>

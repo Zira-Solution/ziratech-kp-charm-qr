@@ -35,6 +35,7 @@ export default function SendRecipientModal({
   const [emailError, setEmailError] = useState("");
   const [apiError, setApiError] = useState("");
   const [sentSuccess, setSentSuccess] = useState(false);
+  const [isSimulated, setIsSimulated] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
   if (!isOpen) return null;
@@ -77,6 +78,9 @@ export default function SendRecipientModal({
         throw new Error(data.error || "Không thể gửi email lúc này. Vui lòng thử lại.");
       }
 
+      if (data.simulated) {
+        setIsSimulated(true);
+      }
       setSentSuccess(true);
       confetti({
         particleCount: 100,
@@ -302,15 +306,32 @@ export default function SendRecipientModal({
 
             <div>
               <h3 className="text-xl sm:text-2xl font-extrabold text-[#721a28] font-serif">
-                ✨ Đã Bắn Mail Bất Ngờ Thành Công!
+                {isSimulated ? "✨ Đã Mô Phỏng Bắn Mail Thành Công!" : "✨ Đã Bắn Mail Bất Ngờ Thành Công!"}
               </h3>
               <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">
-                Một chiếc email tuyệt đẹp chứa <strong>mã QR quét thiệp</strong> và <strong>hướng dẫn mở quà</strong> đã được gửi tới:
+                {isSimulated
+                  ? "Máy chủ đang chạy ở chế độ cục bộ (chưa cấu hình SMTP thật). Nội dung thư kèm mã QR đã được tạo cho:"
+                  : "Một chiếc email tuyệt đẹp chứa mã QR quét thiệp và hướng dẫn mở quà đã được gửi tới:"}
               </p>
               <div className="mt-2 inline-block px-4 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-xs font-mono font-bold text-[#721a28]">
                 {recipientEmail}
               </div>
             </div>
+
+            {isSimulated && (
+              <div className="rounded-2xl border border-amber-300 bg-amber-50/95 p-4 text-left text-xs text-amber-900 leading-relaxed space-y-1.5">
+                <p className="font-bold flex items-center gap-1.5 text-amber-800">
+                  <span className="material-symbols-outlined text-[17px]">info</span>
+                  Lưu ý về môi trường thử nghiệm (Localhost):
+                </p>
+                <p>
+                  Vì máy chủ đang chạy thử nghiệm cục bộ và chưa cài đặt thông tin gửi thư (SMTP trong file <code>.env.local</code>), email chưa gửi thẳng vào hòm thư Gmail thật mà đã được <strong>in nội dung ra terminal máy chủ</strong>.
+                </p>
+                <p className="font-semibold text-[#721a28]">
+                  👉 Hãy sao chép liên kết trực tiếp bên dưới để gửi ngay cho người nhận nhé!
+                </p>
+              </div>
+            )}
 
             {/* Direct Link Share Card */}
             <div className="rounded-2xl bg-slate-50 border border-slate-200/80 p-4 text-left space-y-2">

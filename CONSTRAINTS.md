@@ -4,6 +4,7 @@ Last reviewed: 2026-10-16 by @ANDEV09
 
 Read this before writing code. Do not weaken it to make a change pass: tightening is silent, loosening needs an Exceptions row below.
 Rollout: the floor and the fast checks block from day one. Accessibility, performance and security only **warn until 2026-10-30**, then block.
+Every command below runs inside `src/` (the Next.js app root).
 
 ## Floor (always enforced)
 

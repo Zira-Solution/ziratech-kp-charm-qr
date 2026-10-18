@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { anniversaryText, formatDateVi, sortTimeline } from "../src/components/gift-templates/media/format.ts";
+import { anniversaryText, formatDateVi, sortTimeline } from "../components/gift-templates/media/format.ts";
 
 test("formatDateVi writes a saved date the way Vietnamese readers expect", () => {
   assert.equal(formatDateVi("2024-02-14"), "14/02/2024");

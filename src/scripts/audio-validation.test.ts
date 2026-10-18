@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { sniffAudio, MAX_VOICE_BYTES, AUDIO_CONTENT_TYPES } from "../src/lib/validation/audio.ts";
+import { sniffAudio, MAX_VOICE_BYTES, AUDIO_CONTENT_TYPES } from "../lib/validation/audio.ts";
 
 const bytes = (...b: number[]) => new Uint8Array([...b, ...new Array(64).fill(0)]);
 const ascii = (s: string) => [...s].map((c) => c.charCodeAt(0));

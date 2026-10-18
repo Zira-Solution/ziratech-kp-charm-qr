@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseUserDate, isoToDisplay, isValidDate } from "../src/lib/date-utils.ts";
+import { parseUserDate, isoToDisplay, isValidDate } from "../lib/date-utils.ts";
 
 test("isValidDate accurately validates calendar dates", () => {
   assert.equal(isValidDate(2024, 2, 29), true, "Leap year Feb 29 is valid");

@@ -1,8 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { emptyDraft, draftFromSaved, draftToPayload, daysSince, emptyBlocks } from "../src/components/studio/draft.ts";
-import { parseGiftData } from "../src/lib/validation/gift.ts";
-import { DEFAULT_TEMPLATE } from "../src/components/gift-templates/template-config.ts";
+import { emptyDraft, draftFromSaved, draftToPayload, daysSince, emptyBlocks } from "../components/studio/draft.ts";
+import { parseGiftData } from "../lib/validation/gift.ts";
+import { DEFAULT_TEMPLATE } from "../components/gift-templates/template-config.ts";
 
 const TOKEN = "KP-2010-ABC123";
 

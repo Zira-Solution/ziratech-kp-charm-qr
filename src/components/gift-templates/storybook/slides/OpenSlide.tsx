@@ -136,22 +136,25 @@ export default function OpenSlide({ gift, ctx, slides }: Props) {
             {/* Right: Typography, 3D Gift Box & Grand CTA Button directly on the landscape scenery */}
             <div className="col-span-7 flex flex-col items-center justify-center text-center px-2 lg:px-6">
               <div className="relative w-full max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto flex flex-col items-center text-center">
-                {/* Header Typography & Flight Path (Self-contained aspect box to prevent trail overlap) */}
-                <div className="relative h-[210px] sm:h-[230px] lg:h-[250px] xl:h-[270px] w-auto aspect-[1536/1024] flex flex-col items-center justify-center shrink-0">
+                {/* Header Typography & Flight Path (Properly positioned in upper clear zone to prevent trail overlap) */}
+                <div className="relative h-[200px] sm:h-[220px] lg:h-[240px] xl:h-[260px] w-auto aspect-[1536/1024] flex flex-col items-center justify-start pt-5 sm:pt-7 lg:pt-8 xl:pt-9 shrink-0">
                   <img
                     src="/thamkhao/header_decor_clean.png"
                     alt="Hoa văn trang trí"
                     className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-xs select-none"
                   />
 
-                  <div className="relative z-10 flex flex-col items-center text-center -mt-2">
-                    <span className="block font-handwriting text-3xl sm:text-4xl lg:text-4xl xl:text-5xl text-[#1c3f50] font-bold drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
+                  {/* Luminous sunlit aura behind typography so text is crystal clear and legible */}
+                  <div className="absolute top-[14%] inset-x-[16%] h-[52%] rounded-full bg-radial from-white/95 via-white/70 to-transparent blur-md pointer-events-none -z-0" />
+
+                  <div className="relative z-10 flex flex-col items-center text-center -space-y-0.5 sm:-space-y-1">
+                    <span className="block font-handwriting text-2xl sm:text-3xl lg:text-3xl xl:text-4xl text-[#1c3f50] font-bold drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
                       Có một
                     </span>
-                    <h1 className="font-serif font-black text-5xl sm:text-6xl lg:text-6xl xl:text-7xl text-[#c13d28] tracking-tight -my-1 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
+                    <h1 className="font-serif font-black text-4xl sm:text-5xl lg:text-5xl xl:text-6xl text-[#c13d28] tracking-tight -my-0.5 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
                       món quà
                     </h1>
-                    <span className="block font-handwriting text-2xl sm:text-3xl lg:text-3xl xl:text-4xl text-[#1c3f50] font-bold italic drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
+                    <span className="block font-handwriting text-xl sm:text-2xl lg:text-2xl xl:text-3xl text-[#1c3f50] font-bold italic drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
                       dành cho {recipient}
                     </span>
                   </div>

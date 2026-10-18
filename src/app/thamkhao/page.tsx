@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import GiftTemplateViewer from "@/components/gift-templates/GiftTemplateViewer";
 import type { ViewerGift } from "@/components/gift-templates/normalize";
-import { useMusicPlayer } from "@/components/gift-templates/media/useMusicPlayer";
 
 type ViewDevice = "desktop" | "ipad" | "phone";
 
@@ -47,7 +46,6 @@ const DEMO_GIFT: ViewerGift = {
 
 export default function ThamKhaoPage() {
   const [device, setDevice] = useState<ViewDevice>("desktop");
-  const music = useMusicPlayer("lofi");
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -70,7 +68,7 @@ export default function ThamKhaoPage() {
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-stone-900 font-sans text-stone-900 select-none">
       {/* Top Floating Control Bar */}
-      <header className="fixed top-3 left-1/2 -translate-x-1/2 z-40 flex flex-wrap items-center justify-center gap-2 px-3 py-1.5 rounded-2xl sm:rounded-full bg-white/95 backdrop-blur-md shadow-2xl border border-white/80 max-w-[96vw]">
+      <header className="fixed top-3 left-1/2 -translate-x-1/2 z-40 flex flex-wrap md:flex-nowrap whitespace-nowrap items-center justify-center gap-2 px-4 py-1.5 rounded-2xl md:rounded-full bg-white/95 backdrop-blur-md shadow-2xl border border-white/80 max-w-[96vw]">
         <Link
           href="/"
           className="flex items-center gap-1 px-3 py-1 rounded-full bg-stone-100 hover:bg-stone-200 text-[#6b4737] text-xs font-bold transition-all"
@@ -149,25 +147,7 @@ export default function ThamKhaoPage() {
           </button>
         </div>
 
-        <div className="h-4 w-px bg-stone-300 mx-0.5 hidden sm:block" />
 
-        {/* Quick Speaker Music Toggle */}
-        <button
-          type="button"
-          onClick={music.toggle}
-          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer border ${
-            music.playing
-              ? "bg-rose-50 text-[#721a28] border-rose-200 shadow-2xs"
-              : "text-stone-700 hover:bg-stone-100 border-stone-200"
-          }`}
-          title={music.playing ? "Tắt âm thanh nhạc nền" : "Bật âm thanh nhạc nền"}
-          aria-label={music.playing ? "Tắt âm thanh" : "Bật âm thanh"}
-        >
-          <span className={`material-symbols-outlined text-[16px] ${music.playing ? "text-[#c13d28]" : "text-stone-400"}`}>
-            {music.playing ? "volume_up" : "volume_off"}
-          </span>
-          <span className="hidden sm:inline font-sans">{music.playing ? "Nhạc: Bật" : "Nhạc: Tắt"}</span>
-        </button>
 
         <div className="h-4 w-px bg-stone-300 mx-0.5 hidden sm:block" />
 

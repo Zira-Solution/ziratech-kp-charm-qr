@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Merriweather } from "next/font/google";
 import "./globals.css";
+import { SmoothScroll } from "@/components/ui/SmoothScroll";
 
 const beVietnam = Be_Vietnam_Pro({
   variable: "--font-be-vietnam",
@@ -44,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`${beVietnam.variable} ${merriweather.variable} ${beVietnam.className} h-full antialiased scroll-smooth`}
+      className={`${beVietnam.variable} ${merriweather.variable} ${beVietnam.className} h-full antialiased`}
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -68,7 +69,7 @@ export default function RootLayout({
           <div className="absolute top-1/2 left-1/3 w-104 h-104 rounded-full bg-linear-to-r from-white/40 to-rose-50/50 blur-[90px] animate-liquid-pulse" />
         </div>
         <div className="relative z-10 flex flex-col min-h-screen">
-          {children}
+          <SmoothScroll>{children}</SmoothScroll>
         </div>
       </body>
     </html>

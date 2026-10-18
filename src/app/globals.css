@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Dancing+Script:wght@600;700&family=Abril+Fatface&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&display=swap');
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
 @theme {
   --font-sans: var(--font-be-vietnam), "Be Vietnam Pro", system-ui, -apple-system, sans-serif;

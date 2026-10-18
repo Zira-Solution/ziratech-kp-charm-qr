@@ -120,6 +120,38 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
   const gift = mode === "demo" ? demoGift : draftGift;
   const frame = DEVICES.find((d) => d.id === device)!;
 
+  const messengerPreviewUrl = useMemo(() => {
+    const q = new URLSearchParams();
+    q.set("embed", "true");
+    q.set("hideConfig", "true");
+    if (mode === "demo") {
+      return `/messenger?${q.toString()}`;
+    }
+    if (draft.recipientName) q.set("to", draft.recipientName);
+    if (draft.senderName) q.set("sender", draft.senderName);
+    if (draft.unlockPin) q.set("pin", draft.unlockPin);
+    if (draft.letterTitle) q.set("ltitle", draft.letterTitle);
+    if (draft.letterContent) q.set("lbody", draft.letterContent);
+    if (draft.letterSignature) q.set("lsig", draft.letterSignature);
+    if (draft.voice?.audioUrl) q.set("voice", draft.voice.audioUrl);
+    if (draft.song?.link) q.set("music", draft.song.link);
+    if (draft.photos?.length > 0) {
+      q.set("photos", JSON.stringify(draft.photos.map((p) => p.url)));
+    }
+    const m = draft.messenger;
+    if (m) {
+      if (m.wallpaperUrl) q.set("wallpaper", m.wallpaperUrl);
+      if (m.avatarUrl) q.set("avatar", m.avatarUrl);
+      if (m.notificationText) q.set("text", m.notificationText);
+      if (m.messages && m.messages.length > 0) q.set("msg", m.messages.join("||"));
+      q.set("hearts", m.showFloatingHearts ? "1" : "0");
+      if (m.giftLeadMessage) q.set("glead", m.giftLeadMessage);
+      if (m.voiceLeadMessage) q.set("vlead", m.voiceLeadMessage);
+      if (m.voiceAfterMessage) q.set("vafter", m.voiceAfterMessage);
+    }
+    return `/messenger?${q.toString()}`;
+  }, [mode, draft]);
+
   // Move focus in when it opens, give it back when it closes, and keep the page behind from scrolling.
   useEffect(() => {
     const opener = document.activeElement as HTMLElement | null;
@@ -303,7 +335,7 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
         >
           {template === "messenger" ? (
             <iframe
-              src="/messenger"
+              src={messengerPreviewUrl}
               className="w-full h-full border-0"
               title="Xem thử Hộp Quà Messenger"
             />

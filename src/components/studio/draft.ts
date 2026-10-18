@@ -25,6 +25,36 @@ export interface VoiceDraft {
   noteText: string;
 }
 
+export interface MessengerDraft {
+  wallpaperUrl: string;
+  avatarUrl: string;
+  notificationText: string;
+  messages: string[];
+  showFloatingHearts: boolean;
+  giftLeadMessage: string;
+  voiceLeadMessage: string;
+  voiceAfterMessage: string;
+}
+
+export const DEFAULT_MESSENGER_DRAFT: MessengerDraft = {
+  wallpaperUrl: "/images/default_lockscreen_girl.jpg",
+  avatarUrl: "/images/default_avatar.png",
+  notificationText: "hello bé iu",
+  messages: [
+    "Hello bé iu của anh ❤️",
+    "Hôm nay là 20/10, ngày phụ nữ Việt Nam nè 🌸",
+    "Anh có chuẩn bị một món quà bất ngờ nho nhỏ dành riêng cho em",
+    "Cảm ơn em vì đã luôn ở bên cạnh anh, làm cho mỗi ngày trôi qua đều thật ấm áp và ngập tràn hạnh phúc",
+    "Chúc công chúa của anh luôn xinh đẹp, rạng rỡ và luôn nở nụ cười thật tươi nhé ✨",
+    "Thương em nhiều lắm! 💕",
+    "Giữ lá thư nhỏ bên dưới để mở thư tay anh viết riêng cho em nhé 💌",
+  ],
+  showFloatingHearts: true,
+  giftLeadMessage: "Còn một món quà nhỏ nữa anh để dành cho em, chạm vào hộp quà bên dưới nhé 🎁",
+  voiceLeadMessage: "Anh có ghi âm một đoạn nhỏ gửi em, em nghe thử nhé 🎧",
+  voiceAfterMessage: "Anh thương em nhiều lắm, chúc em ngày 20/10 thật vui nha 💕",
+};
+
 export interface GiftDraft {
   template: GiftTemplateId;
   /** The messages the buyer ticked, in the order they are shown. Unticked ones keep their content here. */
@@ -50,6 +80,7 @@ export interface GiftDraft {
   requirePin: boolean;
   /** New 4-digit "OTP xem thiệp". Empty keeps the current one. */
   unlockPin: string;
+  messenger: MessengerDraft;
 }
 
 export function emptyDraft(): GiftDraft {
@@ -75,6 +106,7 @@ export function emptyDraft(): GiftDraft {
     voice: { audioPath: "", audioUrl: "", durationSec: 0, noteText: "" },
     requirePin: true,
     unlockPin: "",
+    messenger: { ...DEFAULT_MESSENGER_DRAFT, messages: [...DEFAULT_MESSENGER_DRAFT.messages] },
   };
 }
 
@@ -157,6 +189,23 @@ export function draftFromSaved(saved: unknown): GiftDraft {
       noteText: str(v.noteText),
     };
   }
+
+  const m = g.messenger as Record<string, unknown> | undefined;
+  if (m && typeof m === "object") {
+    d.messenger = {
+      wallpaperUrl: str(m.wallpaperUrl) || DEFAULT_MESSENGER_DRAFT.wallpaperUrl,
+      avatarUrl: str(m.avatarUrl) || DEFAULT_MESSENGER_DRAFT.avatarUrl,
+      notificationText: str(m.notificationText) || DEFAULT_MESSENGER_DRAFT.notificationText,
+      messages: Array.isArray(m.messages)
+        ? (m.messages as unknown[]).map(str).filter(Boolean)
+        : [...DEFAULT_MESSENGER_DRAFT.messages],
+      showFloatingHearts: m.showFloatingHearts !== false,
+      giftLeadMessage: str(m.giftLeadMessage) || DEFAULT_MESSENGER_DRAFT.giftLeadMessage,
+      voiceLeadMessage: str(m.voiceLeadMessage) || DEFAULT_MESSENGER_DRAFT.voiceLeadMessage,
+      voiceAfterMessage: str(m.voiceAfterMessage) || DEFAULT_MESSENGER_DRAFT.voiceAfterMessage,
+    };
+  }
+
   return d;
 }
 
@@ -192,6 +241,7 @@ export function draftToPayload(d: GiftDraft): { giftData: Record<string, unknown
       durationSec: d.voice.durationSec,
       noteText: d.voice.noteText,
     },
+    messenger: d.messenger,
   };
   if (/^\d{4}$/.test(d.unlockPin)) giftData.pinCode = d.unlockPin;
   return { giftData };

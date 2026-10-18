@@ -177,6 +177,8 @@ const LiveStatusClock = React.memo(function LiveStatusClock({
 
 function MessengerPageInner() {
   const searchParams = useSearchParams();
+  const isEmbedded = searchParams?.get("embed") === "true";
+  const hideConfig = searchParams?.get("hideConfig") === "true" || isEmbedded;
 
   // Settings state
   const [settings, setSettings] = useState<CustomSettings>(DEFAULT_SETTINGS);
@@ -314,6 +316,26 @@ function MessengerPageInner() {
     if (pVoiceAfter) initial.voiceAfterMessage = pVoiceAfter;
     if (pFilmTitle) initial.filmTitle = pFilmTitle;
     if (pFilmSubtitle) initial.filmSubtitle = pFilmSubtitle;
+
+    const pHearts = searchParams?.get("hearts");
+    if (pHearts !== null && pHearts !== undefined) {
+      initial.showFloatingHearts = pHearts === "1" || pHearts === "true";
+    }
+
+    const pPhotos = searchParams?.get("photos");
+    if (pPhotos) {
+      try {
+        const parsed = JSON.parse(pPhotos);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          initial.filmPhotos = parsed
+            .map((item: unknown) => (typeof item === "string" ? item : (item as { url?: string })?.url))
+            .filter((url): url is string => typeof url === "string" && Boolean(url.trim()));
+        }
+      } catch {
+        const list = pPhotos.split(",").filter(Boolean);
+        if (list.length > 0) initial.filmPhotos = list;
+      }
+    }
 
     setSettings(initial);
   }, [searchParams]);
@@ -683,116 +705,124 @@ function MessengerPageInner() {
       />
 
       {/* Top Floating Controls Bar on Desktop */}
-      <header className="hidden sm:flex w-full max-w-4xl px-4 py-3 sm:py-4 items-center justify-between gap-3 z-40 relative">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
-        >
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-          <span>Trang chủ</span>
-        </Link>
+      {!isEmbedded && (
+        <header className="hidden sm:flex w-full max-w-4xl px-4 py-3 sm:py-4 items-center justify-between gap-3 z-40 relative">
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
+          >
+            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Trang chủ</span>
+          </Link>
 
-        {/* 2 Sample Templates Switcher */}
-        <div className="flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
+          {/* 2 Sample Templates Switcher */}
+          <div className="flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
+            <Link
+              href="/thamkhao?device=phone"
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all"
+              title="Chuyển sang xem Mẫu 1: Storybook Hoàng Hôn 20/10"
+            >
+              <span>🌅</span>
+              <span>Mẫu 1: Storybook</span>
+            </Link>
+
+            <button
+              type="button"
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-600 text-white shadow-xs"
+              title="Đang xem Mẫu 2: Hộp Quà Messenger"
+            >
+              <span>💬</span>
+              <span>Mẫu 2: Messenger</span>
+            </button>
+          </div>
+
+          {/* Device Mode Switcher (Desktop only) */}
+          <div className="hidden lg:flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
+            <button
+              type="button"
+              onClick={() => setDeviceMode("mockup")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                deviceMode === "mockup"
+                  ? "bg-rose-600 text-white shadow-xs"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              <span className="material-symbols-outlined text-[14px]">phone_iphone</span>
+              <span>Khung iPhone</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeviceMode("fullscreen")}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                deviceMode === "fullscreen"
+                  ? "bg-rose-600 text-white shadow-xs"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              <span className="material-symbols-outlined text-[14px]">fullscreen</span>
+              <span>Toàn màn hình</span>
+            </button>
+          </div>
+
+          {/* Right Action Buttons */}
+          <div className="flex items-center gap-2 shrink-0">
+            {!hideConfig && (
+              <button
+                type="button"
+                onClick={() => setIsConfigOpen(true)}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-semibold text-white transition-all active:scale-95 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[15px]">tune</span>
+                <span>Tùy chỉnh</span>
+              </button>
+            )}
+
+            <Link
+              href="/gift"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-linear-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[15px]">edit</span>
+              <span>Tự tạo thiệp</span>
+            </Link>
+          </div>
+        </header>
+      )}
+
+      {/* Mobile Floating Bar for Template Switching & Actions */}
+      {!isEmbedded && (
+        <div className="sm:hidden fixed top-3 inset-x-2 z-50 flex items-center justify-between gap-1 p-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/20 shadow-lg text-[11px]">
           <Link
             href="/thamkhao?device=phone"
-            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-white/80 hover:text-white hover:bg-white/10 transition-all"
-            title="Chuyển sang xem Mẫu 1: Storybook Hoàng Hôn 20/10"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-full text-white/80 hover:text-white"
           >
             <span>🌅</span>
             <span>Mẫu 1: Storybook</span>
           </Link>
 
-          <button
-            type="button"
-            className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-rose-600 text-white shadow-xs"
-            title="Đang xem Mẫu 2: Hộp Quà Messenger"
-          >
+          <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-600 text-white font-bold shadow-xs">
             <span>💬</span>
             <span>Mẫu 2: Messenger</span>
-          </button>
-        </div>
+          </span>
 
-        {/* Device Mode Switcher (Desktop only) */}
-        <div className="hidden lg:flex items-center gap-1 bg-white/10 p-1 rounded-full border border-white/10 backdrop-blur-md">
-          <button
-            type="button"
-            onClick={() => setDeviceMode("mockup")}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-              deviceMode === "mockup"
-                ? "bg-rose-600 text-white shadow-xs"
-                : "text-white/70 hover:text-white"
-            }`}
-          >
-            <span className="material-symbols-outlined text-[14px]">phone_iphone</span>
-            <span>Khung iPhone</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setDeviceMode("fullscreen")}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-              deviceMode === "fullscreen"
-                ? "bg-rose-600 text-white shadow-xs"
-                : "text-white/70 hover:text-white"
-            }`}
-          >
-            <span className="material-symbols-outlined text-[14px]">fullscreen</span>
-            <span>Toàn màn hình</span>
-          </button>
-        </div>
-
-        {/* Right Action Buttons */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => setIsConfigOpen(true)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-semibold text-white transition-all active:scale-95 cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-[15px]">tune</span>
-            <span>Tùy chỉnh</span>
-          </button>
+          {!hideConfig && (
+            <button
+              type="button"
+              onClick={() => setIsConfigOpen(true)}
+              className="px-2 py-1 rounded-full bg-white/20 text-white font-medium flex items-center gap-0.5"
+              title="Tùy chỉnh thiệp mẫu"
+            >
+              <span className="material-symbols-outlined text-[13px]">tune</span>
+            </button>
+          )}
 
           <Link
             href="/gift"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-linear-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
+            className="px-2.5 py-1 rounded-full bg-linear-to-r from-rose-600 to-pink-600 text-white font-bold"
           >
-            <span className="material-symbols-outlined text-[15px]">edit</span>
-            <span>Tự tạo thiệp</span>
+            Tạo thiệp
           </Link>
         </div>
-      </header>
-
-      {/* Mobile Floating Bar for Template Switching & Actions */}
-      <div className="sm:hidden fixed top-3 inset-x-2 z-50 flex items-center justify-between gap-1 p-1 rounded-full bg-black/60 backdrop-blur-xl border border-white/20 shadow-lg text-[11px]">
-        <Link
-          href="/thamkhao?device=phone"
-          className="flex items-center gap-1 px-2.5 py-1 rounded-full text-white/80 hover:text-white"
-        >
-          <span>🌅</span>
-          <span>Mẫu 1: Storybook</span>
-        </Link>
-
-        <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-600 text-white font-bold shadow-xs">
-          <span>💬</span>
-          <span>Mẫu 2: Messenger</span>
-        </span>
-
-        <button
-          type="button"
-          onClick={() => setIsConfigOpen(true)}
-          className="px-2 py-1 rounded-full bg-white/20 text-white font-medium flex items-center gap-0.5"
-          title="Tùy chỉnh thiệp mẫu"
-        >
-          <span className="material-symbols-outlined text-[13px]">tune</span>
-        </button>
-
-        <Link
-          href="/gift"
-          className="px-2.5 py-1 rounded-full bg-linear-to-r from-rose-600 to-pink-600 text-white font-bold"
-        >
-          Tạo thiệp
-        </Link>
-      </div>
+      )}
 
       {/* Main Showcase Area */}
       <main className="w-full flex-1 flex items-center justify-center p-0 sm:p-3 z-20 overflow-hidden">
@@ -1845,6 +1875,22 @@ function MessengerPageInner() {
 
             {/* Customization Form */}
             <div className="space-y-4 text-xs font-sans">
+              {/* Banner dẫn sang Bàn tạo thiệp chính thức */}
+              <div className="rounded-2xl bg-linear-to-r from-rose-50 to-pink-50 border border-rose-200/80 p-3.5 flex items-center justify-between gap-3 shadow-2xs">
+                <div className="text-xs">
+                  <p className="font-bold text-[#721a28]">💡 Tùy chỉnh trực tiếp trên Bàn tạo thiệp</p>
+                  <p className="text-[11px] text-slate-600 mt-0.5">
+                    Bàn tạo thiệp (/create) đã đưa toàn bộ tùy chọn hình nền, avatar, tin nhắn ra ngoài để bạn thiết kế và lưu vào mã QR vòng tay!
+                  </p>
+                </div>
+                <Link
+                  href="/gift"
+                  className="shrink-0 px-3 py-1.5 rounded-xl bg-linear-to-r from-rose-600 to-pink-600 text-white text-xs font-bold shadow-xs whitespace-nowrap hover:opacity-95 cursor-pointer"
+                >
+                  Vào Bàn tạo thiệp
+                </Link>
+              </div>
+
               {/* Tên người gửi & Tên người nhận */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>

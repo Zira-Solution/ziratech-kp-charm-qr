@@ -215,6 +215,52 @@ export function parseVoice(input: unknown, token: string): Parsed<CleanVoice> {
   return ok({ audioPath: v.audioPath, duration: formatDuration(seconds), noteText });
 }
 
+export interface CleanMessenger {
+  wallpaperUrl: string;
+  avatarUrl: string;
+  notificationText: string;
+  messages: string[];
+  showFloatingHearts: boolean;
+  giftLeadMessage: string;
+  voiceLeadMessage: string;
+  voiceAfterMessage: string;
+}
+
+export function parseMessenger(input: unknown): CleanMessenger {
+  const m = (input && typeof input === "object" ? input : {}) as Record<string, unknown>;
+  const messagesRaw = Array.isArray(m.messages) ? m.messages : [];
+  const cleanMessages = messagesRaw
+    .map((s) => cleanText(s, 500))
+    .filter((s) => s.length > 0)
+    .slice(0, 30);
+
+  return {
+    wallpaperUrl: cleanText(m.wallpaperUrl, 500_000) || "/images/default_lockscreen_girl.jpg",
+    avatarUrl: cleanText(m.avatarUrl, 500_000) || "/images/default_avatar.png",
+    notificationText: cleanText(m.notificationText, 200) || "hello bé iu",
+    messages:
+      cleanMessages.length > 0
+        ? cleanMessages
+        : [
+            "Hello bé iu của anh ❤️",
+            "Hôm nay là 20/10, ngày phụ nữ Việt Nam nè 🌸",
+            "Anh có chuẩn bị một món quà bất ngờ nho nhỏ dành riêng cho em",
+            "Cảm ơn em vì đã luôn ở bên cạnh anh, làm cho mỗi ngày trôi qua đều thật ấm áp và ngập tràn hạnh phúc",
+            "Chúc công chúa của anh luôn xinh đẹp, rạng rỡ và luôn nở nụ cười thật tươi nhé ✨",
+            "Thương em nhiều lắm! 💕",
+            "Giữ lá thư nhỏ bên dưới để mở thư tay anh viết riêng cho em nhé 💌",
+          ],
+    showFloatingHearts: m.showFloatingHearts !== false,
+    giftLeadMessage:
+      cleanText(m.giftLeadMessage, 300) ||
+      "Còn một món quà nhỏ nữa anh để dành cho em, chạm vào hộp quà bên dưới nhé 🎁",
+    voiceLeadMessage:
+      cleanText(m.voiceLeadMessage, 300) || "Anh có ghi âm một đoạn nhỏ gửi em, em nghe thử nhé 🎧",
+    voiceAfterMessage:
+      cleanText(m.voiceAfterMessage, 300) || "Anh thương em nhiều lắm, chúc em ngày 20/10 thật vui nha 💕",
+  };
+}
+
 // ---------------------------------------------------------------- the whole card
 /** What is stored in `gift_products.gift_data`. Content exists only for the messages listed in `blocks`. */
 export interface StoredGiftData {
@@ -239,6 +285,7 @@ export interface StoredGiftData {
   voiceNote?: CleanVoice;
   anniversary?: { date: string; label: string };
   timeline?: TimelineItem[];
+  messenger?: CleanMessenger;
 }
 
 /** The ticked messages: known ids only, no repeats, at least one. Their order is kept. */
@@ -345,6 +392,10 @@ export function parseGiftData(input: unknown, ctx: { token: string }): Parsed<St
     if (!v.ok) return v;
     if (!v.value.audioPath) return empty("voice");
     out.voiceNote = v.value;
+  }
+
+  if (out.template === "messenger" || g.messenger !== undefined) {
+    out.messenger = parseMessenger(g.messenger);
   }
 
   return ok(out);

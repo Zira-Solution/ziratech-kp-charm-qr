@@ -24,6 +24,7 @@ import TimelineBlock from "@/components/studio/blocks/TimelineBlock";
 import VideoBlock from "@/components/studio/blocks/VideoBlock";
 import MusicBlock from "@/components/studio/blocks/MusicBlock";
 import VoiceBlock from "@/components/studio/blocks/VoiceBlock";
+import MessengerBlock from "@/components/studio/blocks/MessengerBlock";
 import { getTemplate, getTemplateAllowedBlocks } from "@/components/gift-templates/template-config";
 import { parseGiftData } from "@/lib/validation/gift";
 import { ToastContainer, useToastState } from "@/components/ui/Toast";
@@ -552,6 +553,13 @@ export default function CardStudioPage() {
           {/* STAGE 2: Write & Arrange the chosen content blocks */}
           {stage === 2 && (
             <div className="space-y-6">
+              {draft.template === "messenger" && (
+                <MessengerBlock
+                  step={nextStep()}
+                  draft={draft}
+                  onChange={update}
+                />
+              )}
               {draft.blocks.length === 0 ? (
                 <div role="status" className="rounded-3xl liquid-glass-section border border-rose-200/80 p-8 text-center shadow-sm">
                   <p className="text-base font-bold text-slate-800">Bạn chưa chọn thông điệp nào.</p>

@@ -307,3 +307,28 @@ test("parseGiftData accepts the largest album the limits allow", () => {
   const seven = Array.from({ length: 7 }, () => ({ url: "https://e.com/a.jpg", caption: "" }));
   assert.equal(parse({ recipientName: "Lan", memoryPhotos: seven, blocks: ["photos"] }).ok, false);
 });
+
+test("parseGiftData preserves and cleans messenger settings when template is messenger", () => {
+  const res = parse({
+    template: "messenger",
+    recipientName: "Bé Iu",
+    blocks: ["letter"],
+    letterContent: "Anh thương em nhiều",
+    messenger: {
+      wallpaperUrl: "https://example.com/custom.jpg",
+      avatarUrl: "https://example.com/avatar.jpg",
+      notificationText: "hello bé iu nè ❤️",
+      messages: ["Tin 1", "Tin 2"],
+      showFloatingHearts: true,
+      giftLeadMessage: "Mở quà nha",
+    },
+  });
+  assert.equal(res.ok, true);
+  if (res.ok) {
+    assert.equal(res.value.template, "messenger");
+    assert.equal(res.value.messenger?.notificationText, "hello bé iu nè ❤️");
+    assert.deepEqual(res.value.messenger?.messages, ["Tin 1", "Tin 2"]);
+    assert.equal(res.value.messenger?.wallpaperUrl, "https://example.com/custom.jpg");
+    assert.equal(res.value.messenger?.giftLeadMessage, "Mở quà nha");
+  }
+});

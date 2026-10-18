@@ -99,12 +99,29 @@ export default function RecipientGiftPage() {
   if (phase === "ready" && gift) {
     if (gift.template === "messenger") {
       const q = new URLSearchParams();
+      q.set("embed", "true");
+      q.set("hideConfig", "true");
       if (gift.recipientName) q.set("to", gift.recipientName);
       if (gift.sender) q.set("sender", gift.sender);
       if (gift.letter?.title) q.set("ltitle", gift.letter.title);
       if (gift.letter?.content) q.set("lbody", gift.letter.content);
       if (gift.letter?.signature) q.set("lsig", gift.letter.signature);
       if (gift.voice?.audioUrl) q.set("voice", gift.voice.audioUrl);
+      if (gift.song?.link) q.set("music", gift.song.link);
+      if (gift.photos && gift.photos.length > 0) {
+        q.set("photos", JSON.stringify(gift.photos.map((p) => p.url)));
+      }
+      const m = gift.messenger;
+      if (m) {
+        if (m.wallpaperUrl) q.set("wallpaper", m.wallpaperUrl);
+        if (m.avatarUrl) q.set("avatar", m.avatarUrl);
+        if (m.notificationText) q.set("text", m.notificationText);
+        if (m.messages && m.messages.length > 0) q.set("msg", m.messages.join("||"));
+        q.set("hearts", m.showFloatingHearts ? "1" : "0");
+        if (m.giftLeadMessage) q.set("glead", m.giftLeadMessage);
+        if (m.voiceLeadMessage) q.set("vlead", m.voiceLeadMessage);
+        if (m.voiceAfterMessage) q.set("vafter", m.voiceAfterMessage);
+      }
       return (
         <div className="kp-card-in h-dvh w-full overflow-hidden bg-black relative">
           {isCreator && (

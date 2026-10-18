@@ -40,7 +40,30 @@ export default function PreviewCard({
         onClick={onOpenFullPreview}
         className="rounded-2xl p-4 shadow-inner border border-slate-200/80 bg-slate-50/70 transition-all cursor-pointer hover:shadow-md hover:border-[#721a28]/40 flex flex-col items-center justify-center min-h-[190px] relative z-10 overflow-hidden"
       >
-        {cover ? (
+        {draft.template === "messenger" ? (
+          <div className="w-32 aspect-[9/16] rounded-2xl overflow-hidden shadow-lg border-2 border-slate-700 relative bg-black flex flex-col justify-between p-2 select-none group-hover:scale-105 transition-transform duration-300">
+            <img
+              src={draft.messenger?.wallpaperUrl || "/images/default_lockscreen_girl.jpg"}
+              alt="Hình nền khóa"
+              className="absolute inset-0 w-full h-full object-cover opacity-90"
+            />
+            <div className="absolute inset-0 bg-black/25" />
+            <div className="relative z-10 text-center pt-1">
+              <span className="text-[10px] text-white/90 font-medium">9:41</span>
+            </div>
+            <div className="relative z-10 bg-white/85 backdrop-blur-md rounded-xl p-1.5 shadow-xs border border-white/50">
+              <div className="flex items-center gap-1 mb-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                <span className="text-[9px] font-bold text-slate-800 truncate">
+                  {draft.senderName || "Người gửi"}
+                </span>
+              </div>
+              <p className="text-[8px] text-slate-700 line-clamp-1 leading-tight">
+                {draft.messenger?.notificationText || "hello bé iu ❤️"}
+              </p>
+            </div>
+          </div>
+        ) : cover ? (
           <div className="w-36 rotate-[-1deg] rounded-lg bg-white p-2 pb-5 shadow-md ring-1 ring-black/5 hover:rotate-0 transition-transform">
             <img src={cover} alt="Ảnh bìa thiệp" className="aspect-square w-full object-cover rounded-xs" />
           </div>

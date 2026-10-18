@@ -1009,12 +1009,12 @@ function MessengerPageInner() {
 
       {/* Top Floating Controls Bar on Desktop */}
       {!isEmbedded && (
-        <header className="hidden sm:flex w-full max-w-4xl px-4 py-3 sm:py-4 items-center justify-between gap-3 z-40 relative">
+        <header className="hidden sm:flex w-full max-w-5xl px-3 py-1.5 items-center justify-between gap-2 z-40 relative">
           <Link
             href="/"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
           >
-            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span className="material-symbols-outlined text-[15px]">arrow_back</span>
             <span>Trang chủ</span>
           </Link>
 
@@ -1128,12 +1128,14 @@ function MessengerPageInner() {
       )}
 
       {/* Main Showcase Area */}
-      <main className="w-full flex-1 flex items-center justify-center p-0 sm:p-3 z-20 overflow-hidden">
+      <main className="w-full flex-1 flex items-center justify-center p-0 sm:py-1 sm:px-2 z-20 overflow-hidden">
         {/* iPhone Outer Wrapper (Mockup on Desktop, flat full screen on Mobile or when fullscreen mode is selected) */}
         <div
           className={`relative transition-all duration-300 ${
             deviceMode === "mockup"
-              ? "w-full sm:w-auto sm:aspect-[390/812] sm:h-[min(812px,calc(100vh-75px))] sm:max-w-[390px] h-[100dvh] sm:rounded-[54px] sm:border-[8px] sm:border-[#222329] sm:ring-1 sm:ring-white/20 sm:shadow-[0_20px_70px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)]"
+              ? isEmbedded
+                ? "w-full sm:w-auto sm:aspect-[390/812] sm:h-[calc(100dvh-12px)] sm:max-h-[960px] h-[100dvh] sm:rounded-[52px] sm:border-[8px] sm:border-[#222329] sm:ring-1 sm:ring-white/20 sm:shadow-[0_25px_80px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)]"
+                : "w-full sm:w-auto sm:aspect-[390/812] sm:h-[calc(100dvh-50px)] sm:max-h-[960px] h-[100dvh] sm:rounded-[52px] sm:border-[8px] sm:border-[#222329] sm:ring-1 sm:ring-white/20 sm:shadow-[0_25px_80px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)]"
               : "w-full h-[100dvh] max-w-none rounded-none border-none shadow-none fixed inset-0 z-30"
           }`}
         >

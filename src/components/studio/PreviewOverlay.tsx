@@ -320,7 +320,13 @@ export default function PreviewOverlay({ draft, template, onTemplateChange, onCl
       {/* Main Stage with Device Frame */}
       <div className="relative flex min-h-0 flex-1 items-center justify-center p-3 sm:p-5 lg:p-6">
         <div
-          style={{ width: frame.width, height: frame.height, maxWidth: "100%", maxHeight: "100%" }}
+          style={{
+            width: frame.width,
+            height: frame.height,
+            maxWidth: "100%",
+            maxHeight: "100%",
+            aspectRatio: `${frame.width} / ${frame.height}`,
+          }}
           className={`overflow-hidden bg-white transition-all duration-300 ${
             frame.id === "phone"
               ? "rounded-[38px] sm:rounded-[44px] border-[6px] sm:border-[8px] border-[#2e2624] shadow-[0_30px_80px_rgba(70,30,20,0.22),0_12px_28px_rgba(0,0,0,0.08)] ring-1 ring-black/10"

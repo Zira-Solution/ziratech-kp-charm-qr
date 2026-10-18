@@ -2,11 +2,13 @@
 
 import React, { useRef, useState } from "react";
 import { compressImageToDataUrl } from "@/lib/image-compress";
+import { MAX_VIDEO_BYTES } from "@/lib/validation/audio";
 import type { GiftDraft, MessengerDraft } from "../draft";
 import { Field, Icon, StudioSection, fieldClass } from "../ui";
 
 interface Props {
   step?: number;
+  token?: string;
   draft: GiftDraft;
   onChange: (patch: Partial<GiftDraft>) => void;
 }
@@ -60,18 +62,65 @@ const MESSAGE_PRESETS = [
   },
 ];
 
-export default function MessengerBlock({ step, draft, onChange }: Props) {
+export default function MessengerBlock({ step, token, draft, onChange }: Props) {
   const wallpaperInputRef = useRef<HTMLInputElement>(null);
   const chatWallpaperInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const videoFileInputRef = useRef<HTMLInputElement>(null);
 
   const [uploadingWallpaper, setUploadingWallpaper] = useState(false);
   const [uploadingChatWallpaper, setUploadingChatWallpaper] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [videoUploading, setVideoUploading] = useState(false);
+  const [videoUploadError, setVideoUploadError] = useState<string | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
   const messenger = draft.messenger;
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > MAX_VIDEO_BYTES) {
+      setVideoUploadError("Tệp video quá lớn (tối đa 25MB). Hãy nén hoặc chọn clip ngắn hơn.");
+      if (videoFileInputRef.current) videoFileInputRef.current.value = "";
+      return;
+    }
+
+    setVideoUploadError(null);
+    setVideoUploading(true);
+
+    try {
+      const activeToken = token || "KP-2010-DEMO";
+      const formData = new FormData();
+      formData.set("type", "video");
+      formData.set("file", file);
+
+      const res = await fetch(`/api/gifts/${activeToken}/media`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Không tải được video lên.");
+      }
+
+      onChange({
+        videoUrl: data.url,
+        messenger: {
+          ...messenger,
+          videoUrl: data.url,
+        },
+      });
+    } catch (err: unknown) {
+      setVideoUploadError(err instanceof Error ? err.message : "Tải video thất bại. Vui lòng thử lại.");
+    } finally {
+      setVideoUploading(false);
+      if (videoFileInputRef.current) videoFileInputRef.current.value = "";
+    }
+  };
 
   const updateMessenger = (patch: Partial<MessengerDraft>) => {
     onChange({
@@ -469,16 +518,24 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
           />
         </div>
 
-        {/* 6. GỬI KÈM VIDEO KỶ NIỆM (YOUTUBE / DRIVE / VIMEO) */}
+        {/* 6. TẢI VIDEO KỶ NIỆM TỪ THIẾT BỊ */}
         <div className="pt-4 border-t border-rose-100/80">
+          <input
+            ref={videoFileInputRef}
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
+            className="hidden"
+            onChange={handleVideoUpload}
+          />
+
           <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="messenger-video-url" className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+            <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
               <span className="material-symbols-outlined text-[16px] text-rose-600">smart_display</span>
-              Video kỷ niệm gửi kèm (YouTube / Drive / Vimeo)
+              Video kỷ niệm gửi kèm
             </label>
             {(messenger.videoUrl || draft.videoUrl) ? (
               <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 flex items-center gap-1">
-                <span>✓ Đã gắn video</span>
+                <span>✓ Đã tải video</span>
               </span>
             ) : (
               <span className="text-[11px] text-slate-400">Không bắt buộc</span>
@@ -486,56 +543,63 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
           </div>
 
           <p className="text-[11.5px] text-slate-500 mb-3 leading-relaxed">
-            Gửi thêm 1 video kỷ niệm vào cuộc trò chuyện Messenger. Hệ thống sẽ tự động gửi 1 tin nhắn thông báo tò mò, sau đó xuất hiện khung video như tin nhắn thật có nút phát và lời mời chạm mở.
+            Tải video kỷ niệm trực tiếp từ thiết bị của bạn vào cuộc trò chuyện Messenger (tối đa 25MB, hỗ trợ MP4, WebM, MOV). Video sẽ hiển thị dạng tin nhắn kèm nút phát riêng tư.
           </p>
 
-          <div className="space-y-3 p-3.5 rounded-2xl bg-white border border-rose-100 shadow-2xs">
-            <Field
-              label="Đường dẫn video (YouTube, Shorts, Google Drive, Vimeo...)"
-              htmlFor="messenger-video-url"
-              hint="Ví dụ: https://youtu.be/dQw4w9WgXcQ hoặc link Google Drive (đã bật quyền 'Bất kỳ ai có liên kết')"
-            >
-              <div className="relative">
-                <input
-                  id="messenger-video-url"
-                  type="url"
-                  value={messenger.videoUrl ?? draft.videoUrl ?? ""}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onChange({
-                      videoUrl: val,
-                      messenger: {
-                        ...messenger,
-                        videoUrl: val,
-                      },
-                    });
-                  }}
-                  placeholder="https://youtu.be/..."
-                  className={`${fieldClass} !text-xs !py-2 pr-8`}
-                />
-                {(messenger.videoUrl || draft.videoUrl) && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onChange({
-                        videoUrl: "",
-                        messenger: {
-                          ...messenger,
-                          videoUrl: "",
-                        },
-                      });
-                    }}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 text-xs font-bold cursor-pointer"
-                    title="Xóa video"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-            </Field>
+          {videoUploadError && (
+            <div role="alert" className="mb-3 rounded-xl border border-rose-300 bg-rose-50/90 px-3.5 py-2 text-xs text-rose-800">
+              <span className="font-bold">Lỗi: </span> {videoUploadError}
+            </div>
+          )}
 
-            {(messenger.videoUrl || draft.videoUrl) && (
-              <>
+          <div className="space-y-3 p-3.5 rounded-2xl bg-white border border-rose-100 shadow-2xs">
+            {(messenger.videoUrl || draft.videoUrl) ? (
+              <div className="space-y-3">
+                <div className="relative rounded-xl overflow-hidden bg-black/95 border border-stone-800 flex items-center justify-center p-1.5 shadow-xs">
+                  <video
+                    src={messenger.videoUrl || draft.videoUrl}
+                    controls
+                    playsInline
+                    className="max-h-56 w-auto max-w-full rounded-lg object-contain"
+                  />
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+                  <p className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+                    Video đã sẵn sàng phát trên thiệp
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => videoFileInputRef.current?.click()}
+                      disabled={videoUploading}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-200 text-xs font-bold text-rose-700 hover:bg-rose-50 cursor-pointer transition-colors"
+                    >
+                      <Icon name="swap_horiz" className="text-[16px]" />
+                      Đổi video khác
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onChange({
+                          videoUrl: "",
+                          messenger: {
+                            ...messenger,
+                            videoUrl: "",
+                          },
+                        });
+                      }}
+                      disabled={videoUploading}
+                      className="inline-flex items-center justify-center w-8 h-8 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 cursor-pointer transition-colors"
+                      title="Xóa video"
+                    >
+                      <Icon name="delete" className="text-[18px]" />
+                    </button>
+                  </div>
+                </div>
+
                 <Field
                   label="Tin nhắn dẫn dắt trước video"
                   htmlFor="messenger-video-lead"
@@ -575,6 +639,11 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
                   </span>
                   <div className="max-w-[280px] p-2 rounded-2xl bg-white border border-pink-200/80 shadow-xs">
                     <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 flex items-center justify-center group">
+                      <video
+                        src={messenger.videoUrl || draft.videoUrl}
+                        preload="metadata"
+                        className="w-full h-full object-cover pointer-events-none"
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10" />
                       <div className="w-10 h-10 rounded-full bg-white/90 text-rose-600 flex items-center justify-center shadow-lg z-20 group-hover:scale-110 transition-transform">
                         <span className="material-symbols-outlined text-[24px] ml-0.5">play_arrow</span>
@@ -596,7 +665,38 @@ export default function MessengerBlock({ step, draft, onChange }: Props) {
                     </div>
                   </div>
                 </div>
-              </>
+              </div>
+            ) : (
+              <div
+                onClick={() => !videoUploading && videoFileInputRef.current?.click()}
+                className={`rounded-xl border-2 border-dashed border-rose-300/80 hover:border-rose-500/80 bg-rose-50/40 p-6 text-center cursor-pointer transition-all hover:bg-rose-50/70 ${
+                  videoUploading ? "opacity-60 pointer-events-none" : ""
+                }`}
+              >
+                {videoUploading ? (
+                  <div className="flex flex-col items-center justify-center py-2">
+                    <span className="w-8 h-8 rounded-full border-3 border-rose-600 border-t-transparent animate-spin mb-2" />
+                    <p className="text-xs font-bold text-rose-700">Đang tải video lên...</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">Vui lòng chờ trong giây lát</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-1">
+                    <div className="w-10 h-10 rounded-full bg-rose-100/80 text-rose-600 flex items-center justify-center mb-2 shadow-2xs">
+                      <span className="material-symbols-outlined text-[22px]">video_file</span>
+                    </div>
+                    <p className="text-xs font-bold text-slate-800">
+                      Chạm để tải video kỷ niệm từ thiết bị
+                    </p>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Hỗ trợ MP4, WebM, MOV (tối đa 25MB)
+                    </p>
+                    <span className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-linear-to-r from-rose-600 to-pink-600 text-white font-bold text-xs shadow-2xs">
+                      <span className="material-symbols-outlined text-[16px]">upload</span>
+                      <span>Chọn tệp video</span>
+                    </span>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

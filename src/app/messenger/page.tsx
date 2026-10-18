@@ -916,11 +916,19 @@ function MessengerPageInner() {
         >
           {/* Video Preview Frame */}
           <div className="relative aspect-[16/9] w-full bg-slate-900 overflow-hidden flex items-center justify-center">
-            <img
-              src={displayThumbnail}
-              alt={settings.videoTitle || "Video kỷ niệm"}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
+            {settings.videoUrl && !videoEmbedUrl ? (
+              <video
+                src={settings.videoUrl}
+                preload="metadata"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
+              />
+            ) : (
+              <img
+                src={displayThumbnail}
+                alt={settings.videoTitle || "Video kỷ niệm"}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            )}
             {/* Ambient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/30" />
 
@@ -933,7 +941,7 @@ function MessengerPageInner() {
             {/* Top Platform Tag */}
             <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white shadow-xs">
               <span>🎬</span>
-              <span>{videoPlatform}</span>
+              <span>{videoEmbedUrl ? videoPlatform : "Thước phim"}</span>
             </div>
 
             {/* Top HD Badge */}
@@ -2884,7 +2892,7 @@ function MessengerPageInner() {
             </div>
 
             {/* Responsive 16:9 Video Player */}
-            <div className="relative aspect-video w-full bg-black">
+            <div className="relative aspect-video w-full bg-black flex items-center justify-center">
               {videoEmbedUrl ? (
                 <iframe
                   src={`${videoEmbedUrl}${videoEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`}
@@ -2893,21 +2901,18 @@ function MessengerPageInner() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
+              ) : settings.videoUrl ? (
+                <video
+                  src={settings.videoUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-contain"
+                />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-white">
                   <span className="material-symbols-outlined text-4xl text-rose-400 mb-2">smart_display</span>
-                  <p className="text-sm font-semibold mb-3">Không thể phát trực tiếp liên kết này trong khung nhúng</p>
-                  {settings.videoUrl && (
-                    <a
-                      href={settings.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-xs font-bold text-white transition-all inline-flex items-center gap-1.5"
-                    >
-                      <span>Mở xem trên trang ngoài</span>
-                      <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-                    </a>
-                  )}
+                  <p className="text-sm font-semibold mb-3">Chưa có video kỷ niệm</p>
                 </div>
               )}
             </div>

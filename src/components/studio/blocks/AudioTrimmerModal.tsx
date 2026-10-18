@@ -56,6 +56,19 @@ export default function AudioTrimmerModal({
     let cancelled = false;
 
     async function loadAudio() {
+      // Setup preview audio element immediately so playback and duration are available even before full decode
+      const url = URL.createObjectURL(file);
+      previewUrlRef.current = url;
+      const audio = new Audio(url);
+      audioPreviewRef.current = audio;
+
+      audio.onloadedmetadata = () => {
+        if (!cancelled && audio.duration && isFinite(audio.duration) && audio.duration > 0) {
+          setDuration((prev) => (prev > 0 ? prev : audio.duration));
+          setEndTime((prev) => (prev > 0 ? prev : Math.min(audio.duration, 45)));
+        }
+      };
+
       try {
         setLoadingDecode(true);
         setDecodeError(null);
@@ -65,52 +78,57 @@ export default function AudioTrimmerModal({
 
         rawFileBytesRef.current = new Uint8Array(arrayBuf);
 
-        // Native Web Audio decode
-        const AudioCtx =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        const ctx = new AudioCtx();
-        const decoded = await ctx.decodeAudioData(arrayBuf.slice(0));
-        if (cancelled) return;
+        // Native Web Audio decode for accurate waveform visualizer
+        try {
+          const AudioCtx =
+            window.AudioContext ||
+            (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+          const ctx = new AudioCtx();
+          const decoded = await ctx.decodeAudioData(arrayBuf.slice(0));
+          if (!cancelled) {
+            audioBufferRef.current = decoded;
+            const dur = decoded.duration;
+            setDuration(dur);
 
-        audioBufferRef.current = decoded;
-        const dur = decoded.duration;
-        setDuration(dur);
+            // Generate ~48 waveform bars
+            const rawPcm = decoded.getChannelData(0);
+            const barCount = 48;
+            const step = Math.max(1, Math.floor(rawPcm.length / barCount));
+            const bars: number[] = [];
+            for (let i = 0; i < barCount; i++) {
+              let sum = 0;
+              const startSample = i * step;
+              const endSample = Math.min(rawPcm.length, startSample + step);
+              for (let j = startSample; j < endSample; j++) {
+                sum += Math.abs(rawPcm[j]);
+              }
+              bars.push(sum / Math.max(1, endSample - startSample));
+            }
+            const maxVal = Math.max(...bars, 0.01);
+            const normalized = bars.map((b) => Math.max(0.18, b / maxVal));
+            setWaveformBars(normalized);
 
-        // Generate ~48 waveform bars
-        const rawPcm = decoded.getChannelData(0);
-        const barCount = 48;
-        const step = Math.max(1, Math.floor(rawPcm.length / barCount));
-        const bars: number[] = [];
-        for (let i = 0; i < barCount; i++) {
-          let sum = 0;
-          const startSample = i * step;
-          const endSample = Math.min(rawPcm.length, startSample + step);
-          for (let j = startSample; j < endSample; j++) {
-            sum += Math.abs(rawPcm[j]);
+            const initialEnd = dur > 45 ? 45 : dur;
+            setStartTime(0);
+            setEndTime(initialEnd);
           }
-          bars.push(sum / Math.max(1, endSample - startSample));
+        } catch {
+          // If Web Audio decode fails, don't crash: use pleasant fallback bars and rely on native audio element
+          if (!cancelled) {
+            const fallbackBars = Array.from({ length: 48 }, (_, i) => 0.2 + 0.5 * Math.abs(Math.sin((i * 3.14) / 8)));
+            setWaveformBars(fallbackBars);
+            if (audio.duration && isFinite(audio.duration) && audio.duration > 0) {
+              setDuration(audio.duration);
+              setEndTime(Math.min(audio.duration, 45));
+            }
+          }
         }
-        const maxVal = Math.max(...bars, 0.01);
-        const normalized = bars.map((b) => Math.max(0.18, b / maxVal));
-        setWaveformBars(normalized);
-
-        // Initial default: 0 to min(45s, dur)
-        const initialEnd = dur > 45 ? 45 : dur;
-        setStartTime(0);
-        setEndTime(initialEnd);
-
-        // Setup preview audio element
-        const url = URL.createObjectURL(file);
-        previewUrlRef.current = url;
-        const audio = new Audio(url);
-        audioPreviewRef.current = audio;
       } catch (err: unknown) {
         if (!cancelled) {
           setDecodeError(
             err instanceof Error
-              ? `Không thể phân tích tệp âm thanh này: ${err.message}`
-              : "Không thể phân tích định dạng tệp âm thanh này."
+              ? `Không thể đọc tệp: ${err.message}`
+              : "Không thể đọc tệp âm thanh này."
           );
         }
       } finally {
@@ -219,9 +237,9 @@ export default function AudioTrimmerModal({
       body: formData,
     });
 
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.success) {
-      throw new Error(data.error || "Không thể tải bài hát lên.");
+      throw new Error(data.error || `Lỗi tải lên máy chủ (${res.status}). Vui lòng kiểm tra lại.`);
     }
 
     onUploaded({
@@ -249,10 +267,13 @@ export default function AudioTrimmerModal({
       const baseName = file.name.replace(/\.[^/.]+$/, "");
       const cutSuffix = `_cut_${Math.round(startTime)}s_${Math.round(endTime)}s`;
 
+      const safeDuration = duration > 0 ? duration : 45;
+      const safeEnd = endTime > startTime ? endTime : safeDuration;
+
       // 1. Try lossless MP3 frame slicing if MP3
       if (isMp3 && rawFileBytesRef.current) {
         try {
-          const slicedMp3Bytes = sliceMp3(rawFileBytesRef.current, startTime, endTime);
+          const slicedMp3Bytes = sliceMp3(rawFileBytesRef.current, startTime, safeEnd);
           if (slicedMp3Bytes && slicedMp3Bytes.length > 0) {
             const mp3Buffer = slicedMp3Bytes.buffer.slice(
               slicedMp3Bytes.byteOffset,
@@ -269,24 +290,29 @@ export default function AudioTrimmerModal({
 
       // 2. Fall back to PCM slicing & WAV encoding
       if (!finalFile && audioBufferRef.current) {
-        const decoded = audioBufferRef.current;
-        const channelList: Float32Array[] = [];
-        for (let ch = 0; ch < decoded.numberOfChannels; ch++) {
-          channelList.push(decoded.getChannelData(ch));
+        try {
+          const decoded = audioBufferRef.current;
+          const channelList: Float32Array[] = [];
+          for (let ch = 0; ch < decoded.numberOfChannels; ch++) {
+            channelList.push(decoded.getChannelData(ch));
+          }
+          const slicedChannels = slicePcmChannels(channelList, decoded.sampleRate, startTime, safeEnd);
+          const wavBytes = encodeWav(slicedChannels, decoded.sampleRate);
+          const wavBuffer = wavBytes.buffer.slice(
+            wavBytes.byteOffset,
+            wavBytes.byteOffset + wavBytes.byteLength
+          ) as ArrayBuffer;
+          finalFile = new File([wavBuffer], `${baseName}${cutSuffix}.wav`, {
+            type: "audio/wav",
+          });
+        } catch {
+          // Fall back to original file
         }
-        const slicedChannels = slicePcmChannels(channelList, decoded.sampleRate, startTime, endTime);
-        const wavBytes = encodeWav(slicedChannels, decoded.sampleRate);
-        const wavBuffer = wavBytes.buffer.slice(
-          wavBytes.byteOffset,
-          wavBytes.byteOffset + wavBytes.byteLength
-        ) as ArrayBuffer;
-        finalFile = new File([wavBuffer], `${baseName}${cutSuffix}.wav`, {
-          type: "audio/wav",
-        });
       }
 
+      // 3. Fall back to original file if slicing cannot be performed
       if (!finalFile) {
-        throw new Error("Không thể xử lý đoạn nhạc đã chọn. Vui lòng thử tải bài gốc.");
+        finalFile = file;
       }
 
       setProcessStatus("Đang tải đoạn nhạc lên máy chủ...");
@@ -373,11 +399,24 @@ export default function AudioTrimmerModal({
         )}
 
         {/* Loading state while decoding audio */}
-        {loadingDecode ? (
-          <div className="py-12 flex flex-col items-center justify-center text-center">
-            <span className="w-8 h-8 rounded-full border-3 border-primary border-t-transparent animate-spin mb-3" />
-            <p className="text-xs font-bold text-primary">Đang nạp âm thanh...</p>
-            <p className="text-[11px] text-slate-500 mt-0.5">Sẵn sàng thanh trượt cắt nhạc trong giây lát</p>
+        {loadingDecode && duration === 0 ? (
+          <div className="py-10 flex flex-col items-center justify-center text-center space-y-3">
+            <span className="w-8 h-8 rounded-full border-3 border-primary border-t-transparent animate-spin" />
+            <div>
+              <p className="text-xs font-bold text-primary">Đang nạp file âm thanh...</p>
+              <p className="text-[11px] text-slate-500 mt-0.5">Sẵn sàng thanh trượt cắt nhạc trong giây lát</p>
+            </div>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => startTransition(handleUploadOriginal)}
+                disabled={processing}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl liquid-glass-btn-primary text-white text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              >
+                <Icon name="upload" className="text-[16px]" />
+                Tải lên ngay bài gốc (không cần cắt)
+              </button>
+            </div>
           </div>
         ) : (
           <div className="mt-4 space-y-4">

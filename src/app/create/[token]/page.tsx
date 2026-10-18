@@ -588,6 +588,7 @@ export default function CardStudioPage() {
               {draft.template === "messenger" && (
                 <MessengerBlock
                   step={nextStep()}
+                  token={token}
                   draft={draft}
                   onChange={update}
                 />

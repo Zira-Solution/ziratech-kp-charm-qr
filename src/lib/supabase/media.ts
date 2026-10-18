@@ -47,6 +47,16 @@ function ensureBucket(): Promise<void> {
       if (error && !/already exists|duplicate/i.test(error.message)) {
         throw new Error(`[Storage] create bucket failed: ${error.message}`);
       }
+    } else {
+      // Bucket exists: ensure fileSizeLimit is updated to 30MB for custom songs & videos
+      try {
+        await supabase.storage.updateBucket(BUCKET, {
+          public: false,
+          fileSizeLimit: MAX_MEDIA_STORAGE_BYTES,
+        });
+      } catch {
+        // Non-fatal if updateBucket is restricted
+      }
     }
   })().catch((err) => {
     memoryState.__kp_bucket_ready = undefined; // try again next time

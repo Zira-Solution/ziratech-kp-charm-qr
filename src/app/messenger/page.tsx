@@ -362,6 +362,18 @@ function MessengerPageInner() {
 
     let initial = { ...DEFAULT_SETTINGS };
 
+    // Try reading sessionStorage if in preview mode (avoids huge query strings)
+    try {
+      if (searchParams?.get("preview") === "true") {
+        const previewDraft = sessionStorage.getItem("kp_preview_settings");
+        if (previewDraft) {
+          initial = { ...initial, ...JSON.parse(previewDraft) };
+        }
+      }
+    } catch {
+      // Ignore sessionStorage errors
+    }
+
     // Try reading localStorage for saved customizer draft
     try {
       const saved = localStorage.getItem("kp_messenger_settings");
@@ -453,7 +465,7 @@ function MessengerPageInner() {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [shownMessages, isTyping]);
+  }, [shownMessages, isTyping, afterFilmStep]);
 
   // Lockscreen notification click
   const handleOpenNotification = () => {
@@ -497,11 +509,28 @@ function MessengerPageInner() {
 
   // Closing the film reel: the chat sends a line, the voice note, then a closing line
   useEffect(() => {
-    if (stage !== "chat" || afterFilmStep < 1 || afterFilmStep === 3 || afterFilmStep > 4) return;
-    const delay = afterFilmStep === 1 ? 900 : afterFilmStep === 2 ? 1600 : 1200;
+    if (stage !== "chat" || afterFilmStep < 1 || afterFilmStep > 4) return;
+
+    // When on step 3 with a voice note, allow 6s for user to listen or auto-advance
+    if (afterFilmStep === 3 && settings.voiceUrl) {
+      const timeout = window.setTimeout(() => {
+        setAfterFilmStep((prev) => (prev === 3 ? 4 : prev));
+      }, 6000);
+      return () => window.clearTimeout(timeout);
+    }
+
+    const delay =
+      afterFilmStep === 1
+        ? 900
+        : afterFilmStep === 2
+          ? 1600
+          : afterFilmStep === 3
+            ? 1500 // If no voice note, show the bubble briefly (1.5s) then jump down to the closing message!
+            : 1100;
+
     const timeout = window.setTimeout(() => setAfterFilmStep(afterFilmStep + 1), delay);
     return () => window.clearTimeout(timeout);
-  }, [stage, afterFilmStep]);
+  }, [stage, afterFilmStep, settings.voiceUrl]);
 
   // Leaving the chat (film, lock) stops any playing voice note
   useEffect(() => {
@@ -538,7 +567,9 @@ function MessengerPageInner() {
     const audio = voiceAudioRef.current;
     if (!audio || !settings.voiceUrl) {
       setVoiceHint(true);
-      window.setTimeout(() => setVoiceHint(false), 3000);
+      window.setTimeout(() => setVoiceHint(false), 2500);
+      // If there is no voice note, advance immediately to the next message
+      setAfterFilmStep((prev) => (prev === 3 ? 4 : prev));
       return;
     }
     if (audio.paused) {
@@ -916,11 +947,19 @@ function MessengerPageInner() {
         >
           {/* Video Preview Frame */}
           <div className="relative aspect-[16/9] w-full bg-slate-900 overflow-hidden flex items-center justify-center">
-            <img
-              src={displayThumbnail}
-              alt={settings.videoTitle || "Video kỷ niệm"}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
+            {settings.videoUrl && !videoEmbedUrl ? (
+              <video
+                src={settings.videoUrl}
+                preload="metadata"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
+              />
+            ) : (
+              <img
+                src={displayThumbnail}
+                alt={settings.videoTitle || "Video kỷ niệm"}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            )}
             {/* Ambient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/30" />
 
@@ -933,7 +972,7 @@ function MessengerPageInner() {
             {/* Top Platform Tag */}
             <div className="absolute top-2 left-2 z-10 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-bold text-white shadow-xs">
               <span>🎬</span>
-              <span>{videoPlatform}</span>
+              <span>{videoEmbedUrl ? videoPlatform : "Thước phim"}</span>
             </div>
 
             {/* Top HD Badge */}
@@ -965,7 +1004,10 @@ function MessengerPageInner() {
   );
 
   return (
-    <div data-lenis-prevent className="relative min-h-screen w-full bg-[#0d0f12] text-slate-100 flex flex-col items-center justify-center overflow-x-hidden selection:bg-rose-500/30 selection:text-white">
+    <div
+      data-lenis-prevent
+      className="relative h-screen h-dvh max-h-screen max-h-dvh w-full bg-[#0d0f12] text-slate-100 flex flex-col items-center justify-between overflow-hidden selection:bg-rose-500/30 selection:text-white"
+    >
       <audio ref={musicAudioRef} src={settings.musicUrl || undefined} loop preload="none" />
 
       {/* Background ambient lighting for desktop showcase - lightweight radial gradients, zero blur GPU overhead */}
@@ -982,12 +1024,12 @@ function MessengerPageInner() {
 
       {/* Top Floating Controls Bar on Desktop */}
       {!isEmbedded && (
-        <header className="hidden sm:flex w-full max-w-4xl px-4 py-3 sm:py-4 items-center justify-between gap-3 z-40 relative">
+        <header className="hidden sm:flex w-full max-w-5xl px-3 py-1.5 items-center justify-between gap-2 z-40 relative shrink-0">
           <Link
             href="/"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white/90 backdrop-blur-md transition-all active:scale-95 shrink-0"
           >
-            <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span className="material-symbols-outlined text-[15px]">arrow_back</span>
             <span>Trang chủ</span>
           </Link>
 
@@ -1101,13 +1143,13 @@ function MessengerPageInner() {
       )}
 
       {/* Main Showcase Area */}
-      <main className="w-full flex-1 flex items-center justify-center p-0 sm:p-3 z-20 overflow-hidden">
-        {/* iPhone Outer Wrapper (Mockup on Desktop, flat full screen on Mobile or when fullscreen mode is selected) */}
+      <main className="w-full flex-1 min-h-0 flex items-center justify-center p-2 sm:p-3 lg:p-4 z-20 overflow-hidden">
+        {/* iPhone Outer Wrapper (Mockup on Desktop/iPad, flat full screen on Mobile or when fullscreen mode is selected) */}
         <div
           className={`relative transition-all duration-300 ${
             deviceMode === "mockup"
-              ? "w-full sm:w-auto sm:aspect-[390/812] sm:h-[min(812px,calc(100vh-75px))] sm:max-w-[390px] h-[100dvh] sm:rounded-[54px] sm:border-[8px] sm:border-[#222329] sm:ring-1 sm:ring-white/20 sm:shadow-[0_20px_70px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)]"
-              : "w-full h-[100dvh] max-w-none rounded-none border-none shadow-none fixed inset-0 z-30"
+              ? "w-auto h-full max-h-full max-w-full aspect-[390/812] rounded-[36px] sm:rounded-[44px] lg:rounded-[48px] border-[6px] sm:border-[8px] border-[#222329] ring-1 ring-white/20 shadow-[0_20px_70px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] shrink-0"
+              : "w-full h-full max-w-none rounded-none border-none shadow-none fixed inset-0 z-30"
           }`}
         >
 
@@ -1128,7 +1170,7 @@ function MessengerPageInner() {
           {/* Screen Bezel & Display Viewport */}
           <div
             className={`w-full h-full relative overflow-hidden bg-black select-none ${
-              deviceMode === "mockup" ? "sm:rounded-[46px]" : "rounded-none"
+              deviceMode === "mockup" ? "rounded-[30px] sm:rounded-[36px] lg:rounded-[40px]" : "rounded-none"
             }`}
           >
             {/* Wallpaper Layer */}
@@ -1728,7 +1770,7 @@ function MessengerPageInner() {
                         </div>
                         {voiceHint && (
                           <span className="mt-0.5 ml-1 text-[10px] text-slate-600">
-                            Chưa có ghi âm. Thêm trong Tùy chỉnh.
+                            {hideConfig ? "Chưa có ghi âm thoại." : "Chưa có ghi âm. Thêm trong Tùy chỉnh."}
                           </span>
                         )}
                       </div>
@@ -2884,7 +2926,7 @@ function MessengerPageInner() {
             </div>
 
             {/* Responsive 16:9 Video Player */}
-            <div className="relative aspect-video w-full bg-black">
+            <div className="relative aspect-video w-full bg-black flex items-center justify-center">
               {videoEmbedUrl ? (
                 <iframe
                   src={`${videoEmbedUrl}${videoEmbedUrl.includes("?") ? "&" : "?"}autoplay=1`}
@@ -2893,21 +2935,18 @@ function MessengerPageInner() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
+              ) : settings.videoUrl ? (
+                <video
+                  src={settings.videoUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-contain"
+                />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-white">
                   <span className="material-symbols-outlined text-4xl text-rose-400 mb-2">smart_display</span>
-                  <p className="text-sm font-semibold mb-3">Không thể phát trực tiếp liên kết này trong khung nhúng</p>
-                  {settings.videoUrl && (
-                    <a
-                      href={settings.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-xs font-bold text-white transition-all inline-flex items-center gap-1.5"
-                    >
-                      <span>Mở xem trên trang ngoài</span>
-                      <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-                    </a>
-                  )}
+                  <p className="text-sm font-semibold mb-3">Chưa có video kỷ niệm</p>
                 </div>
               )}
             </div>

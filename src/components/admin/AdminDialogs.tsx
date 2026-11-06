@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Dialog, Icon, formatVnd, primaryButton, secondaryButton } from "./ui";
+import { Dialog, Icon, primaryButton, secondaryButton } from "./ui";
 import type { CreatedOrder } from "./PosView";
 
 function useCopy() {
@@ -132,14 +132,6 @@ export function OrderCreatedDialog({ created, onClose }: { created: CreatedOrder
         <div className="flex justify-between gap-4">
           <dt className="text-slate-500">Sản phẩm</dt>
           <dd className="text-right text-slate-900">{order.chainName}</dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-slate-500">Tiền charm</dt>
-          <dd className="text-slate-900">{formatVnd(Math.max(0, order.totalPrice - order.chainPrice))}</dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-slate-500">Đã thu</dt>
-          <dd className="font-semibold text-primary-container">{formatVnd(order.totalPrice)}</dd>
         </div>
       </dl>
     </Dialog>

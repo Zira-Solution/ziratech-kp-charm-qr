@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import type { GiftProductView } from "@/types/gift-order";
-import { Card, EmptyState, Icon, Skeleton, StatusBadge, focusRing, formatVnd, inputClass } from "./ui";
+import { Card, EmptyState, Icon, Skeleton, StatusBadge, focusRing, inputClass } from "./ui";
 
 type Filter = "all" | "pending" | "completed";
 
@@ -119,12 +119,6 @@ export default function OrdersView({
     });
   }, [orders, query, filter]);
 
-  // Charms are bought separately at the counter; their money is whatever the total adds to the chain price.
-  const charmText = (o: GiftProductView) => {
-    const charmMoney = Math.max(0, (o.totalPrice || 0) - (o.chainPrice || 0));
-    return charmMoney > 0 ? `Dây ${formatVnd(o.chainPrice)} + charm ${formatVnd(charmMoney)}` : `Dây ${formatVnd(o.chainPrice)}`;
-  };
-
   const rowProps = { onCopyLink, trash, softDeleteReady, busyToken, onDelete, onRestore };
 
   return (
@@ -229,8 +223,6 @@ export default function OrdersView({
                 <tr>
                   <th scope="col" className="px-5 py-3">Mã</th>
                   <th scope="col" className="px-3 py-3">Khách hàng</th>
-                  <th scope="col" className="px-3 py-3">Sản phẩm</th>
-                  <th scope="col" className="px-3 py-3 text-right">Tổng tiền</th>
                   <th scope="col" className="px-3 py-3">Thiệp</th>
                   <th scope="col" className="px-5 py-3">Thao tác</th>
                 </tr>
@@ -245,14 +237,6 @@ export default function OrdersView({
                       <p className="font-medium text-slate-900">{o.customerName}</p>
                       <p className="text-xs text-slate-500">{o.customerEmail}</p>
                       {o.customerPhone && <p className="text-xs text-slate-500">{o.customerPhone}</p>}
-                    </td>
-                    <td className="max-w-64 px-3 py-3.5">
-                      <p className="text-slate-900">{o.chainName}</p>
-                      <p className="line-clamp-2 text-xs text-slate-500">{charmText(o)}</p>
-                    </td>
-                    <td className="px-3 py-3.5 text-right">
-                      <p className="font-semibold text-slate-900">{formatVnd(o.totalPrice)}</p>
-                      <p className="text-xs text-slate-500">{o.paymentMethod === "transfer" ? "Chuyển khoản" : "Tiền mặt"}</p>
                     </td>
                     <td className="px-3 py-3.5">
                       <StatusBadge completed={o.status === "completed"} />
@@ -279,11 +263,7 @@ export default function OrdersView({
                     <p className="font-medium text-slate-900">{o.customerName}</p>
                     <p className="truncate text-xs text-slate-500">{o.customerEmail}</p>
                   </div>
-                  <p className="shrink-0 font-semibold text-slate-900">{formatVnd(o.totalPrice)}</p>
                 </div>
-                <p className="text-xs text-slate-500">
-                  {o.chainName} · {charmText(o)}
-                </p>
                 <RowActions order={o} {...rowProps} />
               </li>
             ))}

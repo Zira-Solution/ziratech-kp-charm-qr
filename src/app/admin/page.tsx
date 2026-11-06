@@ -8,7 +8,7 @@ import PosView, { type CreatedOrder } from "@/components/admin/PosView";
 import OrdersView from "@/components/admin/OrdersView";
 import DonationsView, { type DonationsData } from "@/components/admin/DonationsView";
 import SalesView, { type SalesData } from "@/components/admin/SalesView";
-import { OrderCreatedDialog, ReissuedKeyDialog } from "@/components/admin/AdminDialogs";
+import { OrderCreatedDialog } from "@/components/admin/AdminDialogs";
 import { ConfirmDialog, adminFontStyle, formatVnd } from "@/components/admin/ui";
 
 export default function AdminPage() {
@@ -36,8 +36,6 @@ export default function AdminPage() {
   const [salesError, setSalesError] = useState("");
 
   const [created, setCreated] = useState<CreatedOrder | null>(null);
-  const [reissued, setReissued] = useState<{ token: string; creatorKey: string } | null>(null);
-  const [resendingToken, setResendingToken] = useState<string | null>(null);
 
   const notify = useCallback((message: string) => {
     setToast(message);
@@ -139,33 +137,6 @@ export default function AdminPage() {
     notify("Đã đăng xuất.");
   };
 
-  const resend = async (token: string) => {
-    setResendingToken(token);
-    try {
-      const res = await fetch("/api/admin/resend-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      });
-      if (res.status === 401) return handleExpired();
-      const data = await res.json();
-      if (data.creatorKey) setReissued({ token, creatorKey: data.creatorKey });
-      if (data.success) {
-        notify(
-          data.simulated
-            ? `Đã cấp lại OTP tạo thiệp cho ${token} (chế độ mô phỏng, chưa gửi email thật)`
-            : `Đã cấp lại OTP tạo thiệp và gửi email cho ${token}`
-        );
-      } else if (!data.creatorKey) {
-        notify(data.error || "Không gửi lại được email.");
-      }
-    } catch {
-      notify("Lỗi kết nối khi gửi lại email.");
-    } finally {
-      setResendingToken(null);
-    }
-  };
-
   const setDeleted = async (token: string, deleted: boolean) => {
     setBusyToken(token);
     try {
@@ -242,8 +213,6 @@ export default function AdminPage() {
           loading={ordersLoading}
           error={ordersError}
           onRefresh={loadOrders}
-          onResend={resend}
-          resendingToken={resendingToken}
           onCopyLink={copyLink}
           trash={trash}
           onToggleTrash={setTrash}
@@ -278,7 +247,6 @@ export default function AdminPage() {
       )}
 
       {created && <OrderCreatedDialog created={created} onClose={() => setCreated(null)} />}
-      {reissued && <ReissuedKeyDialog token={reissued.token} creatorKey={reissued.creatorKey} onClose={() => setReissued(null)} />}
     </AdminShell>
   );
 }

@@ -15,24 +15,24 @@ interface Product {
 
 const PRODUCTS: Product[] = [
   {
-    title: "Hoa lẻ tinh khôi",
-    price: "40.000 – 70.000đ",
+    title: "1 Đóa Thương",
+    price: "20.000đ",
     desc: "Đặt trước hoa tươi tuyển chọn cẩn trọng, nhận trực tiếp ngày 20/10 tại Sảnh liên tầng lầu 3 ĐH FPT. Mã thiệp số cá nhân hóa được gửi qua email.",
     tags: [{ label: "Đặt trước", solid: true }, { label: "QR gửi qua email", outline: true }],
     footNote: "Góp quỹ trạm cứu hộ",
-    action: { href: "#preorder", label: "Đặt trước hoa" },
+    action: { href: "#preorder", label: "Đặt 1 đóa thương" },
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuB_4mDGS0xffxwcJ71txa5wOeoYAvBOOf2uSojK2uCxd0_K1mApojDPFpzJJzHwG-rSs428EPPcvkFHfaVkbPQRWsmzJ4MBkWCoYKrXo4tcrbRLmHQGrRmRFVCBO9Z1ewOVplxgniYaHTZRX1fE_IdOx3Zbehs_9VULa56Ps0AbRa6Lzv9n9nxgin7RQyxw_ZBQb82VB4GdGxV9dPVBKdiGaRspudRIjX7sovyPsjqdGkOD6HQ8yIN8-w",
-    alt: "Một bông hồng phấn gói giấy nâu buộc dây gai",
+    alt: "1 đóa thương hồng phấn gói giấy nâu buộc dây gai",
   },
   {
-    title: "Hoa bó kết tay nghệ thuật",
-    price: "40.000 – 70.000đ",
+    title: "2 Đóa Xinh",
+    price: "25.000đ",
     desc: "Bó hoa trang nhã phối hoa nhập khẩu và baby breath dịu dàng, gói giấy mỹ thuật thủ công sang trọng đón chào 20/10.",
     tags: [{ label: "Đặt trước", solid: true }, { label: "QR gửi qua email", outline: true }],
     footNote: "Góp quỹ trạm cứu hộ",
-    action: { href: "#preorder", label: "Đặt trước bó" },
+    action: { href: "#preorder", label: "Đặt 2 đóa xinh" },
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAC3K_So8EnaedBp3w8ybRFGrZGmfOzQ7AGm2KAfs2IW48IriCTvT46WO72wBJc_uUEFiqbAuUC_eiOWIiPX7cgWeSpGAyT9liUlSjgPl6hNItKi_zF7qCkhGpS6CAHrnCFXRXXuUDm__yueYCEPUJKdgWPegxKFFGIZXH-4Vr6wbOOCzOzCXMkjS9ZmqFknuxBPa-JwjtD1ppTYBSVsGG2knAGnxAiIki4oQnolTsf0snehIEVFmDegQ",
-    alt: "Bó hoa cẩm chướng kem và hồng phấn gói giấy linen",
+    alt: "Bó 2 đóa xinh cẩm chướng kem và hồng phấn gói giấy linen",
   },
   {
     title: "Vòng Charm hoàn thiện",

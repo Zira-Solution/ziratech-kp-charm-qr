@@ -294,3 +294,38 @@ export function countByCategory(data: Classified): Record<string, { count: numbe
   }
   return result;
 }
+
+export interface FinanceBlock {
+  /** Amounts in VND, or null when the label is missing from the sheet. */
+  sales: number | null;
+  capital: number | null;
+  expenses: number | null;
+  transferred: number | null;
+}
+
+const FINANCE_LABELS: Record<keyof FinanceBlock, string> = {
+  sales: "tổng tiền bán",
+  capital: "tiền vốn",
+  expenses: "tiền mua đồ chi phí",
+  transferred: "đã chuyển từ thiện",
+};
+
+/** Reads the summary block to the right of the sales (label cell, then the number next to it). */
+export function parseFinanceBlock(rows: string[][]): FinanceBlock {
+  const out: FinanceBlock = { sales: null, capital: null, expenses: null, transferred: null };
+  for (const cells of rows) {
+    for (let col = 9; col < cells.length; col++) {
+      const label = normalizeName(cells[col] ?? "");
+      const key = (Object.keys(FINANCE_LABELS) as Array<keyof FinanceBlock>).find((k) => FINANCE_LABELS[k] === label);
+      if (!key) continue;
+      for (let next = col + 1; next < Math.min(cells.length, col + 4); next++) {
+        const value = Number((cells[next] ?? "").trim().replace(",", "."));
+        if ((cells[next] ?? "").trim() !== "" && Number.isFinite(value)) {
+          out[key] = Math.round(value * PRICE_UNIT);
+          break;
+        }
+      }
+    }
+  }
+  return out;
+}

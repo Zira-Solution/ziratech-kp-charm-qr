@@ -6,12 +6,14 @@ import { STATEMENT_CATEGORIES, STATEMENT_SUMMARY } from "@/lib/sales/statement-d
 
 const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(Math.round(n))}đ`;
 
-// Receiving account (the one linked to SePay & VietQR).
-const BANK = process.env.NEXT_PUBLIC_DONATION_BANK || "MBBank";
-const ACCOUNT = process.env.NEXT_PUBLIC_DONATION_ACCOUNT || "1025032006";
-const ACCOUNT_NAME = process.env.NEXT_PUBLIC_DONATION_NAME || "TRAN HOANG HAO";
+// Receiving account (direct official account of Sân Nhà Nhiều Chó).
+const BANK = process.env.NEXT_PUBLIC_DONATION_BANK || "Vietcombank";
+const ACCOUNT = process.env.NEXT_PUBLIC_DONATION_ACCOUNT || "1060402678";
+const ACCOUNT_NAME =
+  process.env.NEXT_PUBLIC_DONATION_NAME || "T.TAM CUU HO CHO MEO SAN NHA NHIEU CHO";
+const BRANCH = "VCB Tây Hà Nội - PGD Nam Thanh Xuân";
 
-const TRANSFER_NOTE = "Ho_va_Ten_MSSV";
+const TRANSFER_NOTE = "Ung_ho_San_Nha_Nhieu_Cho";
 
 export default function Shelter() {
   const [copiedAccount, setCopiedAccount] = useState(false);
@@ -46,12 +48,6 @@ export default function Shelter() {
       cancelled = true;
     };
   }, []);
-
-  const qrReady = Boolean(BANK && ACCOUNT);
-  // Omit amount param so banking apps let the donor freely choose their donation amount
-  const qrSrc = qrReady
-    ? `https://qr.sepay.vn/img?acc=${encodeURIComponent(ACCOUNT)}&bank=${encodeURIComponent(BANK)}&des=${encodeURIComponent(TRANSFER_NOTE)}`
-    : "";
 
   const handleCopyAccount = async () => {
     if (!ACCOUNT) return;
@@ -155,9 +151,9 @@ export default function Shelter() {
             <div className="sm:col-span-5 flex flex-col items-center justify-center">
               <div className="relative group p-2 bg-white rounded-3xl border border-rose-100/80 shadow-md transition-all duration-300 hover:shadow-lg">
                 <img
-                  className="w-44 sm:w-48 h-auto object-contain rounded-2xl shadow-inner"
-                  alt="Mã VietQR MBBank TRAN HOANG HAO 1025032006"
-                  src="/images/qr_vietqr_card.png"
+                  className="w-48 sm:w-52 h-auto object-contain rounded-2xl shadow-inner"
+                  alt="Mã QR Vietcombank T.TAM CUU HO CHO MEO SAN NHA NHIEU CHO 1060402678"
+                  src="/images/qr_vietcombank_san_nha_nhieu_cho.jpg"
                 />
               </div>
               <div className="mt-3 flex flex-col items-center gap-1.5 text-center">
@@ -166,10 +162,10 @@ export default function Shelter() {
                   <span>Quét bằng App Ngân hàng / MoMo</span>
                 </div>
                 <a
-                  href="/images/qr_vietqr_tranhoanghao.png"
-                  download="VietQR_MBBank_TRAN_HOANG_HAO.png"
+                  href="/images/qr_vietcombank_san_nha_nhieu_cho.jpg"
+                  download="QR_Vietcombank_San_Nha_Nhieu_Cho_1060402678.jpg"
                   className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white hover:bg-rose-50 text-[#721a28] text-[11px] font-sans font-semibold border border-rose-200/80 shadow-2xs transition-all cursor-pointer"
-                  title="Tải ảnh gốc mã QR"
+                  title="Tải ảnh gốc mã QR Vietcombank"
                 >
                   <span className="material-symbols-outlined text-[13px]">download</span>
                   <span>Tải ảnh mã VietQR</span>
@@ -179,19 +175,19 @@ export default function Shelter() {
 
             {/* Bank details info */}
             <div className="sm:col-span-7 flex flex-col space-y-3 text-xs">
-              <div className="p-3.5 rounded-2xl bg-white/85 border border-white/90 shadow-xs space-y-2">
+              <div className="p-3.5 rounded-2xl bg-white/85 border border-white/90 shadow-xs space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold">Ngân hàng</span>
                   <div className="text-right">
-                    <span className="font-bold text-primary font-sans block">MB (Quân Đội)</span>
-                    <span className="text-[10px] text-stone-500 font-sans">VietQR • Napas 247</span>
+                    <span className="font-bold text-primary font-sans block">Vietcombank (VCB)</span>
+                    <span className="text-[10px] text-emerald-700 font-sans font-semibold">Tài khoản chính thức của trạm</span>
                   </div>
                 </div>
                 
                 <div className="pt-2 border-t border-rose-100/50 flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <span className="text-[11px] text-on-surface-variant uppercase tracking-wider block font-semibold mb-0.5">Số tài khoản</span>
-                    <span className="font-mono text-base font-bold text-primary tracking-wider select-all">{ACCOUNT}</span>
+                    <span className="font-mono text-base sm:text-lg font-bold text-primary tracking-wider select-all">{ACCOUNT}</span>
                   </div>
                   <button
                     type="button"
@@ -211,7 +207,16 @@ export default function Shelter() {
 
                 <div className="pt-2 border-t border-rose-100/50 flex items-center justify-between gap-2">
                   <span className="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold shrink-0">Chủ tài khoản</span>
-                  <span className="font-bold text-primary font-sans uppercase text-right truncate">{ACCOUNT_NAME}</span>
+                  <span className="font-bold text-primary font-sans uppercase text-right text-[11px] sm:text-xs leading-snug">
+                    {ACCOUNT_NAME}
+                  </span>
+                </div>
+
+                <div className="pt-2 border-t border-rose-100/50 flex items-center justify-between gap-2">
+                  <span className="text-[11px] text-on-surface-variant uppercase tracking-wider font-semibold shrink-0">Chi nhánh</span>
+                  <span className="text-stone-600 font-sans text-right text-[11px]">
+                    {BRANCH}
+                  </span>
                 </div>
               </div>
             </div>
@@ -229,14 +234,14 @@ export default function Shelter() {
             </div>
 
             <p className="mt-2 text-center text-xs text-on-surface-variant font-medium">
-              Khi chuyển khoản, bạn vui lòng thay bằng <strong className="text-primary font-semibold">Họ và Tên kèm MSSV của bạn</strong> (Ví dụ: <code className="font-mono text-primary font-bold">Nguyen_Van_A_SE180000</code>).
+              Bạn có thể nhập cú pháp trên hoặc lời chúc tùy tâm gửi đến các bé cún mèo (Ví dụ: <code className="font-mono text-primary font-bold">Ho_Ten_Ung_ho_SNNC</code>).
             </p>
           </div>
 
           {/* Footer note */}
-          <div className="p-3 rounded-2xl bg-rose-50/70 border border-rose-100/80 flex items-center gap-2 text-xs text-secondary-dark font-medium">
-            <span className="material-symbols-outlined text-[18px] text-secondary-dark shrink-0">verified</span>
-            <span>100% tiền gửi được chuyển trực tiếp vào tài khoản trạm cứu hộ &amp; cập nhật minh bạch trên sao kê.</span>
+          <div className="p-3 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 flex items-center gap-2 text-xs text-emerald-900 font-medium">
+            <span className="material-symbols-outlined text-[18px] text-emerald-600 shrink-0">verified</span>
+            <span>100% tiền gửi được chuyển thẳng trực tiếp vào tài khoản ngân hàng chính thức của Mái ấm Sân Nhà Nhiều Chó.</span>
           </div>
         </div>
       </div>

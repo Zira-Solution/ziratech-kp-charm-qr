@@ -4,6 +4,7 @@ import { resolveSiteUrl, sendGiftActivationEmail } from "@/lib/mail/mailer";
 import { CreateProductPayload } from "@/types/gift-order";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { isValidEmail } from "@/lib/validation/security";
+import { EMAIL_SENDING_ENABLED } from "@/config/features";
 
 // The web records no money: every order is one bracelet with no price, identified by the buyer's email.
 const DEFAULT_CHAIN = { id: "kp-bracelet", name: "Vòng K&P" };
@@ -51,14 +52,17 @@ export async function POST(req: NextRequest) {
     const requestOrigin = host ? `${proto}://${host}` : req.nextUrl.origin;
     const siteUrl = resolveSiteUrl(requestOrigin);
 
-    const mailRes = await sendGiftActivationEmail({
-      customerName: order.customerName,
-      customerEmail: order.customerEmail,
-      token: order.token,
-      creatorKey: issued.creatorKey,
-      chainName: order.chainName,
-      siteUrl,
-    });
+    // With e-mail switched off nothing is sent; staff get the codes in the response instead.
+    const mailRes = EMAIL_SENDING_ENABLED
+      ? await sendGiftActivationEmail({
+          customerName: order.customerName,
+          customerEmail: order.customerEmail,
+          token: order.token,
+          creatorKey: issued.creatorKey,
+          chainName: order.chainName,
+          siteUrl,
+        })
+      : { success: true, simulated: true };
 
     // Simulated mode (no SMTP configured) does not count as sent.
     if (mailRes.success && !mailRes.simulated) {

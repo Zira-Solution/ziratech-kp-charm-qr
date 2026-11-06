@@ -5,13 +5,12 @@ import Link from "next/link";
 import { Icon, adminFontStyle, focusRing } from "./ui";
 import type { AdminUser } from "./AdminLogin";
 
-export type AdminTab = "pos" | "orders" | "products" | "reports" | "fund";
+export type AdminTab = "pos" | "orders" | "sales" | "fund";
 
 const NAV: Array<{ id: AdminTab; label: string; title: string; icon: string }> = [
-  { id: "pos", label: "Tạo đơn", title: "Tạo đơn tại quầy", icon: "add_shopping_cart" },
+  { id: "pos", label: "Tạo vòng", title: "Tạo vòng cho khách", icon: "add_shopping_cart" },
   { id: "orders", label: "Đơn hàng", title: "Danh sách đơn hàng", icon: "receipt_long" },
-  { id: "products", label: "Sản phẩm", title: "Dây vòng đang bán", icon: "diamond" },
-  { id: "reports", label: "Báo cáo", title: "Báo cáo doanh thu", icon: "bar_chart" },
+  { id: "sales", label: "Bán hàng", title: "Bán hàng tại gian hàng", icon: "storefront" },
   { id: "fund", label: "Quỹ", title: "Sao kê quỹ từ thiện", icon: "volunteer_activism" },
 ];
 

@@ -4,10 +4,9 @@ import { resolveSiteUrl, sendGiftActivationEmail } from "@/lib/mail/mailer";
 import { CreateProductPayload } from "@/types/gift-order";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { isValidEmail } from "@/lib/validation/security";
-import { getActiveChain } from "@/lib/supabase/chains";
-import { MAX_CHARM_AMOUNT } from "@/config/catalog";
 
-const PHONE_PATTERN = /^[0-9+\s().-]{8,20}$/;
+// The web records no money: every order is one bracelet with no price, identified by the buyer's email.
+const DEFAULT_CHAIN = { id: "kp-bracelet", name: "Vòng K&P" };
 
 const badRequest = (error: string) => NextResponse.json({ success: false, error }, { status: 400 });
 
@@ -23,46 +22,24 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    // --- customer ---
-    const customerName = typeof body.customerName === "string" ? body.customerName.trim() : "";
+    // --- customer: only the email is asked; it also stands in for the name (no name is invented) ---
     const customerEmail = typeof body.customerEmail === "string" ? body.customerEmail.trim() : "";
-    const customerPhone = typeof body.customerPhone === "string" ? body.customerPhone.trim() : "";
-
-    if (!customerName || !customerEmail) {
-      return badRequest("Vui lòng nhập đầy đủ tên và email của khách hàng");
-    }
-    if (customerName.length > 120) {
-      return badRequest("Tên khách hàng quá dài (tối đa 120 ký tự)");
+    if (!customerEmail) {
+      return badRequest("Vui lòng nhập email của khách hàng");
     }
     if (!isValidEmail(customerEmail)) {
       return badRequest("Email của khách hàng không hợp lệ");
     }
-    if (customerPhone && !PHONE_PATTERN.test(customerPhone)) {
-      return badRequest("Số điện thoại không hợp lệ");
-    }
-
-    // --- product: the chain price comes from the database; the browser only sends the chain id ---
-    const chain = await getActiveChain(body.chainId);
-    if (!chain) {
-      return badRequest("Loại dây vòng không hợp lệ hoặc đã bị ẩn");
-    }
-
-    // Charms are bought separately at the counter; staff enter the money collected for them.
-    const charmAmount = body.charmAmount === undefined || body.charmAmount === "" ? 0 : Number(body.charmAmount);
-    if (!Number.isInteger(charmAmount) || charmAmount < 0 || charmAmount > MAX_CHARM_AMOUNT) {
-      return badRequest("Tiền charm không hợp lệ");
-    }
 
     const payload: CreateProductPayload = {
-      customerName,
+      customerName: customerEmail,
       customerEmail,
-      customerPhone: customerPhone || undefined,
-      chainId: chain.id,
-      chainName: chain.name,
-      chainPrice: chain.price,
+      chainId: DEFAULT_CHAIN.id,
+      chainName: DEFAULT_CHAIN.name,
+      chainPrice: 0,
       charms: [],
-      totalPrice: chain.price + charmAmount,
-      paymentMethod: body.paymentMethod === "transfer" ? "transfer" : "cash",
+      totalPrice: 0,
+      paymentMethod: "cash",
     };
 
     // 1. Create product & generate unique token

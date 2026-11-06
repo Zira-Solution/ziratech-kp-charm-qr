@@ -6,10 +6,8 @@ import AdminLogin, { type AdminUser } from "@/components/admin/AdminLogin";
 import AdminShell, { type AdminTab } from "@/components/admin/AdminShell";
 import PosView, { type CreatedOrder } from "@/components/admin/PosView";
 import OrdersView from "@/components/admin/OrdersView";
-import ReportsView, { type AnalyticsStats } from "@/components/admin/ReportsView";
-import ProductsView from "@/components/admin/ProductsView";
 import DonationsView, { type DonationsData } from "@/components/admin/DonationsView";
-import type { StoredChain } from "@/lib/supabase/chains";
+import SalesView, { type SalesData } from "@/components/admin/SalesView";
 import { OrderCreatedDialog, ReissuedKeyDialog } from "@/components/admin/AdminDialogs";
 import { ConfirmDialog, adminFontStyle, formatVnd } from "@/components/admin/ui";
 
@@ -29,18 +27,13 @@ export default function AdminPage() {
   const [busyToken, setBusyToken] = useState<string | null>(null);
   const [orderToDelete, setOrderToDelete] = useState<GiftProductView | null>(null);
 
-  const [chains, setChains] = useState<StoredChain[]>([]);
-  const [chainsEditable, setChainsEditable] = useState(true);
-  const [chainsLoading, setChainsLoading] = useState(false);
-  const [chainsError, setChainsError] = useState("");
-
-  const [stats, setStats] = useState<AnalyticsStats | null>(null);
-  const [statsLoading, setStatsLoading] = useState(false);
-  const [statsError, setStatsError] = useState("");
-
   const [fund, setFund] = useState<DonationsData | null>(null);
   const [fundLoading, setFundLoading] = useState(false);
   const [fundError, setFundError] = useState("");
+
+  const [sales, setSales] = useState<SalesData | null>(null);
+  const [salesLoading, setSalesLoading] = useState(false);
+  const [salesError, setSalesError] = useState("");
 
   const [created, setCreated] = useState<CreatedOrder | null>(null);
   const [reissued, setReissued] = useState<{ token: string; creatorKey: string } | null>(null);
@@ -91,39 +84,6 @@ export default function AdminPage() {
     }
   }, [handleExpired, trash]);
 
-  const loadChains = useCallback(async () => {
-    setChainsLoading(true);
-    setChainsError("");
-    try {
-      const res = await fetch("/api/admin/chains");
-      if (res.status === 401) return handleExpired();
-      const data = await res.json();
-      if (!res.ok || !Array.isArray(data.chains)) throw new Error(data.error || "Không tải được danh sách dây vòng.");
-      setChains(data.chains);
-      setChainsEditable(data.editable !== false);
-    } catch (err) {
-      setChainsError(err instanceof Error ? err.message : "Không tải được danh sách dây vòng.");
-    } finally {
-      setChainsLoading(false);
-    }
-  }, [handleExpired]);
-
-  const loadStats = useCallback(async () => {
-    setStatsLoading(true);
-    setStatsError("");
-    try {
-      const res = await fetch("/api/admin/analytics");
-      if (res.status === 401) return handleExpired();
-      const data = await res.json();
-      if (!res.ok || !data.stats) throw new Error(data.error || "Không tải được báo cáo.");
-      setStats(data.stats);
-    } catch (err) {
-      setStatsError(err instanceof Error ? err.message : "Không tải được báo cáo.");
-    } finally {
-      setStatsLoading(false);
-    }
-  }, [handleExpired]);
-
   const loadFund = useCallback(async () => {
     setFundLoading(true);
     setFundError("");
@@ -140,12 +100,27 @@ export default function AdminPage() {
     }
   }, [handleExpired]);
 
+  const loadSales = useCallback(async () => {
+    setSalesLoading(true);
+    setSalesError("");
+    try {
+      const res = await fetch("/api/admin/sales");
+      if (res.status === 401) return handleExpired();
+      const data = await res.json();
+      if (!res.ok || !Array.isArray(data.rows)) throw new Error(data.error || "Không tải được bảng bán hàng.");
+      setSales({ rows: data.rows, ready: data.ready !== false });
+    } catch (err) {
+      setSalesError(err instanceof Error ? err.message : "Không tải được bảng bán hàng.");
+    } finally {
+      setSalesLoading(false);
+    }
+  }, [handleExpired]);
+
   // Keep the orders count in the sidebar fresh, and load the report when it is opened.
   useEffect(() => {
     if (!user) return;
     if (tab === "orders" || orders.length === 0) loadOrders();
-    if (tab === "pos" || tab === "products" || chains.length === 0) loadChains();
-    if (tab === "reports") loadStats();
+    if (tab === "sales") loadSales();
     if (tab === "fund") loadFund();
   }, [user, tab, trash]);
 
@@ -157,9 +132,8 @@ export default function AdminPage() {
     }
     setUser(null);
     setOrders([]);
-    setStats(null);
     setFund(null);
-    setChains([]);
+    setSales(null);
     setTrash(false);
     setTab("pos");
     notify("Đã đăng xuất.");
@@ -256,9 +230,6 @@ export default function AdminPage() {
     >
       {tab === "pos" && (
         <PosView
-          chains={chains.filter((c) => c.active)}
-          chainsLoading={chainsLoading}
-          onGoProducts={() => setTab("products")}
           onCreated={(c) => {
             setCreated(c);
             loadOrders();
@@ -282,18 +253,7 @@ export default function AdminPage() {
           onRestore={(token) => setDeleted(token, false)}
         />
       )}
-      {tab === "products" && (
-        <ProductsView
-          chains={chains}
-          editable={chainsEditable}
-          loading={chainsLoading}
-          error={chainsError}
-          onChanged={loadChains}
-          onNotify={notify}
-          onExpired={handleExpired}
-        />
-      )}
-      {tab === "reports" && <ReportsView stats={stats} loading={statsLoading} error={statsError} onRetry={loadStats} />}
+      {tab === "sales" && <SalesView data={sales} loading={salesLoading} error={salesError} onRefresh={loadSales} />}
       {tab === "fund" && <DonationsView data={fund} loading={fundLoading} error={fundError} onRefresh={loadFund} />}
 
       {orderToDelete && (

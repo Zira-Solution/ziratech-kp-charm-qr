@@ -116,3 +116,100 @@ create index if not exists idx_donations_transaction_date on public.donations (t
 alter table public.donations enable row level security; -- no policies: server only
 revoke all on public.donations from anon, authenticated;
 grant select, insert, update, delete on public.donations to service_role;
+
+-- ==============================================================================
+-- 9. Stall sales, imported from the "DOANH THU" sheet by src/scripts/seed-sales.ts.
+-- The web records no money: revenue = stall_sales + received donations (all from the DOANH THU sheet).
+-- Safe to run more than once.
+-- ==============================================================================
+create table if not exists public.stall_sales (
+  id uuid primary key default gen_random_uuid(),
+  sold_on date not null,
+  product_name_raw text not null,              -- name exactly as written in the sheet
+  category text not null check (category in (
+    'bracelet','keychain','keychain_phone','bear_mini','bear','diy','card','flower','blindbox','combo','unclassified'
+  )),
+  items jsonb,                                  -- list of items when category = 'combo'
+  qty integer not null default 1 check (qty > 0),
+  unit_price bigint not null check (unit_price >= 0), -- VND
+  note text,
+  channel text not null default 'stall',
+  source_row integer not null,                  -- line number in data/doanh-thu.csv
+  part smallint not null default 0,             -- >0 when one sheet line was split into several items
+  created_at timestamptz not null default now()
+);
+
+-- Re-running the seed never duplicates a line. (Upgrade: older runs used unique (sold_on, source_row).)
+alter table public.stall_sales add column if not exists part smallint not null default 0;
+alter table public.stall_sales drop constraint if exists stall_sales_sold_on_source_row_key;
+create unique index if not exists uq_stall_sales_row on public.stall_sales (sold_on, source_row, part);
+
+create index if not exists idx_stall_sales_sold_on on public.stall_sales (sold_on);
+
+-- 10. Donations: add channel/status, and let cash donations taken at the stall in (no SePay id).
+alter table public.donations alter column sepay_id drop not null;
+alter table public.donations add column if not exists channel text not null default 'web';
+alter table public.donations add column if not exists status text not null default 'received';
+alter table public.donations add column if not exists donated_on date;
+alter table public.donations add column if not exists source_row integer;
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'donations_channel_check') then
+    alter table public.donations add constraint donations_channel_check check (channel in ('web', 'stall'));
+  end if;
+end $$;
+create unique index if not exists uq_donations_stall_row on public.donations (donated_on, source_row);
+
+-- 11. Money handed over to the shelter. `transferred_at` stays null when the date is unknown.
+create table if not exists public.fund_transfers (
+  id uuid primary key default gen_random_uuid(),
+  amount bigint not null check (amount > 0),    -- VND
+  proof_path text,
+  transferred_at timestamptz,
+  note text not null default '',
+  source text unique,                           -- idempotency key for imported rows
+  created_at timestamptz not null default now()
+);
+
+-- 12. Campaign expenses (cost of goods). Filled only with figures the team provides.
+create table if not exists public.campaign_expenses (
+  id uuid primary key default gen_random_uuid(),
+  label text not null,
+  amount bigint not null check (amount >= 0),   -- VND
+  note text,
+  created_at timestamptz not null default now()
+);
+alter table public.campaign_expenses add column if not exists spent_on date;
+alter table public.campaign_expenses add column if not exists source_row integer; -- line in data/chi-phi.csv
+create unique index if not exists uq_campaign_expenses_row on public.campaign_expenses (source_row);
+
+-- 13. Views behind the landing page and the admin sales table.
+create or replace view public.fund_by_channel as
+  select 'stall'::text as channel, coalesce(sum(unit_price * qty), 0)::bigint as amount, count(*)::bigint as lines
+    from public.stall_sales
+  union all
+  select 'donation_stall', coalesce(sum(amount), 0)::bigint, count(*)::bigint
+    from public.donations where status = 'received' and channel = 'stall'
+  union all
+  select 'donation_web', coalesce(sum(amount), 0)::bigint, count(*)::bigint
+    from public.donations where status = 'received' and channel = 'web';
+
+create or replace view public.fund_sales_by_day_category as
+  select sold_on, category, sum(qty)::bigint as qty, sum(unit_price * qty)::bigint as amount
+    from public.stall_sales
+    group by sold_on, category;
+
+create or replace view public.fund_summary as
+  select
+    (select coalesce(sum(amount), 0) from public.fund_by_channel)::bigint as total_revenue,
+    (select coalesce(sum(amount), 0) from public.fund_transfers)::bigint as transferred,
+    (select coalesce(sum(amount), 0) from public.campaign_expenses)::bigint as expenses;
+
+-- Server only (service role), like every other table.
+alter table public.stall_sales enable row level security;
+alter table public.fund_transfers enable row level security;
+alter table public.campaign_expenses enable row level security;
+revoke all on public.stall_sales, public.fund_transfers, public.campaign_expenses from anon, authenticated;
+revoke all on public.fund_by_channel, public.fund_sales_by_day_category, public.fund_summary from anon, authenticated;
+grant select, insert, update, delete on public.stall_sales, public.fund_transfers, public.campaign_expenses to service_role;
+grant select on public.fund_by_channel, public.fund_sales_by_day_category, public.fund_summary to service_role;

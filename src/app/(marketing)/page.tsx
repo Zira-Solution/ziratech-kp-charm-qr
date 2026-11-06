@@ -7,6 +7,7 @@ import Keepsake from "@/components/home/Keepsake";
 import Workshop from "@/components/home/Workshop";
 import Preorder from "@/components/home/Preorder";
 import Shelter from "@/components/home/Shelter";
+import RevenueStatement from "@/components/home/RevenueStatement";
 import HomeFooter, { ClosingBanner } from "@/components/home/HomeFooter";
 
 // Both families ship real Vietnamese glyphs; loading them through next/font keeps the diacritics intact.
@@ -39,6 +40,7 @@ export default function MarketingHomePage() {
       <div className="relative z-10">
         <HomeHeader />
         <main>
+          <RevenueStatement />
           <Hero />
           <Catalog />
           <Keepsake />

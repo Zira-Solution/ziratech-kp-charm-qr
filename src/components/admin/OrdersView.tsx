@@ -119,6 +119,12 @@ export default function OrdersView({
     });
   }, [orders, query, filter]);
 
+  const stats = useMemo(() => {
+    const total = orders.length;
+    const done = orders.filter((o) => o.status === "completed").length;
+    return { total, done, pending: total - done, percent: total > 0 ? Math.round((done / total) * 100) : 0 };
+  }, [orders]);
+
   const rowProps = { onCopyLink, trash, softDeleteReady, busyToken, onDelete, onRestore };
 
   return (
@@ -156,6 +162,26 @@ export default function OrdersView({
           </button>
         ))}
       </div>
+
+      {/* Quick stats */}
+      {!loading && orders.length > 0 && (
+        <dl className="grid grid-cols-3 gap-3 border-b border-slate-100 p-4">
+          <div className="rounded-lg bg-slate-50 px-4 py-3">
+            <dt className="text-xs font-medium text-slate-500">{trash ? "Trong thùng rác" : "Tổng người dùng"}</dt>
+            <dd className="mt-0.5 text-2xl font-bold text-slate-900">{stats.total}</dd>
+          </div>
+          <div className="rounded-lg bg-emerald-50 px-4 py-3">
+            <dt className="text-xs font-medium text-emerald-700">Đã xong thiệp</dt>
+            <dd className="mt-0.5 text-2xl font-bold text-emerald-800">
+              {stats.done} <span className="text-sm font-medium text-emerald-700">({stats.percent}%)</span>
+            </dd>
+          </div>
+          <div className="rounded-lg bg-amber-50 px-4 py-3">
+            <dt className="text-xs font-medium text-amber-700">Chờ khách soạn</dt>
+            <dd className="mt-0.5 text-2xl font-bold text-amber-800">{stats.pending}</dd>
+          </div>
+        </dl>
+      )}
 
       {/* Toolbar */}
       <div className="flex flex-col gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between">

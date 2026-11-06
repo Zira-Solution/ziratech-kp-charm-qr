@@ -34,6 +34,12 @@ export interface StatementCategory {
 }
 
 export interface StatementSummary {
+  /** Team starting capital, from the finance block of the sheet. */
+  capitalAmount: number;
+  /** Capital + revenue. */
+  fundTotal: number;
+  /** Money spent on goods and running costs: the total of the itemised expense sheet. */
+  expensesAmount: number;
   totalRevenue: number;
   stallSalesAmount: number;
   stallSalesCount: number;
@@ -48,6 +54,9 @@ export interface StatementSummary {
 }
 
 export const STATEMENT_SUMMARY: StatementSummary = {
+  capitalAmount: 1600000,
+  fundTotal: 3800000,
+  expensesAmount: 2006980,
   totalRevenue: 2200000,
   stallSalesAmount: 1909000,
   stallSalesCount: 61,

@@ -66,8 +66,8 @@ export default function Preorder() {
               <legend className="block font-sans text-xs text-neutral font-semibold mb-2">Chọn loại hoa đặt trước *</legend>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
-                  { title: "Hoa lẻ tinh tế (40.000 – 70.000đ)", sub: "Mã QR thiệp số gửi qua email", checked: true },
-                  { title: "Hoa bó kết tay (40.000 – 70.000đ)", sub: "Phối hoa nhập, bọc giấy mỹ thuật" },
+                  { title: "1 Đóa Thương (20.000đ)", sub: "Hoa lẻ tinh khôi • Mã QR thiệp số gửi qua email", checked: true },
+                  { title: "2 Đóa Xinh (25.000đ)", sub: "Bó hoa kết tay • Phối hoa nhập, bọc giấy mỹ thuật" },
                 ].map((o) => (
                   <label
                     key={o.title}

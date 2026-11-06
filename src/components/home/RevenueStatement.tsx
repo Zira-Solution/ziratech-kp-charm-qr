@@ -158,7 +158,7 @@ export default function RevenueStatement() {
                     {formatVnd(STATEMENT_SUMMARY.totalRevenue)}
                   </span>
                   <span className="px-3 py-1 rounded-full bg-emerald-100/80 border border-emerald-300 text-emerald-800 text-xs font-bold font-sans">
-                    74 giao dịch ghi nhận
+                    {STATEMENT_TRANSACTIONS.length} giao dịch ghi nhận
                   </span>
                 </div>
               </div>
@@ -295,89 +295,86 @@ export default function RevenueStatement() {
               </div>
             </div>
 
-            {/* 4 Enhanced Financial Metric Cards */}
+            {/* 4 financial blocks: total fund, expenses, revenue, transferred to the shelter */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Card 1: Tổng doanh thu */}
+              {/* Card 1: Tổng tiền thu được */}
               <div className="relative p-5 rounded-3xl bg-linear-to-br from-white via-white to-rose-50/70 border border-rose-200/90 shadow-liquid-card transition-all duration-300 hover:-translate-y-1 hover:shadow-liquid-card-hover group">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-primary uppercase tracking-wider">
-                    Tổng doanh thu &amp; quỹ
+                    Tổng tiền thu được
                   </span>
                   <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-rose-100 to-rose-200 flex items-center justify-center text-primary shadow-2xs group-hover:scale-105 transition-transform">
-                    <span className="material-symbols-outlined text-[22px]">payments</span>
+                    <span className="material-symbols-outlined text-[22px]">account_balance_wallet</span>
                   </div>
                 </div>
                 <div className="font-headline text-2xl lg:text-3xl font-extrabold text-primary">
-                  {formatVnd(STATEMENT_SUMMARY.totalRevenue)}
+                  {formatVnd(STATEMENT_SUMMARY.fundTotal)}
                 </div>
                 <div className="mt-2 text-xs text-on-surface-variant font-medium flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[15px] text-secondary-dark">receipt</span>
-                  <span><strong>74</strong> dòng giao dịch đối chiếu</span>
+                  <span className="material-symbols-outlined text-[15px] text-secondary-dark">savings</span>
+                  <span>Vốn nhóm tự góp {formatVnd(STATEMENT_SUMMARY.capitalAmount)} + doanh thu {formatVnd(STATEMENT_SUMMARY.totalRevenue)}</span>
                 </div>
                 <div className="w-full bg-rose-100 rounded-full h-1.5 mt-3 overflow-hidden">
-                  <div className="bg-primary h-1.5 rounded-full w-full" />
+                  <div className="bg-primary h-1.5 rounded-full" style={{ width: `${100}%` }} />
                 </div>
               </div>
 
-              {/* Card 2: Bán quà quầy */}
+              {/* Card 2: Chi phí */}
               <div className="relative p-5 rounded-3xl bg-linear-to-br from-white via-white to-amber-50/60 border border-amber-200/80 shadow-liquid-card transition-all duration-300 hover:-translate-y-1 hover:shadow-liquid-card-hover group">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-amber-900 uppercase tracking-wider">
-                    Bán hàng trực tiếp
+                    Chi phí
                   </span>
                   <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-amber-100 to-amber-200 flex items-center justify-center text-amber-800 shadow-2xs group-hover:scale-105 transition-transform">
-                    <span className="material-symbols-outlined text-[22px]">storefront</span>
+                    <span className="material-symbols-outlined text-[22px]">shopping_bag</span>
                   </div>
                 </div>
                 <div className="font-headline text-2xl lg:text-3xl font-extrabold text-primary">
-                  {formatVnd(STATEMENT_SUMMARY.stallSalesAmount)}
+                  {formatVnd(STATEMENT_SUMMARY.expensesAmount)}
                 </div>
                 <div className="mt-2 text-xs text-on-surface-variant font-medium flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[15px] text-amber-700">loyalty</span>
-                  <span><strong>65</strong> sản phẩm (vòng, hoa, gấu...)</span>
+                  <span className="material-symbols-outlined text-[15px] text-amber-700">inventory_2</span>
+                  <span>Nguyên vật liệu, hàng hoá và chi phí phát sinh</span>
                 </div>
                 <div className="w-full bg-amber-100 rounded-full h-1.5 mt-3 overflow-hidden">
-                  <div
-                    className="bg-amber-600 h-1.5 rounded-full"
-                    style={{
-                      width: `${Math.round((STATEMENT_SUMMARY.stallSalesAmount / STATEMENT_SUMMARY.totalRevenue) * 100)}%`,
-                    }}
-                  />
+                  <div className="bg-amber-600 h-1.5 rounded-full" style={{ width: `${Math.round((STATEMENT_SUMMARY.expensesAmount / STATEMENT_SUMMARY.fundTotal) * 100)}%` }} />
                 </div>
               </div>
 
-              {/* Card 3: Tiền donate */}
+              {/* Card 3: Doanh thu còn lại sau chi phí */}
               <div className="relative p-5 rounded-3xl bg-linear-to-br from-white via-white to-rose-50/80 border border-rose-200/90 shadow-liquid-card transition-all duration-300 hover:-translate-y-1 hover:shadow-liquid-card-hover group">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-secondary-dark uppercase tracking-wider">
-                    Quyên góp trực tiếp
+                    Doanh thu còn lại
                   </span>
                   <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-rose-100 to-rose-200 flex items-center justify-center text-secondary-dark shadow-2xs group-hover:scale-105 transition-transform">
-                    <span className="material-symbols-outlined text-[22px]">volunteer_activism</span>
+                    <span className="material-symbols-outlined text-[22px]">account_balance</span>
                   </div>
                 </div>
                 <div className="font-headline text-2xl lg:text-3xl font-extrabold text-secondary-dark">
-                  {formatVnd(STATEMENT_SUMMARY.donationAmount)}
+                  {formatVnd(STATEMENT_SUMMARY.fundTotal - STATEMENT_SUMMARY.expensesAmount)}
                 </div>
                 <div className="mt-2 text-xs text-on-surface-variant font-medium flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[15px] text-secondary-dark">favorite</span>
-                  <span><strong>9</strong> lượt đóng góp tùy tâm</span>
+                  <span className="material-symbols-outlined text-[15px] text-secondary-dark">calculate</span>
+                  <span>
+                    Tổng tiền thu được trừ chi phí
+                  </span>
                 </div>
                 <div className="w-full bg-rose-100 rounded-full h-1.5 mt-3 overflow-hidden">
                   <div
                     className="bg-secondary-dark h-1.5 rounded-full"
                     style={{
-                      width: `${Math.round((STATEMENT_SUMMARY.donationAmount / STATEMENT_SUMMARY.totalRevenue) * 100)}%`,
+                      width: `${Math.round(((STATEMENT_SUMMARY.fundTotal - STATEMENT_SUMMARY.expensesAmount) / STATEMENT_SUMMARY.fundTotal) * 100)}%`,
                     }}
                   />
                 </div>
               </div>
 
-              {/* Card 4: Đã bàn giao trạm */}
+              {/* Card 4: Ủng hộ Sân Nhà Nhiều Chó */}
               <div className="relative p-5 rounded-3xl bg-linear-to-br from-emerald-50 via-white to-emerald-50/70 border-2 border-emerald-300 shadow-liquid-card transition-all duration-300 hover:-translate-y-1 hover:shadow-liquid-card-hover group">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider">
-                    Đã chuyển trạm cứu hộ
+                    Ủng hộ Sân Nhà Nhiều Chó
                   </span>
                   <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-emerald-200 to-emerald-300 flex items-center justify-center text-emerald-800 shadow-2xs group-hover:scale-105 transition-transform">
                     <span className="material-symbols-outlined text-[22px]">task_alt</span>
@@ -388,10 +385,17 @@ export default function RevenueStatement() {
                 </div>
                 <div className="mt-2 text-xs text-emerald-800 font-bold flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Hoàn tất bàn giao đợt 1</span>
+                  <span>
+                    {STATEMENT_SUMMARY.transferredAmount > STATEMENT_SUMMARY.fundTotal - STATEMENT_SUMMARY.expensesAmount
+                      ? `Nhóm tự bù thêm ${formatVnd(STATEMENT_SUMMARY.transferredAmount - (STATEMENT_SUMMARY.fundTotal - STATEMENT_SUMMARY.expensesAmount))} để đủ số ủng hộ`
+                      : "Toàn bộ phần còn lại đã chuyển cho trạm"}
+                  </span>
                 </div>
                 <div className="w-full bg-emerald-100 rounded-full h-1.5 mt-3 overflow-hidden">
-                  <div className="bg-emerald-600 h-1.5 rounded-full w-full" />
+                  <div
+                    className="bg-emerald-600 h-1.5 rounded-full"
+                    style={{ width: `${Math.round((STATEMENT_SUMMARY.transferredAmount / STATEMENT_SUMMARY.fundTotal) * 100)}%` }}
+                  />
                 </div>
               </div>
             </div>
@@ -422,7 +426,7 @@ export default function RevenueStatement() {
                   }`}
                 >
                   <span className="material-symbols-outlined text-[17px]">category</span>
-                  <span>Cơ cấu 9 nhóm sản phẩm</span>
+                  <span>Cơ cấu {STATEMENT_CATEGORIES.length} nhóm sản phẩm</span>
                 </button>
 
                 <button

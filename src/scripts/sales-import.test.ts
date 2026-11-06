@@ -155,3 +155,17 @@ test("expense sheet: money, dates and the bottom total are read as written", asy
 test("a phone charm written in full is still a phone charm", () => {
   assert.deepEqual(classify("móc khóa điện thoại "), { kind: "single", category: "keychain_phone" });
 });
+
+test("finance block of the sheet is read in VND", async () => {
+  const { parseFinanceBlock } = await import("../lib/sales/doanh-thu.ts");
+  const rows = parseCsv(
+    [
+      "a,b,c,d,e,f,g,h,i,j,k,l",
+      "x,,,,,,,,,tổng tiền bán,,2200,",
+      "x,,,,,,,,,tiền vốn,,1600,( phí phát sinh 200)",
+      "x,,,,,,,,,tiền mua đồ chi phí,,2000,",
+      "x,,,,,,,,,ĐÃ CHUYỂN TỪ THIỆN ,,1800",
+    ].join("\n")
+  );
+  assert.deepEqual(parseFinanceBlock(rows), { sales: 2200000, capital: 1600000, expenses: 2000000, transferred: 1800000 });
+});

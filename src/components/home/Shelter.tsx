@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { categoryLabel } from "@/lib/sales/labels";
-import { STATEMENT_CATEGORIES, STATEMENT_SUMMARY } from "@/lib/sales/statement-data";
+import { STATEMENT_SUMMARY } from "@/lib/sales/statement-data";
 
 const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(Math.round(n))}đ`;
 
@@ -17,16 +16,15 @@ const TRANSFER_NOTE = "Ung_ho_San_Nha_Nhieu_Cho";
 
 export default function Shelter() {
   const [copiedAccount, setCopiedAccount] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
   const [fund, setFund] = useState<{
     totalRevenue: number;
     transferred: number;
     donations: number;
-    byCategory: Array<{ category: string; qty: number }>;
   }>({
     totalRevenue: STATEMENT_SUMMARY.totalRevenue,
     transferred: STATEMENT_SUMMARY.transferredAmount,
     donations: STATEMENT_SUMMARY.donationAmount,
-    byCategory: STATEMENT_CATEGORIES.map((c) => ({ category: c.category, qty: c.count })),
   });
 
   useEffect(() => {
@@ -39,7 +37,6 @@ export default function Shelter() {
             totalRevenue: d.totalRevenue,
             transferred: d.transferred,
             donations: d.channels.donationStall + d.channels.donationWeb,
-            byCategory: d.byCategory,
           });
         }
       })
@@ -61,6 +58,17 @@ export default function Shelter() {
       setTimeout(() => setCopiedAccount(false), 2000);
     }
   };
+
+  useEffect(() => {
+    if (!showQrModal) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowQrModal(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showQrModal]);
 
   return (
     <section className="max-w-7xl mx-auto px-6 py-20" id="shelter">
@@ -112,18 +120,6 @@ export default function Shelter() {
               </div>
             ))}
           </div>
-          {fund && fund.byCategory.length > 0 && (
-            <ul className="flex flex-wrap gap-2 pt-1" aria-label="Số lượng đã bán theo nhóm">
-              {fund.byCategory.map((c) => (
-                <li
-                  key={c.category}
-                  className="px-3 py-1 rounded-full bg-white/70 border border-white/80 text-[11px] text-on-surface-variant"
-                >
-                  {categoryLabel(c.category)}: <strong className="text-primary">{c.qty}</strong>
-                </li>
-              ))}
-            </ul>
-          )}
         </div>
 
         {/* Donation box */}
@@ -149,27 +145,54 @@ export default function Shelter() {
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center p-5 rounded-[28px] bg-white/65 backdrop-blur-xl border border-white/85 shadow-xs mb-5">
             {/* QR Code */}
             <div className="sm:col-span-5 flex flex-col items-center justify-center">
-              <div className="relative group p-2 bg-white rounded-3xl border border-rose-100/80 shadow-md transition-all duration-300 hover:shadow-lg">
+              <button
+                type="button"
+                onClick={() => setShowQrModal(true)}
+                className="relative group p-2 bg-white rounded-3xl border border-rose-100/80 shadow-md transition-all duration-300 hover:shadow-xl hover:scale-[1.02] cursor-pointer text-left focus:outline-hidden focus:ring-2 focus:ring-primary/40"
+                aria-label="Nhấn để phóng to mã QR Vietcombank"
+                title="Nhấn để phóng to mã QR"
+              >
                 <img
                   className="w-48 sm:w-52 h-auto object-contain rounded-2xl shadow-inner"
                   alt="Mã QR Vietcombank T.TAM CUU HO CHO MEO SAN NHA NHIEU CHO 1060402678"
                   src="/images/qr_vietcombank_san_nha_nhieu_cho.jpg"
                 />
-              </div>
-              <div className="mt-3 flex flex-col items-center gap-1.5 text-center">
+                {/* Hover overlay hint */}
+                <div className="absolute inset-2 rounded-2xl bg-black/45 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-1.5 p-3 text-center">
+                  <span className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-xs">
+                    <span className="material-symbols-outlined text-[24px]">zoom_in</span>
+                  </span>
+                  <span className="font-sans text-xs font-bold tracking-wide">Nhấn để phóng to</span>
+                </div>
+              </button>
+
+              <div className="mt-3 flex flex-col items-center gap-2 text-center w-full">
                 <div className="flex items-center gap-1 text-[11px] font-medium text-on-surface-variant">
                   <span className="material-symbols-outlined text-[14px] text-primary">qr_code_scanner</span>
                   <span>Quét bằng App Ngân hàng / MoMo</span>
                 </div>
-                <a
-                  href="/images/qr_vietcombank_san_nha_nhieu_cho.jpg"
-                  download="QR_Vietcombank_San_Nha_Nhieu_Cho_1060402678.jpg"
-                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white hover:bg-rose-50 text-[#721a28] text-[11px] font-sans font-semibold border border-rose-200/80 shadow-2xs transition-all cursor-pointer"
-                  title="Tải ảnh gốc mã QR Vietcombank"
-                >
-                  <span className="material-symbols-outlined text-[13px]">download</span>
-                  <span>Tải ảnh mã VietQR</span>
-                </a>
+
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowQrModal(true)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary hover:bg-[#5a1420] text-white text-xs font-sans font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
+                    title="Phóng to mã QR để quét dễ dàng"
+                  >
+                    <span className="material-symbols-outlined text-[15px]">zoom_in</span>
+                    <span>Phóng to mã QR</span>
+                  </button>
+
+                  <a
+                    href="/images/qr_vietcombank_san_nha_nhieu_cho.jpg"
+                    download="QR_Vietcombank_San_Nha_Nhieu_Cho_1060402678.jpg"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white hover:bg-rose-50 text-[#721a28] text-xs font-sans font-semibold border border-rose-200/80 shadow-2xs transition-all cursor-pointer"
+                    title="Tải ảnh gốc mã QR Vietcombank"
+                  >
+                    <span className="material-symbols-outlined text-[14px]">download</span>
+                    <span>Tải ảnh</span>
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -245,6 +268,108 @@ export default function Shelter() {
           </div>
         </div>
       </div>
+
+      {/* Lightbox Modal for Zoomed QR Code */}
+      {showQrModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Phóng to mã QR Vietcombank ủng hộ Sân Nhà Nhiều Chó"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in"
+          onClick={() => setShowQrModal(false)}
+        >
+          <div
+            className="relative max-w-sm sm:max-w-md w-full bg-linear-to-b from-white via-white to-rose-50/90 rounded-3xl p-5 sm:p-6 border border-rose-200/90 shadow-2xl flex flex-col items-center space-y-4 animate-scale-up max-h-[94vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="w-full flex items-center justify-between pb-3 border-b border-rose-100 text-primary">
+              <div className="flex items-center gap-2.5">
+                <span className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-[18px]">qr_code_2</span>
+                </span>
+                <div>
+                  <h4 className="font-headline text-base font-bold text-primary">Mã QR Vietcombank</h4>
+                  <p className="text-[11px] text-on-surface-variant font-sans">Ủng hộ Mái ấm Sân Nhà Nhiều Chó</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowQrModal(false)}
+                className="w-8 h-8 rounded-full bg-rose-100/70 hover:bg-rose-200 text-primary flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Đóng phóng to"
+              >
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            </div>
+
+            {/* Big QR Display */}
+            <div className="relative p-3 sm:p-4 bg-white rounded-2xl border border-rose-100 shadow-md flex items-center justify-center max-w-[320px] sm:max-w-[360px] w-full">
+              <img
+                src="/images/qr_vietcombank_san_nha_nhieu_cho.jpg"
+                alt="Mã QR Vietcombank phóng to - 1060402678 T.TAM CUU HO CHO MEO SAN NHA NHIEU CHO"
+                className="w-full h-auto object-contain rounded-xl"
+              />
+            </div>
+
+            {/* Quick Summary Info */}
+            <div className="w-full p-3.5 rounded-2xl bg-white/90 border border-rose-100 space-y-2 text-xs font-sans">
+              <div className="flex items-center justify-between">
+                <span className="text-on-surface-variant">Ngân hàng:</span>
+                <span className="font-bold text-emerald-700">Vietcombank (VCB)</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-on-surface-variant">Số tài khoản:</span>
+                <span className="font-mono font-bold text-primary text-sm sm:text-base select-all tracking-wider">{ACCOUNT}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-on-surface-variant">Chủ tài khoản:</span>
+                <span className="font-bold text-primary text-right uppercase text-[11px] select-all">{ACCOUNT_NAME}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-on-surface-variant">Chi nhánh:</span>
+                <span className="text-stone-600 text-right text-[11px]">{BRANCH}</span>
+              </div>
+              <div className="pt-2 border-t border-rose-100/70 flex items-center justify-between">
+                <span className="text-on-surface-variant">Cú pháp gợi ý:</span>
+                <span className="font-mono font-bold text-primary select-all">{TRANSFER_NOTE}</span>
+              </div>
+            </div>
+
+            {/* Action Buttons in Modal */}
+            <div className="w-full flex items-center justify-center gap-2.5 pt-1">
+              <button
+                type="button"
+                onClick={handleCopyAccount}
+                className={`flex-1 py-2.5 px-3 rounded-xl font-sans text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  copiedAccount
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-300"
+                    : "bg-white hover:bg-rose-50 text-primary border border-rose-200 shadow-xs"
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px]">
+                  {copiedAccount ? "check" : "content_copy"}
+                </span>
+                <span>{copiedAccount ? "Đã sao chép STK" : "Sao chép STK"}</span>
+              </button>
+
+              <a
+                href="/images/qr_vietcombank_san_nha_nhieu_cho.jpg"
+                download="QR_Vietcombank_San_Nha_Nhieu_Cho_1060402678.jpg"
+                className="flex-1 py-2.5 px-3 rounded-xl bg-primary hover:bg-[#5a1420] text-white font-sans text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[16px]">download</span>
+                <span>Tải ảnh mã QR</span>
+              </a>
+            </div>
+
+            {/* Close hint */}
+            <p className="text-[11px] text-stone-500 font-sans text-center">
+              Nhấn phím <kbd className="px-1.5 py-0.5 rounded bg-stone-100 border border-stone-200 text-[10px] font-mono">Esc</kbd> hoặc bấm ra ngoài để đóng
+            </p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

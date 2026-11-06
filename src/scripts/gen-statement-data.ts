@@ -4,17 +4,25 @@
 //   cd src
 //   node --experimental-strip-types --no-warnings scripts/gen-statement-data.ts
 import { readFileSync, writeFileSync } from "node:fs";
-import { classifySheet, parseCsv } from "../lib/sales/doanh-thu.ts";
+import { classifySheet, parseCsv, parseFinanceBlock } from "../lib/sales/doanh-thu.ts";
 import { categoryLabel } from "../lib/sales/labels.ts";
+import { parseExpenses } from "../lib/sales/chi-phi.ts";
 
 const CSV_PATH = new URL("../../data/doanh-thu.csv", import.meta.url);
+// The itemised expense sheet (kept out of git because it names people). Needed only to regenerate.
+const EXPENSES_PATH = new URL("../../data/chi-phi.csv", import.meta.url);
 const TARGET = new URL("../lib/sales/statement-data.ts", import.meta.url);
 const START = "export const STATEMENT_SUMMARY";
 const END = "/** Builds a downloadable";
 const WEEKDAYS = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 const DAYS = ["2026-10-17", "2026-10-19", "2026-10-20"];
 
-const data = classifySheet(parseCsv(readFileSync(CSV_PATH, "utf8")));
+const sheetRows = parseCsv(readFileSync(CSV_PATH, "utf8"));
+const data = classifySheet(sheetRows);
+const finance = parseFinanceBlock(sheetRows);
+for (const [name, value] of Object.entries(finance)) {
+  if (value === null) throw new Error(`Thiếu "${name}" trong khối tài chính của sheet`);
+}
 const pct = (part: number, whole: number) => Math.round((part / whole) * 1000) / 10;
 
 const salesAmount = data.sales.reduce((n, s) => n + s.amount, 0);
@@ -106,13 +114,22 @@ const keep = (field: string) => {
   return m[1];
 };
 
+const expensesTotal = parseExpenses(parseCsv(readFileSync(EXPENSES_PATH, "utf8"))).expenses.reduce((n, e) => n + e.amount, 0);
+
+if (finance.sales !== totalRevenue) {
+  console.warn(`Cảnh báo: tổng cộng từng dòng (${totalRevenue}) khác "tổng tiền bán" của sheet (${finance.sales}).`);
+}
+
 const block = `export const STATEMENT_SUMMARY: StatementSummary = {
+  capitalAmount: ${finance.capital},
+  fundTotal: ${finance.capital! + totalRevenue},
+  expensesAmount: ${expensesTotal},
   totalRevenue: ${totalRevenue},
   stallSalesAmount: ${salesAmount},
   stallSalesCount: ${data.sales.length},
   donationAmount: ${donationAmount},
   donationCount: ${data.donations.length},
-  transferredAmount: 1800000,
+  transferredAmount: ${finance.transferred},
   transferRecipient: ${keep("transferRecipient")},
   transferStatus: ${keep("transferStatus")},
   transferredAt: ${keep("transferredAt")},

@@ -15,6 +15,15 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   {
+    href: "#sao-ke",
+    id: "sao-ke",
+    label: "Sao kê",
+    shortLabel: "Sao kê",
+    icon: "receipt_long",
+    badge: "100%",
+    desc: "Minh bạch toàn bộ thu chi & tiền chuyển trạm",
+  },
+  {
     href: "#catalog",
     id: "catalog",
     label: "Bộ sưu tập",
@@ -58,7 +67,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function HomeHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("hero");
+  const [activeSection, setActiveSection] = useState("sao-ke");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Dynamic scroll listener for frosted-glass elevation & active section spy
@@ -67,7 +76,7 @@ export default function HomeHeader() {
       setIsScrolled(window.scrollY > 25);
 
       // Section spy
-      const sections = ["hero", "catalog", "workshop", "preorder", "shelter", "keepsake"];
+      const sections = ["sao-ke", "hero", "catalog", "keepsake", "workshop", "preorder", "shelter"];
       const scrollPos = window.scrollY + 220;
 
       for (let i = sections.length - 1; i >= 0; i--) {

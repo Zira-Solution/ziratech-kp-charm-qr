@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { categoryLabel } from "@/lib/sales/labels";
+import { STATEMENT_CATEGORIES, STATEMENT_SUMMARY } from "@/lib/sales/statement-data";
 
 const vnd = (n: number) => `${new Intl.NumberFormat("vi-VN").format(Math.round(n))}đ`;
 
@@ -13,14 +15,31 @@ const TRANSFER_NOTE = "Ho_va_Ten_MSSV";
 
 export default function Shelter() {
   const [copiedAccount, setCopiedAccount] = useState(false);
-  const [raised, setRaised] = useState<{ total: number; count: number } | null>(null);
+  const [fund, setFund] = useState<{
+    totalRevenue: number;
+    transferred: number;
+    donations: number;
+    byCategory: Array<{ category: string; qty: number }>;
+  }>({
+    totalRevenue: STATEMENT_SUMMARY.totalRevenue,
+    transferred: STATEMENT_SUMMARY.transferredAmount,
+    donations: STATEMENT_SUMMARY.donationAmount,
+    byCategory: STATEMENT_CATEGORIES.map((c) => ({ category: c.category, qty: c.count })),
+  });
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/donations/summary")
+    fetch("/api/fund/summary")
       .then((r) => r.json())
       .then((d) => {
-        if (!cancelled && d.success) setRaised({ total: d.total, count: d.count });
+        if (!cancelled && d.success && d.ready) {
+          setFund({
+            totalRevenue: d.totalRevenue,
+            transferred: d.transferred,
+            donations: d.channels.donationStall + d.channels.donationWeb,
+            byCategory: d.byCategory,
+          });
+        }
       })
       .catch(() => {});
     return () => {
@@ -62,10 +81,20 @@ export default function Shelter() {
           <p className="font-body text-sm sm:text-base text-on-surface-variant leading-relaxed">
             <strong>Sân Nhà Nhiều Chó</strong> là mái ấm phi lợi nhuận tại Thanh Oai, Hà Nội, hiện đang cưu mang hơn 120 chú chó mèo già yếu, khuyết tật hoặc bị bỏ rơi. Dự án 20/10 của sinh viên Đại học FPT TP. Hồ Chí Minh ra đời không chỉ để tôn vinh phụ nữ Việt Nam, mà còn là cầu nối tiếp tế khẩu phần ăn, thuốc men và cải tạo chuồng trại trước mùa đông giá rét.
           </p>
-          <div className="p-5 rounded-[28px] bg-white/60 backdrop-blur-2xl border border-white/80 shadow-xs space-y-2">
-            <div className="flex items-center gap-2 font-headline text-base text-primary font-bold">
-              <span className="material-symbols-outlined text-secondary-dark">verified</span>
-              <span>Cam kết minh bạch tài chính 100%</span>
+          <div className="p-5 rounded-[28px] bg-white/60 backdrop-blur-2xl border border-white/80 shadow-xs space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2 font-headline text-base text-primary font-bold">
+                <span className="material-symbols-outlined text-secondary-dark">verified</span>
+                <span>Cam kết minh bạch tài chính 100%</span>
+              </div>
+              <a
+                href="#sao-ke"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-linear-to-r from-rose-100 via-white to-rose-50 text-primary font-sans text-xs font-bold border border-rose-200/90 hover:border-primary/50 shadow-2xs hover:shadow-xs hover:scale-105 transition-all shrink-0"
+              >
+                <span className="material-symbols-outlined text-[15px] text-secondary-dark">receipt_long</span>
+                <span>Xem bảng sao kê chi tiết</span>
+                <span className="material-symbols-outlined text-[14px]">arrow_downward</span>
+              </a>
             </div>
             <p className="font-sans text-xs text-on-surface-variant leading-relaxed">
               Toàn bộ doanh thu sau khi trừ chi phí nguyên vật liệu giấy, cước, hoa và tiền ủng hộ trực tiếp được sao kê công khai và chuyển thẳng tới số tài khoản thiện nguyện của trạm.
@@ -74,14 +103,9 @@ export default function Shelter() {
 
           <div className="grid grid-cols-3 gap-3 pt-2">
             {[
-              { label: "Dự kiến gây quỹ", value: "15.000.000đ", tone: "text-primary" },
-              { label: "Đơn chung tay", value: "186+", tone: "text-secondary-dark" },
-              {
-                label: "Ủng hộ trực tiếp",
-                value: raised ? vnd(raised.total) : "—",
-                tone: "text-primary",
-                note: raised && raised.count > 0 ? `${raised.count} lượt` : undefined,
-              },
+              { label: "Tổng doanh thu", value: fund ? vnd(fund.totalRevenue) : "—", tone: "text-primary" },
+              { label: "Đã chuyển cho trạm", value: fund ? vnd(fund.transferred) : "—", tone: "text-secondary-dark" },
+              { label: "Ủng hộ trực tiếp", value: fund ? vnd(fund.donations) : "—", tone: "text-primary" },
             ].map((m) => (
               <div
                 key={m.label}
@@ -89,10 +113,21 @@ export default function Shelter() {
               >
                 <span className="text-[11px] text-on-surface-variant block mb-1">{m.label}</span>
                 <span className={`font-headline text-lg font-bold ${m.tone}`}>{m.value}</span>
-                {m.note && <span className="text-[10px] text-on-surface-variant block mt-0.5">{m.note}</span>}
               </div>
             ))}
           </div>
+          {fund && fund.byCategory.length > 0 && (
+            <ul className="flex flex-wrap gap-2 pt-1" aria-label="Số lượng đã bán theo nhóm">
+              {fund.byCategory.map((c) => (
+                <li
+                  key={c.category}
+                  className="px-3 py-1 rounded-full bg-white/70 border border-white/80 text-[11px] text-on-surface-variant"
+                >
+                  {categoryLabel(c.category)}: <strong className="text-primary">{c.qty}</strong>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* Donation box */}

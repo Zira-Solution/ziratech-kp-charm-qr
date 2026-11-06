@@ -69,7 +69,8 @@ export async function sendGiftActivationEmail({
 }: SendActivationEmailParams): Promise<{ success: boolean; simulated?: boolean; error?: string }> {
   const siteUrl = resolveSiteUrl(rawSiteUrl);
   const activationUrl = `${siteUrl}/gift?token=${token}`;
-  const safeName = escapeHtml(customerName);
+  // Orders made from an email alone carry the email as their name: greet them neutrally.
+  const safeName = escapeHtml(customerName.includes("@") ? "bạn" : customerName);
   const safeChainName = escapeHtml(chainName);
 
   const htmlContent = `

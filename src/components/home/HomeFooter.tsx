@@ -33,13 +33,14 @@ export default function HomeFooter() {
     { label: "Bàn workshop thủ công", href: "#workshop" },
     { label: "Mã QR & thiệp số email", href: "#keepsake" },
     { label: "Quỹ Sân Nhà Nhiều Chó", href: "#shelter" },
+    { label: "Sao kê doanh thu & quỹ", href: "#sao-ke" },
   ];
 
   const serviceLinks = [
     { label: "Studio tạo thiệp quà số", href: "/gift", isRoute: true },
     { label: "Đặt trước hoa tươi 20/10", href: "#preorder" },
     { label: "Trải nghiệm workshop tự làm", href: "#workshop" },
-    { label: "Minh bạch quỹ thiện nguyện", href: "#shelter-donate" },
+    { label: "Minh bạch sao kê doanh thu", href: "#sao-ke" },
   ];
 
   return (

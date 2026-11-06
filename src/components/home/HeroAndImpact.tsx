@@ -36,7 +36,7 @@ export function Hero() {
   };
 
   return (
-    <section className="pt-28 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="hero">
+    <section className="pt-8 sm:pt-12 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto scroll-mt-24" id="hero">
       <div className="flex flex-col items-center text-center space-y-5 sm:space-y-6 w-full max-w-6xl mx-auto">
         {/* Top Charity Badge */}
         <div className="inline-flex items-center gap-2 px-4.5 py-1.5 rounded-full bg-white/80 backdrop-blur-xl border border-white/95 text-secondary-dark font-sans text-xs sm:text-sm font-semibold shadow-xs hover:shadow-sm transition-all">

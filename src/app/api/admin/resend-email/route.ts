@@ -4,6 +4,7 @@ import { resolveSiteUrl, sendGiftActivationEmail } from "@/lib/mail/mailer";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { generateCreatorKey, hashSecret, normalizeCreatorKey } from "@/lib/auth/crypto";
 import { normalizeToken } from "@/lib/auth/gift-session";
+import { EMAIL_DISABLED_MESSAGE, EMAIL_SENDING_ENABLED } from "@/config/features";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,6 +17,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Checked before anything changes, so a disabled switch never re-issues (and loses) a creator key.
+    if (!EMAIL_SENDING_ENABLED) {
+      return NextResponse.json({ success: false, error: EMAIL_DISABLED_MESSAGE }, { status: 403 });
+    }
 
     const body = await req.json();
     const token = normalizeToken(body.token);

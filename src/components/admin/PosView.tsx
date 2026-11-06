@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import confetti from "canvas-confetti";
 import type { GiftProductView, IssuedCodes } from "@/types/gift-order";
+import { EMAIL_SENDING_ENABLED } from "@/config/features";
 import { Card, CardHeader, Field, Icon, inputClass, primaryButton } from "./ui";
 
 export interface CreatedOrder {
@@ -50,7 +51,11 @@ export default function PosView({ onCreated }: Props) {
   return (
     <form onSubmit={submit} noValidate className="mx-auto max-w-xl pb-16 lg:pb-0">
       <Card>
-        <CardHeader title="Tạo vòng" subtitle="Nhập email của khách. Mã thiệp và OTP tạo thiệp sẽ được gửi về email này." />
+        <CardHeader title="Tạo vòng" subtitle={
+            EMAIL_SENDING_ENABLED
+              ? "Nhập email của khách. Mã thiệp và OTP tạo thiệp sẽ được gửi về email này."
+              : "Nhập email của khách. Đang tạm tắt gửi email: mã sẽ hiện trên màn hình để bạn đưa cho khách."
+          } />
         <div className="space-y-4 p-5">
           {error && (
             <div
@@ -82,7 +87,7 @@ export default function PosView({ onCreated }: Props) {
             ) : (
               <>
                 <Icon name="send" className="text-[18px]" />
-                Tạo vòng &amp; gửi mã
+                {EMAIL_SENDING_ENABLED ? "Tạo vòng & gửi mã" : "Tạo vòng"}
               </>
             )}
           </button>

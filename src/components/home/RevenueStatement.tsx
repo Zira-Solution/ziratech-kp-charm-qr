@@ -385,11 +385,7 @@ export default function RevenueStatement() {
                 </div>
                 <div className="mt-2 text-xs text-emerald-800 font-bold flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>
-                    {STATEMENT_SUMMARY.transferredAmount > STATEMENT_SUMMARY.fundTotal - STATEMENT_SUMMARY.expensesAmount
-                      ? `Nhóm tự bù thêm ${formatVnd(STATEMENT_SUMMARY.transferredAmount - (STATEMENT_SUMMARY.fundTotal - STATEMENT_SUMMARY.expensesAmount))} để đủ số ủng hộ`
-                      : "Toàn bộ phần còn lại đã chuyển cho trạm"}
-                  </span>
+                  <span>Đã chuyển cho trạm cứu hộ</span>
                 </div>
                 <div className="w-full bg-emerald-100 rounded-full h-1.5 mt-3 overflow-hidden">
                   <div

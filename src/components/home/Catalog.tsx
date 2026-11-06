@@ -31,8 +31,8 @@ const PRODUCTS: Product[] = [
     tags: [{ label: "Đặt trước", solid: true }, { label: "QR gửi qua email", outline: true }],
     footNote: "Góp quỹ trạm cứu hộ",
     action: { href: "#preorder", label: "Đặt 2 đóa xinh" },
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAC3K_So8EnaedBp3w8ybRFGrZGmfOzQ7AGm2KAfs2IW48IriCTvT46WO72wBJc_uUEFiqbAuUC_eiOWIiPX7cgWeSpGAyT9liUlSjgPl6hNItKi_zF7qCkhGpS6CAHrnCFXRXXuUDm__yueYCEPUJKdgWPegxKFFGIZXH-4Vr6wbOOCzOzCXMkjS9ZmqFknuxBPa-JwjtD1ppTYBSVsGG2knAGnxAiIki4oQnolTsf0snehIEVFmDegQ",
-    alt: "Bó 2 đóa xinh cẩm chướng kem và hồng phấn gói giấy linen",
+    img: "/images/hoa_2_doa_xinh.jpg",
+    alt: "Bó hoa hồng 2 đóa xinh phối baby breath gói giấy kraft thủ công",
   },
   {
     title: "Vòng Charm hoàn thiện",

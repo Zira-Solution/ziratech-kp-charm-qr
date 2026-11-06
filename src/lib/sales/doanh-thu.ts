@@ -168,9 +168,11 @@ export function normalizeName(raw: string): string {
 const SINGLE: Record<string, SingleCategory> = {
   "vòng tay": "bracelet",
   "vòng đeo tay": "bracelet",
+  vòng: "bracelet", // confirmed by the owner: "vòng 60" is two bracelets
   "móc khoá": "keychain",
   "móc khoá mu ro di": "keychain", // confirmed by the owner
   "móc khoá đt": "keychain_phone",
+  "móc khoá điện thoại": "keychain_phone", // written out in full in the latest sheet
   "móc treo đt": "keychain_phone",
   "gấu mini": "bear_mini",
   "gấu bông": "bear",

@@ -119,6 +119,37 @@ await upsert(
   "donated_on,source_row"
 );
 
+// Rows imported from an earlier version of the sheet that are no longer in it are removed,
+// so the database always mirrors the current CSV.
+async function removeStale(table: string, filter: Record<string, string>, keep: Set<string>, keyOf: (r: Record<string, unknown>) => string) {
+  const { data, error } = await supabase.from(table).select("*").match(filter);
+  if (error) {
+    console.error(`Đọc ${table} lỗi: ${error.message}`);
+    process.exit(1);
+  }
+  const stale = (data ?? []).filter((r) => !keep.has(keyOf(r)));
+  if (stale.length === 0) return;
+  const { error: delError } = await supabase.from(table).delete().in("id", stale.map((r) => r.id as string));
+  if (delError) {
+    console.error(`Xóa dòng cũ của ${table} lỗi: ${delError.message}`);
+    process.exit(1);
+  }
+  console.log(`${table}: đã xóa ${stale.length} dòng không còn trong sheet`);
+}
+
+await removeStale(
+  "stall_sales",
+  {},
+  new Set(data.sales.map((x) => `${x.soldOn}|${x.sourceRow}|${x.part}`)),
+  (r) => `${r.sold_on}|${r.source_row}|${r.part}`
+);
+await removeStale(
+  "donations",
+  { channel: "stall" },
+  new Set(data.donations.map((x) => `${x.soldOn}|${x.sourceRow}`)),
+  (r) => `${r.donated_on}|${r.source_row}`
+);
+
 // Transferred to Sân Nhà Nhiều Chó on 25/10/2026 at 22:18 via MB Bank -> VCB.
 await upsert(
   "fund_transfers",

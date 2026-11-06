@@ -48,11 +48,11 @@ export interface StatementSummary {
 }
 
 export const STATEMENT_SUMMARY: StatementSummary = {
-  totalRevenue: 2234000,
-  stallSalesAmount: 1974000,
-  stallSalesCount: 65,
-  donationAmount: 260000,
-  donationCount: 9,
+  totalRevenue: 2200000,
+  stallSalesAmount: 1909000,
+  stallSalesCount: 61,
+  donationAmount: 291000,
+  donationCount: 13,
   transferredAmount: 1800000,
   transferRecipient: "Trạm cứu hộ Sân Nhà Nhiều Chó",
   transferStatus: "Đã hoàn tất",
@@ -64,36 +64,36 @@ export const STATEMENT_SUMMARY: StatementSummary = {
 export const STATEMENT_DAYS: StatementDay[] = [
   {
     "soldOn": "2026-10-17",
-    "dayLabel": "Thứ Sáu, 17/10/2026",
+    "dayLabel": "Thứ Bảy, 17/10/2026",
     "dayShort": "17/10",
-    "salesAmount": 729000,
-    "salesCount": 25,
-    "donationAmount": 15000,
-    "donationCount": 1,
-    "total": 744000,
-    "percentage": 33.3
+    "salesAmount": 694000,
+    "salesCount": 24,
+    "donationAmount": 46000,
+    "donationCount": 5,
+    "total": 740000,
+    "percentage": 33.6
   },
   {
     "soldOn": "2026-10-19",
-    "dayLabel": "Chủ Nhật, 19/10/2026",
+    "dayLabel": "Thứ Hai, 19/10/2026",
     "dayShort": "19/10",
     "salesAmount": 415000,
-    "salesCount": 18,
+    "salesCount": 19,
     "donationAmount": 155000,
     "donationCount": 6,
     "total": 570000,
-    "percentage": 25.5
+    "percentage": 25.9
   },
   {
     "soldOn": "2026-10-20",
-    "dayLabel": "Thứ Hai, 20/10/2026",
+    "dayLabel": "Thứ Ba, 20/10/2026",
     "dayShort": "20/10",
-    "salesAmount": 830000,
-    "salesCount": 22,
+    "salesAmount": 800000,
+    "salesCount": 18,
     "donationAmount": 90000,
     "donationCount": 2,
-    "total": 920000,
-    "percentage": 41.2
+    "total": 890000,
+    "percentage": 40.5
   }
 ];
 
@@ -102,57 +102,43 @@ export const STATEMENT_CATEGORIES: StatementCategory[] = [
     "category": "bracelet",
     "label": "Vòng tay",
     "count": 19,
-    "amount": 585000,
-    "percentage": 29.6
+    "amount": 570000,
+    "percentage": 29.9
   },
   {
     "category": "flower",
     "label": "Bông",
-    "count": 7,
+    "count": 22,
     "amount": 440000,
-    "percentage": 22.3
+    "percentage": 23
   },
   {
     "category": "keychain",
     "label": "Móc khoá",
-    "count": 15,
-    "amount": 320000,
-    "percentage": 16.2
-  },
-  {
-    "category": "keychain_phone",
-    "label": "Móc khoá điện thoại",
-    "count": 7,
-    "amount": 190000,
-    "percentage": 9.6
+    "count": 16,
+    "amount": 350000,
+    "percentage": 18.3
   },
   {
     "category": "diy",
     "label": "DIY",
-    "count": 3,
-    "amount": 163000,
-    "percentage": 8.3
-  },
-  {
-    "category": "combo",
-    "label": "Combo nhiều món",
-    "count": 3,
-    "amount": 138000,
-    "percentage": 7
+    "count": 5,
+    "amount": 241000,
+    "percentage": 12.6
   },
   {
     "category": "bear_mini",
     "label": "Gấu mini",
-    "count": 9,
-    "amount": 125000,
-    "percentage": 6.3
+    "count": 15,
+    "amount": 195000,
+    "percentage": 10.2
   },
   {
-    "category": "bear",
-    "label": "Gấu bông",
-    "count": 1,
-    "amount": 10000,
-    "percentage": 0.5
+    "category": "keychain_phone",
+    "label": "Móc khoá điện thoại",
+    "count": 4,
+    "amount": 110000,
+    "percentage": 5.8
   },
   {
     "category": "card",
@@ -172,7 +158,18 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "category": "bracelet",
     "categoryLabel": "Vòng tay",
     "isDonation": false,
-    "amount": 40000,
+    "amount": 30000,
+    "note": null
+  },
+  {
+    "id": "donation-2026-10-17-4",
+    "soldOn": "2026-10-17",
+    "sourceRow": 4,
+    "name": "donate",
+    "category": "donation",
+    "categoryLabel": "Quyên góp",
+    "isDonation": true,
+    "amount": 10000,
     "note": null
   },
   {
@@ -201,11 +198,22 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "id": "sale-2026-10-17-7",
     "soldOn": "2026-10-17",
     "sourceRow": 7,
-    "name": "móc khoá vòng tay",
-    "category": "combo",
-    "categoryLabel": "Combo nhiều món",
+    "name": "Móc khoá",
+    "category": "keychain",
+    "categoryLabel": "Móc khoá",
     "isDonation": false,
-    "amount": 60000,
+    "amount": 30000,
+    "note": null
+  },
+  {
+    "id": "sale-2026-10-17-7-1",
+    "soldOn": "2026-10-17",
+    "sourceRow": 7,
+    "name": "Vòng tay",
+    "category": "bracelet",
+    "categoryLabel": "Vòng tay",
+    "isDonation": false,
+    "amount": 30000,
     "note": null
   },
   {
@@ -216,7 +224,18 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "category": "bracelet",
     "categoryLabel": "Vòng tay",
     "isDonation": false,
-    "amount": 40000,
+    "amount": 30000,
+    "note": null
+  },
+  {
+    "id": "donation-2026-10-17-8",
+    "soldOn": "2026-10-17",
+    "sourceRow": 8,
+    "name": "donate",
+    "category": "donation",
+    "categoryLabel": "Quyên góp",
+    "isDonation": true,
+    "amount": 10000,
     "note": null
   },
   {
@@ -235,8 +254,8 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "soldOn": "2026-10-17",
     "sourceRow": 10,
     "name": "gấu bông",
-    "category": "bear",
-    "categoryLabel": "Gấu bông",
+    "category": "bear_mini",
+    "categoryLabel": "Gấu mini",
     "isDonation": false,
     "amount": 10000,
     "note": null
@@ -333,11 +352,22 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "id": "sale-2026-10-17-19",
     "soldOn": "2026-10-17",
     "sourceRow": 19,
-    "name": "DIY, gấu bông",
-    "category": "combo",
-    "categoryLabel": "Combo nhiều món",
+    "name": "Gấu mini",
+    "category": "bear_mini",
+    "categoryLabel": "Gấu mini",
     "isDonation": false,
-    "amount": 43000,
+    "amount": 15000,
+    "note": null
+  },
+  {
+    "id": "sale-2026-10-17-19-1",
+    "soldOn": "2026-10-17",
+    "sourceRow": 19,
+    "name": "DIY",
+    "category": "diy",
+    "categoryLabel": "DIY",
+    "isDonation": false,
+    "amount": 28000,
     "note": null
   },
   {
@@ -348,11 +378,22 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "category": "bracelet",
     "categoryLabel": "Vòng tay",
     "isDonation": false,
-    "amount": 40000,
+    "amount": 30000,
     "note": null
   },
   {
-    "id": "don-2026-10-17-21",
+    "id": "donation-2026-10-17-20",
+    "soldOn": "2026-10-17",
+    "sourceRow": 20,
+    "name": "donate",
+    "category": "donation",
+    "categoryLabel": "Quyên góp",
+    "isDonation": true,
+    "amount": 10000,
+    "note": null
+  },
+  {
+    "id": "donation-2026-10-17-21",
     "soldOn": "2026-10-17",
     "sourceRow": 21,
     "name": "donate",
@@ -371,83 +412,61 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "categoryLabel": "Vòng tay",
     "isDonation": false,
     "amount": 30000,
-    "note": "tiền hỗ trợ"
+    "note": null
   },
   {
     "id": "sale-2026-10-17-23",
     "soldOn": "2026-10-17",
     "sourceRow": 23,
-    "name": "gấu mini",
-    "category": "bear_mini",
-    "categoryLabel": "Gấu mini",
+    "name": "móc khóa điện thoại",
+    "category": "keychain_phone",
+    "categoryLabel": "Móc khoá điện thoại",
     "isDonation": false,
-    "amount": 15000,
+    "amount": 30000,
     "note": null
   },
   {
     "id": "sale-2026-10-17-24",
     "soldOn": "2026-10-17",
     "sourceRow": 24,
-    "name": "vòng tay",
+    "name": "vòng",
     "category": "bracelet",
     "categoryLabel": "Vòng tay",
     "isDonation": false,
-    "amount": 30000,
+    "amount": 60000,
     "note": null
   },
   {
     "id": "sale-2026-10-17-25",
     "soldOn": "2026-10-17",
     "sourceRow": 25,
-    "name": "gấu mini",
-    "category": "bear_mini",
-    "categoryLabel": "Gấu mini",
+    "name": "diy",
+    "category": "diy",
+    "categoryLabel": "DIY",
     "isDonation": false,
-    "amount": 15000,
+    "amount": 50000,
     "note": null
   },
   {
     "id": "sale-2026-10-17-26",
     "soldOn": "2026-10-17",
     "sourceRow": 26,
-    "name": "vòng tay",
-    "category": "bracelet",
-    "categoryLabel": "Vòng tay",
+    "name": "móc khóa",
+    "category": "keychain",
+    "categoryLabel": "Móc khoá",
     "isDonation": false,
-    "amount": 30000,
+    "amount": 40000,
     "note": null
   },
   {
-    "id": "sale-2026-10-17-27",
+    "id": "donation-2026-10-17-27",
     "soldOn": "2026-10-17",
     "sourceRow": 27,
-    "name": "vòng tay",
-    "category": "bracelet",
-    "categoryLabel": "Vòng tay",
-    "isDonation": false,
-    "amount": 30000,
-    "note": null
-  },
-  {
-    "id": "sale-2026-10-17-28",
-    "soldOn": "2026-10-17",
-    "sourceRow": 28,
-    "name": "vòng tay",
-    "category": "bracelet",
-    "categoryLabel": "Vòng tay",
-    "isDonation": false,
-    "amount": 30000,
-    "note": null
-  },
-  {
-    "id": "sale-2026-10-17-29",
-    "soldOn": "2026-10-17",
-    "sourceRow": 29,
-    "name": "móc treo đt",
-    "category": "keychain_phone",
-    "categoryLabel": "Móc khoá điện thoại",
-    "isDonation": false,
-    "amount": 35000,
+    "name": "donate",
+    "category": "donation",
+    "categoryLabel": "Quyên góp",
+    "isDonation": true,
+    "amount": 1000,
     "note": null
   },
   {
@@ -528,7 +547,7 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "note": null
   },
   {
-    "id": "don-2026-10-19-11",
+    "id": "donation-2026-10-19-11",
     "soldOn": "2026-10-19",
     "sourceRow": 11,
     "name": "donate",
@@ -543,14 +562,14 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "soldOn": "2026-10-19",
     "sourceRow": 12,
     "name": "vòng tay",
-    "category": "bracelet",
-    "categoryLabel": "Vòng tay",
+    "category": "bear_mini",
+    "categoryLabel": "Gấu mini",
     "isDonation": false,
     "amount": 15000,
     "note": null
   },
   {
-    "id": "don-2026-10-19-13",
+    "id": "donation-2026-10-19-13",
     "soldOn": "2026-10-19",
     "sourceRow": 13,
     "name": "donate",
@@ -564,11 +583,22 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "id": "sale-2026-10-19-14",
     "soldOn": "2026-10-19",
     "sourceRow": 14,
-    "name": "gấu bông với móc khoá",
-    "category": "combo",
-    "categoryLabel": "Combo nhiều món",
+    "name": "Gấu mini",
+    "category": "bear_mini",
+    "categoryLabel": "Gấu mini",
     "isDonation": false,
-    "amount": 35000,
+    "amount": 15000,
+    "note": null
+  },
+  {
+    "id": "sale-2026-10-19-14-1",
+    "soldOn": "2026-10-19",
+    "sourceRow": 14,
+    "name": "Móc khoá",
+    "category": "keychain",
+    "categoryLabel": "Móc khoá",
+    "isDonation": false,
+    "amount": 20000,
     "note": null
   },
   {
@@ -587,8 +617,8 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "soldOn": "2026-10-19",
     "sourceRow": 16,
     "name": "móc khoá",
-    "category": "keychain",
-    "categoryLabel": "Móc khoá",
+    "category": "bear_mini",
+    "categoryLabel": "Gấu mini",
     "isDonation": false,
     "amount": 15000,
     "note": null
@@ -609,8 +639,8 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "soldOn": "2026-10-19",
     "sourceRow": 18,
     "name": "móc khoá",
-    "category": "keychain",
-    "categoryLabel": "Móc khoá",
+    "category": "bear_mini",
+    "categoryLabel": "Gấu mini",
     "isDonation": false,
     "amount": 15000,
     "note": null
@@ -620,8 +650,8 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "soldOn": "2026-10-19",
     "sourceRow": 19,
     "name": "móc khoá",
-    "category": "keychain",
-    "categoryLabel": "Móc khoá",
+    "category": "bear_mini",
+    "categoryLabel": "Gấu mini",
     "isDonation": false,
     "amount": 15000,
     "note": null
@@ -630,7 +660,7 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "id": "sale-2026-10-19-20",
     "soldOn": "2026-10-19",
     "sourceRow": 20,
-    "name": "móc khoá mu ro di",
+    "name": "móc khoá",
     "category": "keychain",
     "categoryLabel": "Móc khoá",
     "isDonation": false,
@@ -642,14 +672,14 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "soldOn": "2026-10-19",
     "sourceRow": 21,
     "name": "móc khoá",
-    "category": "keychain",
-    "categoryLabel": "Móc khoá",
+    "category": "bear_mini",
+    "categoryLabel": "Gấu mini",
     "isDonation": false,
     "amount": 15000,
     "note": null
   },
   {
-    "id": "don-2026-10-19-22",
+    "id": "donation-2026-10-19-22",
     "soldOn": "2026-10-19",
     "sourceRow": 22,
     "name": "donate",
@@ -671,7 +701,7 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "note": null
   },
   {
-    "id": "don-2026-10-19-24",
+    "id": "donation-2026-10-19-24",
     "soldOn": "2026-10-19",
     "sourceRow": 24,
     "name": "donate",
@@ -693,7 +723,7 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "note": null
   },
   {
-    "id": "don-2026-10-19-26",
+    "id": "donation-2026-10-19-26",
     "soldOn": "2026-10-19",
     "sourceRow": 26,
     "name": "donate",
@@ -704,7 +734,7 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "note": null
   },
   {
-    "id": "don-2026-10-19-27",
+    "id": "donation-2026-10-19-27",
     "soldOn": "2026-10-19",
     "sourceRow": 27,
     "name": "donate",
@@ -770,7 +800,7 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "note": null
   },
   {
-    "id": "don-2026-10-20-9",
+    "id": "donation-2026-10-20-9",
     "soldOn": "2026-10-20",
     "sourceRow": 9,
     "name": "donate",
@@ -781,7 +811,7 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "note": null
   },
   {
-    "id": "don-2026-10-20-10",
+    "id": "donation-2026-10-20-10",
     "soldOn": "2026-10-20",
     "sourceRow": 10,
     "name": "donate",
@@ -927,55 +957,11 @@ export const STATEMENT_TRANSACTIONS: StatementItem[] = [
     "id": "sale-2026-10-20-23",
     "soldOn": "2026-10-20",
     "sourceRow": 23,
-    "name": "gấu mini",
-    "category": "bear_mini",
-    "categoryLabel": "Gấu mini",
-    "isDonation": false,
-    "amount": 15000,
-    "note": null
-  },
-  {
-    "id": "sale-2026-10-20-24",
-    "soldOn": "2026-10-20",
-    "sourceRow": 24,
-    "name": "móc khoá đt",
-    "category": "keychain_phone",
-    "categoryLabel": "Móc khoá điện thoại",
-    "isDonation": false,
-    "amount": 25000,
-    "note": null
-  },
-  {
-    "id": "sale-2026-10-20-25",
-    "soldOn": "2026-10-20",
-    "sourceRow": 25,
-    "name": "móc khoá đt",
-    "category": "keychain_phone",
-    "categoryLabel": "Móc khoá điện thoại",
-    "isDonation": false,
-    "amount": 25000,
-    "note": null
-  },
-  {
-    "id": "sale-2026-10-20-26",
-    "soldOn": "2026-10-20",
-    "sourceRow": 26,
     "name": "vòng tay",
     "category": "bracelet",
     "categoryLabel": "Vòng tay",
     "isDonation": false,
-    "amount": 30000,
-    "note": null
-  },
-  {
-    "id": "sale-2026-10-20-27",
-    "soldOn": "2026-10-20",
-    "sourceRow": 27,
-    "name": "móc khoá đt",
-    "category": "keychain_phone",
-    "categoryLabel": "Móc khoá điện thoại",
-    "isDonation": false,
-    "amount": 25000,
+    "amount": 90000,
     "note": null
   }
 ];

@@ -72,11 +72,11 @@ test("summaries add up the money of each line", () => {
 
 test("statement dataset is mathematically consistent with stall records", () => {
   assert.equal(STATEMENT_TRANSACTIONS.length, 74);
-  assert.equal(STATEMENT_SUMMARY.stallSalesCount, 65);
-  assert.equal(STATEMENT_SUMMARY.donationCount, 9);
-  assert.equal(STATEMENT_SUMMARY.stallSalesAmount, 1974000);
-  assert.equal(STATEMENT_SUMMARY.donationAmount, 260000);
-  assert.equal(STATEMENT_SUMMARY.totalRevenue, 2234000);
+  assert.equal(STATEMENT_SUMMARY.stallSalesCount, 61);
+  assert.equal(STATEMENT_SUMMARY.donationCount, 13);
+  assert.equal(STATEMENT_SUMMARY.stallSalesAmount, 1909000);
+  assert.equal(STATEMENT_SUMMARY.donationAmount, 291000);
+  assert.equal(STATEMENT_SUMMARY.totalRevenue, 2200000);
 
   const dayTotal = STATEMENT_DAYS.reduce((sum, d) => sum + d.total, 0);
   assert.equal(dayTotal, STATEMENT_SUMMARY.totalRevenue);
@@ -150,4 +150,8 @@ test("expense sheet: money, dates and the bottom total are read as written", asy
   assert.equal(expenses[0].amount, 184140);
   assert.equal(expenses[0].note, "Người đặt: Gia Hân; Người mua: Gia Hân; Tình trạng: Đã chuyển");
   assert.equal(sheetTotal, 235476);
+});
+
+test("a phone charm written in full is still a phone charm", () => {
+  assert.deepEqual(classify("móc khóa điện thoại "), { kind: "single", category: "keychain_phone" });
 });
